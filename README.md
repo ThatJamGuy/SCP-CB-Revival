@@ -1,8 +1,16 @@
-# SCP-CB-Revival
-After a rough start on the main SCP Repo (And hardly any gameplay by 120 commits 💀), I've decided it's time for a fresh start. So I present to you,
-The SCP: Containment Breach Revival project (WIP name)
+# THE SCP:CB Revival Project
+Welcome 05, to The Revival Project.
 
-This one I hope to land more towards the original game while still keeping all the cool stuff I had from the original project, such as the HD graphics.
-Speaking of the original REPO, you can find it here: https://github.com/ThatJamGuy/scp-project-unity
+SCP:CB Revival will eventually form to be a complete High Defenition remake of the original SCP: Containment Breach, all built on the Unity HDRP Engine.
 
-// TODO: Finish this README
+# Planned Features
+SCP:CB Revival has multiple planned features or changes, some that slightly deviate from the original to give a more modernized experience. Some features are:
+- Fixes to bugs present in the original
+- A complete graphics overhaul, with modern lighting and volumetrics
+- More advanced NPC AI
+- Modding support
+- Multiplayer
+- And more!
+
+# Contributing
+As a solo dev, progress will be slow and many issues may occur. If you feel that you can contribute to the project, I'd recommend using pull requests.
