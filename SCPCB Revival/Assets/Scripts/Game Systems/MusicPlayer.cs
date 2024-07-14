@@ -34,14 +34,14 @@ public class MusicPlayer : MonoBehaviour
 
     private void MusicChanging()
     {
-        if (!changed) Music.volume -= Time.deltaTime / 4;
-        if (Music.volume <= 0.1 && !changed && trackTo != null)
+        if (!changed) Music.volume -= Time.deltaTime / 2;
+        if (Music.volume <= 0 && !changed && trackTo != null)
         {
             changed = true;
             Music.clip = trackTo;
             Music.Play();
         }
         if (changed) Music.volume += Time.deltaTime;
-        if (Music.volume >= 0.9 && changed) changeTrack = false;
+        if (Music.volume >= 1f && changed) changeTrack = false;
     }
 }
