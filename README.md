@@ -4,13 +4,14 @@ SCP:CB Revival will eventually form to be a complete High Defenition Open-Source
 
 ![image](https://github.com/user-attachments/assets/6191c963-e6da-43e7-9efd-66b3f76b4f7d)
 
-> [!NOTE]
-> This project is very unfinished, so don't expect a whole lot from this repo!
+> [!WARNING]
+> This project is very new, so everything is subject to change.
 
 # Planned Features
 SCP:CB Revival has multiple planned features or changes, some that slightly deviate from the original to give a more modernized experience. Some features are:
-- Fixes to bugs present in the original
 - A complete graphics overhaul, with modern lighting and volumetrics
+- Some extra additions to make the environment more convincing
+- Fixes to bugs present in the original
 - More advanced NPC AI
 - Modding support
 - Multiplayer
@@ -18,3 +19,15 @@ SCP:CB Revival has multiple planned features or changes, some that slightly devi
 
 # Contributing
 As a solo dev, progress will be slow and my code will not be completelly fool-proof. If you feel that you can contribute to the project, feel free to use GitHub pull requests or join the [SCP:CB Revival Discord](https://discord.gg/rarnCP68Dk) to inquire on contributing to the project! Any meaningful contributions will give you a spot in the credits menu in game, and a spot in the credits list on this page here. If you are in the Discord server, you will also recieve a special role.
+
+# Credits
+This credits list will grow as people contribute. See how to do so above!
+
+- Project Lead
+  - ThatJamGuy
+- Programming
+  - ThatJamGuy
+- Game Assets
+  - SCP:CB Team
+- Translator
+  - Alex Polo
