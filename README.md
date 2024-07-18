@@ -7,6 +7,10 @@ SCP:CB Revival will eventually form to be a complete High Defenition Open-Source
 > [!WARNING]
 > This project is very new, so everything is subject to change.
 
+# Concept Renders
+![image](https://github.com/user-attachments/assets/6f0b1dcd-967f-4f91-a124-ebcc1153dae0)
+![image](https://github.com/user-attachments/assets/a1fc942a-6b32-4f11-9786-dc5584dffae7)
+
 # Planned Features
 SCP:CB Revival has multiple planned features or changes, some that slightly deviate from the original to give a more modernized experience. Some features are:
 - A complete graphics overhaul, with modern lighting and volumetrics
