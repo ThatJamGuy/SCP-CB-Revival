@@ -10,7 +10,7 @@ public class MenuController : MonoBehaviour
 
     private void Start()
     {
-        MusicPlayer.instance.StartMusic(menuMusic);
+        MusicPlayer.Instance.StartMusic(menuMusic);
     }
 
     public void PlayInteractSFX(bool failed)

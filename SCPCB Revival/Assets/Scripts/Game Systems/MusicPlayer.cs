@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class MusicPlayer : MonoBehaviour
 {
-    public static MusicPlayer instance { get; private set; }
+    public static MusicPlayer Instance { get; private set; }
     public AudioSource Music;
     private bool changeTrack, changed;
     private AudioClip trackTo;
 
     private void Awake()
     {
-        if (instance == null) instance = this;
+        if (Instance == null) Instance = this;
         else Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
         Music.ignoreListenerPause = true;
