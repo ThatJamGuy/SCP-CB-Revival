@@ -4,50 +4,43 @@
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float walkSpeed = 5f;
-    public float sprintSpeed = 10f;
-    public float crouchSpeed = 2.5f;
-    public float gravity = 9.81f;
+    [SerializeField] private float walkSpeed = 5f;
+    [SerializeField] private float sprintSpeed = 10f;
+    [SerializeField] private float crouchSpeed = 2.5f;
+    [SerializeField] private float gravity = 9.81f;
 
     [Header("Look Settings")]
-    public float lookSpeed = 2f;
-    public float maxLookX = 90f;
-    public float minLookX = -90f;
+    [SerializeField] private float lookSpeed = 2f;
+    [SerializeField] private float maxLookX = 90f;
+    [SerializeField] private float minLookX = -90f;
 
     private CharacterController characterController;
     private Vector3 moveDirection;
     private float currentSpeed;
     private float rotationX;
 
-    void Start()
+    private void Start()
     {
         characterController = GetComponent<CharacterController>();
         currentSpeed = walkSpeed;
-
         UpdateCursorState();
     }
 
-    void Update()
+    private void Update()
     {
-        if (GameManager.Instance.disablePlayerInputs)
-        {
-            return;
-        }
-
-        Move();
-        Look();
+        if (GameManager.Instance.disablePlayerInputs) return;
+        HandleMovement();
+        HandleLook();
     }
 
-    private void Move()
+    private void HandleMovement()
     {
         if (characterController.isGrounded)
         {
             float moveX = Input.GetAxis("Horizontal");
             float moveZ = Input.GetAxis("Vertical");
 
-            moveDirection = transform.TransformDirection(new Vector3(moveX, 0, moveZ));
-            currentSpeed = DetermineCurrentSpeed();
-            moveDirection *= currentSpeed;
+            moveDirection = transform.TransformDirection(new Vector3(moveX, 0, moveZ)) * DetermineCurrentSpeed();
         }
 
         moveDirection.y -= gravity * Time.deltaTime;
@@ -56,40 +49,24 @@ public class PlayerController : MonoBehaviour
 
     private float DetermineCurrentSpeed()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            return sprintSpeed;
-        }
-        if (Input.GetKey(KeyCode.LeftControl))
-        {
-            return crouchSpeed;
-        }
+        if (Input.GetKey(KeyCode.LeftShift)) return sprintSpeed;
+        if (Input.GetKey(KeyCode.LeftControl)) return crouchSpeed;
         return walkSpeed;
     }
 
-    private void Look()
+    private void HandleLook()
     {
         float mouseX = Input.GetAxis("Mouse X") * lookSpeed;
         float mouseY = Input.GetAxis("Mouse Y") * lookSpeed;
 
-        rotationX -= mouseY;
-        rotationX = Mathf.Clamp(rotationX, minLookX, maxLookX);
-
+        rotationX = Mathf.Clamp(rotationX - mouseY, minLookX, maxLookX);
         transform.Rotate(0, mouseX, 0);
         Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
     }
 
     private void UpdateCursorState()
     {
-        if (GameManager.Instance.disablePlayerInputs)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+        Cursor.lockState = GameManager.Instance.disablePlayerInputs ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = GameManager.Instance.disablePlayerInputs;
     }
 }
