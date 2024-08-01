@@ -3,6 +3,14 @@
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
+    [System.Serializable]
+    public struct FootstepData
+    {
+        public Texture texture;
+        public AudioClip[] walkingFootstepAudio;
+        public AudioClip[] runningFootstepAudio;
+    }
+
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float sprintSpeed = 10f;
@@ -14,23 +22,43 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxLookX = 90f;
     [SerializeField] private float minLookX = -90f;
 
+    [Header("Headbob Settings")]
+    [SerializeField] private float headbobFrequency = 1.5f;
+    [SerializeField] private float headbobAmplitude = 0.1f;
+    [SerializeField] private float headbobRotationFrequency = 1.5f;
+    [SerializeField] private float headbobRotationAmplitude = 0.1f;
+    [SerializeField] private float runningHeadbobMultiplier = 1.5f;
+
+    [Header("Footstep Settings")]
+    [SerializeField] private FootstepData[] footstepData;
+    [SerializeField] private AudioSource footstepAudioSource;
+
     private CharacterController characterController;
     private Vector3 moveDirection;
-    private float currentSpeed;
     private float rotationX;
+    private bool isMoving;
+    private bool isSprinting;
+    private float headbobTimer;
+    private Vector3 initialCameraPosition;
+    private Quaternion initialCameraRotation;
+    private bool footstepPlayed;
+    private float previousHeadbobOffset = float.MaxValue;
 
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
-        currentSpeed = walkSpeed;
         UpdateCursorState();
+        initialCameraPosition = Camera.main.transform.localPosition;
+        initialCameraRotation = Camera.main.transform.localRotation;
     }
 
     private void Update()
     {
         if (GameManager.Instance.disablePlayerInputs) return;
+
         HandleMovement();
         HandleLook();
+        HandleHeadbob();
     }
 
     private void HandleMovement()
@@ -41,6 +69,8 @@ public class PlayerController : MonoBehaviour
             float moveZ = Input.GetAxis("Vertical");
 
             moveDirection = transform.TransformDirection(new Vector3(moveX, 0, moveZ)) * DetermineCurrentSpeed();
+            isMoving = moveX != 0 || moveZ != 0;
+            isSprinting = Input.GetKey(KeyCode.LeftShift) && isMoving;
         }
 
         moveDirection.y -= gravity * Time.deltaTime;
@@ -64,9 +94,102 @@ public class PlayerController : MonoBehaviour
         Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
     }
 
+    private void HandleHeadbob()
+    {
+        if (isMoving)
+        {
+            headbobTimer += Time.deltaTime;
+
+            float frequencyMultiplier = isSprinting ? runningHeadbobMultiplier : 1.0f;
+            float amplitudeMultiplier = isSprinting ? runningHeadbobMultiplier : 1.0f;
+
+            float currentHeadbobOffset = Mathf.Sin(headbobTimer * headbobFrequency * frequencyMultiplier) * headbobAmplitude * amplitudeMultiplier;
+
+            Vector3 newPosition = initialCameraPosition + new Vector3(0, currentHeadbobOffset, 0);
+            Quaternion newRotation = CalculateHeadbobRotation(frequencyMultiplier, amplitudeMultiplier);
+
+            Camera.main.transform.localPosition = newPosition;
+            Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, 0) * newRotation;
+
+            if (currentHeadbobOffset > previousHeadbobOffset && previousHeadbobOffset < 0 && !footstepPlayed)
+            {
+                PlayFootstepAudio();
+                footstepPlayed = true;
+            }
+
+            if (currentHeadbobOffset >= 0) footstepPlayed = false;
+            previousHeadbobOffset = currentHeadbobOffset;
+        }
+        else
+        {
+            headbobTimer = 0;
+        }
+    }
+
+    private Quaternion CalculateHeadbobRotation(float frequencyMultiplier, float amplitudeMultiplier)
+    {
+        float headbobRotation = Mathf.Sin(headbobTimer * headbobRotationFrequency * frequencyMultiplier) * headbobRotationAmplitude * amplitudeMultiplier;
+        return initialCameraRotation * Quaternion.Euler(0, 0, headbobRotation);
+    }
+
+    private void PlayFootstepAudio()
+    {
+        Texture currentTexture = GetCurrentTextureUnderPlayer();
+        if (currentTexture == null) return;
+
+        FootstepData footstep = GetFootstepDataForTexture(currentTexture);
+        if (footstep.texture == null) return;
+
+        AudioClip[] footstepSounds = isSprinting ? footstep.runningFootstepAudio : footstep.walkingFootstepAudio;
+        if (footstepSounds.Length == 0) return;
+
+        AudioClip footstepSound = footstepSounds[Random.Range(0, footstepSounds.Length)];
+        footstepAudioSource.PlayOneShot(footstepSound);
+    }
+
+    private Texture GetCurrentTextureUnderPlayer()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, characterController.height + 1.0f))
+        {
+            MeshCollider meshCollider = hit.collider as MeshCollider;
+            if (meshCollider != null && meshCollider.sharedMesh != null)
+            {
+                int submeshIndex = GetSubmeshIndex(meshCollider.sharedMesh, hit.triangleIndex);
+                if (submeshIndex != -1)
+                {
+                    Material material = meshCollider.GetComponent<Renderer>()?.materials[submeshIndex];
+                    return material?.mainTexture;
+                }
+            }
+        }
+        return null;
+    }
+
+    private int GetSubmeshIndex(Mesh mesh, int triangleIndex)
+    {
+        int triangleCount = 0;
+        for (int i = 0; i < mesh.subMeshCount; i++)
+        {
+            int subMeshTriangleCount = mesh.GetTriangles(i).Length / 3;
+            if (triangleIndex < triangleCount + subMeshTriangleCount) return i;
+            triangleCount += subMeshTriangleCount;
+        }
+        return -1;
+    }
+
+    private FootstepData GetFootstepDataForTexture(Texture texture)
+    {
+        foreach (FootstepData data in footstepData)
+        {
+            if (data.texture == texture) return data;
+        }
+        return new FootstepData();
+    }
+
     private void UpdateCursorState()
     {
-        Cursor.lockState = GameManager.Instance.disablePlayerInputs ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = GameManager.Instance.disablePlayerInputs;
+        bool disablePlayerInputs = GameManager.Instance.disablePlayerInputs;
+        Cursor.lockState = disablePlayerInputs ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = disablePlayerInputs;
     }
 }
