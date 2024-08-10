@@ -23,20 +23,23 @@ public class DoorButton : MonoBehaviour
 
     public void UseButton()
     {
-        if (!door.isLocked && canInteract)
-        {
-            buttonSource.clip = buttonSFX;
-            buttonSource.Play();
+        if (!canInteract) return;
 
+        if (!door.isLocked)
+        {
+            PlaySound(buttonSFX);
             ToggleDoorState();
         }
-        else if (canInteract)
+        else
         {
-            buttonSource.clip = lockedSFX;
-            buttonSource.Play();
-
-            canInteract = false;
-            StartCoroutine(Cooldown());
+            if (door.isBroken)
+            {
+                NotifyAndCooldown("You pushed the button but nothing happened.", buttonSFX);
+            }
+            else
+            {
+                NotifyAndCooldown("The door appears to be locked.", lockedSFX);
+            }
         }
     }
 
@@ -56,6 +59,20 @@ public class DoorButton : MonoBehaviour
             canInteract = false;
             StartCoroutine(Cooldown());
         }
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        buttonSource.clip = clip;
+        buttonSource.Play();
+    }
+
+    private void NotifyAndCooldown(string message, AudioClip clip)
+    {
+        PlaySound(clip);
+        InfoTextManager.Instance.NotifyPlayer(message);
+        canInteract = false;
+        StartCoroutine(Cooldown());
     }
 
     IEnumerator Cooldown()

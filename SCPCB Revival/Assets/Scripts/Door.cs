@@ -6,6 +6,7 @@ public class Door : MonoBehaviour
     [Header("Door Settings")]
     public bool isOpen;
     public bool isLocked;
+    public bool isBroken;
     public float regularOpenCloseSpeed;
     public float regularOpenCloseDistance;
 
