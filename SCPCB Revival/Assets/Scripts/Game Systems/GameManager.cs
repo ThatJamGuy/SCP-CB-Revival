@@ -43,6 +43,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void PauseGame()
+    {
+        bool isPaused = Time.timeScale == 0.0f;
+
+        AudioListener.pause = !isPaused;
+        Time.timeScale = isPaused ? 1.0f : 0.0f;
+    }
+
     public void TogglePlayerInput(bool alsoToggleMouse)
     {
         disablePlayerInputs = !disablePlayerInputs;

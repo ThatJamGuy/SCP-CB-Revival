@@ -20,6 +20,8 @@ public class PauseMenu : MonoBehaviour
         GameManager.Instance.TogglePlayerInput(true);
         pauseMenuScreen.SetActive(isOpen);
 
+        GameManager.Instance.PauseGame();
+
         quitMenuScreen.SetActive(false);
     }
 

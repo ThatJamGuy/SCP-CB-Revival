@@ -94,19 +94,37 @@ public class PlayerController : MonoBehaviour
         Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
     }
 
+    // HEADBOBBING - Made a goofy fix for the sudden snappiness from switching from walking to running
+    // and vice versa. It's really weird though and probably shouldn't be shipped in the final game :skull:
+
+    private float transitionProgress = 0.9f;
+    private const float transitionSpeed = 0.1f; // Adjust this value for faster or slower transitions
+
     private void HandleHeadbob()
     {
         if (isMoving)
         {
             headbobTimer += Time.deltaTime;
 
-            float frequencyMultiplier = isSprinting ? runningHeadbobMultiplier : 1.0f;
-            float amplitudeMultiplier = isSprinting ? runningHeadbobMultiplier : 1.0f;
+            float targetFrequencyMultiplier = isSprinting ? runningHeadbobMultiplier : 1.0f;
+            float targetAmplitudeMultiplier = isSprinting ? runningHeadbobMultiplier : 1.0f;
 
-            float currentHeadbobOffset = Mathf.Sin(headbobTimer * headbobFrequency * frequencyMultiplier) * headbobAmplitude * amplitudeMultiplier;
+            if (isSprinting)
+            {
+                transitionProgress = Mathf.Clamp01(transitionProgress + Time.deltaTime * transitionSpeed);
+            }
+            else
+            {
+                transitionProgress = Mathf.Clamp01(transitionProgress - Time.deltaTime * transitionSpeed);
+            }
+
+            float currentFrequencyMultiplier = Mathf.Lerp(1.0f, runningHeadbobMultiplier, transitionProgress);
+            float currentAmplitudeMultiplier = Mathf.Lerp(1.0f, runningHeadbobMultiplier, transitionProgress);
+
+            float currentHeadbobOffset = Mathf.Sin(headbobTimer * headbobFrequency * currentFrequencyMultiplier) * headbobAmplitude * currentAmplitudeMultiplier;
 
             Vector3 newPosition = initialCameraPosition + new Vector3(0, currentHeadbobOffset, 0);
-            Quaternion newRotation = CalculateHeadbobRotation(frequencyMultiplier, amplitudeMultiplier);
+            Quaternion newRotation = CalculateHeadbobRotation(currentFrequencyMultiplier, currentAmplitudeMultiplier);
 
             Camera.main.transform.localPosition = newPosition;
             Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, 0) * newRotation;
@@ -123,8 +141,13 @@ public class PlayerController : MonoBehaviour
         else
         {
             headbobTimer = 0;
+            transitionProgress = 0.9f;
         }
     }
+
+    // TODO: FIX THE HEADBOB AT SOME POINT. IM JUST LEAVING IT LIKE THIS BECAUSE IM LAZY AND DONT
+    // WANT TO SPEND TOO MUCH TIME ON THE DAMN HEADBOBBING.
+
 
     private Quaternion CalculateHeadbobRotation(float frequencyMultiplier, float amplitudeMultiplier)
     {
