@@ -22,7 +22,7 @@ SCP:CB Revival has multiple planned features or changes, some that slightly devi
 - And more!
 
 # Contributing
-As a solo dev, progress will be slow and my code will not be completelly fool-proof. If you feel that you can contribute to the project, feel free to use GitHub pull requests or join the [SCP:CB Revival Discord](https://discord.gg/rarnCP68Dk) to inquire on contributing to the project! Any meaningful contributions will give you a spot in the credits menu in game, and a spot in the credits list on this page here. If you are in the Discord server, you will also recieve a special role.
+As a solo dev, progress will be slow and my code will not be completelly fool-proof. If you feel that you can contribute to the project, feel free to use GitHub pull requests or join the [SCP:CB Revival Discord](https://discord.gg/rarnCP68Dk) to inquire on contributing to the project! (I personally would recommend pull requests as I personally am not the best at communication and pull requests also allow me to see every change made before mergin it with the main branch) Any meaningful contributions will give you a spot in the credits menu in game, and a spot in the credits list on this page here. If you are in the Discord server, you will also recieve a special role.
 
 # Credits
 This credits list will grow as people contribute. See how to do so above!
