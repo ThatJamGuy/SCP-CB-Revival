@@ -33,6 +33,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private FootstepData[] footstepData;
     [SerializeField] private AudioSource footstepAudioSource;
 
+    [Header("Toggles")]
+    [SerializeField] private bool enableHeadbob = true;
+    [SerializeField] private bool enableHeadbobFootsteps = true;
+
     private CharacterController characterController;
     private Vector3 moveDirection;
     private float rotationX;
@@ -43,6 +47,8 @@ public class PlayerController : MonoBehaviour
     private Quaternion initialCameraRotation;
     private bool footstepPlayed;
     private float previousHeadbobOffset = float.MaxValue;
+    private float footstepTimer;  // Timer for footsteps fallback
+    private float footstepInterval;  // Interval based on movement speed
 
     private void Start()
     {
@@ -50,6 +56,7 @@ public class PlayerController : MonoBehaviour
         UpdateCursorState();
         initialCameraPosition = Camera.main.transform.localPosition;
         initialCameraRotation = Camera.main.transform.localRotation;
+        footstepTimer = 0f;
     }
 
     private void Update()
@@ -58,7 +65,8 @@ public class PlayerController : MonoBehaviour
 
         HandleMovement();
         HandleLook();
-        HandleHeadbob();
+        if (enableHeadbob) HandleHeadbob();
+        HandleFootsteps();
     }
 
     private void HandleMovement()
@@ -94,11 +102,8 @@ public class PlayerController : MonoBehaviour
         Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
     }
 
-    // HEADBOBBING - Made a goofy fix for the sudden snappiness from switching from walking to running
-    // and vice versa. It's really weird though and probably shouldn't be shipped in the final game :skull:
-
     private float transitionProgress = 0.9f;
-    private const float transitionSpeed = 0.1f; // Adjust this value for faster or slower transitions
+    private const float transitionSpeed = 0.1f;
 
     private void HandleHeadbob()
     {
@@ -129,7 +134,7 @@ public class PlayerController : MonoBehaviour
             Camera.main.transform.localPosition = newPosition;
             Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, 0) * newRotation;
 
-            if (currentHeadbobOffset > previousHeadbobOffset && previousHeadbobOffset < 0 && !footstepPlayed)
+            if (enableHeadbobFootsteps && currentHeadbobOffset > previousHeadbobOffset && previousHeadbobOffset < 0 && !footstepPlayed)
             {
                 PlayFootstepAudio();
                 footstepPlayed = true;
@@ -145,9 +150,24 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // TODO: FIX THE HEADBOB AT SOME POINT. IM JUST LEAVING IT LIKE THIS BECAUSE IM LAZY AND DONT
-    // WANT TO SPEND TOO MUCH TIME ON THE DAMN HEADBOBBING.
+    private void HandleFootsteps()
+    {
+        // Handle footsteps if headbob footsteps are disabled
+        if (!enableHeadbobFootsteps && isMoving)
+        {
+            // Set footstep interval based on speed
+            footstepInterval = isSprinting ? 0.5f : 1f;
 
+            // Update footstep timer
+            footstepTimer += Time.deltaTime;
+
+            if (footstepTimer >= footstepInterval)
+            {
+                PlayFootstepAudio();
+                footstepTimer = 0f;
+            }
+        }
+    }
 
     private Quaternion CalculateHeadbobRotation(float frequencyMultiplier, float amplitudeMultiplier)
     {

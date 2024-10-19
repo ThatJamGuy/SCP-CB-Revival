@@ -14,6 +14,11 @@ public class PauseMenu : MonoBehaviour
 
     private bool isOpen;
 
+    private void Start()
+    {
+        interactSource.ignoreListenerPause = true;
+    }
+
     public void TogglePauseMenu()
     {
         isOpen = !isOpen;
