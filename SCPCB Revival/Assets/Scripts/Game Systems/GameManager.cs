@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -68,10 +67,5 @@ public class GameManager : MonoBehaviour
                 Cursor.visible = false;
             }
         }
-    }
-
-    public void ReturnToMainMenu()
-    {
-        SceneManager.LoadScene("MainMenu");
     }
 }

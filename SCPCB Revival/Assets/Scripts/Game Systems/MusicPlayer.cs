@@ -1,10 +1,11 @@
+using System.Collections;
 using UnityEngine;
 
 public class MusicPlayer : MonoBehaviour
 {
     public static MusicPlayer Instance { get; private set; }
     public AudioSource Music;
-    private bool changeTrack, changed;
+    private bool isChanging;
     private AudioClip trackTo;
 
     private void Awake()
@@ -15,12 +16,15 @@ public class MusicPlayer : MonoBehaviour
         Music.ignoreListenerPause = true;
     }
 
-    private void Update()
+    public void ChangeMusic(AudioClip newMusic)
     {
-        if (changeTrack) MusicChanging();
+        if (!isChanging) StartCoroutine(FadeOutAndChangeMusic(newMusic));
     }
 
-    public void ChangeMusic(AudioClip newMusic) => (changeTrack, trackTo, changed) = (true, newMusic, false);
+    public void StopMusic()
+    {
+        if (!isChanging) StartCoroutine(FadeOutAndStopMusic());
+    }
 
     public void StartMusic(AudioClip newMusic)
     {
@@ -30,18 +34,75 @@ public class MusicPlayer : MonoBehaviour
         Music.Play();
     }
 
-    public void StopMusic() => (changeTrack, trackTo, changed) = (true, null, false);
-
-    private void MusicChanging()
+    private IEnumerator FadeOutAndChangeMusic(AudioClip newMusic)
     {
-        if (!changed) Music.volume -= Time.deltaTime / 2;
-        if (Music.volume <= 0 && !changed && trackTo != null)
+        isChanging = true;
+
+        // Fade out
+        yield return StartCoroutine(FadeOut(1f));
+
+        // Asynchronously load new music if not already loaded
+        if (!newMusic.loadState.Equals(AudioDataLoadState.Loaded))
         {
-            changed = true;
-            Music.clip = trackTo;
-            Music.Play();
+            yield return StartCoroutine(LoadAudioAsync(newMusic));
         }
-        if (changed) Music.volume += Time.deltaTime;
-        if (Music.volume >= 1f && changed) changeTrack = false;
+
+        // Change the clip and start playing
+        Music.clip = newMusic;
+        Music.Play();
+
+        // Fade in
+        yield return StartCoroutine(FadeIn(1f));
+
+        isChanging = false;
+    }
+
+    private IEnumerator FadeOutAndStopMusic()
+    {
+        isChanging = true;
+
+        // Fade out
+        yield return StartCoroutine(FadeOut(1f));
+
+        // Stop the music after fade out
+        Music.Stop();
+
+        isChanging = false;
+    }
+
+    private IEnumerator FadeOut(float duration)
+    {
+        float startVolume = Music.volume;
+
+        while (Music.volume > 0)
+        {
+            Music.volume -= startVolume * Time.deltaTime / duration;
+            yield return null;
+        }
+
+        Music.volume = 0;
+    }
+
+    private IEnumerator FadeIn(float duration)
+    {
+        float targetVolume = 1f;
+
+        while (Music.volume < targetVolume)
+        {
+            Music.volume += Time.deltaTime / duration;
+            yield return null;
+        }
+
+        Music.volume = targetVolume;
+    }
+
+    private IEnumerator LoadAudioAsync(AudioClip clip)
+    {
+        // Wait until the audio clip is fully loaded
+        while (clip.loadState != AudioDataLoadState.Loaded)
+        {
+            clip.LoadAudioData();
+            yield return null;
+        }
     }
 }

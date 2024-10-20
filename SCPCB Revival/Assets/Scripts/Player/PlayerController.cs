@@ -22,19 +22,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxLookX = 90f;
     [SerializeField] private float minLookX = -90f;
 
-    [Header("Headbob Settings")]
-    [SerializeField] private float headbobFrequency = 1.5f;
-    [SerializeField] private float headbobAmplitude = 0.1f;
-    [SerializeField] private float headbobRotationFrequency = 1.5f;
-    [SerializeField] private float headbobRotationAmplitude = 0.1f;
-    [SerializeField] private float runningHeadbobMultiplier = 1.5f;
-
     [Header("Footstep Settings")]
     [SerializeField] private FootstepData[] footstepData;
     [SerializeField] private AudioSource footstepAudioSource;
 
     [Header("Toggles")]
-    [SerializeField] private bool enableHeadbob = true;
     [SerializeField] private bool enableHeadbobFootsteps = true;
 
     private CharacterController characterController;
@@ -42,20 +34,14 @@ public class PlayerController : MonoBehaviour
     private float rotationX;
     private bool isMoving;
     private bool isSprinting;
-    private float headbobTimer;
-    private Vector3 initialCameraPosition;
-    private Quaternion initialCameraRotation;
     private bool footstepPlayed;
-    private float previousHeadbobOffset = float.MaxValue;
-    private float footstepTimer;  // Timer for footsteps fallback
-    private float footstepInterval;  // Interval based on movement speed
+    private float footstepTimer;
+    private float footstepInterval;
 
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
         UpdateCursorState();
-        initialCameraPosition = Camera.main.transform.localPosition;
-        initialCameraRotation = Camera.main.transform.localRotation;
         footstepTimer = 0f;
     }
 
@@ -65,7 +51,6 @@ public class PlayerController : MonoBehaviour
 
         HandleMovement();
         HandleLook();
-        if (enableHeadbob) HandleHeadbob();
         HandleFootsteps();
     }
 
@@ -102,61 +87,13 @@ public class PlayerController : MonoBehaviour
         Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
     }
 
-    private float transitionProgress = 0.9f;
-    private const float transitionSpeed = 0.1f;
-
-    private void HandleHeadbob()
-    {
-        if (isMoving)
-        {
-            headbobTimer += Time.deltaTime;
-
-            float targetFrequencyMultiplier = isSprinting ? runningHeadbobMultiplier : 1.0f;
-            float targetAmplitudeMultiplier = isSprinting ? runningHeadbobMultiplier : 1.0f;
-
-            if (isSprinting)
-            {
-                transitionProgress = Mathf.Clamp01(transitionProgress + Time.deltaTime * transitionSpeed);
-            }
-            else
-            {
-                transitionProgress = Mathf.Clamp01(transitionProgress - Time.deltaTime * transitionSpeed);
-            }
-
-            float currentFrequencyMultiplier = Mathf.Lerp(1.0f, runningHeadbobMultiplier, transitionProgress);
-            float currentAmplitudeMultiplier = Mathf.Lerp(1.0f, runningHeadbobMultiplier, transitionProgress);
-
-            float currentHeadbobOffset = Mathf.Sin(headbobTimer * headbobFrequency * currentFrequencyMultiplier) * headbobAmplitude * currentAmplitudeMultiplier;
-
-            Vector3 newPosition = initialCameraPosition + new Vector3(0, currentHeadbobOffset, 0);
-            Quaternion newRotation = CalculateHeadbobRotation(currentFrequencyMultiplier, currentAmplitudeMultiplier);
-
-            Camera.main.transform.localPosition = newPosition;
-            Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, 0) * newRotation;
-
-            if (enableHeadbobFootsteps && currentHeadbobOffset > previousHeadbobOffset && previousHeadbobOffset < 0 && !footstepPlayed)
-            {
-                PlayFootstepAudio();
-                footstepPlayed = true;
-            }
-
-            if (currentHeadbobOffset >= 0) footstepPlayed = false;
-            previousHeadbobOffset = currentHeadbobOffset;
-        }
-        else
-        {
-            headbobTimer = 0;
-            transitionProgress = 0.9f;
-        }
-    }
-
     private void HandleFootsteps()
     {
         // Handle footsteps if headbob footsteps are disabled
         if (!enableHeadbobFootsteps && isMoving)
         {
             // Set footstep interval based on speed
-            footstepInterval = isSprinting ? 0.5f : 1f;
+            footstepInterval = isSprinting ? 0.5f : 0.7f;
 
             // Update footstep timer
             footstepTimer += Time.deltaTime;
@@ -167,12 +104,6 @@ public class PlayerController : MonoBehaviour
                 footstepTimer = 0f;
             }
         }
-    }
-
-    private Quaternion CalculateHeadbobRotation(float frequencyMultiplier, float amplitudeMultiplier)
-    {
-        float headbobRotation = Mathf.Sin(headbobTimer * headbobRotationFrequency * frequencyMultiplier) * headbobRotationAmplitude * amplitudeMultiplier;
-        return initialCameraRotation * Quaternion.Euler(0, 0, headbobRotation);
     }
 
     private void PlayFootstepAudio()

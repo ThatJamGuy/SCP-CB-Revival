@@ -14,6 +14,8 @@ public class InteractionSystem : MonoBehaviour
     [Header("Interactable Object")]
     public GameObject currentInteractible;
 
+    private Lever currentLever;
+
     private void Update()
     {
         FindClosestInteractable();
@@ -45,7 +47,6 @@ public class InteractionSystem : MonoBehaviour
         if (interactable != null)
         {
             currentInteractible = interactable;
-
             Vector2 screenPosition = Camera.main.WorldToScreenPoint(currentInteractible.transform.position);
             Vector2 canvasPosition;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.GetComponent<RectTransform>(), screenPosition, null, out canvasPosition);
@@ -53,17 +54,23 @@ public class InteractionSystem : MonoBehaviour
             interactDisplay.rectTransform.anchoredPosition = canvasPosition;
             interactDisplay.gameObject.SetActive(true);
 
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 if (currentInteractible.GetComponent<DoorButton>())
                 {
                     currentInteractible.GetComponent<DoorButton>().UseButton();
-                    Debug.Log("[!] " + currentInteractible + " was detected as a Button!");
                 }
-                else
+                else if (currentInteractible.GetComponentInParent<Lever>() != null)
                 {
-                    Debug.Log("[!] " + currentInteractible + " doesn't have any function! Ignoring...");
+                    currentLever = currentInteractible.GetComponentInParent<Lever>();
+                    currentLever.UseLever(true);
                 }
+            }
+
+            if (Input.GetMouseButtonUp(0) && currentLever != null)
+            {
+                currentLever.UseLever(false);
+                currentLever = null;
             }
         }
         else
