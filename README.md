@@ -2,9 +2,6 @@
 Welcome 05, to The Revival Project.
 SCP:CB Revival will eventually form to be a complete High Defenition Open-Source remake of the original SCP: Containment Breach, all built on the Unity HDRP Engine.
 
-> [!NOTE]
-> GitHub thinks this project is in the ShaderLab language and not C# for some ungodly reason. I'll fix it as soon as I figure out how.
-
 ![image](https://github.com/user-attachments/assets/6191c963-e6da-43e7-9efd-66b3f76b4f7d)
 
 > [!WARNING]
