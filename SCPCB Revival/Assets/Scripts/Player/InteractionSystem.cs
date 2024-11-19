@@ -1,3 +1,4 @@
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -64,6 +65,11 @@ public class InteractionSystem : MonoBehaviour
                 {
                     currentLever = currentInteractible.GetComponentInParent<Lever>();
                     currentLever.UseLever(true);
+                }
+                else if (currentInteractible.GetComponent<Item>() != null)
+                {
+                    Item item = currentInteractible.GetComponent<Item>();
+                    if (item != null) item.Interact();
                 }
             }
 

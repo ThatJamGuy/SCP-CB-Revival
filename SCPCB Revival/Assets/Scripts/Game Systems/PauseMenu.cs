@@ -12,7 +12,7 @@ public class PauseMenu : MonoBehaviour
 
     [SerializeField] private AudioSource interactSource;
 
-    private bool isOpen;
+    public bool isOpen;
 
     private void Start()
     {

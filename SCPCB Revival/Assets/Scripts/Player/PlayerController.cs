@@ -38,11 +38,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float staminaDepletionModifier = 0f;
     [SerializeField] private bool infiniteStamina = false;
 
+    public bool isMoving;
+    public bool isSprinting;
+
     private CharacterController characterController;
     private Vector3 moveDirection;
     private float rotationX;
-    private bool isMoving;
-    private bool isSprinting;
     private bool isBlinkingOverlayActive;
     private float blinkTimer;
     private float blinkOverlayDuration = 0.2f;

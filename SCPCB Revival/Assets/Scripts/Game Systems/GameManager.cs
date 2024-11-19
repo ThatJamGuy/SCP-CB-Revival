@@ -9,12 +9,14 @@ public class GameManager : MonoBehaviour
 
     [Header("Controls")]
     [SerializeField] private KeyCode pauseGameKey = KeyCode.Escape;
+    [SerializeField] private KeyCode openInventoryKey = KeyCode.Tab;
 
     [Header("Music")]
     [SerializeField] private AudioClip zone1Music;
 
     [Header("References")]
     [SerializeField] private PauseMenu pauseMenu;
+    [SerializeField] private InventoryScreen inventoryScreen;
 
     private void Awake()
     {
@@ -38,7 +40,18 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(pauseGameKey))
         {
+            if (inventoryScreen.isOpen)
+                return;
+
             pauseMenu.TogglePauseMenu();
+        }
+
+        if (Input.GetKeyDown(openInventoryKey))
+        {
+            if (pauseMenu.isOpen)
+                return;
+
+            inventoryScreen.ToggleInventory();
         }
     }
 
