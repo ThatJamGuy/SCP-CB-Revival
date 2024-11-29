@@ -78,14 +78,25 @@ public class PlayerController : MonoBehaviour
             float moveX = Input.GetAxis("Horizontal");
             float moveZ = Input.GetAxis("Vertical");
 
-            moveDirection = transform.TransformDirection(new Vector3(moveX, 0, moveZ)) * DetermineCurrentSpeed();
-            isMoving = moveX != 0 || moveZ != 0;
+            if (moveX != 0 || moveZ != 0)
+            {
+                moveDirection = transform.TransformDirection(new Vector3(moveX, 0, moveZ)) * DetermineCurrentSpeed();
+                isMoving = true;
+            }
+            else
+            {
+                moveDirection.x = 0;
+                moveDirection.z = 0;
+                isMoving = false;
+            }
+
             isSprinting = Input.GetKey(KeyCode.LeftShift) && isMoving && (infiniteStamina || stamina > 0);
         }
 
         moveDirection.y -= gravity * Time.deltaTime;
         characterController.Move(moveDirection * Time.deltaTime);
     }
+
 
     private float DetermineCurrentSpeed()
     {

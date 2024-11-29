@@ -66,10 +66,10 @@ public class InteractionSystem : MonoBehaviour
                     currentLever = currentInteractible.GetComponentInParent<Lever>();
                     currentLever.UseLever(true);
                 }
-                else if (currentInteractible.GetComponent<Item>() != null)
+                else if (currentInteractible.GetComponent<PhysicalItem>() != null)
                 {
-                    Item item = currentInteractible.GetComponent<Item>();
-                    if (item != null) item.Interact();
+                    PhysicalItem item = currentInteractible.GetComponent<PhysicalItem>();
+                    if (item != null) item.AddItemToInventory();
                 }
             }
 

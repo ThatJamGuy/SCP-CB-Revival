@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("MusicPlayer instance is not found!");
+            //Debug.LogWarning("MusicPlayer instance is not found!");
         }
     }
 

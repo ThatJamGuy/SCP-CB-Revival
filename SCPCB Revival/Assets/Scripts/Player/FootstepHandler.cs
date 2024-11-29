@@ -35,7 +35,7 @@ public class FootstepHandler : MonoBehaviour
         }
     }
 
-    private void PlayFootstepAudio()
+    public void PlayFootstepAudio()
     {
         Texture currentTexture = GetCurrentTextureUnderPlayer();
         if (currentTexture == null) return;
