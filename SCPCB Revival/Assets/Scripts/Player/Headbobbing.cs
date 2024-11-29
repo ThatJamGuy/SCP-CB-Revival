@@ -19,6 +19,8 @@ public class HeadBob : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.disablePlayerInputs) return;
+
         if (playerController.isMoving)
         {
             float speed = playerController.isSprinting ? sprintBobSpeed : walkBobSpeed;

@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Global Values")]
     public bool disablePlayerInputs;
+    public bool inventoryPausesGame;
 
     [Header("Controls")]
     [SerializeField] private KeyCode pauseGameKey = KeyCode.Escape;

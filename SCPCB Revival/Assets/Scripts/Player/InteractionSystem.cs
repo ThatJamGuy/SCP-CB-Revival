@@ -19,6 +19,8 @@ public class InteractionSystem : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.disablePlayerInputs) return;
+
         FindClosestInteractable();
     }
 

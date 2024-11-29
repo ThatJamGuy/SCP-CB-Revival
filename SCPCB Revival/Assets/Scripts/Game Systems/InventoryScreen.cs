@@ -14,6 +14,7 @@ public class InventoryScreen : MonoBehaviour
         GameManager.Instance.TogglePlayerInput(true);
         inventoryScreen.SetActive(isOpen);
 
-        GameManager.Instance.PauseGame();
+        if (GameManager.Instance.inventoryPausesGame)
+            GameManager.Instance.PauseGame();
     }
 }

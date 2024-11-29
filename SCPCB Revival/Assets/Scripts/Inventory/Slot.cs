@@ -1,7 +1,7 @@
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class Slot : MonoBehaviour
+public class Slot : MonoBehaviour, IDropHandler
 {
     [SerializeField] private GameObject outline;
     [SerializeField] private RectTransform rectTransform;
@@ -21,6 +21,31 @@ public class Slot : MonoBehaviour
         else
         {
             HideOutline();
+        }
+    }
+
+    public GameObject Item
+    {
+        get
+        {
+            if (transform.childCount > 0)
+            {
+                return transform.GetChild(0).gameObject;
+            }
+
+            return null;
+        }
+    }
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        Debug.Log("OnDrop");
+
+        //if there is not item already then set our item.
+        if (!Item)
+        {
+            DragDrop.itemBeingDragged.transform.SetParent(transform);
+            DragDrop.itemBeingDragged.transform.localPosition = new Vector2(0, 0);
         }
     }
 
