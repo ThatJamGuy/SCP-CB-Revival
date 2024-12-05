@@ -3,15 +3,14 @@ using UnityEngine.EventSystems;
 
 public class DragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
-
     [SerializeField] private Canvas canvas;
+    [SerializeField] private GameObject itemPrefab;
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
-
     public static GameObject itemBeingDragged;
-    Vector3 startPosition;
-    Transform startParent;
+
+    private bool droppedOnValidSlot;
 
     private void Awake()
     {
@@ -22,18 +21,14 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDrag
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        //canvasGroup.alpha = .6f;
-        //So the ray cast will ignore the item itself.
         canvasGroup.blocksRaycasts = false;
-        startPosition = transform.position;
-        startParent = transform.parent;
-        transform.SetParent(transform.root);
+        transform.SetParent(canvas.transform);
         itemBeingDragged = gameObject;
+        droppedOnValidSlot = false;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        //So the item will move with our mouse (at same speed)  and so it will be consistant if the canvas has a different scale (other then 1);
         rectTransform.anchoredPosition += eventData.delta;
     }
 
@@ -41,14 +36,34 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDrag
     {
         itemBeingDragged = null;
 
-        if (transform.parent == startParent || transform.parent == transform.root)
+        if (droppedOnValidSlot)
         {
-            transform.position = startPosition;
-            transform.SetParent(startParent);
-
+            transform.localPosition = Vector3.zero;
+        }
+        else
+        {
+            DropItemFromInventory();
         }
 
-        //canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = true;
+    }
+
+    public void SetDroppedOnValidSlot(Transform newParent)
+    {
+        droppedOnValidSlot = true;
+        transform.SetParent(newParent);
+    }
+
+    private void DropItemFromInventory()
+    {
+        if (itemPrefab == null) return;
+
+        Transform playerCamera = Camera.main.transform;
+        Vector3 spawnPosition = playerCamera.position + playerCamera.forward * 1.5f;
+
+        Instantiate(itemPrefab, spawnPosition, Quaternion.identity);
+
+        InventorySystem.instance.itemList.Remove(itemPrefab.name);
+        Destroy(gameObject);
     }
 }

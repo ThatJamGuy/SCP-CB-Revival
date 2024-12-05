@@ -6,8 +6,6 @@ public class InventorySystem : MonoBehaviour
 {
     public static InventorySystem instance { get; set; }
 
-    //public bool isFull;
-
     public List<GameObject> slotList = new List<GameObject>();
     public List<string> itemList = new List<string>();
 
@@ -20,11 +18,6 @@ public class InventorySystem : MonoBehaviour
             Destroy(gameObject);
         else
             instance = this;
-    }
-
-    private void Start()
-    {
-        //isFull = false;
     }
 
     public void AddToInventory(string itemName)

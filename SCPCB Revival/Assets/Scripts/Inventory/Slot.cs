@@ -39,13 +39,14 @@ public class Slot : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        Debug.Log("OnDrop");
-
-        //if there is not item already then set our item.
         if (!Item)
         {
-            DragDrop.itemBeingDragged.transform.SetParent(transform);
-            DragDrop.itemBeingDragged.transform.localPosition = new Vector2(0, 0);
+            DragDrop dragDrop = DragDrop.itemBeingDragged.GetComponent<DragDrop>();
+            if (dragDrop != null)
+            {
+                dragDrop.SetDroppedOnValidSlot(transform);
+                DragDrop.itemBeingDragged.transform.localPosition = Vector3.zero;
+            }
         }
     }
 
