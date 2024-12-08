@@ -9,6 +9,10 @@ public class InventorySystem : MonoBehaviour
     public List<GameObject> slotList = new List<GameObject>();
     public List<string> itemList = new List<string>();
 
+    [SerializeField] private InventoryScreen inventoryScreen;
+
+    public GameObject itemInfoUI;
+
     private GameObject itemToAdd;
     private GameObject whatSlotToEquip;
 
@@ -63,5 +67,10 @@ public class InventorySystem : MonoBehaviour
         }
 
         return new GameObject();
+    }
+
+    public void CloseInventory()
+    {
+        inventoryScreen.ToggleInventory();
     }
 }

@@ -24,29 +24,22 @@ public class Slot : MonoBehaviour, IDropHandler
         }
     }
 
-    public GameObject Item
-    {
-        get
-        {
-            if (transform.childCount > 0)
-            {
-                return transform.GetChild(0).gameObject;
-            }
-
-            return null;
-        }
-    }
+    public GameObject Item => transform.childCount > 0 ? transform.GetChild(0).gameObject : null;
 
     public void OnDrop(PointerEventData eventData)
     {
+        DragDrop dragDrop = DragDrop.itemBeingDragged?.GetComponent<DragDrop>();
+        if (dragDrop == null) return;
+
         if (!Item)
         {
-            DragDrop dragDrop = DragDrop.itemBeingDragged.GetComponent<DragDrop>();
-            if (dragDrop != null)
-            {
-                dragDrop.SetDroppedOnValidSlot(transform);
-                DragDrop.itemBeingDragged.transform.localPosition = Vector3.zero;
-            }
+            dragDrop.SetDroppedOnValidSlot(transform);
+            DragDrop.itemBeingDragged.transform.localPosition = Vector3.zero;
+        }
+        else
+        {
+            InfoTextManager.Instance.NotifyPlayer("You cannot combine these two items.");
+            dragDrop.ResetToOriginalSlot();
         }
     }
 

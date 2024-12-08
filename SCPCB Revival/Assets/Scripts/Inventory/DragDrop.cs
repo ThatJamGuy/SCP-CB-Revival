@@ -1,14 +1,20 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// The script that manages the dragging and dropping of items in the inventory.
+/// </summary>
 public class DragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
     [SerializeField] private Canvas canvas;
-    [SerializeField] private GameObject itemPrefab;
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
+    private InventoryItem inventoryItem;
     public static GameObject itemBeingDragged;
+
+    Vector3 startPosition;
+    Transform startParent;
 
     private bool droppedOnValidSlot;
 
@@ -17,10 +23,14 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDrag
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         canvas = FindFirstObjectByType<Canvas>();
+        inventoryItem = GetComponent<InventoryItem>();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        startPosition = transform.position;
+        startParent = transform.parent;
+
         canvasGroup.blocksRaycasts = false;
         transform.SetParent(canvas.transform);
         itemBeingDragged = gameObject;
@@ -54,16 +64,23 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDrag
         transform.SetParent(newParent);
     }
 
+    public void ResetToOriginalSlot()
+    {
+        transform.SetParent(startParent);
+        transform.localPosition = Vector3.zero;  
+        droppedOnValidSlot = true;
+    }
+
     private void DropItemFromInventory()
     {
-        if (itemPrefab == null) return;
+        if (inventoryItem.itemPrefab == null) return;
 
         Transform playerCamera = Camera.main.transform;
         Vector3 spawnPosition = playerCamera.position + playerCamera.forward * 1.5f;
 
-        Instantiate(itemPrefab, spawnPosition, Quaternion.identity);
+        Instantiate(inventoryItem.itemPrefab, spawnPosition, Quaternion.identity);
 
-        InventorySystem.instance.itemList.Remove(itemPrefab.name);
+        InventorySystem.instance.itemList.Remove(inventoryItem.itemPrefab.name);
         Destroy(gameObject);
     }
 }

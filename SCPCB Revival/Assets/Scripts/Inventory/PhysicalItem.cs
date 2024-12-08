@@ -18,8 +18,7 @@ public class PhysicalItem : MonoBehaviour
         }
         else
         {
-            InfoTextManager.Instance.NotifyPlayer("Cannot pick up item; inventory is full.");
-            Debug.Log("Inventory is full!");
+            InfoTextManager.Instance.NotifyPlayer("You cannot carry any more items.");
         }
     }
 }
