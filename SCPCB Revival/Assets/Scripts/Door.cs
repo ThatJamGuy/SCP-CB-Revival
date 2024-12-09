@@ -7,6 +7,8 @@ public class Door : MonoBehaviour
     public bool isOpen;
     public bool isLocked;
     public bool isBroken;
+    public bool requiresKeycard;
+    public int requiredKeyLevel;
     public float regularOpenCloseSpeed;
     public float regularOpenCloseDistance;
 

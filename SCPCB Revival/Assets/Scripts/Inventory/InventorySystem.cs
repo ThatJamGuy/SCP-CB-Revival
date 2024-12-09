@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventorySystem : MonoBehaviour
 {
@@ -12,6 +12,11 @@ public class InventorySystem : MonoBehaviour
     [SerializeField] private InventoryScreen inventoryScreen;
 
     public GameObject itemInfoUI;
+    [SerializeField] private GameObject currentHeldItemDisplay;
+    [SerializeField] private AudioSource itemEquipUnequipSource;
+
+    public string currentHeldItem;
+    public int currentKeyLevel;
 
     private GameObject itemToAdd;
     private GameObject whatSlotToEquip;
@@ -22,6 +27,14 @@ public class InventorySystem : MonoBehaviour
             Destroy(gameObject);
         else
             instance = this;
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonUp(1) && currentHeldItem != null)
+        {
+            UnequipItem();
+        }
     }
 
     public void AddToInventory(string itemName)
@@ -67,6 +80,31 @@ public class InventorySystem : MonoBehaviour
         }
 
         return new GameObject();
+    }
+
+    public void EquipItem(string itemName, Sprite itemImage, AudioClip audioClip, int keyLevel)
+    {
+        currentHeldItem = itemName;
+        currentKeyLevel = keyLevel;
+
+        currentHeldItemDisplay.GetComponent<Image>().sprite = itemImage;
+        currentHeldItemDisplay.SetActive(true);
+
+        itemEquipUnequipSource.clip = audioClip;
+        itemEquipUnequipSource.Stop();
+        itemEquipUnequipSource.Play();
+
+        CloseInventory();
+    }
+
+    public void UnequipItem()
+    {
+        currentHeldItemDisplay.SetActive(false);
+        itemEquipUnequipSource.Stop();
+        itemEquipUnequipSource.Play();
+
+        currentHeldItem = null;
+        currentKeyLevel = 0;
     }
 
     public void CloseInventory()

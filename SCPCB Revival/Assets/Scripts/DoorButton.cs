@@ -34,7 +34,29 @@ public class DoorButton : MonoBehaviour
         {
             if (door.isBroken)
             {
-                NotifyAndCooldown("You pushed the button but nothing happened.", buttonSFX);
+                if (door.requiresKeycard && InventorySystem.instance.currentKeyLevel > 0)
+                    NotifyAndCooldown("The keycard was inserted into the slot but nothing happened.", lockedSFX);
+                else
+                    NotifyAndCooldown("You pushed the button but nothing happened.", lockedSFX);
+            }
+            else if (door.requiresKeycard)
+            {
+                if (InventorySystem.instance.currentKeyLevel >= door.requiredKeyLevel)
+                {
+                    PlaySound(buttonSFX);
+                    ToggleDoorState();
+
+                    InventorySystem.instance.UnequipItem();
+                }
+                else if (InventorySystem.instance.currentKeyLevel < door.requiredKeyLevel && InventorySystem.instance.currentKeyLevel > 0)
+                {
+                    NotifyAndCooldown("A keycard with security clearance " + door.requiredKeyLevel + " or higher is required to operate this door.", lockedSFX);
+                    InventorySystem.instance.UnequipItem();
+                }
+                else 
+                {
+                    NotifyAndCooldown("A keycard is required to operate this door.", lockedSFX);
+                }
             }
             else
             {
