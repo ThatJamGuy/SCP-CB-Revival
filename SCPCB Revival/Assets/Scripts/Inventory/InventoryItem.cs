@@ -1,28 +1,37 @@
+using NaughtyAttributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    [Header("Inventory Item Data")]
+    [Header("Item Data")]
+    [Tooltip("The physical prefab for spawning in the world."), ShowAssetPreview]
     public GameObject itemPrefab;
 
-    public enum ItemType {Normal, Consumable, Document, Equipment};
+    [Tooltip("The type of the item.")]
+    public enum ItemType { Normal, Keycard, Consumable, Document, Equipment }
     public ItemType itemType;
+
+    [Tooltip("Display name of the item.")]
+    public string thisName;
+
+    [ShowIf("itemType", ItemType.Keycard), Tooltip("Key level associated with the item.")]
+    public int thisKeyLevel;
+
+    [Tooltip("Icon or image representing the item.")]
+    [SerializeField] private Sprite thisImage;
+
+    [Header("Equipping")]
+    [Tooltip("Indicates if the item can be equipped.")]
+    public bool isEquippable;
+
+    [Tooltip("Sound effect for equipping or unequipping.")]
+    [SerializeField] private AudioClip equipUnequipSound;
 
     // --- Item Info UI --- //
     private GameObject itemInfoUI;
     private TextMeshProUGUI itemInfoUI_itemName;
-
-    [SerializeField] private Sprite thisImage;
-    public string thisName;
-    public int thisKeyLevel;
-
-    // --- Equipping --- //
-    private GameObject itemPendingEqip;
-    public bool isEquippable;
-
-    [SerializeField] AudioClip equipUnequipSound;
 
     private void Start()
     {
@@ -43,22 +52,25 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.clickCount == 2 && itemType == ItemType.Normal && isEquippable)
+        if (eventData.clickCount == 2)
         {
-            Debug.Log("Equipped " + thisName);
-            InventorySystem.instance.EquipItem(thisName, thisImage, equipUnequipSound, thisKeyLevel);
-        }
-        else if(eventData.clickCount == 2 && itemType == ItemType.Consumable)
-        {
-            Debug.Log("Double clicked on a consumable item!");
-        }
-        else if(eventData.clickCount == 2 && itemType == ItemType.Document)
-        {
-            Debug.Log("Double clicked on a document!");
-        }
-        else if(eventData.clickCount == 2 && itemType == ItemType.Equipment)
-        {
-            Debug.Log("Double clicked on an equipment item!");
+            switch (itemType)
+            {
+                case ItemType.Normal or ItemType.Keycard when isEquippable:
+                    Debug.Log("Equipped " + thisName);
+                    InventorySystem.instance.EquipItem(thisName, thisImage, equipUnequipSound, thisKeyLevel);
+                    break;
+                case ItemType.Consumable:
+                    Debug.Log("Double clicked on a consumable item!");
+                    break;
+                case ItemType.Document:
+                    Debug.Log("Reading " + thisName);
+                    InventorySystem.instance.EquipDocument(thisName, thisImage, equipUnequipSound);
+                    break;
+                case ItemType.Equipment:
+                    Debug.Log("Double clicked on an equipment item!");
+                    break;
+            }
         }
     }
 }

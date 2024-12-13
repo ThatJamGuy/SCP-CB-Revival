@@ -13,6 +13,7 @@ public class InventorySystem : MonoBehaviour
 
     public GameObject itemInfoUI;
     [SerializeField] private GameObject currentHeldItemDisplay;
+    [SerializeField] private GameObject currentHeldDocumentDisplay;
     [SerializeField] private AudioSource itemEquipUnequipSource;
 
     public string currentHeldItem;
@@ -33,7 +34,10 @@ public class InventorySystem : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(1) && currentHeldItem != null)
         {
-            UnequipItem();
+            if (currentHeldDocumentDisplay != null && currentHeldDocumentDisplay.activeSelf)
+                UnequipDocument();
+            else
+                UnequipItem();
         }
     }
 
@@ -84,6 +88,9 @@ public class InventorySystem : MonoBehaviour
 
     public void EquipItem(string itemName, Sprite itemImage, AudioClip audioClip, int keyLevel)
     {
+        if (currentHeldDocumentDisplay.activeSelf)
+            return;
+
         currentHeldItem = itemName;
         currentKeyLevel = keyLevel;
 
@@ -95,6 +102,32 @@ public class InventorySystem : MonoBehaviour
         itemEquipUnequipSource.Play();
 
         CloseInventory();
+    }
+
+    public void EquipDocument(string documentName, Sprite documentImage, AudioClip audioClip)
+    {
+        if(currentHeldItemDisplay.activeSelf)
+            return;
+
+        currentHeldItem = documentName;
+
+        currentHeldDocumentDisplay.GetComponent<Image>().sprite = documentImage;
+        currentHeldDocumentDisplay.SetActive(true);
+
+        itemEquipUnequipSource.clip = audioClip;
+        itemEquipUnequipSource.Stop();
+        itemEquipUnequipSource.Play();
+
+        CloseInventory();
+    }
+
+    public void UnequipDocument()
+    {
+        currentHeldDocumentDisplay.SetActive(false);
+        itemEquipUnequipSource.Stop();
+        itemEquipUnequipSource.Play();
+
+        currentHeldItem = null;
     }
 
     public void UnequipItem()
