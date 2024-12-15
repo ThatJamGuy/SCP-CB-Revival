@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
@@ -24,6 +25,7 @@ public class NPC_173 : MonoBehaviour
     [SerializeField] private AudioSource horrorStingerSource;
     [SerializeField] private AudioSource movementSource;
     [SerializeField] private AudioSource killPlayerSource;
+    [SerializeField] private GameObject christmasHat;
     public bool isVisible { get; private set; }
 
     private Renderer objectRenderer;
@@ -38,6 +40,16 @@ public class NPC_173 : MonoBehaviour
         targetCamera ??= Camera.main;
         objectRenderer = GetComponent<Renderer>();
         agent = GetComponent<NavMeshAgent>();
+
+        // Check if the month is December and enable holiday spririt!
+        if (DateTime.Now.Month == 12)
+        {
+            christmasHat.SetActive(true);
+        }
+        else
+        {
+            christmasHat.SetActive(false);
+        }
     }
 
     private void Update()
@@ -51,9 +63,9 @@ public class NPC_173 : MonoBehaviour
             distanceToPlayer = Vector3.Distance(transform.position, targetCamera.transform.position);
 
             if (distanceToPlayer < 10f)
-                horrorStingerSource.PlayOneShot(horrorNearSFX[Random.Range(0, horrorNearSFX.Length)]);
+                horrorStingerSource.PlayOneShot(horrorNearSFX[UnityEngine.Random.Range(0, horrorNearSFX.Length)]);
             else
-                horrorStingerSource.PlayOneShot(horrorFarSFX[Random.Range(0, horrorFarSFX.Length)]);
+                horrorStingerSource.PlayOneShot(horrorFarSFX[UnityEngine.Random.Range(0, horrorFarSFX.Length)]);
             
             seenForTheFirstTime = true;
             currentState = SCPState.Idle;
@@ -86,7 +98,7 @@ public class NPC_173 : MonoBehaviour
 
         if (isVisible && distanceToPlayer < 5f && !hasPlayedNearSound && agent.velocity.magnitude > 0f)
         {
-            horrorStingerSource.PlayOneShot(horrorNearSFX[Random.Range(0, horrorNearSFX.Length)]);
+            horrorStingerSource.PlayOneShot(horrorNearSFX[UnityEngine.Random.Range(0, horrorNearSFX.Length)]);
             hasPlayedNearSound = true;
 
             StartCoroutine(ResetHorrorNearSound());

@@ -1,12 +1,13 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class MusicPlayer : MonoBehaviour
 {
     public static MusicPlayer Instance { get; private set; }
     public AudioSource Music;
     private bool isChanging;
-    private AudioClip trackTo;
+    private Coroutine currentCoroutine;
 
     private void Awake()
     {
@@ -18,12 +19,26 @@ public class MusicPlayer : MonoBehaviour
 
     public void ChangeMusic(AudioClip newMusic)
     {
-        if (!isChanging) StartCoroutine(FadeOutAndChangeMusic(newMusic));
+        if (!isChanging)
+        {
+            if (currentCoroutine != null)
+            {
+                StopCoroutine(currentCoroutine);
+            }
+            currentCoroutine = StartCoroutine(FadeOutAndChangeMusic(newMusic));
+        }
     }
 
     public void StopMusic()
     {
-        if (!isChanging) StartCoroutine(FadeOutAndStopMusic());
+        if (!isChanging)
+        {
+            if (currentCoroutine != null)
+            {
+                StopCoroutine(currentCoroutine);
+            }
+            currentCoroutine = StartCoroutine(FadeOutAndStopMusic());
+        }
     }
 
     public void StartMusic(AudioClip newMusic)
@@ -39,22 +54,23 @@ public class MusicPlayer : MonoBehaviour
         isChanging = true;
 
         // Fade out
-        yield return StartCoroutine(FadeOut(1f));
+        yield return StartCoroutine(FadeOut(1f, Music.volume));
 
-        // Asynchronously load new music if not already loaded
-        if (!newMusic.loadState.Equals(AudioDataLoadState.Loaded))
+        // Load the new music asynchronously if not already loaded
+        if (newMusic.loadState != AudioDataLoadState.Loaded)
         {
             yield return StartCoroutine(LoadAudioAsync(newMusic));
         }
 
-        // Change the clip and start playing
+        // Assign new clip and play
         Music.clip = newMusic;
         Music.Play();
 
         // Fade in
-        yield return StartCoroutine(FadeIn(1f));
+        yield return StartCoroutine(FadeIn(1f, 0f));
 
         isChanging = false;
+        currentCoroutine = null;
     }
 
     private IEnumerator FadeOutAndStopMusic()
@@ -62,47 +78,49 @@ public class MusicPlayer : MonoBehaviour
         isChanging = true;
 
         // Fade out
-        yield return StartCoroutine(FadeOut(1f));
+        yield return StartCoroutine(FadeOut(1f, Music.volume));
 
         // Stop the music after fade out
         Music.Stop();
 
         isChanging = false;
+        currentCoroutine = null;
     }
 
-    private IEnumerator FadeOut(float duration)
+    private IEnumerator FadeOut(float duration, float startVolume)
     {
-        float startVolume = Music.volume;
-
-        while (Music.volume > 0)
+        float elapsed = 0f;
+        while (elapsed < duration)
         {
-            Music.volume -= startVolume * Time.deltaTime / duration;
+            Music.volume = Mathf.Lerp(startVolume, 0f, elapsed / duration);
+            elapsed += Time.deltaTime;
             yield return null;
         }
-
-        Music.volume = 0;
+        Music.volume = 0f;
     }
 
-    private IEnumerator FadeIn(float duration)
+    private IEnumerator FadeIn(float duration, float startVolume)
     {
-        float targetVolume = 1f;
-
-        while (Music.volume < targetVolume)
+        float elapsed = 0f;
+        while (elapsed < duration)
         {
-            Music.volume += Time.deltaTime / duration;
+            Music.volume = Mathf.Lerp(startVolume, 1f, elapsed / duration);
+            elapsed += Time.deltaTime;
             yield return null;
         }
-
-        Music.volume = targetVolume;
+        Music.volume = 1f;
     }
 
     private IEnumerator LoadAudioAsync(AudioClip clip)
     {
-        // Wait until the audio clip is fully loaded
-        while (clip.loadState != AudioDataLoadState.Loaded)
+        // If the clip is external, you can load it via UnityWebRequest for true async loading
+        if (clip.loadState != AudioDataLoadState.Loaded)
         {
             clip.LoadAudioData();
-            yield return null;
+            while (clip.loadState != AudioDataLoadState.Loaded)
+            {
+                yield return null;
+            }
         }
     }
 }

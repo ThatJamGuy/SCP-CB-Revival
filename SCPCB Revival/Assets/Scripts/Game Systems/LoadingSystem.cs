@@ -25,6 +25,8 @@ public class LoadingSystem : MonoBehaviour
 
     public void LoadScene(int sceneIDToLoad)
     {
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
         StartCoroutine(LoadSceneAsync(sceneIDToLoad));
     }
 
