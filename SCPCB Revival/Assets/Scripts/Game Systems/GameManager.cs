@@ -30,13 +30,9 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         if (MusicPlayer.Instance != null)
-        {
             MusicPlayer.Instance.ChangeMusic(zone1Music);
-        }
-        else
-        {
-            //Debug.LogWarning("MusicPlayer instance is not found!");
-        }
+
+        //BroAudio.Play(zone1Music).AsBGM().SetTransition(Transition.CrossFade, 1f);
     }
 
     private void Update()
