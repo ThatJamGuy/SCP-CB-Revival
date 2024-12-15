@@ -13,11 +13,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private KeyCode openInventoryKey = KeyCode.Tab;
 
     [Header("Music")]
-    [SerializeField] private AudioClip zone1Music;
+    public AudioClip zone1Music;
+    public AudioClip scp173Music;
 
     [Header("References")]
     [SerializeField] private PauseMenu pauseMenu;
     [SerializeField] private InventoryScreen inventoryScreen;
+    [SerializeField] private DeathScreen deathScreen;
 
     private void Awake()
     {
@@ -62,6 +64,11 @@ public class GameManager : MonoBehaviour
 
         AudioListener.pause = !isPaused;
         Time.timeScale = isPaused ? 1.0f : 0.0f;
+    }
+
+    public void ShowDeathScreen()
+    {
+        deathScreen.ToggleDeathMenu();
     }
 
     public void TogglePlayerInput(bool alsoToggleMouse)

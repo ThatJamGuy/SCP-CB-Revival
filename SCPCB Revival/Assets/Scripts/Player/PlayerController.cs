@@ -179,6 +179,11 @@ public class PlayerController : MonoBehaviour
         isBlinkingOverlayActive = false;
     }
 
+    public void KillPlayer()
+    {
+        GameManager.Instance.ShowDeathScreen();
+    }
+
     private void UpdateCursorState()
     {
         bool disablePlayerInputs = GameManager.Instance.disablePlayerInputs;
