@@ -1,40 +1,34 @@
-# THE SCP:CB Revival Project
-Welcome 05, to The Revival Project.
-SCP:CB Revival will eventually form to be a complete High Defenition Open-Source remake of the original SCP: Containment Breach, all built on the Unity HDRP Engine.
+# THE SCP:CB REVIVAL PROJECT
+SCP: Containment Breach Revival is a remake of SCP:CB with a few creative liberties taken in the new Unity 6 Engine utilizing HDRP technology for HD lighting. The game is based on the works of the [SCP Foundation community](http://www.scp-wiki.net/)
 
-![image](https://github.com/user-attachments/assets/6191c963-e6da-43e7-9efd-66b3f76b4f7d)
+This game and the source code are licensed under [Creative Commons Attribution-ShareAlike 3.0 License](http://creativecommons.org/licenses/by-sa/3.0/)
 
-> [!WARNING]
-> This project is very new, so everything is subject to change.
+Discord: https://discord.gg/rarnCP68Dk
 
-# Concept Renders
-![image](https://github.com/user-attachments/assets/6f0b1dcd-967f-4f91-a124-ebcc1153dae0)
-![image](https://github.com/user-attachments/assets/a1fc942a-6b32-4f11-9786-dc5584dffae7)
+>[!WARNING]
+>Beware - the source code is perhaps more horrifying than the game itself!
 
 # Contributing
-I'm not a master of game development and I'm a generally lazy person, so if you think you can help out somehow I've supplied a thing below this.
-
-### Pull Requests
-You are more than welcome to fork this repo and make pull requests. I personally support this method the most, as I'm a very anti-social person. This does come with some rules though. You must:
-- Ensure that the content of your pull request is meaningful to the project.
-- Ensure that any code written is in a clean optimized fashion to ensure a smooth developer and player experience.
-- Ensure that any code written does not contain harmful messages or slurs.
-- Ensure that any assets imported by you is not copyrighted material that could get the project into trouble.
-
-### Direct Communication
-Although the less preferrable way for myself, I do have a discord server any members hoping to volunteer in the development of this game can join to inquire about helping out. In complete honesty I will be super nervous the whole time, at least until I get to know you better. [Join With dis link](https://discord.gg/rarnCP68Dk)
-
-### Crediting
-If you contribute to SCP:CBR in a meaningful manner, you will be given a spot on the credits list below, the one in the game and recieve a special role on the Discord server if you so choose to join it.
+Feel free to make a pull request for any of the following reasons:
+- Feature Addition (Adding a feature from the main game that's not there yet)
+- Bug fix
+- Code refactors/optimizations
+- Other (If there's another way you would like to contribute, ask in the Discord, or just open a PR or an issue.)
 
 # Credits
-This credits list will grow as people contribute. See how to do so above!
+This credits list will grow as people contribute. By contributing anything meaninful, you can get your name on here!
 
 - Project Lead
   - ThatJamGuy
 - Programming
   - ThatJamGuy
-- Game Assets
-  - SCP:CB Team
+- Music
+  - Kevin MacLeod
+  - Axel Nosferatu
+  - Sound Reality
 - Translator
   - Alex Polo
+- Honorable Mentions
+  - SCP Wiki  
+  - Undertow Games
+  - Third Subdivision Studios
