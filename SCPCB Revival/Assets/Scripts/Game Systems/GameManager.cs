@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private KeyCode openInventoryKey = KeyCode.Tab;
 
     [Header("Music")]
+    public AudioClip introMusic;
     public AudioClip zone1Music;
     public AudioClip scp173Music;
 
@@ -30,9 +31,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         if (MusicPlayer.Instance != null)
-            MusicPlayer.Instance.ChangeMusic(zone1Music);
-
-        //BroAudio.Play(zone1Music).AsBGM().SetTransition(Transition.CrossFade, 1f);
+            MusicPlayer.Instance.ChangeMusic(introMusic);
     }
 
     private void Update()

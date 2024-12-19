@@ -38,10 +38,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float staminaDepletionModifier = 0f;
     [SerializeField] private bool infiniteStamina = false;
 
+    [Header("Other Settings")]
     public bool isMoving;
     public bool isSprinting;
+    public bool toggleIkTarget; // Doesn't work yet
 
     private CharacterController characterController;
+    private IK_PontOfInterest cameraPointOfinterest;
     private Vector3 moveDirection;
     private float rotationX;
     private bool isBlinkingOverlayActive;
@@ -52,12 +55,14 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
+        cameraPointOfinterest = Camera.main.GetComponent<IK_PontOfInterest>();
         footstepHandler.Initialize(characterController);
         UpdateCursorState();
         staminaSlider.value = stamina;
         blinkTimer = 1f;
         blinkSlider.value = blinkTimer;
         blinkOverlay.enabled = false;
+        cameraPointOfinterest.enabled = toggleIkTarget;
     }
 
     private void Update()
@@ -69,6 +74,8 @@ public class PlayerController : MonoBehaviour
         HandleStamina();
         HandleBlinking();
         footstepHandler.UpdateFootsteps(isMoving, isSprinting);
+
+        cameraPointOfinterest.enabled = toggleIkTarget;
     }
 
     private void HandleMovement()

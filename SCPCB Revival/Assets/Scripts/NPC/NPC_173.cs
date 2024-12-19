@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.HighDefinition;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class NPC_173 : MonoBehaviour
@@ -9,9 +11,8 @@ public class NPC_173 : MonoBehaviour
     enum SCPState { Sleeping, Idle, Chasing }
     SCPState currentState = SCPState.Sleeping;
 
-    [Header("Settings")]
-    public bool ignorePlayer;
-    public float playerEscapeDistance;
+    [Header("Settings")] 
+    public bool ignorePlayer; public bool scriptedMode; public float playerEscapeDistance, minVignetteIntensity, maxVignetteIntensity, vignetteRange;
 
     [Header("Audio")]
     [SerializeField] private AudioClip[] horrorNearSFX;
@@ -19,17 +20,16 @@ public class NPC_173 : MonoBehaviour
     [SerializeField] private AudioClip killPlayerSound;
 
     [Header("References")]
-    [SerializeField] private PlayerController playerController;
-    [SerializeField] private Camera targetCamera;
     [SerializeField] private LayerMask obstructionMask;
-    [SerializeField] private AudioSource horrorStingerSource;
-    [SerializeField] private AudioSource movementSource;
-    [SerializeField] private AudioSource killPlayerSource;
+    [SerializeField] private AudioSource horrorStingerSource, movementSource, killPlayerSource, tensionSource;
     [SerializeField] private GameObject christmasHat;
     public bool isVisible { get; private set; }
 
+    private PlayerController playerController;
     private Renderer objectRenderer;
     private NavMeshAgent agent;
+    private Volume skyAndFogVolume;
+    private Camera targetCamera;
     private bool seenForTheFirstTime;
     private float distanceToPlayer;
     private bool hasPlayedNearSound = false;
@@ -37,19 +37,15 @@ public class NPC_173 : MonoBehaviour
 
     private void Awake()
     {
+        playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         targetCamera ??= Camera.main;
         objectRenderer = GetComponent<Renderer>();
         agent = GetComponent<NavMeshAgent>();
 
+        skyAndFogVolume = GameObject.Find("Sky and Fog Volume").GetComponent<Volume>();
+
         // Check if the month is December and enable holiday spririt!
-        if (DateTime.Now.Month == 12)
-        {
-            christmasHat.SetActive(true);
-        }
-        else
-        {
-            christmasHat.SetActive(false);
-        }
+        christmasHat.SetActive(DateTime.Now.Month == 12);
     }
 
     private void Update()
@@ -75,7 +71,7 @@ public class NPC_173 : MonoBehaviour
             Debug.Log("Just saw SCP-173 for the first time.");
         }
 
-        if(currentState == SCPState.Sleeping) return;
+        if(currentState == SCPState.Sleeping || scriptedMode) return;
 
         distanceToPlayer = Vector3.Distance(transform.position, targetCamera.transform.position);
 
@@ -96,7 +92,7 @@ public class NPC_173 : MonoBehaviour
                 break;
         }
 
-        if (isVisible && distanceToPlayer < 5f && !hasPlayedNearSound && agent.velocity.magnitude > 0f)
+        if (isVisible && distanceToPlayer < 5f && !hasPlayedNearSound && agent.velocity.magnitude > 0f && isVisible)
         {
             horrorStingerSource.PlayOneShot(horrorNearSFX[UnityEngine.Random.Range(0, horrorNearSFX.Length)]);
             hasPlayedNearSound = true;
@@ -116,6 +112,18 @@ public class NPC_173 : MonoBehaviour
             currentState = SCPState.Sleeping;
         }
 
+        if (isVisible && !playerController.isBlinking)
+        {
+            if (skyAndFogVolume.profile.TryGet(out Vignette vignette))
+            {
+                float vignetteIntensity = Mathf.Lerp(maxVignetteIntensity, minVignetteIntensity, distanceToPlayer / vignetteRange);
+                vignette.intensity.value = vignetteIntensity;
+            }
+        }
+
+        tensionSource.enabled = isVisible && distanceToPlayer < vignetteRange;
+        tensionSource.volume = Mathf.Lerp(minVignetteIntensity, maxVignetteIntensity, 1 - (distanceToPlayer / vignetteRange));
+
         if(distanceToPlayer > playerEscapeDistance)
         {
             currentState = SCPState.Sleeping;
@@ -128,7 +136,8 @@ public class NPC_173 : MonoBehaviour
     }
 
     private void ChasePlayer() 
-    { 
+    {
+        agent.speed = 350;
         agent.isStopped = false;
         movementSource.enabled = true;
         agent.SetDestination(playerController.transform.position);
@@ -136,6 +145,7 @@ public class NPC_173 : MonoBehaviour
 
     public void Idle()
     {
+        agent.speed = 0;
         agent.isStopped = true;
         movementSource.enabled = false;
         agent.SetDestination(transform.position);
