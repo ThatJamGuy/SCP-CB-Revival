@@ -22,10 +22,11 @@ This credits list will grow as people contribute. By contributing anything meani
   - ThatJamGuy
 - Programming
   - ThatJamGuy
-- Music
+- Music / SFX
   - Kevin MacLeod
   - Axel Nosferatu
   - Sound Reality
+  - alice
 - Translator
   - Alex Polo
 - Honorable Mentions
