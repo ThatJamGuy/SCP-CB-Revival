@@ -10,8 +10,8 @@ public class IK_HeadTracking : MonoBehaviour
     public float Radius = 10f;
     public float retargetSpeed = 5f;
     public float maxAngle = 90f;
-    
-    public List<IK_PontOfInterest> POIs;
+
+    public List<IK_PointOfInterest> POIs;
 
     private float RadiusSqr;
 
@@ -22,8 +22,10 @@ public class IK_HeadTracking : MonoBehaviour
 
     private void Update()
     {
+        if(POIs == null) return;
+
         Transform tracking  = null;
-        foreach (IK_PontOfInterest poi in POIs)
+        foreach (IK_PointOfInterest poi in POIs)
         {
             Vector3 delta = poi.transform.position - transform.position;
             if (delta.sqrMagnitude < RadiusSqr)

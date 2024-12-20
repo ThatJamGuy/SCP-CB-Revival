@@ -12,6 +12,7 @@ public class NPC_Puppet : MonoBehaviour
     [Header("Head IK")]
     [SerializeField] private bool useHeadIK;
     [SerializeField, ShowIf(nameof(useHeadIK))] private IK_HeadTracking headTracking;
+    [SerializeField, ShowIf(nameof(useHeadIK))] private bool targetMainCamera;
 
     [Header("Animation")]
     [SerializeField] private bool useAnimations;
@@ -24,9 +25,17 @@ public class NPC_Puppet : MonoBehaviour
     [SerializeField, ShowIf(nameof(nodeMovement))] private Transform[] nodes;
 
     private NavMeshAgent navMeshAgent;
+    private IK_PointOfInterest mainCameraPointOfInterest;
 
     private void Start()
     {
+        if(useHeadIK && targetMainCamera) {
+            mainCameraPointOfInterest = Camera.main.GetComponent<IK_PointOfInterest>();
+            if (mainCameraPointOfInterest != null) {
+                headTracking.POIs.Add(mainCameraPointOfInterest);
+            }
+        }
+
         if (nodeMovement)
             navMeshAgent = GetComponent<NavMeshAgent>();
 
@@ -40,6 +49,13 @@ public class NPC_Puppet : MonoBehaviour
         
         if (useHeadIK && headTracking)
             headTracking.enabled = useHeadIK;
+
+        if(!targetMainCamera && mainCameraPointOfInterest != null && headTracking.POIs.Contains(mainCameraPointOfInterest)) {
+            headTracking.POIs.Remove(mainCameraPointOfInterest);
+        }
+        if (targetMainCamera && mainCameraPointOfInterest != null && !headTracking.POIs.Contains(mainCameraPointOfInterest)) {
+            headTracking.POIs.Add(mainCameraPointOfInterest);
+        }
     }
 
     public void PlayAnimation(string animationName)
