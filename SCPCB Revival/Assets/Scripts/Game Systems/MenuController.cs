@@ -2,10 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Main stuff for the Menu, but due to settings also being accessed from the pause menu I'll move all the settings
-/// stuff to another script later. Just not right now.
-/// </summary>
 public class MenuController : MonoBehaviour
 {
     [SerializeField] private Toggle fullscreenToggle, vsyncToggle;
@@ -16,6 +12,8 @@ public class MenuController : MonoBehaviour
     [SerializeField] private AudioClip menuFailInteract;
 
     [SerializeField] private AudioSource interactSource;
+
+    [SerializeField] private PlayerSettings playerSettings;
 
     private void Start()
     {

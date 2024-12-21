@@ -8,10 +8,15 @@ using UnityEngine.UI;
 public class LoadingSystem : MonoBehaviour
 {
     [Header("Loading Screen")]
+    [SerializeField] private bool isMapLoader;
     [SerializeField] private GameObject loadingScreen;
     [SerializeField] private Image[] loadingSegments;
     [SerializeField] private TextMeshProUGUI percentageText;
+    [SerializeField] private TextMeshProUGUI loadingCompleteText;
     [SerializeField] private Slider testSlider;
+    [SerializeField] private AudioSource loadingFinishedSFX;
+
+    private bool playedSound = false;
 
     private void Start()
     {
@@ -44,7 +49,11 @@ public class LoadingSystem : MonoBehaviour
 
     IEnumerator LoadSceneAsync(int sceneIdToLoad)
     {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIdToLoad);
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIdToLoad, LoadSceneMode.Single);
+        operation.allowSceneActivation = true;
+
+        if(isMapLoader)
+            operation.allowSceneActivation = false;
 
         loadingScreen.SetActive(true);
 
@@ -54,6 +63,22 @@ public class LoadingSystem : MonoBehaviour
             testSlider.value = progressValue;
 
             Debug.Log(progressValue);
+
+            if(isMapLoader) {
+                if (progressValue >= 0.9f)
+                {
+                    percentageText.gameObject.SetActive(false);
+                    loadingCompleteText.gameObject.SetActive(true);
+
+                    if(!playedSound) {
+                        loadingFinishedSFX.Play();  
+                        playedSound = true;
+                    }
+                }
+                if ((Input.GetMouseButtonDown(0) || Input.anyKeyDown) && progressValue >= 0.9f)
+                    operation.allowSceneActivation = true;
+
+            }
 
             yield return null;
         }

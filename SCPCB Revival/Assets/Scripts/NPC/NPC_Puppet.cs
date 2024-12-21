@@ -17,6 +17,8 @@ public class NPC_Puppet : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private bool useAnimations;
     [SerializeField, ShowIf(nameof(useAnimations))] private Animator animator;
+    [SerializeField, ShowIf(nameof(useAnimations))] private bool playAnimOnStart;
+    [SerializeField, ShowIf(nameof(playAnimOnStart))] private AnimationClip startingAinim;
     [SerializeField, ShowIf(nameof(useAnimations))] private bool uniqueAnimSpeeds;
     [SerializeField, ShowIf(nameof(uniqueAnimSpeeds))] private float minAnimSpeed = 0.5f, maxAnimSpeed = 1;
 
@@ -29,6 +31,8 @@ public class NPC_Puppet : MonoBehaviour
 
     private void Start()
     {
+        if(useAnimations && playAnimOnStart && startingAinim != null) animator.Play(startingAinim.name);
+
         if(useHeadIK && targetMainCamera) {
             mainCameraPointOfInterest = Camera.main.GetComponent<IK_PointOfInterest>();
             if (mainCameraPointOfInterest != null) {
