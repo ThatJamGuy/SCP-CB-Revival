@@ -12,6 +12,10 @@ public class Door : MonoBehaviour
     public float regularOpenCloseSpeed;
     public float regularOpenCloseDistance;
 
+    public enum Axis { X, Y, Z }
+    [Header("Movement Settings")]
+    public Axis moveAxis = Axis.X;
+
     [Header("Door Objects")]
     public GameObject doorPart01;
     public GameObject doorPart02;
@@ -33,12 +37,18 @@ public class Door : MonoBehaviour
         door02InitialPosition = doorPart02.transform.position;
     }
 
+    public void ToggleLockState()
+    {
+        isLocked = !isLocked;
+    }
+
     public void OpenDoor()
     {
         if (!isOpening && !isOpen)
         {
-            door01TargetPosition = door01InitialPosition + transform.right * regularOpenCloseDistance;
-            door02TargetPosition = door02InitialPosition - transform.right * regularOpenCloseDistance;
+            Vector3 offset = GetMovementOffset(regularOpenCloseDistance);
+            door01TargetPosition = door01InitialPosition + offset;
+            door02TargetPosition = door02InitialPosition - offset;
             StartCoroutine(SlideDoor(doorPart01, door01TargetPosition, regularOpenCloseSpeed));
             StartCoroutine(SlideDoor(doorPart02, door02TargetPosition, regularOpenCloseSpeed));
             PlayDoorSound(doorOpenSFX);
@@ -56,6 +66,16 @@ public class Door : MonoBehaviour
             StartCoroutine(SlideDoor(doorPart02, door02TargetPosition, regularOpenCloseSpeed));
             PlayDoorSound(doorCloseSFX);
             isOpen = false;
+        }
+    }
+
+    private Vector3 GetMovementOffset(float distance)
+    {
+        switch (moveAxis)
+        {
+            case Axis.Y: return transform.up * distance;
+            case Axis.Z: return transform.forward * distance;
+            default: return transform.right * distance;
         }
     }
 

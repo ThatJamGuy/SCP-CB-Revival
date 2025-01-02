@@ -66,7 +66,8 @@ public class NPC_173 : MonoBehaviour
             seenForTheFirstTime = true;
             currentState = SCPState.Idle;
 
-            MusicPlayer.Instance.ChangeMusic(GameManager.Instance.scp173Music);
+            if(!scriptedMode)
+                MusicPlayer.Instance.ChangeMusic(GameManager.Instance.scp173Music);
 
             Debug.Log("Just saw SCP-173 for the first time.");
         }

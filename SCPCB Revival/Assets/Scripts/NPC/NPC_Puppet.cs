@@ -10,7 +10,7 @@ public class NPC_Puppet : MonoBehaviour
     [SerializeField, ShowIf(nameof(doesSpeech))] private AudioSource speechSource;
 
     [Header("Head IK")]
-    [SerializeField] private bool useHeadIK;
+    public bool useHeadIK;
     [SerializeField, ShowIf(nameof(useHeadIK))] private IK_HeadTracking headTracking;
     [SerializeField, ShowIf(nameof(useHeadIK))] private bool targetMainCamera;
 
@@ -23,11 +23,10 @@ public class NPC_Puppet : MonoBehaviour
     [SerializeField, ShowIf(nameof(uniqueAnimSpeeds))] private float minAnimSpeed = 0.5f, maxAnimSpeed = 1;
 
     [Header("Movement")]
-    [SerializeField] private bool nodeMovement;
-    [SerializeField, ShowIf(nameof(nodeMovement))] private Transform[] nodes;
+    [SerializeField] private bool enableMovement;
 
-    private NavMeshAgent navMeshAgent;
     private IK_PointOfInterest mainCameraPointOfInterest;
+    private NPC_Locomotion locomotion;
 
     private void Start()
     {
@@ -40,17 +39,16 @@ public class NPC_Puppet : MonoBehaviour
             }
         }
 
-        if (nodeMovement)
-            navMeshAgent = GetComponent<NavMeshAgent>();
-
         if(useAnimations) animator.speed = uniqueAnimSpeeds ? Random.Range(minAnimSpeed, maxAnimSpeed) : 1f;
+
+        if(enableMovement && GetComponent<NPC_Locomotion>())
+            locomotion = GetComponent<NPC_Locomotion>();
+        else if(enableMovement && !GetComponent<NPC_Locomotion>())
+            Debug.LogWarning($"{gameObject.name} is missing a NPC_Locomotion component.");
     }
 
     private void Update()
-    {
-        if (useAnimations && !uniqueAnimSpeeds)
-            animator.speed = 1f;
-        
+    {    
         if (useHeadIK && headTracking)
             headTracking.enabled = useHeadIK;
 
@@ -58,21 +56,37 @@ public class NPC_Puppet : MonoBehaviour
             headTracking.POIs.Remove(mainCameraPointOfInterest);
         }
         if (targetMainCamera && mainCameraPointOfInterest != null && !headTracking.POIs.Contains(mainCameraPointOfInterest)) {
-            headTracking.POIs.Add(mainCameraPointOfInterest);
+            headTracking.POIs.Insert(0, mainCameraPointOfInterest);
         }
     }
 
-    public void PlayAnimation(string animationName)
+    public void ToggleLookAtCamera(bool lookAtCamera)
     {
-        animator.Play(animationName);
+        targetMainCamera = lookAtCamera;
+
+        if(useHeadIK && targetMainCamera) {
+            mainCameraPointOfInterest = Camera.main.GetComponent<IK_PointOfInterest>();
+        }
+        else if(!targetMainCamera && mainCameraPointOfInterest != null && headTracking.POIs.Contains(mainCameraPointOfInterest)) {
+            headTracking.POIs.Remove(mainCameraPointOfInterest);
+        }
     }
 
-    public void MoveToNodes()
-    {
-        if (nodes.Length == 0 || !navMeshAgent)
-            return;
+    public void SetAnimatorSpeed(float speed) => animator.speed = speed;
 
-        StartCoroutine(MoveThroughNodes());
+    public void PlayAnimationConditional(string animTrigger, float speedToPlay = 1f)
+    {
+        if(!useAnimations || !animator) return;
+
+        animator.speed = speedToPlay;
+        animator.applyRootMotion = true;
+        animator.SetTrigger(animTrigger);
+    }
+
+    public void MoveAgent(Transform destination)
+    {
+        if(!enableMovement || !locomotion) return;   
+        locomotion.WalkToPosition(destination);
     }
 
     public void Say(AudioClip clip)
@@ -85,18 +99,5 @@ public class NPC_Puppet : MonoBehaviour
 
         speechSource.clip = clip;
         speechSource.Play();
-    }
-
-    private IEnumerator MoveThroughNodes()
-    {
-        foreach (var node in nodes)
-        {
-            navMeshAgent.SetDestination(node.position);
-
-            while (navMeshAgent.pathPending || navMeshAgent.remainingDistance > navMeshAgent.stoppingDistance)
-                yield return null;
-        }
-
-        navMeshAgent.isStopped = true;
     }
 }

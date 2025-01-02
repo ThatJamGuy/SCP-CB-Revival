@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,8 +9,6 @@ public class InventorySystem : MonoBehaviour
 
     public List<GameObject> slotList = new List<GameObject>();
     public List<string> itemList = new List<string>();
-
-    [SerializeField] private InventoryScreen inventoryScreen;
 
     public GameObject itemInfoUI;
     [SerializeField] private GameObject currentHeldItemDisplay;
@@ -142,6 +141,6 @@ public class InventorySystem : MonoBehaviour
 
     public void CloseInventory()
     {
-        inventoryScreen.ToggleInventory();
+        MenuManager.Instance.ToggleMenu(2);
     }
 }

@@ -9,18 +9,13 @@ public class GameManager : MonoBehaviour
     public bool inventoryPausesGame;
 
     [Header("Controls")]
-    [SerializeField] private KeyCode pauseGameKey = KeyCode.Escape;
-    [SerializeField] private KeyCode openInventoryKey = KeyCode.Tab;
+    public KeyCode noclipUp = KeyCode.E;
+    public KeyCode noclipDown = KeyCode.LeftControl;
 
     [Header("Music")]
     public AudioClip introMusic;
     public AudioClip zone1Music;
     public AudioClip scp173Music;
-
-    [Header("References")]
-    [SerializeField] private PauseMenu pauseMenu;
-    [SerializeField] private InventoryScreen inventoryScreen;
-    [SerializeField] private DeathScreen deathScreen;
 
     private void Awake()
     {
@@ -34,25 +29,6 @@ public class GameManager : MonoBehaviour
             MusicPlayer.Instance.ChangeMusic(introMusic);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(pauseGameKey))
-        {
-            if (inventoryScreen.isOpen)
-                return;
-
-            pauseMenu.TogglePauseMenu();
-        }
-
-        if (Input.GetKeyDown(openInventoryKey))
-        {
-            if (pauseMenu.isOpen)
-                return;
-
-            inventoryScreen.ToggleInventory();
-        }
-    }
-
     public void PauseGame()
     {
         bool isPaused = Time.timeScale == 0.0f;
@@ -63,7 +39,7 @@ public class GameManager : MonoBehaviour
 
     public void ShowDeathScreen()
     {
-        deathScreen.ToggleDeathMenu();
+        MenuManager.Instance.ToggleMenu(1);
     }
 
     public void TogglePlayerInput(bool alsoToggleMouse)

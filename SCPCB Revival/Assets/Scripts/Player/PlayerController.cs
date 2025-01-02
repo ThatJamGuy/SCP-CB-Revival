@@ -27,7 +27,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float blinkDrainRate = 0.2f;
     [SerializeField] private Slider blinkSlider;
     [SerializeField] private float blinkDepletionModifier = 0f;
-    [SerializeField] private bool infiniteBlink = false;
 
     [Header("Stamina Settings")]
     [SerializeField, Range(0, 1)] private float stamina = 1f;
@@ -36,9 +35,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float staminaRegenRate = 0.1f;
     [SerializeField] private Slider staminaSlider;
     [SerializeField] private float staminaDepletionModifier = 0f;
-    [SerializeField] private bool infiniteStamina = false;
 
     [Header("Other Settings")]
+    public bool enabledNoclip = false;
+    public bool infiniteBlink = false;
+    public bool infiniteStamina = false;
     public bool isMoving;
     public bool isSprinting;
 
@@ -65,6 +66,7 @@ public class PlayerController : MonoBehaviour
     {
         if (GameManager.Instance.disablePlayerInputs) return;
 
+        HandleNoclip();
         HandleMovement();
         HandleLook();
         HandleStamina();
@@ -72,8 +74,31 @@ public class PlayerController : MonoBehaviour
         footstepHandler.UpdateFootsteps(isMoving, isSprinting);
     }
 
+    private void HandleNoclip()
+    {
+        if (enabledNoclip)
+        {
+            characterController.enabled = false;
+            float moveSpeed = isSprinting ? 10f : 5f;
+            float vertical = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
+            float horizontal = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
+            float upDown = 0f;
+
+            if(Input.GetKey(GameManager.Instance.noclipUp)) upDown = moveSpeed * Time.deltaTime;
+            if (Input.GetKey(GameManager.Instance.noclipDown)) upDown = -moveSpeed * Time.deltaTime;
+
+            transform.Translate(new Vector3(horizontal, upDown, vertical));
+        }
+        else
+        {
+            characterController.enabled = true;
+        }
+    }
+
     private void HandleMovement()
     {
+        if(enabledNoclip) return;
+
         if (characterController.isGrounded)
         {
             float moveX = Input.GetAxis("Horizontal");
