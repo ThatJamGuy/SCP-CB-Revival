@@ -30,8 +30,8 @@ public class MusicPlayer : MonoBehaviour
     
     private IEnumerator ChangeMusicCoroutine(AudioClip newMusic)
     {
-        float fadeOutTime = 1f;
-        float fadeInTime = 1f;
+        float fadeOutTime = 0.5f;
+        float fadeInTime = 0.5f;
     
         float timer = 0f;
         while (timer < fadeOutTime)

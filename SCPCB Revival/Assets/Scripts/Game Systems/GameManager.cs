@@ -37,11 +37,6 @@ public class GameManager : MonoBehaviour
         Time.timeScale = isPaused ? 1.0f : 0.0f;
     }
 
-    public void ShowDeathScreen()
-    {
-        MenuManager.Instance.ToggleMenu(1);
-    }
-
     public void TogglePlayerInput(bool alsoToggleMouse)
     {
         disablePlayerInputs = !disablePlayerInputs;

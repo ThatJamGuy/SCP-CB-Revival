@@ -59,6 +59,7 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private GameObject emergencyLights;
     [SerializeField] private GameObject scp173;
     [SerializeField] private GameObject scp173_2;
+    [SerializeField] private Animator gunLightLoop;
 
     [Header("Other Stuff")]
     [SerializeField] private AudioSource alarmSource;
@@ -163,10 +164,11 @@ public class EVNT_Intro : MonoBehaviour
         guardGuy.Say(ohShitShitShit);
         yield return new WaitForSeconds(2f);
         StartCoroutine(IntroGunshots());
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.5f);
         bangSounds.Play();
         emergencyLights.SetActive(false);
         scp173_2.SetActive(false);
+        gunShotLight.gameObject.SetActive(false);
         guardGuy.gameObject.SetActive(false);
         alarmSource.Play();
         announcementSource.clip = breachAnnouncement;
@@ -178,12 +180,12 @@ public class EVNT_Intro : MonoBehaviour
 
     IEnumerator IntroGunshots()
     {
-        for (int i = 0; i < 18; i++)
+        gunShotLight.gameObject.SetActive(true);
+
+        for (int i = 0; i < 27; i++)
         {
-            gunShotLight.SetActive(true);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
             gunShotSource.PlayOneShot(gunshot);
-            gunShotLight.SetActive(false);
         }
     }
 }

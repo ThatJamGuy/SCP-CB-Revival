@@ -207,7 +207,7 @@ public class PlayerController : MonoBehaviour
 
     public void KillPlayer()
     {
-        GameManager.Instance.ShowDeathScreen();
+        MenuManager.Instance.ToggleMenu(1);
     }
 
     private void UpdateCursorState()

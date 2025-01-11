@@ -4,9 +4,6 @@ using NaughtyAttributes;
 
 public class NPC_Locomotion : MonoBehaviour
 {
-    [SerializeField] private bool useStepSFX;
-    [SerializeField, ShowIf("useStepSFX")] private FootstepHandler footstepHandler;
-
     private NavMeshAgent navMeshAgent;
     private Animator animator;
 
@@ -68,9 +65,4 @@ public class NPC_Locomotion : MonoBehaviour
     }
 
     public void ToggleAgent() => navMeshAgent.enabled = !navMeshAgent.enabled;
-
-    public void PlayStepSound()
-    {
-        footstepHandler?.PlayFootstepAudio();
-    }
 }

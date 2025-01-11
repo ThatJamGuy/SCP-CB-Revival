@@ -8,20 +8,11 @@ public class FootstepHandler : MonoBehaviour
     [SerializeField] private AudioSource footstepAudioSource;
     [SerializeField] private bool enableHeadbobFootsteps = true;
 
-    [Header("Used By NPCs")]
-    [SerializeField] private bool enableNPCFootsteps = false;
-
     private CharacterController characterController;
     private bool isSprinting;
     private bool isMoving;
     private float footstepTimer;
     private float footstepInterval;
-
-    private void Start()
-    {
-        if(enableNPCFootsteps)
-            Initialize(GetComponent<CharacterController>());
-    }
     
     public void Initialize(CharacterController controller)
     {
