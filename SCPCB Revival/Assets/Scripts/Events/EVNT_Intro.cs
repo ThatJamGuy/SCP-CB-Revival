@@ -13,8 +13,8 @@ public class EVNT_Intro : MonoBehaviour
 
     [SerializeField] private GameObject cellDoor;
     [SerializeField] private NPC_Puppet guard01;
-    [SerializeField] private NPC_Puppet guard02;
-    [SerializeField] private NPC_Puppet guard03;
+    [SerializeField] private NPC_Puppet classDEscortGuard01;
+    [SerializeField] private NPC_Puppet classDEscortGuard02;
     [SerializeField] private AudioClip[] vibingGuardMusic;
     [SerializeField] private AudioClip exitCell;
     [SerializeField] private AudioClip[] escortBegin;
