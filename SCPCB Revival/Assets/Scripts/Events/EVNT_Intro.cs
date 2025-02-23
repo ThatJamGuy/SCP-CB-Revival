@@ -81,10 +81,11 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private PlayerController playerController;
     [SerializeField] private Transform skipIntroTransform;
     [SerializeField] private AudioReverbZone playerReverb;
+    [SerializeField] private GameObject emergenctTeleportTrigger;
     
     private void Start()
     {
-        enablePartOne = !GameManager.Instance.skipIntro;
+        enablePartOne = !GameSettings.Instance.skipIntro;
 
         if(!enablePartOne) return;
 
@@ -108,11 +109,12 @@ public class EVNT_Intro : MonoBehaviour
     {
         cont173Intro.SetActive(false);
         cont173.SetActive(true);
-        playerController.transform.position = skipIntroTransform.position;
         announcementSource.clip = breachAnnouncement;
         announcementSource.Play();
         alarmSource.Play();
         playerReverb.gameObject.SetActive(true);
+        playerController.transform.position = skipIntroTransform.position;
+        StartCoroutine(BringTheFellow());
         StartCoroutine(SkipIntroShakes());
     }
 
@@ -251,6 +253,12 @@ public class EVNT_Intro : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
             gunShotSource.PlayOneShot(gunshot);
         }
+    }
+
+    IEnumerator BringTheFellow()
+    {
+        yield return new WaitForSeconds(0.01f);
+        playerController.transform.position = skipIntroTransform.position;
     }
 
     IEnumerator IntroBreachAnnouncementShakes() {

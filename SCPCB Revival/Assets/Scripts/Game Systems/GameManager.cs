@@ -32,6 +32,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        skipIntro = GameSettings.Instance.skipIntro;
+
         if(isNewGame && MusicPlayer.Instance != null) {
             if (skipIntro) {
                 ChangeMusic(scp173ChamberMusic);
