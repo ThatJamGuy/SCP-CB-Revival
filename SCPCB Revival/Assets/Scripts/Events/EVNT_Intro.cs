@@ -13,6 +13,7 @@ public class EVNT_Intro : MonoBehaviour
 
     [SerializeField] private GameObject cellDoor;
     [SerializeField] private NPC_Puppet guard01;
+    [SerializeField] private NPC_Puppet guard02;
     [SerializeField] private NPC_Puppet classDEscortGuard01;
     [SerializeField] private NPC_Puppet classDEscortGuard02;
     [SerializeField] private AudioClip[] vibingGuardMusic;
@@ -22,6 +23,13 @@ public class EVNT_Intro : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioSource beforeDoorOpenAudio;
     [SerializeField] private AudioSource vibingGuardSource;
+    [SerializeField] private AudioClip[] ulgrinSpeeches;
+    [SerializeField] private AudioClip[] otherGuardSpeeches;
+
+    [SerializeField] private NPC_Puppet walkingFranklin;
+    [SerializeField] private GameObject scFranklinp1;
+    [SerializeField] private GameObject scFranklinp2;
+    [SerializeField] private GameObject scFranklinDoor1;
 
     [Header("Intro Part 2")]
     public bool readyForApproach173;
@@ -65,11 +73,16 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private AudioSource alarmSource;
     [SerializeField] private AudioSource announcementSource;
     [SerializeField] private AudioClip breachAnnouncement;
+    [SerializeField] private GameObject cont173Intro;
+    [SerializeField] private GameObject cont173;
+    [SerializeField] private GameObject cont173Lighting;
 
-    private bool readyForTwoPointFive;
-
+    //private bool readyForTwoPointFive;
+    
     private void Start()
     {
+        enablePartOne = !GameManager.Instance.skipIntro;
+
         if(!enablePartOne) return;
 
         vibingGuardSource.clip = vibingGuardMusic[Random.Range(0, vibingGuardMusic.Length)];
@@ -86,7 +99,36 @@ public class EVNT_Intro : MonoBehaviour
 
     public void StartPartTwo() => StartCoroutine(IntroSequencePartTwo());
 
-    public void StartPartTwoPointFive() => readyForTwoPointFive = true;
+    //public void StartPartTwoPointFive() => readyForTwoPointFive = true;
+
+    public void FranklinWalk() => StartCoroutine(FranklinWalksToDoor());
+
+    public void StartShakes() => StartCoroutine(IntroBreachAnnouncementShakes());
+
+    public void GuardSpeech() {
+        // Play a random speech from the ulgrin speech array, then find the matching one in the other guard array and play that
+        if(guard01 != null && guard02 != null) {
+            int randomIndex = Random.Range(0, ulgrinSpeeches.Length);
+            guard01.ToggleLookAtCamera(false);
+            guard02.ToggleLookAtCamera(false);
+            guard01.Say(ulgrinSpeeches[randomIndex]);
+            guard02.Say(otherGuardSpeeches[randomIndex]);
+        }
+    }
+
+    IEnumerator FranklinWalksToDoor()
+    {
+        walkingFranklin.MoveAgent(scFranklinp1.transform);
+        yield return new WaitForSeconds(7f);
+        scFranklinDoor1.GetComponent<Door>().OpenDoor();
+        walkingFranklin.MoveAgent(scFranklinp2.transform);
+        yield return new WaitForSeconds(4f);
+        if(scFranklinDoor1.gameObject.activeSelf) {
+            scFranklinDoor1.GetComponent<Door>().CloseDoor();
+        }
+        yield return new WaitForSeconds(1);
+        walkingFranklin.gameObject.SetActive(false);
+    }
 
     IEnumerator IntroSequencePartOne()
     {
@@ -97,6 +139,8 @@ public class EVNT_Intro : MonoBehaviour
         guard01.Say(exitCell);
         yield return new WaitUntil(() => readyForEscort);
         guard01.Say(escortBegin[Random.Range(0, escortBegin.Length)]);
+        yield return new WaitForSeconds(20);
+        GuardSpeech();
     }
 
     IEnumerator IntroSequencePartTwo()
@@ -129,13 +173,18 @@ public class EVNT_Intro : MonoBehaviour
         contDoor.OpenDoor();
         yield return new WaitForSeconds(0.5f);
         scFranklin.Say(announcementDoorProblem);
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(3f);
+        GlobalCameraShake.Instance.ShakeCamera(0f, 0.03f, 10f);
+        //GlobalLightFlicker.Instance.FlickerLights(0f, 0.03f, 10f);
+        yield return new WaitForSeconds(2f);
         dclass1.Say(iDontLikeThis);
         yield return new WaitForSeconds(3.5f);
         dclass2.PlayAnimationConditional("walkBackScared");
-        yield return new WaitForSeconds(3.5f);
-        lightingAnimator.Play("IntroLightsFlicker");
+        yield return new WaitForSeconds(1f);
         guardGuy.Say(wtfIsHappening[Random.Range(0, wtfIsHappening.Length)]);
+        yield return new WaitForSeconds(2.5f);
+        GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 3f);
+        lightingAnimator.Play("IntroLightsFlicker");
         dclass2.Say(neckSnap);
         yield return new WaitForSeconds(0.3f);
         scp173.transform.position = scpNode1.position;
@@ -152,6 +201,7 @@ public class EVNT_Intro : MonoBehaviour
         dclass1.Say(neckSnap2);
         yield return new WaitForSeconds(2f);
         bangSounds.Play();
+        GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 2f);
         lightingAnimator.Play("IntroLightsFlicker");
         yield return new WaitForSeconds(0.3f);
         guardGuy.transform.position = scpNode3.position;
@@ -162,7 +212,7 @@ public class EVNT_Intro : MonoBehaviour
         lightingAnimator.gameObject.SetActive(false);
         emergencyLights.SetActive(true); 
         guardGuy.Say(ohShitShitShit);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.7f);
         StartCoroutine(IntroGunshots());
         yield return new WaitForSeconds(1.5f);
         bangSounds.Play();
@@ -173,9 +223,13 @@ public class EVNT_Intro : MonoBehaviour
         alarmSource.Play();
         announcementSource.clip = breachAnnouncement;
         announcementSource.Play();
+        StartCoroutine(IntroBreachAnnouncementShakes());
         ventBreakSFX.Play();
-        yield return new WaitForSeconds(4);
-        emergencyLights.SetActive(true);
+        GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 2f);
+        cont173Intro.SetActive(false);
+        cont173.SetActive(true);
+        yield return new WaitForSeconds(3);
+        cont173Lighting.SetActive(true);
     }
 
     IEnumerator IntroGunshots()
@@ -187,5 +241,12 @@ public class EVNT_Intro : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
             gunShotSource.PlayOneShot(gunshot);
         }
+    }
+
+    IEnumerator IntroBreachAnnouncementShakes() {
+        yield return new WaitForSeconds(12f);
+        GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
+        yield return new WaitForSeconds(37f);
+        GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
     }
 }

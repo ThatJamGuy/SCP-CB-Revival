@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     [Header("Global Values")]
     public bool disablePlayerInputs;
     public bool inventoryPausesGame;
+    public bool skipIntro;
 
     [Header("Controls")]
     public KeyCode noclipUp = KeyCode.E;
@@ -14,8 +15,22 @@ public class GameManager : MonoBehaviour
 
     [Header("Music")]
     public AudioClip introMusic;
+    public AudioClip scp173ChamberMusic;
     public AudioClip zone1Music;
     public AudioClip scp173Music;
+
+    [Header("SkipIntro Stuff")]
+    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject playerReverb;
+    [SerializeField] private GameObject cont173_PreBreach;
+    [SerializeField] private GameObject cont173_PostBreach;
+    [SerializeField] private AudioSource roomAlarm;
+    [SerializeField] private AudioSource announcementSource;
+    [SerializeField] private AudioClip announcementClip;
+    [SerializeField] private Transform playerSkipStartPos;
+    [SerializeField] private EVNT_Intro introEvent;
+
+    private bool isNewGame = true;
 
     private void Awake()
     {
@@ -25,8 +40,32 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        if(isNewGame && MusicPlayer.Instance != null) {
+            if (skipIntro) {
+                ChangeMusic(scp173ChamberMusic);
+                SkipIntro();
+            } else {
+                ChangeMusic(introMusic);
+            }
+        }
+    }
+
+    public void ChangeMusic(AudioClip music)
+    {
         if (MusicPlayer.Instance != null)
-            MusicPlayer.Instance.ChangeMusic(introMusic);
+            MusicPlayer.Instance.ChangeMusic(music);
+    }
+
+    public void SkipIntro()
+    {   
+        cont173_PreBreach.SetActive(false);
+        cont173_PostBreach.SetActive(true);
+        player.transform.position = playerSkipStartPos.position;
+        announcementSource.clip = announcementClip;
+        announcementSource.Play();
+        roomAlarm.Play();
+        playerReverb.SetActive(true);
+        introEvent.StartShakes();
     }
 
     public void PauseGame()

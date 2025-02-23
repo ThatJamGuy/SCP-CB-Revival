@@ -4,6 +4,9 @@ using NaughtyAttributes;
 
 public class NPC_Locomotion : MonoBehaviour
 {
+    [SerializeField] private bool useStepSounds;
+    [SerializeField, ShowIf("useStepSounds")] private AudioClip[] stepSounds;
+
     private NavMeshAgent navMeshAgent;
     private Animator animator;
 
@@ -62,6 +65,15 @@ public class NPC_Locomotion : MonoBehaviour
         if (navMeshAgent == null || animator == null) return;
 
         navMeshAgent.SetDestination(position.position);
+    }
+
+    public void StepSound()
+    {
+        if (useStepSounds)
+        {
+            int randomIndex = Random.Range(0, stepSounds.Length);
+            AudioSource.PlayClipAtPoint(stepSounds[randomIndex], transform.position);
+        }
     }
 
     public void ToggleAgent() => navMeshAgent.enabled = !navMeshAgent.enabled;
