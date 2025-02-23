@@ -19,16 +19,8 @@ public class GameManager : MonoBehaviour
     public AudioClip zone1Music;
     public AudioClip scp173Music;
 
-    [Header("SkipIntro Stuff")]
-    [SerializeField] private GameObject player;
-    [SerializeField] private GameObject playerReverb;
-    [SerializeField] private GameObject cont173_PreBreach;
-    [SerializeField] private GameObject cont173_PostBreach;
-    [SerializeField] private AudioSource roomAlarm;
-    [SerializeField] private AudioSource announcementSource;
-    [SerializeField] private AudioClip announcementClip;
-    [SerializeField] private Transform playerSkipStartPos;
-    [SerializeField] private EVNT_Intro introEvent;
+    [Header("References")]
+    [SerializeField] private EVNT_Intro introEventScript;
 
     private bool isNewGame = true;
 
@@ -43,7 +35,7 @@ public class GameManager : MonoBehaviour
         if(isNewGame && MusicPlayer.Instance != null) {
             if (skipIntro) {
                 ChangeMusic(scp173ChamberMusic);
-                SkipIntro();
+                introEventScript.SkipIntro();
             } else {
                 ChangeMusic(introMusic);
             }
@@ -54,18 +46,6 @@ public class GameManager : MonoBehaviour
     {
         if (MusicPlayer.Instance != null)
             MusicPlayer.Instance.ChangeMusic(music);
-    }
-
-    public void SkipIntro()
-    {   
-        cont173_PreBreach.SetActive(false);
-        cont173_PostBreach.SetActive(true);
-        player.transform.position = playerSkipStartPos.position;
-        announcementSource.clip = announcementClip;
-        announcementSource.Play();
-        roomAlarm.Play();
-        playerReverb.SetActive(true);
-        introEvent.StartShakes();
     }
 
     public void PauseGame()

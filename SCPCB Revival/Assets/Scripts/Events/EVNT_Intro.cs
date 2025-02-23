@@ -77,7 +77,10 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private GameObject cont173;
     [SerializeField] private GameObject cont173Lighting;
 
-    //private bool readyForTwoPointFive;
+    [Header("Skip Intro")]
+    [SerializeField] private PlayerController playerController;
+    [SerializeField] private Transform skipIntroTransform;
+    [SerializeField] private AudioReverbZone playerReverb;
     
     private void Start()
     {
@@ -99,15 +102,23 @@ public class EVNT_Intro : MonoBehaviour
 
     public void StartPartTwo() => StartCoroutine(IntroSequencePartTwo());
 
-    //public void StartPartTwoPointFive() => readyForTwoPointFive = true;
-
     public void FranklinWalk() => StartCoroutine(FranklinWalksToDoor());
 
-    public void StartShakes() => StartCoroutine(IntroBreachAnnouncementShakes());
+    public void SkipIntro()
+    {
+        cont173Intro.SetActive(false);
+        cont173.SetActive(true);
+        playerController.transform.position = skipIntroTransform.position;
+        announcementSource.clip = breachAnnouncement;
+        announcementSource.Play();
+        alarmSource.Play();
+        playerReverb.gameObject.SetActive(true);
+        StartCoroutine(SkipIntroShakes());
+    }
 
     public void GuardSpeech() {
         // Play a random speech from the ulgrin speech array, then find the matching one in the other guard array and play that
-        if(guard01 != null && guard02 != null) {
+        if(guard01.isActiveAndEnabled && guard02.isActiveAndEnabled) {
             int randomIndex = Random.Range(0, ulgrinSpeeches.Length);
             guard01.ToggleLookAtCamera(false);
             guard02.ToggleLookAtCamera(false);
@@ -175,7 +186,6 @@ public class EVNT_Intro : MonoBehaviour
         scFranklin.Say(announcementDoorProblem);
         yield return new WaitForSeconds(3f);
         GlobalCameraShake.Instance.ShakeCamera(0f, 0.03f, 10f);
-        //GlobalLightFlicker.Instance.FlickerLights(0f, 0.03f, 10f);
         yield return new WaitForSeconds(2f);
         dclass1.Say(iDontLikeThis);
         yield return new WaitForSeconds(3.5f);
@@ -223,13 +233,13 @@ public class EVNT_Intro : MonoBehaviour
         alarmSource.Play();
         announcementSource.clip = breachAnnouncement;
         announcementSource.Play();
-        StartCoroutine(IntroBreachAnnouncementShakes());
         ventBreakSFX.Play();
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 2f);
         cont173Intro.SetActive(false);
         cont173.SetActive(true);
         yield return new WaitForSeconds(3);
         cont173Lighting.SetActive(true);
+        StartCoroutine(IntroBreachAnnouncementShakes());
     }
 
     IEnumerator IntroGunshots()
@@ -244,9 +254,16 @@ public class EVNT_Intro : MonoBehaviour
     }
 
     IEnumerator IntroBreachAnnouncementShakes() {
-        yield return new WaitForSeconds(12f);
+        yield return new WaitForSeconds(9f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
-        yield return new WaitForSeconds(37f);
+        yield return new WaitForSeconds(37.5f);
+        GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
+    }
+
+    public IEnumerator SkipIntroShakes() {
+        yield return new WaitForSeconds(11.5f);
+        GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
+        yield return new WaitForSeconds(37.5f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
     }
 }
