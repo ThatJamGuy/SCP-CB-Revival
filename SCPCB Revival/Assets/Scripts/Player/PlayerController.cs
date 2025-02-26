@@ -205,11 +205,6 @@ public class PlayerController : MonoBehaviour
         isBlinkingOverlayActive = false;
     }
 
-    public void KillPlayer()
-    {
-        MenuManager.Instance.ToggleMenu(1);
-    }
-
     private void UpdateCursorState()
     {
         bool disablePlayerInputs = GameManager.Instance.disablePlayerInputs;

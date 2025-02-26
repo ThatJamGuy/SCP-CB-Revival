@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     public bool disablePlayerInputs;
     public bool inventoryPausesGame;
     public bool skipIntro;
+    public bool playerIsDead = false;
 
     [Header("Controls")]
     public KeyCode noclipUp = KeyCode.E;
@@ -75,5 +76,11 @@ public class GameManager : MonoBehaviour
                 Cursor.visible = false;
             }
         }
+    }
+
+    public void KillPlayer()
+    {
+        playerIsDead = true;
+        MenuManager.Instance.ToggleMenu(1);
     }
 }

@@ -12,7 +12,9 @@ public class NPC_173 : MonoBehaviour
     SCPState currentState = SCPState.Sleeping;
 
     [Header("Settings")] 
-    public bool ignorePlayer; public bool scriptedMode; public float playerEscapeDistance, minVignetteIntensity, maxVignetteIntensity, vignetteRange;
+    public bool ignorePlayer; 
+    public bool scriptedMode; 
+    public float playerEscapeDistance, minVignetteIntensity, maxVignetteIntensity, vignetteRange;
 
     [Header("Audio")]
     [SerializeField] private AudioClip[] horrorNearSFX;
@@ -20,15 +22,14 @@ public class NPC_173 : MonoBehaviour
     [SerializeField] private AudioClip killPlayerSound;
 
     [Header("References")]
-    [SerializeField] private LayerMask obstructionMask;
     [SerializeField] private AudioSource horrorStingerSource, movementSource, killPlayerSource, tensionSource;
     [SerializeField] private GameObject christmasHat;
-    public bool isVisible { get; private set; }
 
     private PlayerController playerController;
     private Renderer objectRenderer;
     private NavMeshAgent agent;
     private Volume skyAndFogVolume;
+    private Vignette vignette;
     private Camera targetCamera;
     private bool seenForTheFirstTime;
     private float distanceToPlayer;
@@ -38,105 +39,130 @@ public class NPC_173 : MonoBehaviour
     private void Awake()
     {
         playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        targetCamera ??= Camera.main;
-        objectRenderer = GetComponent<Renderer>();
+        targetCamera = Camera.main;
         agent = GetComponent<NavMeshAgent>();
-
+        objectRenderer = GetComponent<Renderer>();
         skyAndFogVolume = GameObject.Find("Sky and Fog Volume").GetComponent<Volume>();
 
-        // Check if the month is December and enable holiday spririt!
+        if (skyAndFogVolume.profile.TryGet(out Vignette v))
+            vignette = v;
+
         christmasHat.SetActive(DateTime.Now.Month == 12);
     }
 
     private void Update()
     {
-        if(ignorePlayer) return;
+        if (ignorePlayer) return;
 
-        isVisible = IsObjectVisible();
-        
+        distanceToPlayer = Vector3.Distance(transform.position, targetCamera.transform.position);
+        bool isVisible = IsPlayerLookingAtNPC();
+
+        HandleFirstEncounter(isVisible);
+        HandleStateTransitions(isVisible);
+        HandleStateBehavior();
+        HandleAudioAndEffects(isVisible);
+        HandlePlayerEscape();
+    }
+
+    private void HandleFirstEncounter(bool isVisible)
+    {
         if (!seenForTheFirstTime && isVisible)
         {
-            distanceToPlayer = Vector3.Distance(transform.position, targetCamera.transform.position);
-
-            if (distanceToPlayer < 10f)
-                horrorStingerSource.PlayOneShot(horrorNearSFX[UnityEngine.Random.Range(0, horrorNearSFX.Length)]);
-            else
-                horrorStingerSource.PlayOneShot(horrorFarSFX[UnityEngine.Random.Range(0, horrorFarSFX.Length)]);
-            
+            PlayFirstEncounterSound();
             seenForTheFirstTime = true;
             currentState = SCPState.Idle;
 
-            if(!scriptedMode)
+            if (!scriptedMode)
                 MusicPlayer.Instance.ChangeMusic(GameManager.Instance.scp173Music);
 
             Debug.Log("Just saw SCP-173 for the first time.");
         }
+    }
 
-        if(currentState == SCPState.Sleeping || scriptedMode) return;
+    private void HandleStateTransitions(bool isVisible)
+    {
+        if (currentState == SCPState.Sleeping || scriptedMode) return;
 
-        distanceToPlayer = Vector3.Distance(transform.position, targetCamera.transform.position);
+        currentState = (isVisible && !playerController.isBlinking) ? SCPState.Idle : SCPState.Chasing;
+    }
 
-        if(isVisible && !playerController.isBlinking)
-            currentState = SCPState.Idle;
-        else
-            currentState = SCPState.Chasing;
-
+    private void HandleStateBehavior()
+    {
         switch (currentState)
         {
-            case SCPState.Sleeping:
-                break;
-            case SCPState.Idle:
-                Idle();
-                break;
-            case SCPState.Chasing:
-                ChasePlayer();
-                break;
-        }
-
-        if (isVisible && distanceToPlayer < 5f && !hasPlayedNearSound && agent.velocity.magnitude > 0f && isVisible)
-        {
-            horrorStingerSource.PlayOneShot(horrorNearSFX[UnityEngine.Random.Range(0, horrorNearSFX.Length)]);
-            hasPlayedNearSound = true;
-
-            StartCoroutine(ResetHorrorNearSound());
-        }
-
-        if(distanceToPlayer <= 3f && !hasKilledPlayer && !isVisible)
-        {
-            Debug.Log("Killed player.");
-            playerController.KillPlayer();
-            killPlayerSource.clip = killPlayerSound;
-            killPlayerSource.Play();
-            hasKilledPlayer = true;
-
-            movementSource.enabled = false;
-            currentState = SCPState.Sleeping;
-        }
-
-        if (isVisible && !playerController.isBlinking)
-        {
-            if (skyAndFogVolume.profile.TryGet(out Vignette vignette))
-            {
-                float vignetteIntensity = Mathf.Lerp(maxVignetteIntensity, minVignetteIntensity, distanceToPlayer / vignetteRange);
-                vignette.intensity.value = vignetteIntensity;
-            }
-        }
-
-        tensionSource.enabled = isVisible && distanceToPlayer < vignetteRange;
-        tensionSource.volume = Mathf.Lerp(minVignetteIntensity, maxVignetteIntensity, 1 - (distanceToPlayer / vignetteRange));
-
-        if(distanceToPlayer > playerEscapeDistance)
-        {
-            currentState = SCPState.Sleeping;
-            seenForTheFirstTime = false;
-            hasPlayedNearSound = false;
-            MusicPlayer.Instance.ChangeMusic(GameManager.Instance.zone1Music);
-            Debug.Log("Despawning SCSP-173.");
-            Destroy(gameObject);
+            case SCPState.Sleeping: break;
+            case SCPState.Idle: Idle(); break;
+            case SCPState.Chasing: ChasePlayer(); break;
         }
     }
 
-    private void ChasePlayer() 
+    private void HandleAudioAndEffects(bool isVisible)
+    {
+        if (isVisible && distanceToPlayer < 5f && !hasPlayedNearSound && agent.velocity.magnitude > 0f)
+        {
+            PlayHorrorNearSound();
+            StartCoroutine(ResetHorrorNearSound());
+        }
+
+        if (distanceToPlayer <= 3f && !hasKilledPlayer && !isVisible)
+            KillPlayer();
+
+        if (isVisible && !playerController.isBlinking)
+            UpdateVignetteEffect();
+
+        tensionSource.enabled = isVisible && distanceToPlayer < vignetteRange;
+        tensionSource.volume = Mathf.Lerp(minVignetteIntensity, maxVignetteIntensity, 1 - (distanceToPlayer / vignetteRange));
+    }
+
+    private void HandlePlayerEscape()
+    {
+        if (distanceToPlayer > playerEscapeDistance)
+            DespawnNPC();
+    }
+
+    private void PlayFirstEncounterSound()
+    {
+        AudioClip clip = (distanceToPlayer < 10f) ? horrorNearSFX[UnityEngine.Random.Range(0, horrorNearSFX.Length)] : horrorFarSFX[UnityEngine.Random.Range(0, horrorFarSFX.Length)];
+        horrorStingerSource.PlayOneShot(clip);
+    }
+
+    private void PlayHorrorNearSound()
+    {
+        horrorStingerSource.PlayOneShot(horrorNearSFX[UnityEngine.Random.Range(0, horrorNearSFX.Length)]);
+        hasPlayedNearSound = true;
+    }
+
+    private void KillPlayer()
+    {
+        Debug.Log("Killed player.");
+        //playerController.KillPlayer();
+        killPlayerSource.PlayOneShot(killPlayerSound);
+        hasKilledPlayer = true;
+
+        movementSource.enabled = false;
+        currentState = SCPState.Sleeping;
+    }
+
+    private void UpdateVignetteEffect()
+    {
+        if (vignette != null)
+        {
+            float vignetteIntensity = Mathf.Lerp(maxVignetteIntensity, minVignetteIntensity, distanceToPlayer / vignetteRange);
+            vignette.intensity.value = vignetteIntensity;
+        }
+    }
+
+    private void DespawnNPC()
+    {
+        currentState = SCPState.Sleeping;
+        seenForTheFirstTime = false;
+        hasPlayedNearSound = false;
+        MusicPlayer.Instance.ChangeMusic(GameManager.Instance.zone1Music);
+        Debug.Log("Despawning SCP-173.");
+        Destroy(gameObject);
+    }
+
+    private void ChasePlayer()
     {
         agent.speed = 350;
         agent.isStopped = false;
@@ -149,40 +175,28 @@ public class NPC_173 : MonoBehaviour
         agent.speed = 0;
         agent.isStopped = true;
         movementSource.enabled = false;
-        agent.SetDestination(transform.position);
     }
 
-    private bool IsObjectVisible()
+    private bool IsPlayerLookingAtNPC()
     {
         if (objectRenderer == null || targetCamera == null) return false;
 
-        var planes = GeometryUtility.CalculateFrustumPlanes(targetCamera);
-        if (!GeometryUtility.TestPlanesAABB(planes, objectRenderer.bounds)) return false;
-
-        Vector3 screenPoint = targetCamera.WorldToScreenPoint(objectRenderer.bounds.center);
-        if (screenPoint.z <= 0) return false;
-
-        if (Physics.Raycast(targetCamera.ScreenPointToRay(screenPoint), out RaycastHit hit, Mathf.Infinity, obstructionMask))
+        Vector3 direction = (objectRenderer.bounds.center - targetCamera.transform.position).normalized;
+        if (Physics.Raycast(targetCamera.transform.position, direction, out RaycastHit hit, distanceToPlayer))
         {
-            return hit.transform == transform;
+            if (hit.collider.gameObject == gameObject)
+            {
+                Vector3 screenPoint = targetCamera.WorldToViewportPoint(objectRenderer.bounds.center);
+                return screenPoint.z > 0 && screenPoint.x >= 0 && screenPoint.x <= 1 && screenPoint.y >= 0 && screenPoint.y <= 1;
+            }
         }
-
         return false;
-    }
-
-    private void OnDrawGizmos()
-    {
-        if(!Application.isPlaying) return;
-
-        Gizmos.color = isVisible ? Color.green : Color.red;
-        Gizmos.DrawWireCube(objectRenderer.bounds.center, objectRenderer.bounds.size);
     }
 
     IEnumerator ResetHorrorNearSound()
     {
         yield return new WaitForSeconds(10f);
-
-        if(distanceToPlayer > 10f)
+        if (distanceToPlayer > 10f)
             hasPlayedNearSound = false;
     }
 }
