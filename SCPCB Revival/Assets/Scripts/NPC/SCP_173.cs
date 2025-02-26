@@ -1,11 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.XR;
 
 public class SCP_173 : MonoBehaviour
 {
     [Header("Settings")]
-    [SerializeField, Range(1, 3)] private int difficulty = 1; // Fixed typo
+    [SerializeField, Range(1, 3)] private int difficulty = 1;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float stoppingDistance = 1f;
 
