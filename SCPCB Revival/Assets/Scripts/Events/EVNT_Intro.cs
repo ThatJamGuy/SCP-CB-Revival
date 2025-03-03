@@ -76,12 +76,14 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private GameObject cont173Intro;
     [SerializeField] private GameObject cont173;
     [SerializeField] private GameObject cont173Lighting;
+    [SerializeField] private GameObject generatedMap;
 
     [Header("Skip Intro")]
     [SerializeField] private PlayerController playerController;
     [SerializeField] private Transform skipIntroTransform;
     [SerializeField] private AudioReverbZone playerReverb;
     [SerializeField] private GameObject emergenctTeleportTrigger;
+    [SerializeField] private GameObject roomRenderer;
     
     private void Start()
     {
@@ -242,6 +244,8 @@ public class EVNT_Intro : MonoBehaviour
         yield return new WaitForSeconds(3);
         cont173Lighting.SetActive(true);
         StartCoroutine(IntroBreachAnnouncementShakes());
+        generatedMap.SetActive(true);
+        roomRenderer.SetActive(true);
     }
 
     IEnumerator IntroGunshots()
@@ -269,6 +273,9 @@ public class EVNT_Intro : MonoBehaviour
     }
 
     public IEnumerator SkipIntroShakes() {
+        roomRenderer.SetActive(true);
+        generatedMap.SetActive(true);
+        cont173Lighting.SetActive(true);
         yield return new WaitForSeconds(11.5f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
         yield return new WaitForSeconds(37.5f);
