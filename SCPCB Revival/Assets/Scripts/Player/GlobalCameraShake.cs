@@ -26,7 +26,7 @@ public class GlobalCameraShake : MonoBehaviour
         camTransform = Camera.main.transform;
         originalPosition = camTransform.localPosition;
         float elapsed = 0f;
-        
+
         while (elapsed < duration)
         {
             shakeIntensity = Mathf.Lerp(startIntensity, endIntensity, elapsed / duration);
@@ -34,7 +34,7 @@ public class GlobalCameraShake : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
-        
+
         StartCoroutine(FadeOutShake());
     }
 

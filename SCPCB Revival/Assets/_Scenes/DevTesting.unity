@@ -46192,7 +46192,7 @@ AudioSource:
   m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 0c66aea0e728543458bfb60ca32d3f88, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 0c66aea0e728543458bfb60ca32d3f88, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.7
@@ -47138,7 +47138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 590d52c0b2fc7ad4ab24d8967f7938fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  triggerOnce: 0
+  triggerOnce: 1
   OnTriggerEnterEvent:
     m_PersistentCalls:
       m_Calls:
@@ -47174,6 +47174,18 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 8300000, guid: 495dbcd5027517f47bc65330d7b54a81,
             type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 2076174526}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -57446,7 +57458,6 @@ GameObject:
   - component: {fileID: 1105452845}
   - component: {fileID: 1105452846}
   - component: {fileID: 1105452847}
-  - component: {fileID: 1105452848}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -57585,18 +57596,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e2b8d383226bc144896894187352a6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1105452848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1105452842}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c4203e915a2cf74b9be0b57d32b8126, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1105923144
@@ -88466,6 +88465,9 @@ MonoBehaviour:
   walkBobSpeed: 8
   sprintBobSpeed: 13
   bobAmount: 0.1
+  rotationStrength: 0.7
+  maxRotationAngle: 0.7
+  rotationSpeed: 0.5
 --- !u!114 &1823688470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99604,7 +99606,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2076174527
 Transform:
   m_ObjectHideFlags: 0
@@ -99637,28 +99639,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d566157b7ea16624fa4c470013530eb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: 0
   ignorePlayer: 0
   scriptedMode: 0
-  difficulty: 3
-  checkInterval: 0.1
-  baseSpeed: 20
-  stoppingDistance: 1
   playerEscapeDistance: 30
   minVignetteIntensity: 0
   maxVignetteIntensity: 0.5
   vignetteRange: 15
-  nearSoundDistance: 7
-  nearSoundCooldown: 10
-  killDistance: 1.7
-  tensionAudioRange: 15
-  minTensionVolume: 0
-  maxTensionVolume: 0.5
-  visibilityRayCount: 7
-  visibilityThreshold: 0.3
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 65
+  speed: 0
   horrorNearSFX:
   - {fileID: 8300000, guid: 4908a2a9805fd7b46924ac6040be91fd, type: 3}
   - {fileID: 8300000, guid: 21dfb9980c99d1441ac226eaf7c7de16, type: 3}
@@ -99666,6 +99653,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 338c01a1c6e17b9459509eaf71496047, type: 3}
   - {fileID: 8300000, guid: a7bea4b4f262d4d4fbfb3f40dbc80d10, type: 3}
   killPlayerSound: {fileID: 8300000, guid: 57c75f8514f042a4a8949a0c6df9964d, type: 3}
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 65
   horrorStingerSource: {fileID: 443825670}
   movementSource: {fileID: 929069135}
   killPlayerSource: {fileID: 1669293859}
@@ -99681,10 +99671,10 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1
-  m_Speed: 3.5
+  m_Speed: 20
   m_Acceleration: 500
   avoidancePriority: 50
-  m_AngularSpeed: 0
+  m_AngularSpeed: 720
   m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 0
@@ -101441,7 +101431,7 @@ AudioSource:
   m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 0c66aea0e728543458bfb60ca32d3f88, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 0c66aea0e728543458bfb60ca32d3f88, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -115246,19 +115236,19 @@ AudioSource:
     type: 2}
   m_audioClip: {fileID: 8300000, guid: 8835fabc92496104c91a1f5bcb65606f, type: 3}
   m_Resource: {fileID: 8300000, guid: 8835fabc92496104c91a1f5bcb65606f, type: 3}
-  m_PlayOnAwake: 0
-  m_Volume: 1
+  m_PlayOnAwake: 1
+  m_Volume: 0.3
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 0
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 10
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -115291,7 +115281,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.5
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -123414,11 +123404,12 @@ AudioSource:
   m_GameObject: {fileID: 1747119911556418524}
   m_Enabled: 0
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 0c66aea0e728543458bfb60ca32d3f88, type: 3}
-  m_Resource: {fileID: 8300000, guid: 0c66aea0e728543458bfb60ca32d3f88, type: 3}
+  OutputAudioMixerGroup: {fileID: -6996945593879847873, guid: 3fd2804d04e2d4b4ab754059de8b8cd6,
+    type: 2}
+  m_audioClip: {fileID: 8300000, guid: a7bf9e81233a05c47a1dd37dd4d6ec4d, type: 3}
+  m_Resource: {fileID: 8300000, guid: a7bf9e81233a05c47a1dd37dd4d6ec4d, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.7
+  m_Volume: 1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -131263,7 +131254,7 @@ AudioSource:
   m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 0c66aea0e728543458bfb60ca32d3f88, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 0c66aea0e728543458bfb60ca32d3f88, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -138929,33 +138920,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d566157b7ea16624fa4c470013530eb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: 0
   ignorePlayer: 0
   scriptedMode: 1
-  difficulty: 1
-  checkInterval: 0.1
-  baseSpeed: 5
-  stoppingDistance: 1
-  playerEscapeDistance: 100
+  playerEscapeDistance: 30
   minVignetteIntensity: 0
-  maxVignetteIntensity: 0
-  vignetteRange: 0
-  nearSoundDistance: 5
-  nearSoundCooldown: 10
-  killDistance: 3
-  tensionAudioRange: 15
-  minTensionVolume: 0
-  maxTensionVolume: 0.5
-  visibilityRayCount: 7
-  visibilityThreshold: 0.3
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 65
+  maxVignetteIntensity: 0.5
+  vignetteRange: 15
+  speed: 0
   horrorNearSFX:
   - {fileID: 8300000, guid: 03e6a8ccadd16d64dbfd3a4f5cdbd14e, type: 3}
   horrorFarSFX:
   - {fileID: 8300000, guid: 03e6a8ccadd16d64dbfd3a4f5cdbd14e, type: 3}
   killPlayerSound: {fileID: 8300000, guid: 57c75f8514f042a4a8949a0c6df9964d, type: 3}
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 65
   horrorStingerSource: {fileID: 639372472675896909}
   movementSource: {fileID: 6495860432579178236}
   killPlayerSource: {fileID: 6419839500442577093}
@@ -142458,28 +142437,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d566157b7ea16624fa4c470013530eb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: 0
   ignorePlayer: 0
   scriptedMode: 0
-  difficulty: 3
-  checkInterval: 0.1
-  baseSpeed: 20
-  stoppingDistance: 1
   playerEscapeDistance: 30
   minVignetteIntensity: 0
   maxVignetteIntensity: 0.5
   vignetteRange: 15
-  nearSoundDistance: 7
-  nearSoundCooldown: 10
-  killDistance: 1.7
-  tensionAudioRange: 15
-  minTensionVolume: 0
-  maxTensionVolume: 0.5
-  visibilityRayCount: 7
-  visibilityThreshold: 0.3
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 65
+  speed: 0
   horrorNearSFX:
   - {fileID: 8300000, guid: 4908a2a9805fd7b46924ac6040be91fd, type: 3}
   - {fileID: 8300000, guid: 21dfb9980c99d1441ac226eaf7c7de16, type: 3}
@@ -142487,6 +142451,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 338c01a1c6e17b9459509eaf71496047, type: 3}
   - {fileID: 8300000, guid: a7bea4b4f262d4d4fbfb3f40dbc80d10, type: 3}
   killPlayerSound: {fileID: 8300000, guid: 57c75f8514f042a4a8949a0c6df9964d, type: 3}
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 65
   horrorStingerSource: {fileID: 6964422721542049406}
   movementSource: {fileID: 3629046795185385167}
   killPlayerSource: {fileID: 3561998157640919286}
@@ -142502,10 +142469,10 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1
-  m_Speed: 3.5
+  m_Speed: 20
   m_Acceleration: 500
   avoidancePriority: 50
-  m_AngularSpeed: 0
+  m_AngularSpeed: 720
   m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 0

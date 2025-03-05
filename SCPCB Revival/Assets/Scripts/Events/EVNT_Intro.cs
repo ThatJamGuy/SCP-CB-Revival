@@ -289,6 +289,7 @@ public class EVNT_Intro : MonoBehaviour
         roomRenderer.SetActive(true);
         generatedMap.SetActive(true);
         cont173Lighting.SetActive(true);
+        AmbienceController.Instance.ChangeZone(1);
         yield return new WaitForSeconds(11.5f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
         yield return new WaitForSeconds(37.5f);

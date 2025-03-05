@@ -8,38 +8,12 @@ using UnityEngine.Rendering.HighDefinition;
 [RequireComponent(typeof(NavMeshAgent))]
 public class SCP_173 : MonoBehaviour
 {
-    [System.Serializable]
-    public enum SCPState { Sleeping, Idle, Chasing }
+    enum SCPState { Sleeping, Idle, Chasing }
+    SCPState currentState = SCPState.Sleeping;
 
-    [Header("State Settings")]
-    [SerializeField] private SCPState currentState = SCPState.Sleeping;
-    [SerializeField] private bool ignorePlayer = false;
-    [SerializeField] private bool scriptedMode = false;
-    [SerializeField, Range(1, 3)] private int difficulty = 1;
-    [SerializeField] private float checkInterval = 0.1f; // How often to check visibility
-
-    [Header("Movement Settings")]
-    [SerializeField] private float baseSpeed = 5f;
-    [SerializeField] private float stoppingDistance = 1f;
-    [SerializeField] private float playerEscapeDistance = 50f;
-
-    [Header("Visual Effect Settings")]
-    [SerializeField] private float minVignetteIntensity = 0.1f;
-    [SerializeField] private float maxVignetteIntensity = 0.8f;
-    [SerializeField] private float vignetteRange = 15f;
-
-    [Header("Audio Settings")]
-    [SerializeField] private float nearSoundDistance = 5f;
-    [SerializeField] private float nearSoundCooldown = 10f;
-    [SerializeField] private float killDistance = 3f;
-    [SerializeField] private float tensionAudioRange = 15f;
-    [SerializeField] private float minTensionVolume = 0.1f;
-    [SerializeField] private float maxTensionVolume = 1f;
-
-    [Header("Advanced Visibility")]
-    [SerializeField] private int visibilityRayCount = 7; // Number of rays to check
-    [SerializeField] private float visibilityThreshold = 0.3f; // Percentage of visible rays needed to be considered visible
-    [SerializeField] private LayerMask obstacleMask;
+    [Header("Settings")]
+    public bool ignorePlayer; public bool scriptedMode; public float playerEscapeDistance, minVignetteIntensity, maxVignetteIntensity, vignetteRange;
+    [SerializeField] private int speed;
 
     [Header("Audio")]
     [SerializeField] private AudioClip[] horrorNearSFX;
@@ -47,431 +21,167 @@ public class SCP_173 : MonoBehaviour
     [SerializeField] private AudioClip killPlayerSound;
 
     [Header("References")]
-    [SerializeField] private AudioSource horrorStingerSource;
-    [SerializeField] private AudioSource movementSource;
-    [SerializeField] private AudioSource killPlayerSource;
-    [SerializeField] private AudioSource tensionSource;
+    [SerializeField] private LayerMask obstructionMask;
+    [SerializeField] private AudioSource horrorStingerSource, movementSource, killPlayerSource, tensionSource;
     [SerializeField] private GameObject christmasHat;
+    public bool isVisible { get; private set; }
 
-    // Private variables
-    private Transform player;
     private PlayerController playerController;
     private Renderer objectRenderer;
     private NavMeshAgent agent;
-    private Vignette vignette;
-    private Camera mainCamera;
-    private Transform cameraTransform;
+    private Volume skyAndFogVolume;
+    private Camera targetCamera;
+    private bool seenForTheFirstTime;
     private float distanceToPlayer;
-    private float actualSpeed;
-
-    // Visibility checking
-    private Plane[] cameraFrustumPlanes = new Plane[6];
-    private bool isVisible;
-    private bool hiddenBehindObstacle;
-    private bool isMoving;
-
-    // State tracking
-    private bool seenForTheFirstTime = false;
     private bool hasPlayedNearSound = false;
     private bool hasKilledPlayer = false;
 
-    private void Awake()
-    {
-        InitializeComponents();
-        SetupVignetteEffect();
-        EnableSeasonalContent();
-    }
-
-    private void InitializeComponents()
-    {
-        // Get references
-        objectRenderer = GetComponent<Renderer>();
-        agent = GetComponent<NavMeshAgent>();
-        mainCamera = Camera.main;
-
-        if (mainCamera != null)
-        {
-            cameraTransform = mainCamera.transform;
-        }
-        else
-        {
-            Debug.LogError("Main camera not found!");
-        }
-
-        // Find player if not set
-        GameObject playerObj = GameObject.FindWithTag("Player");
-        if (playerObj != null)
-        {
-            player = playerObj.transform;
-            playerController = playerObj.GetComponent<PlayerController>();
-        }
-        else
-        {
-            Debug.LogWarning("Player not found! SCP-173 needs a player to target.");
-        }
-    }
-
-    private void SetupVignetteEffect()
-    {
-        Volume skyAndFogVolume = GameObject.Find("Sky and Fog Volume")?.GetComponent<Volume>();
-        if (skyAndFogVolume != null && skyAndFogVolume.profile.TryGet(out Vignette v))
-        {
-            vignette = v;
-        }
-        else
-        {
-            Debug.LogWarning("SCP-173: Vignette effect not found in Sky and Fog Volume");
-        }
-    }
-
-    private void EnableSeasonalContent()
-    {
-        if (christmasHat != null)
-        {
-            christmasHat.SetActive(DateTime.Now.Month == 12);
-        }
-    }
-
     private void Start()
     {
-        // Validate required components
-        if (agent == null)
-        {
-            Debug.LogError("NavMeshAgent component is missing on " + gameObject.name);
-            enabled = false;
-            return;
-        }
-
-        // Apply difficulty scaling
-        actualSpeed = baseSpeed * difficulty;
-        agent.speed = actualSpeed;
-        agent.stoppingDistance = stoppingDistance;
-
-        // Start visibility check coroutine for better performance
-        StartCoroutine(VisibilityCheckCoroutine());
+        IntitializeComponents();
+        DoHolidayCheck();
     }
 
-    // Using a coroutine for visibility checks to reduce performance impact
-    private IEnumerator VisibilityCheckCoroutine()
+    private void Update()
     {
-        WaitForSeconds wait = new WaitForSeconds(checkInterval);
+        if (ignorePlayer) return;
 
-        while (enabled)
-        {
-            if (!ignorePlayer && player != null)
-            {
-                CheckVisibility();
-                HandleStateTransitions();
-                HandleStateBehavior();
-                HandleAudioAndEffects();
-                CheckPlayerDistance();
-            }
-            yield return wait;
-        }
-    }
+        isVisible = IsObjectVisible();
 
-    private void CheckVisibility()
-    {
-        // Calculate distance to player
-        distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        // Check if in frustum (basic visibility)
-        GeometryUtility.CalculateFrustumPlanes(mainCamera, cameraFrustumPlanes);
-        bool inFrustum = GeometryUtility.TestPlanesAABB(cameraFrustumPlanes, objectRenderer.bounds);
-
-        // Only do the more expensive raycast check if we're in the camera's view frustum
-        if (inFrustum)
-        {
-            CheckObstacleVisibility();
-        }
-        else
-        {
-            hiddenBehindObstacle = true;
-        }
-
-        // Determine final visibility state
-        isVisible = inFrustum && !hiddenBehindObstacle;
-
-        // First time spotted logic
         if (!seenForTheFirstTime && isVisible)
         {
-            HandleFirstEncounter();
-        }
-    }
+            distanceToPlayer = Vector3.Distance(transform.position, targetCamera.transform.position);
 
-    private void CheckObstacleVisibility()
-    {
-        int visiblePoints = 0;
-        Vector3 center = objectRenderer.bounds.center;
-        Vector3 extents = objectRenderer.bounds.extents;
-        Vector3 camPos = cameraTransform.position;
+            if (distanceToPlayer < 10f)
+                horrorStingerSource.PlayOneShot(horrorNearSFX[UnityEngine.Random.Range(0, horrorNearSFX.Length)]);
+            else
+                horrorStingerSource.PlayOneShot(horrorFarSFX[UnityEngine.Random.Range(0, horrorFarSFX.Length)]);
 
-        // Create a set of points around the object's bounds to test visibility
-        Vector3[] points = new Vector3[visibilityRayCount];
-        points[0] = center; // Center point
+            seenForTheFirstTime = true;
+            currentState = SCPState.Idle;
 
-        // Add points at the corners and edges of the bounds
-        if (visibilityRayCount > 1)
-        {
-            int index = 1;
-            if (index < visibilityRayCount) points[index++] = center + new Vector3(extents.x, extents.y, extents.z);
-            if (index < visibilityRayCount) points[index++] = center + new Vector3(-extents.x, extents.y, extents.z);
-            if (index < visibilityRayCount) points[index++] = center + new Vector3(extents.x, -extents.y, extents.z);
-            if (index < visibilityRayCount) points[index++] = center + new Vector3(-extents.x, -extents.y, extents.z);
-            if (index < visibilityRayCount) points[index++] = center + new Vector3(0, 0, extents.z);
-            if (index < visibilityRayCount) points[index++] = center + new Vector3(0, extents.y, 0);
+            if (!scriptedMode)
+                MusicPlayer.Instance.ChangeMusic(GameManager.Instance.scp173Music);
+
+            Debug.Log("Just saw SCP-173 for the first time.");
         }
 
-        // Cast rays from camera to each point
-        foreach (Vector3 point in points)
-        {
-            Vector3 direction = point - camPos;
-            float distance = direction.magnitude;
-            Ray ray = new Ray(camPos, direction.normalized);
+        if (currentState == SCPState.Sleeping || scriptedMode) return;
 
-            if (!Physics.Raycast(ray, out RaycastHit hit, distance, obstacleMask) || hit.transform == transform)
-            {
-                visiblePoints++;
-            }
-        }
+        distanceToPlayer = Vector3.Distance(transform.position, targetCamera.transform.position);
 
-        // Calculate visibility percentage
-        float visibilityPercentage = (float)visiblePoints / visibilityRayCount;
-        hiddenBehindObstacle = visibilityPercentage < visibilityThreshold;
-    }
+        if (isVisible && !playerController.isBlinking)
+            currentState = SCPState.Idle;
+        else
+            currentState = SCPState.Chasing;
 
-    private void HandleFirstEncounter()
-    {
-        // Play the first encounter sound regardless of scripted mode
-        PlayFirstEncounterSound();
-        seenForTheFirstTime = true;
-        currentState = SCPState.Idle;
-
-        // Only change music if not in scripted mode
-        if (!scriptedMode && MusicPlayer.Instance != null && GameManager.Instance != null)
-        {
-            MusicPlayer.Instance.ChangeMusic(GameManager.Instance.scp173Music);
-        }
-
-        Debug.Log("Player encountered SCP-173 for the first time");
-    }
-
-    private void HandleStateTransitions()
-    {
-        if (currentState == SCPState.Sleeping || scriptedMode || hasKilledPlayer)
-            return;
-
-        bool playerIsWatching = isVisible && playerController != null && !playerController.isBlinking;
-        currentState = playerIsWatching ? SCPState.Idle : SCPState.Chasing;
-    }
-
-    private void HandleStateBehavior()
-    {
         switch (currentState)
         {
             case SCPState.Sleeping:
-                // Do nothing when sleeping
                 break;
-
             case SCPState.Idle:
-                IdleState();
+                Idle();
                 break;
-
             case SCPState.Chasing:
-                ChasePlayerState();
+                ChasePlayer();
                 break;
         }
-    }
 
-    private void HandleAudioAndEffects()
-    {
-        // Play horror sound when close but not seen yet
-        if (isVisible &&
-            distanceToPlayer < nearSoundDistance &&
-            !hasPlayedNearSound &&
-            isMoving)
+        if (isVisible && distanceToPlayer < 5f && !hasPlayedNearSound && agent.velocity.magnitude > 0f && isVisible)
         {
-            PlayHorrorNearSound();
+            horrorStingerSource.PlayOneShot(horrorNearSFX[UnityEngine.Random.Range(0, horrorNearSFX.Length)]);
+            hasPlayedNearSound = true;
+
+            StartCoroutine(ResetHorrorNearSound());
         }
 
-        // Kill player when close and not being observed
-        if (distanceToPlayer <= killDistance && !hasKilledPlayer && !isVisible && !scriptedMode && currentState == SCPState.Chasing)
+        if (distanceToPlayer <= 1.7f && !hasKilledPlayer && !isVisible)
         {
-            KillPlayer();
-        }
-        else if(distanceToPlayer <= killDistance && !hasKilledPlayer && playerController.isBlinking && !scriptedMode && currentState == SCPState.Chasing)
-        {
-            KillPlayer();
+            Debug.Log("Killed player.");
+            GameManager.Instance.KillPlayer();
+            killPlayerSource.clip = killPlayerSound;
+            killPlayerSource.Play();
+            hasKilledPlayer = true;
+
+            movementSource.enabled = false;
+            currentState = SCPState.Sleeping;
         }
 
-        // Update tension audio
-        if (tensionSource != null && !scriptedMode)
+        if (isVisible && !playerController.isBlinking)
         {
-            bool shouldPlayTension = isVisible && distanceToPlayer < tensionAudioRange;
-            tensionSource.enabled = shouldPlayTension;
-
-            if (shouldPlayTension)
+            if (skyAndFogVolume.profile.TryGet(out Vignette vignette))
             {
-                float intensityFactor = 1f - (distanceToPlayer / tensionAudioRange);
-                tensionSource.volume = Mathf.Lerp(minTensionVolume, maxTensionVolume, intensityFactor);
+                float vignetteIntensity = Mathf.Lerp(maxVignetteIntensity, minVignetteIntensity, distanceToPlayer / vignetteRange);
+                vignette.intensity.value = vignetteIntensity;
             }
         }
 
-        // Update vignette intensity based on distance when player is looking
-        if (isVisible && playerController != null && !playerController.isBlinking)
+        tensionSource.enabled = isVisible && distanceToPlayer < vignetteRange;
+        tensionSource.volume = Mathf.Lerp(minVignetteIntensity, maxVignetteIntensity, 1 - (distanceToPlayer / vignetteRange));
+
+        if (distanceToPlayer > playerEscapeDistance)
         {
-            UpdateVignetteEffect();
-        }
-    }
-
-    private void CheckPlayerDistance()
-    {
-        if (distanceToPlayer > playerEscapeDistance && seenForTheFirstTime)
-        {
-            DespawnNPC();
-        }
-    }
-
-    private void PlayFirstEncounterSound()
-    {
-        if (horrorStingerSource == null) return;
-
-        AudioClip[] soundArray = (distanceToPlayer < 10f) ? horrorNearSFX : horrorFarSFX;
-        if (soundArray != null && soundArray.Length > 0)
-        {
-            AudioClip clip = soundArray[UnityEngine.Random.Range(0, soundArray.Length)];
-            horrorStingerSource.PlayOneShot(clip);
-        }
-    }
-
-    private void PlayHorrorNearSound()
-    {
-        if (horrorStingerSource == null || horrorNearSFX == null || horrorNearSFX.Length == 0) return;
-
-        AudioClip clip = horrorNearSFX[UnityEngine.Random.Range(0, horrorNearSFX.Length)];
-        horrorStingerSource.PlayOneShot(clip);
-        hasPlayedNearSound = true;
-
-        StartCoroutine(ResetHorrorSoundCooldown());
-    }
-
-    private IEnumerator ResetHorrorSoundCooldown()
-    {
-        yield return new WaitForSeconds(nearSoundCooldown);
-
-        // Only reset if player has moved away
-        if (distanceToPlayer > nearSoundDistance)
-        {
+            currentState = SCPState.Sleeping;
+            seenForTheFirstTime = false;
             hasPlayedNearSound = false;
-        }
-        else
-        {
-            // If still in range, check again later
-            StartCoroutine(ResetHorrorSoundCooldown());
-        }
-    }
-
-    private void KillPlayer()
-    {
-        if (killPlayerSource == null || killPlayerSound == null) return;
-
-        Debug.Log("SCP-173 killed player");
-        GameManager.Instance.KillPlayer();
-
-        killPlayerSource.PlayOneShot(killPlayerSound);
-        hasKilledPlayer = true;
-
-        if (movementSource != null)
-            movementSource.enabled = false;
-
-        currentState = SCPState.Sleeping;
-        isMoving = false;
-    }
-
-    private void UpdateVignetteEffect()
-    {
-        if (vignette == null) return;
-
-        float normalizedDistance = Mathf.Clamp01(distanceToPlayer / vignetteRange);
-        float vignetteIntensity = Mathf.Lerp(maxVignetteIntensity, minVignetteIntensity, normalizedDistance);
-        vignette.intensity.value = vignetteIntensity;
-    }
-
-    private void DespawnNPC()
-    {
-        currentState = SCPState.Sleeping;
-        seenForTheFirstTime = false;
-        hasPlayedNearSound = false;
-
-        if (MusicPlayer.Instance != null && GameManager.Instance != null)
-        {
             MusicPlayer.Instance.ChangeMusic(GameManager.Instance.zone1Music);
+            Debug.Log("Despawning SCSP-173.");
+            Destroy(gameObject);
         }
-
-        Debug.Log("SCP-173 despawned due to player distance");
-        Destroy(gameObject);
     }
 
-    private void ChasePlayerState()
+    private void ChasePlayer()
     {
-        if (agent == null || player == null) return;
-
-        agent.speed = actualSpeed;
         agent.isStopped = false;
-
-        if (movementSource != null)
-            movementSource.enabled = true;
-
-        MoveTowardsPlayer();
-        isMoving = true;
+        movementSource.enabled = true;
+        agent.SetDestination(playerController.transform.position);
     }
 
-    private void IdleState()
+    public void Idle()
     {
-        if (agent == null) return;
-
-        agent.speed = 0;
         agent.isStopped = true;
-        agent.velocity = Vector3.zero;
-
-        if (movementSource != null)
-            movementSource.enabled = false;
-
-        isMoving = false;
+        movementSource.enabled = false;
+        agent.SetDestination(transform.position);
+        agent.ResetPath();
     }
 
-    private void MoveTowardsPlayer()
+    private bool IsObjectVisible()
     {
-        if (player == null) return;
+        if (objectRenderer == null || targetCamera == null) return false;
 
-        agent.SetDestination(player.position);
+        var planes = GeometryUtility.CalculateFrustumPlanes(targetCamera);
+        if (!GeometryUtility.TestPlanesAABB(planes, objectRenderer.bounds)) return false;
 
-        // Smooth rotation towards player (only Y axis)
-        Vector3 relativePos = player.position - transform.position;
-        relativePos.y = 0;
+        Vector3 screenPoint = targetCamera.WorldToScreenPoint(objectRenderer.bounds.center);
+        if (screenPoint.z <= 0) return false;
 
-        if (relativePos != Vector3.zero)
+        if (Physics.Raycast(targetCamera.ScreenPointToRay(screenPoint), out RaycastHit hit, Mathf.Infinity, obstructionMask))
         {
-            Quaternion lookRotation = Quaternion.LookRotation(relativePos, Vector3.up);
-            transform.rotation = Quaternion.Euler(0, lookRotation.eulerAngles.y, 0);
+            return hit.transform == transform;
         }
+
+        return false;
     }
 
-    // Public methods for external control
-    public void SetState(SCPState newState)
+    IEnumerator ResetHorrorNearSound()
     {
-        currentState = newState;
+        yield return new WaitForSeconds(10f);
+
+        if (distanceToPlayer > 10f)
+            hasPlayedNearSound = false;
     }
 
-    public SCPState GetCurrentState()
+    private void IntitializeComponents()
     {
-        return currentState;
+        playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        skyAndFogVolume = GameObject.Find("Sky and Fog Volume").GetComponent<Volume>();
+        objectRenderer = GetComponent<Renderer>();
+        agent = GetComponent<NavMeshAgent>();
+        targetCamera ??= Camera.main;
     }
 
-    public void SetDifficulty(int newDifficulty)
+    private void DoHolidayCheck()
     {
-        difficulty = Mathf.Clamp(newDifficulty, 1, 3);
-        actualSpeed = baseSpeed * difficulty;
-        agent.speed = actualSpeed;
+        christmasHat.SetActive(DateTime.Now.Month == 12);
     }
 }

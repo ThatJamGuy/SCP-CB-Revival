@@ -84,7 +84,7 @@ public class PlayerController : MonoBehaviour
             float horizontal = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
             float upDown = 0f;
 
-            if(Input.GetKey(GameManager.Instance.noclipUp)) upDown = moveSpeed * Time.deltaTime;
+            if (Input.GetKey(GameManager.Instance.noclipUp)) upDown = moveSpeed * Time.deltaTime;
             if (Input.GetKey(GameManager.Instance.noclipDown)) upDown = -moveSpeed * Time.deltaTime;
 
             transform.Translate(new Vector3(horizontal, upDown, vertical));
@@ -97,7 +97,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
-        if(enabledNoclip) return;
+        if (enabledNoclip) return;
 
         if (characterController.isGrounded)
         {
@@ -138,7 +138,8 @@ public class PlayerController : MonoBehaviour
 
         rotationX = Mathf.Clamp(rotationX - mouseY, minLookX, maxLookX);
         transform.Rotate(0, mouseX, 0);
-        Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+        Quaternion currentRotation = Camera.main.transform.localRotation;
+        Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, currentRotation.eulerAngles.z);
     }
 
     private void HandleStamina()

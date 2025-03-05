@@ -8,27 +8,50 @@ public class HeadBob : MonoBehaviour
     [SerializeField] private float sprintBobSpeed = 10f;
     [SerializeField] private float bobAmount = 0.1f;
 
+    [Header("Rotation Settings")]
+    [SerializeField] private float rotationStrength = 5f;
+    [SerializeField] private float maxRotationAngle = 5f;
+    [SerializeField] private float rotationSpeed = 2f; // New parameter for rotation speed
+
     private float defaultYPos;
     private float bobTimer;
     private bool hasPlayedFootstep;
+    private Vector3 defaultRotation;
 
     private void Start()
     {
         defaultYPos = transform.localPosition.y;
+        defaultRotation = transform.localRotation.eulerAngles;
     }
 
     private void Update()
     {
         if (GameManager.Instance.disablePlayerInputs) return;
 
+        float movementSpeed = playerController.isSprinting ? sprintBobSpeed : walkBobSpeed;
+
         if (playerController.isMoving)
         {
-            float speed = playerController.isSprinting ? sprintBobSpeed : walkBobSpeed;
-            bobTimer += Time.deltaTime * speed;
+            bobTimer += Time.deltaTime * movementSpeed;
 
+            // Position Bob
             float bobOffset = Mathf.Sin(bobTimer) * bobAmount;
-            transform.localPosition = new Vector3(transform.localPosition.x, defaultYPos + bobOffset, transform.localPosition.z);
+            transform.localPosition = new Vector3(
+                transform.localPosition.x,
+                defaultYPos + bobOffset,
+                transform.localPosition.z
+            );
 
+            // Rotation Bob (SCP-like left and right rotation)
+            float rotationOffset = Mathf.Sin(bobTimer * rotationSpeed) * maxRotationAngle * rotationStrength;
+
+            transform.localRotation = Quaternion.Euler(
+                defaultRotation.x,
+                defaultRotation.y,
+                defaultRotation.z + rotationOffset
+            );
+
+            // Footstep Logic
             if (bobOffset < 0 && !hasPlayedFootstep)
             {
                 footstepHandler.PlayFootstepAudio();
