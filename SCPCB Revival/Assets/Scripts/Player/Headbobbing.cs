@@ -11,7 +11,7 @@ public class HeadBob : MonoBehaviour
     [Header("Rotation Settings")]
     [SerializeField] private float rotationStrength = 5f;
     [SerializeField] private float maxRotationAngle = 5f;
-    [SerializeField] private float rotationSpeed = 2f; // New parameter for rotation speed
+    [SerializeField] private float rotationSpeed = 2f;
 
     private float defaultYPos;
     private float bobTimer;

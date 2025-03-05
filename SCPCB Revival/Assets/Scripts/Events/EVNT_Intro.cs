@@ -69,6 +69,12 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private GameObject scp173_2;
     [SerializeField] private Animator gunLightLoop;
 
+    [Header("PA System")]
+    public bool canDoIntroPA = false;
+    [SerializeField] private AudioSource paSystemSource;
+    [SerializeField] private AudioClip[] scriptedLines;
+    [SerializeField] private AudioClip scriptedVoiceLine5;
+
     [Header("Other Stuff")]
     [SerializeField] private AudioSource alarmSource;
     [SerializeField] private AudioSource announcementSource;
@@ -102,6 +108,7 @@ public class EVNT_Intro : MonoBehaviour
         vibingGuardSource.Play();
 
         StartCoroutine(IntroSequencePartOne());
+        StartCoroutine(PASystem());
     }
 
     public void UnloadArea(GameObject area) => Destroy(area);
@@ -123,6 +130,10 @@ public class EVNT_Intro : MonoBehaviour
         alarmSource.Play();
         playerReverb.gameObject.SetActive(true);
         playerController.transform.position = skipIntroTransform.position;
+        roomRenderer.SetActive(true);
+        generatedMap.SetActive(true);
+        cont173Lighting.SetActive(true);
+        AmbienceController.Instance.ChangeZone(1);
         StartCoroutine(BringTheFellow());
         StartCoroutine(SkipIntroShakes());
     }
@@ -137,6 +148,19 @@ public class EVNT_Intro : MonoBehaviour
             guard02.ToggleLookAtCamera(false);
             guard01.Say(ulgrinSpeeches[randomIndex]);
             guard02.Say(otherGuardSpeeches[randomIndex]);
+        }
+    }
+
+    private IEnumerator PASystem()
+    {
+        while (canDoIntroPA)
+        {
+            yield return new WaitForSeconds(Random.Range(20, 30));
+            int randomIndex = Random.Range(0, scriptedLines.Length);
+            paSystemSource.clip = scriptedLines[randomIndex];
+
+            if (canDoIntroPA)
+                paSystemSource.Play();
         }
     }
 
@@ -164,12 +188,15 @@ public class EVNT_Intro : MonoBehaviour
         guard01.Say(exitCell);
         yield return new WaitUntil(() => readyForEscort);
         guard01.Say(escortBegin[Random.Range(0, escortBegin.Length)]);
-        yield return new WaitForSeconds(20);
+        yield return new WaitForSeconds(13f);
+        canDoIntroPA = true;
+        yield return new WaitForSeconds(7);
         GuardSpeech();
     }
 
     IEnumerator IntroSequencePartTwo()
     {
+        canDoIntroPA = false;
         yield return new WaitForSeconds(2f);
         scFranklin.PlayAnimationConditional("pushButton");
         yield return new WaitForSeconds(2f);
@@ -270,8 +297,11 @@ public class EVNT_Intro : MonoBehaviour
         }
     }
 
+    // Do it twice to be 100% sure, because even after the delay the player will still sometimes fall through the floor.
     IEnumerator BringTheFellow()
     {
+        yield return new WaitForSeconds(0.01f);
+        playerController.transform.position = skipIntroTransform.position;
         yield return new WaitForSeconds(0.01f);
         playerController.transform.position = skipIntroTransform.position;
     }
@@ -282,17 +312,19 @@ public class EVNT_Intro : MonoBehaviour
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
         yield return new WaitForSeconds(37.5f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
+        yield return new WaitForSeconds(10f);
+        paSystemSource.clip = scriptedVoiceLine5;
+        paSystemSource.Play();
     }
 
     public IEnumerator SkipIntroShakes()
     {
-        roomRenderer.SetActive(true);
-        generatedMap.SetActive(true);
-        cont173Lighting.SetActive(true);
-        AmbienceController.Instance.ChangeZone(1);
         yield return new WaitForSeconds(11.5f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
         yield return new WaitForSeconds(37.5f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
+        yield return new WaitForSeconds(10f);
+        paSystemSource.clip = scriptedVoiceLine5;
+        paSystemSource.Play();
     }
 }

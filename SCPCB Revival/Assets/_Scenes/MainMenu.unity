@@ -8616,7 +8616,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: v0.0.2
+  m_text: v0.2.1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cd57528ec0bd1ee4ab8945e73be81aa7, type: 2}
   m_sharedMaterial: {fileID: 1990318549308470062, guid: cd57528ec0bd1ee4ab8945e73be81aa7,
@@ -11371,7 +11371,6 @@ GameObject:
   - component: {fileID: 1280820175}
   - component: {fileID: 1280820174}
   - component: {fileID: 1280820173}
-  - component: {fileID: 1280820176}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -11464,14 +11463,14 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1280820176}
+      - m_Target: {fileID: 1905413369}
         m_TargetAssemblyTypeName: GraphicsQualitySettings, Assembly-CSharp
-        m_MethodName: SetQualityLevelDropdown
+        m_MethodName: OnQualityLevelChanged
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -11515,19 +11514,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1280820171}
   m_CullTransparentMesh: 1
---- !u!114 &1280820176
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1280820171}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7aa8306ac084e84f8240db712d823a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  qualityLevelDropdown: {fileID: 1280820173}
 --- !u!1 &1295295724
 GameObject:
   m_ObjectHideFlags: 0
@@ -16844,6 +16830,7 @@ GameObject:
   - component: {fileID: 1905413366}
   - component: {fileID: 1905413367}
   - component: {fileID: 1905413368}
+  - component: {fileID: 1905413369}
   m_Layer: 0
   m_Name: MenuController
   m_TagString: Untagged
@@ -16941,6 +16928,19 @@ MonoBehaviour:
   loadingCompleteText: {fileID: 1142908389}
   testSlider: {fileID: 1519095447}
   loadingFinishedSFX: {fileID: 1972119201}
+--- !u!114 &1905413369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1905413365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7aa8306ac084e84f8240db712d823a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  qualityLevelDropdown: {fileID: 1280820173}
 --- !u!1 &1908183008
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,7 +13,6 @@ public class SCP_173 : MonoBehaviour
 
     [Header("Settings")]
     public bool ignorePlayer; public bool scriptedMode; public float playerEscapeDistance, minVignetteIntensity, maxVignetteIntensity, vignetteRange;
-    [SerializeField] private int speed;
 
     [Header("Audio")]
     [SerializeField] private AudioClip[] horrorNearSFX;
@@ -95,7 +94,7 @@ public class SCP_173 : MonoBehaviour
             StartCoroutine(ResetHorrorNearSound());
         }
 
-        if (distanceToPlayer <= 1.7f && !hasKilledPlayer && !isVisible)
+        if (distanceToPlayer <= 2.5f && !hasKilledPlayer && !isVisible)
         {
             Debug.Log("Killed player.");
             GameManager.Instance.KillPlayer();
@@ -140,6 +139,7 @@ public class SCP_173 : MonoBehaviour
     public void Idle()
     {
         agent.isStopped = true;
+        agent.velocity = Vector3.zero;
         movementSource.enabled = false;
         agent.SetDestination(transform.position);
         agent.ResetPath();
