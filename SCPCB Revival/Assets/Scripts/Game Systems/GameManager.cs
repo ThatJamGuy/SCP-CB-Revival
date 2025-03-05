@@ -33,15 +33,26 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        skipIntro = GameSettings.Instance.skipIntro;
+        if (GameSettings.Instance != null)
+        {
+            skipIntro = GameSettings.Instance.skipIntro;
 
-        if(isNewGame && MusicPlayer.Instance != null) {
-            if (skipIntro) {
-                ChangeMusic(scp173ChamberMusic);
-                introEventScript.SkipIntro();
-            } else {
-                ChangeMusic(introMusic);
+            if (isNewGame && MusicPlayer.Instance != null)
+            {
+                if (skipIntro)
+                {
+                    ChangeMusic(scp173ChamberMusic);
+                    introEventScript.SkipIntro();
+                }
+                else
+                {
+                    ChangeMusic(introMusic);
+                }
             }
+        }
+        else
+        {
+            ChangeMusic(introMusic);
         }
     }
 

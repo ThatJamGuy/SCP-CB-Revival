@@ -84,12 +84,19 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private AudioReverbZone playerReverb;
     [SerializeField] private GameObject emergenctTeleportTrigger;
     [SerializeField] private GameObject roomRenderer;
-    
+
     private void Start()
     {
-        enablePartOne = !GameSettings.Instance.skipIntro;
+        if (GameSettings.Instance != null)
+        {
+            enablePartOne = !GameSettings.Instance.skipIntro;
+        }
+        else
+        {
+            enablePartOne = true;
+        }
 
-        if(!enablePartOne) return;
+        if (!enablePartOne) return;
 
         vibingGuardSource.clip = vibingGuardMusic[Random.Range(0, vibingGuardMusic.Length)];
         vibingGuardSource.Play();
@@ -120,9 +127,11 @@ public class EVNT_Intro : MonoBehaviour
         StartCoroutine(SkipIntroShakes());
     }
 
-    public void GuardSpeech() {
+    public void GuardSpeech()
+    {
         // Play a random speech from the ulgrin speech array, then find the matching one in the other guard array and play that
-        if(guard01.isActiveAndEnabled && guard02.isActiveAndEnabled) {
+        if (guard01.isActiveAndEnabled && guard02.isActiveAndEnabled)
+        {
             int randomIndex = Random.Range(0, ulgrinSpeeches.Length);
             guard01.ToggleLookAtCamera(false);
             guard02.ToggleLookAtCamera(false);
@@ -138,7 +147,8 @@ public class EVNT_Intro : MonoBehaviour
         scFranklinDoor1.GetComponent<Door>().OpenDoor();
         walkingFranklin.MoveAgent(scFranklinp2.transform);
         yield return new WaitForSeconds(4f);
-        if(scFranklinDoor1.gameObject.activeSelf) {
+        if (scFranklinDoor1.gameObject.activeSelf)
+        {
             scFranklinDoor1.GetComponent<Door>().CloseDoor();
         }
         yield return new WaitForSeconds(1);
@@ -224,7 +234,7 @@ public class EVNT_Intro : MonoBehaviour
         scp173_2.SetActive(true); // Grab a seperate SCP-173 for the upper bit cuz the normal one runs to the corner isntead of going up. :/
         yield return new WaitForSeconds(0.5f);
         lightingAnimator.gameObject.SetActive(false);
-        emergencyLights.SetActive(true); 
+        emergencyLights.SetActive(true);
         guardGuy.Say(ohShitShitShit);
         yield return new WaitForSeconds(1.7f);
         StartCoroutine(IntroGunshots());
@@ -265,14 +275,16 @@ public class EVNT_Intro : MonoBehaviour
         playerController.transform.position = skipIntroTransform.position;
     }
 
-    IEnumerator IntroBreachAnnouncementShakes() {
+    IEnumerator IntroBreachAnnouncementShakes()
+    {
         yield return new WaitForSeconds(9f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
         yield return new WaitForSeconds(37.5f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
     }
 
-    public IEnumerator SkipIntroShakes() {
+    public IEnumerator SkipIntroShakes()
+    {
         roomRenderer.SetActive(true);
         generatedMap.SetActive(true);
         cont173Lighting.SetActive(true);
