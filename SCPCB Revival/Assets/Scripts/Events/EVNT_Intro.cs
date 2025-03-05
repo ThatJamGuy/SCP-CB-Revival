@@ -256,6 +256,7 @@ public class EVNT_Intro : MonoBehaviour
         StartCoroutine(IntroBreachAnnouncementShakes());
         generatedMap.SetActive(true);
         roomRenderer.SetActive(true);
+        AmbienceController.Instance.ChangeZone(1);
     }
 
     IEnumerator IntroGunshots()
