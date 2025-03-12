@@ -10,11 +10,12 @@ public class PlayerSettings : MonoBehaviour
     public bool enableFPSCounter;
     public bool isFullscreen;
     public bool vsyncEnabled;
-    
+
     [Header("Audio Settings")]
     public float masterVolume;
     public float musicVolume;
     public float sfxVolume;
+    public float voiceVolume;
 
     [SerializeField] private AudioMixer gameAudioMixer;
 
@@ -36,6 +37,7 @@ public class PlayerSettings : MonoBehaviour
         masterVolume = PlayerPrefs.GetFloat("SavedMasterVolume", 100);
         musicVolume = PlayerPrefs.GetFloat("SavedMusicVolume", 100);
         sfxVolume = PlayerPrefs.GetFloat("SavedSFXVolume", 100);
+        voiceVolume = PlayerPrefs.GetFloat("SavedVoiceVolume", 100);
 
         ApplyGraphicsSettings();
         ApplyAudioSettings();
@@ -52,6 +54,7 @@ public class PlayerSettings : MonoBehaviour
         gameAudioMixer.SetFloat("MasterVolume", Mathf.Log10(masterVolume / 100) * 20f);
         gameAudioMixer.SetFloat("MusicVolume", Mathf.Log10(musicVolume / 100) * 20f);
         gameAudioMixer.SetFloat("SFXVolume", Mathf.Log10(sfxVolume / 100) * 20f);
+        gameAudioMixer.SetFloat("VoiceVolume", Mathf.Log10(voiceVolume / 100) * 20f);
     }
 
     public void SetFullscreen(bool value)
@@ -86,6 +89,13 @@ public class PlayerSettings : MonoBehaviour
     {
         sfxVolume = Mathf.Max(value, 0.001f);
         PlayerPrefs.SetFloat("SavedSFXVolume", sfxVolume);
+        ApplyAudioSettings();
+    }
+
+    public void SetVoiceVolume(float value)
+    {
+        voiceVolume = Mathf.Max(value, 0.001f);
+        PlayerPrefs.SetFloat("SavedVoiceVolume", voiceVolume);
         ApplyAudioSettings();
     }
 }

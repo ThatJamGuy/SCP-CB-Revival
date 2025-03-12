@@ -9,7 +9,10 @@ public class MenuController : MonoBehaviour
     [SerializeField] private TMP_InputField frameLimitInputField;
 
     [Header("Sound Settings")]
-    [SerializeField] private Slider masterVolumeSlider, musicVolumeSlider, sfxVolumeSlider;
+    [SerializeField] private Slider masterVolumeSlider;
+    [SerializeField] private Slider musicVolumeSlider;
+    [SerializeField] private Slider sfxVolumeSlider;
+    [SerializeField] private Slider voiceVolumeSlider;
 
     [SerializeField] private AudioClip menuMusic, menuInteract, menuFailInteract;
     [SerializeField] private AudioSource interactSource;
@@ -28,6 +31,7 @@ public class MenuController : MonoBehaviour
         masterVolumeSlider.value = PlayerSettings.Instance.masterVolume;
         musicVolumeSlider.value = PlayerSettings.Instance.musicVolume;
         sfxVolumeSlider.value = PlayerSettings.Instance.sfxVolume;
+        voiceVolumeSlider.value = PlayerSettings.Instance.voiceVolume;
 
         GameSettings.Instance.skipIntro = false;
     }
@@ -54,6 +58,7 @@ public class MenuController : MonoBehaviour
     public void SetMasterVolume() => PlayerSettings.Instance.SetMasterVolume(masterVolumeSlider.value);
     public void SetMusicVolume() => PlayerSettings.Instance.SetMusicVolume(musicVolumeSlider.value);
     public void SetSFXVolume() => PlayerSettings.Instance.SetSFXVolume(sfxVolumeSlider.value);
+    public void SetVoiceVolume() => PlayerSettings.Instance.SetVoiceVolume(voiceVolumeSlider.value);
 
     public void OpenLink(string linkURL) => Application.OpenURL(linkURL);
     public void QuitGame() => Application.Quit();
