@@ -52,7 +52,7 @@ public class LoadingSystem : MonoBehaviour
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIdToLoad, LoadSceneMode.Single);
         operation.allowSceneActivation = true;
 
-        if(isMapLoader)
+        if (isMapLoader)
             operation.allowSceneActivation = false;
 
         loadingScreen.SetActive(true);
@@ -62,16 +62,18 @@ public class LoadingSystem : MonoBehaviour
             float progressValue = Mathf.Clamp01(operation.progress / 0.9f);
             testSlider.value = progressValue;
 
-            Debug.Log(progressValue);
+            //Debug.Log(progressValue);
 
-            if(isMapLoader) {
+            if (isMapLoader)
+            {
                 if (progressValue >= 0.9f)
                 {
                     percentageText.gameObject.SetActive(false);
                     loadingCompleteText.gameObject.SetActive(true);
 
-                    if(!playedSound) {
-                        loadingFinishedSFX.Play();  
+                    if (!playedSound)
+                    {
+                        loadingFinishedSFX.Play();
                         playedSound = true;
                     }
                 }

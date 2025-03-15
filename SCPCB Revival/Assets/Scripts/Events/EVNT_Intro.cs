@@ -6,10 +6,7 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private bool enablePartOne;
 
     [Header("Intro Part One")]
-
     public bool readyForEscort;
-    public bool reachedSector2;
-    public bool reachedSector3;
 
     [SerializeField] private GameObject cellDoor;
     [SerializeField] private NPC_Puppet guard01;
@@ -18,7 +15,14 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private NPC_Puppet classDEscortGuard02;
     [SerializeField] private AudioClip[] vibingGuardMusic;
     [SerializeField] private AudioClip exitCell;
+    [SerializeField] private AudioClip[] refuseExitCell;
+    [SerializeField] private AudioClip[] refuseExitGas;
     [SerializeField] private AudioClip[] escortBegin;
+    [SerializeField] private AudioClip refuseToCooperateMusic;
+    [SerializeField] private AudioSource autoVoxKillSource;
+    [SerializeField] private GameObject[] cellLights;
+    [SerializeField] private AudioSource gasValvlesOpen;
+    [SerializeField] private GameObject[] gas;
 
     [Header("Audio")]
     [SerializeField] private AudioSource beforeDoorOpenAudio;
@@ -84,6 +88,27 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private GameObject cont173Lighting;
     [SerializeField] private GameObject generatedMap;
 
+    [Header("Electricians But Actually Dumb Retards")]
+    [SerializeField] private Animator electricianAnimator;
+    [SerializeField] private Animator electricianAnimator2;
+    [SerializeField] private AudioSource breakerExplode;
+    [SerializeField] private Animator lightsAnimator;
+    [SerializeField] private GameObject expodeVFX;
+    [SerializeField] private float time1;
+    [SerializeField] private float time2;
+    [SerializeField] private float time3;
+
+    [Header("SCFranklin And Ulgrin Escape")]
+    [SerializeField] private NPC_Puppet scFranklinPostBreach;
+    [SerializeField] private NPC_Puppet ulgrinPostBreach;
+    [SerializeField] private AudioClip ufEvnt_01;
+    [SerializeField] private AudioClip ufEvnt_02;
+    [SerializeField] private Door eventDoor;
+    [SerializeField] private GameObject scpOneSevenThreeOhThree;
+    [SerializeField] private Animator ContLightingFlicker;
+    [SerializeField] private AudioSource lightFlickerSource;
+    [SerializeField] private AudioClip[] lightFlickerSounds;
+
     [Header("Skip Intro")]
     [SerializeField] private PlayerController playerController;
     [SerializeField] private Transform skipIntroTransform;
@@ -118,6 +143,8 @@ public class EVNT_Intro : MonoBehaviour
     public void Approach173() => readyForApproach173 = true;
 
     public void StartPartTwo() => StartCoroutine(IntroSequencePartTwo());
+    public void StartElecricianEvent() => StartCoroutine(ElectricianEvent());
+    public void StartFranklinUlgrinEvent() => StartCoroutine(FranklinUlgrinEvent());
 
     public void FranklinWalk() => StartCoroutine(FranklinWalksToDoor());
 
@@ -164,19 +191,70 @@ public class EVNT_Intro : MonoBehaviour
         }
     }
 
-    IEnumerator FranklinWalksToDoor()
+    private IEnumerator ElectricianEvent()
+    {
+        electricianAnimator2.Play("Electrician01");
+        yield return new WaitForSeconds(time1);
+        electricianAnimator.Play("Electrician02");
+        yield return new WaitForSeconds(time2);
+        electricianAnimator2.SetBool("Elec1Touch", true);
+        yield return new WaitForSeconds(time3);
+        expodeVFX.SetActive(true);
+        lightsAnimator.Play("IntroConnectorLightFlicker");
+        GlobalCameraShake.Instance.ShakeCamera(0.5f, 0f, 0.3f);
+        breakerExplode.Play();
+        electricianAnimator2.enabled = false;
+        electricianAnimator.SetBool("Elec2Look", true);
+        yield return new WaitForSeconds(0.5f);
+        expodeVFX.SetActive(false);
+    }
+
+    private IEnumerator FranklinWalksToDoor()
     {
         walkingFranklin.MoveAgent(scFranklinp1.transform);
         yield return new WaitForSeconds(7f);
-        scFranklinDoor1.GetComponent<Door>().OpenDoor();
-        walkingFranklin.MoveAgent(scFranklinp2.transform);
+        if (scFranklinDoor1.gameObject.activeSelf)
+            scFranklinDoor1.GetComponent<Door>().OpenDoor();
+        if (scFranklinDoor1.gameObject.activeSelf)
+            walkingFranklin.MoveAgent(scFranklinp2.transform);
         yield return new WaitForSeconds(4f);
         if (scFranklinDoor1.gameObject.activeSelf)
-        {
             scFranklinDoor1.GetComponent<Door>().CloseDoor();
-        }
         yield return new WaitForSeconds(1);
         walkingFranklin.gameObject.SetActive(false);
+    }
+
+    private IEnumerator FranklinUlgrinEvent()
+    {
+        eventDoor.OpenDoor();
+        scFranklinPostBreach.Say(ufEvnt_01);
+        ulgrinPostBreach.Say(ufEvnt_02);
+        yield return new WaitForSeconds(0.9f);
+        ulgrinPostBreach.PlayAnimationConditional("franklinUlgrinEvent");
+        yield return new WaitForSeconds(0.5f);
+        scFranklinPostBreach.PlayAnimationConditional("franklinWalkBack");
+        yield return new WaitForSeconds(1.6f);
+        ulgrinPostBreach.PlayAnimationConditional("franklinUlgrinWalkBack");
+        StartCoroutine(FranklinUlgrin173Event());
+        yield return new WaitForSeconds(9f);
+        eventDoor.CloseDoor();
+        yield return new WaitForSeconds(1f);
+        ulgrinPostBreach.gameObject.SetActive(false);
+        scFranklinPostBreach.gameObject.SetActive(false);
+    }
+
+    private IEnumerator FranklinUlgrin173Event()
+    {
+        yield return new WaitForSeconds(3.9f);
+        ContLightingFlicker.SetTrigger("LightFlicker");
+        lightFlickerSource.PlayOneShot(lightFlickerSounds[Random.Range(0, lightFlickerSounds.Length)]);
+        yield return new WaitForSeconds(0.1f);
+        scpOneSevenThreeOhThree.transform.position += new Vector3(0, 0, 8.5f);
+        yield return new WaitForSeconds(5.5f);
+        lightFlickerSource.PlayOneShot(lightFlickerSounds[Random.Range(0, lightFlickerSounds.Length)]);
+        ContLightingFlicker.SetTrigger("LightFlicker");
+        yield return new WaitForSeconds(0.1f);
+        scpOneSevenThreeOhThree.SetActive(false);
     }
 
     IEnumerator IntroSequencePartOne()
@@ -186,12 +264,48 @@ public class EVNT_Intro : MonoBehaviour
         yield return new WaitForSeconds(11f);
         cellDoor.GetComponent<Door>().OpenDoor();
         guard01.Say(exitCell);
+        StartCoroutine(RefuseExitCellCheck());
         yield return new WaitUntil(() => readyForEscort);
         guard01.Say(escortBegin[Random.Range(0, escortBegin.Length)]);
         yield return new WaitForSeconds(13f);
         canDoIntroPA = true;
         yield return new WaitForSeconds(7);
         GuardSpeech();
+    }
+
+    private IEnumerator RefuseExitCellCheck()
+    {
+        yield return new WaitForSeconds(10f);
+        if (!readyForEscort)
+            guard01.Say(refuseExitCell[Random.Range(0, refuseExitCell.Length)]);
+        yield return new WaitForSeconds(10f);
+        if (!readyForEscort)
+            guard01.Say(refuseExitGas[0]);
+        yield return new WaitForSeconds(7f);
+        if (!readyForEscort)
+            cellDoor.GetComponent<Door>().CloseDoor();
+        if (!readyForEscort)
+            MusicPlayer.Instance.ChangeMusic(refuseToCooperateMusic);
+        yield return new WaitForSeconds(1f);
+        StartCoroutine(RefuseExitCellKill());
+    }
+
+    private IEnumerator RefuseExitCellKill()
+    {
+        if (!readyForEscort)
+        {
+            canDoIntroPA = false;
+            yield return new WaitForSeconds(3f);
+            cellLights[0].SetActive(false);
+            cellLights[1].SetActive(true);
+            autoVoxKillSource.Play();
+            yield return new WaitForSeconds(18);
+            gasValvlesOpen.Play();
+            gas[0].SetActive(true);
+            gas[1].SetActive(true);
+            yield return new WaitForSeconds(5);
+            GameManager.Instance.KillPlayer();
+        }
     }
 
     IEnumerator IntroSequencePartTwo()

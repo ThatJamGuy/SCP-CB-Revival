@@ -10,7 +10,7 @@ public class RoomData : ScriptableObject
 
     [Header("Size Configuration")]
     public bool isLargeRoom;
-    public Vector2Int expansionAmount; // X = horizontal expansion, Y = vertical expansion
+    public Vector2Int expansionAmount;
 
     [Header("Special Properties")]
     public bool isExitRoom;
@@ -25,6 +25,4 @@ public class RoomData : ScriptableObject
         FourWayHallway,
         LShapeHallway
     }
-
-    // Add custom validation if needed in a separate editor script
 }
