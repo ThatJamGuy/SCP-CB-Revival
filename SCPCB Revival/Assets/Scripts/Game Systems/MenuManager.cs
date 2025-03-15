@@ -1,4 +1,3 @@
-using NaughtyAttributes;
 using UnityEngine;
 
 public class MenuManager : MonoBehaviour
@@ -28,7 +27,7 @@ public class MenuManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        if(menuInteractSource != null) menuInteractSource.ignoreListenerPause = true;
+        if (menuInteractSource != null) menuInteractSource.ignoreListenerPause = true;
     }
 
     private void Update()
@@ -46,11 +45,21 @@ public class MenuManager : MonoBehaviour
     public void ToggleMenu(int index)
     {
         if (index < 0 || index >= menus.Length) return;
+        if (IsAnyMenuOpen() && !menus[index].isActive) return;
         var menu = menus[index];
         menu.isActive = !menu.isActive;
         menu.menu.SetActive(menu.isActive);
-        if(menu.pausesGame) GameManager.Instance.PauseGame();
-        if(menu.togglesInput) GameManager.Instance.TogglePlayerInput(true);
+        if (menu.pausesGame) GameManager.Instance.PauseGame();
+        if (menu.togglesInput) GameManager.Instance.TogglePlayerInput(true);
+    }
+
+    private bool IsAnyMenuOpen()
+    {
+        foreach (var menu in menus)
+        {
+            if (menu.isActive) return true;
+        }
+        return false;
     }
 
     public void PlayInteractSFX(bool failed)
