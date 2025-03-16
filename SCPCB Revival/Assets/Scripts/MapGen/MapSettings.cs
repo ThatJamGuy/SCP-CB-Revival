@@ -7,6 +7,7 @@ public class MapSettings : ScriptableObject
     [Header("Grid Configuration")]
     public float cellSize = 20.5f;
     public Vector2Int gridSize = new Vector2Int(10, 10);
+    public Vector2Int startingCoords = new Vector2Int(0, 0);
 
     [Header("Zone Configuration")]
     public List<ZoneConnection> zoneConnections = new List<ZoneConnection>();

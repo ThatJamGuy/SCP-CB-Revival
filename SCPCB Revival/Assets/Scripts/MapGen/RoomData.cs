@@ -17,6 +17,10 @@ public class RoomData : ScriptableObject
     public bool mustSpawn;
     public bool spawnOnce;
 
+    [Header("Entrance Configuration")]
+    [Tooltip("Array of 4 bools representing entrances [North, East, South, West]")]
+    public bool[] entrances = new bool[4];
+
     public enum RoomShape
     {
         EndRoom,
