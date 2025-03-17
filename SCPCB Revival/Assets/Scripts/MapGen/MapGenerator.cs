@@ -13,6 +13,7 @@ public class MapGenerator : MonoBehaviour
     {
         InitializeGrid();
         PlaceStartingRoom();
+        GenerateMap();
     }
 
     void InitializeGrid()
@@ -36,22 +37,31 @@ public class MapGenerator : MonoBehaviour
         ClearMap();
         InitializeGrid();
         PlaceStartingRoom();
+        GenerateMap();
     }
 
     void ClearMap()
     {
+        List<GameObject> children = new List<GameObject>();
+
         foreach (Transform child in transform)
-        {
-            DestroyImmediate(child.gameObject);
-        }
+            children.Add(child.gameObject);
+
+        foreach (GameObject child in children)
+            DestroyImmediate(child);
+
         spawnedRooms.Clear();
         grid = null;
+
+        Debug.Log("Map cleared successfully.");
     }
 
     void PlaceStartingRoom()
     {
         List<RoomData> availableRooms = mapSettings.zones[0].rooms.FindAll(room =>
-            !room.isExitRoom && room.shape != RoomData.RoomShape.EndRoom && (room.mustSpawn || !spawnedRooms.Contains(room))
+            !room.isExitRoom &&
+            (room.shape == RoomData.RoomShape.TShapeHallway || room.shape == RoomData.RoomShape.FourWayHallway) &&
+            (room.mustSpawn || !spawnedRooms.Contains(room))
         );
 
         if (availableRooms.Count == 0)
@@ -72,6 +82,131 @@ public class MapGenerator : MonoBehaviour
         InstantiateRoom(startingRoom, startCoords, rotation);
 
         Debug.Log($"Placed starting room '{startingRoom.roomName}' at {startCoords} with rotation {rotation} degrees.");
+    }
+
+    void GenerateMap()
+    {
+        Vector2Int startCoords = mapSettings.startingCoords;
+        GridCell startCell = grid[startCoords.x, startCoords.y];
+
+        // Iterate through all entrances of the starting room
+        for (int i = 0; i < 4; i++)
+        {
+            if (startCell.roomData.entrances[i])
+            {
+                Vector2Int adjacentCoords = GetAdjacentCoordinates(startCoords, i);
+                if (IsWithinGrid(adjacentCoords) && grid[adjacentCoords.x, adjacentCoords.y].roomData == null)
+                {
+                    PlaceAdjacentRoom(adjacentCoords, i);
+                }
+            }
+        }
+    }
+
+    void PlaceAdjacentRoom(Vector2Int coords, int entranceDirection)
+    {
+        List<RoomData> availableRooms = mapSettings.zones[0].rooms.FindAll(room =>
+            !room.isExitRoom && // Exclude exit rooms
+            (!room.spawnOnce || !spawnedRooms.Contains(room)) // Allow rooms that are not marked as "spawn once" or haven't been spawned yet
+        );
+
+        if (availableRooms.Count == 0)
+        {
+            Debug.LogWarning("No available rooms to place adjacent to the starting room.");
+            return;
+        }
+
+        // Exclude 4-way rooms if the coordinates are on the edge of the grid
+        if (IsOnGridEdge(coords))
+        {
+            availableRooms = availableRooms.FindAll(room => room.shape != RoomData.RoomShape.FourWayHallway);
+        }
+
+        // Prioritize rooms marked as "must spawn"
+        List<RoomData> mustSpawnRooms = availableRooms.FindAll(room => room.mustSpawn);
+        if (mustSpawnRooms.Count > 0)
+        {
+            availableRooms = mustSpawnRooms;
+        }
+
+        if (availableRooms.Count == 0)
+        {
+            Debug.LogWarning("No valid rooms to place at the edge of the grid.");
+            return;
+        }
+
+        RoomData adjacentRoom = availableRooms[Random.Range(0, availableRooms.Count)];
+        spawnedRooms.Add(adjacentRoom);
+
+        // Calculate the required rotation for the adjacent room
+        int rotation = GetValidRotationForEdge(adjacentRoom, coords, entranceDirection);
+        grid[coords.x, coords.y].roomData = adjacentRoom;
+        grid[coords.x, coords.y].rotation = rotation;
+
+        InstantiateRoom(adjacentRoom, coords, rotation);
+
+        Debug.Log($"Placed adjacent room '{adjacentRoom.roomName}' at {coords} with rotation {rotation} degrees.");
+    }
+
+    bool IsOnGridEdge(Vector2Int coords)
+    {
+        return coords.x == 0 || coords.x == mapSettings.gridSize.x - 1 ||
+               coords.y == 0 || coords.y == mapSettings.gridSize.y - 1;
+    }
+
+    int GetValidRotationForEdge(RoomData room, Vector2Int coords, int entranceDirection)
+    {
+        // The adjacent room's entrance must face the opposite direction of the starting room's exit
+        int requiredEntrance = (entranceDirection + 2) % 4; // Opposite direction
+
+        // Try all rotations to find one that aligns the required entrance and doesn't point outside the grid
+        for (int rotation = 0; rotation < 4; rotation++)
+        {
+            int rotatedEntrance = (requiredEntrance - rotation + 4) % 4;
+            if (room.entrances[rotatedEntrance])
+            {
+                // Check if this rotation causes any entrances to point outside the grid
+                bool isValidRotation = true;
+                for (int i = 0; i < 4; i++)
+                {
+                    if (room.entrances[i])
+                    {
+                        Vector2Int adjacentCoords = GetAdjacentCoordinates(coords, (i + rotation) % 4);
+                        if (!IsWithinGrid(adjacentCoords))
+                        {
+                            isValidRotation = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (isValidRotation)
+                {
+                    return rotation * 90;
+                }
+            }
+        }
+
+        Debug.LogError($"Room {room.roomName} has no valid rotation for adjacent placement without pointing outside the grid!");
+        return 0;
+    }
+
+    Vector2Int GetAdjacentCoordinates(Vector2Int coords, int direction)
+    {
+        switch (direction)
+        {
+            case 0: return new Vector2Int(coords.x, coords.y + 1); // North
+            case 1: return new Vector2Int(coords.x + 1, coords.y); // East
+            case 2: return new Vector2Int(coords.x, coords.y - 1); // South
+            case 3: return new Vector2Int(coords.x - 1, coords.y); // West
+            default: return coords;
+        }
+    }
+
+    bool IsWithinGrid(Vector2Int coords)
+    {
+        return coords.x >= 0 && coords.x < mapSettings.gridSize.x &&
+               coords.y >= 0 && coords.y < mapSettings.gridSize.y;
     }
 
     int GetValidRotation(RoomData room)
