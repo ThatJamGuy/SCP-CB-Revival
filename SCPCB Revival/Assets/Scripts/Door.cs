@@ -58,14 +58,17 @@ public class Door : MonoBehaviour
 
     public void CloseDoor()
     {
-        if (isOpen && !isOpening)
+        if (gameObject.activeSelf)
         {
-            door01TargetPosition = door01InitialPosition;
-            door02TargetPosition = door02InitialPosition;
-            StartCoroutine(SlideDoor(doorPart01, door01TargetPosition, regularOpenCloseSpeed));
-            StartCoroutine(SlideDoor(doorPart02, door02TargetPosition, regularOpenCloseSpeed));
-            PlayDoorSound(doorCloseSFX);
-            isOpen = false;
+            if (isOpen && !isOpening)
+            {
+                door01TargetPosition = door01InitialPosition;
+                door02TargetPosition = door02InitialPosition;
+                StartCoroutine(SlideDoor(doorPart01, door01TargetPosition, regularOpenCloseSpeed));
+                StartCoroutine(SlideDoor(doorPart02, door02TargetPosition, regularOpenCloseSpeed));
+                PlayDoorSound(doorCloseSFX);
+                isOpen = false;
+            }
         }
     }
 

@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class EVNT_Intro : MonoBehaviour
 {
+    [SerializeField] private MapGenerator mapGenerator;
+    [SerializeField] private NavigationBaker navigationBaker;
+    [SerializeField] private GameObject generatedMapParent;
     [SerializeField] private bool enablePartOne;
 
     [Header("Intro Part One")]
@@ -86,7 +89,6 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private GameObject cont173Intro;
     [SerializeField] private GameObject cont173;
     [SerializeField] private GameObject cont173Lighting;
-    [SerializeField] private GameObject generatedMap;
 
     [Header("Electricians But Actually Dumb Retards")]
     [SerializeField] private Animator electricianAnimator;
@@ -115,6 +117,11 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private AudioReverbZone playerReverb;
     [SerializeField] private GameObject emergenctTeleportTrigger;
     [SerializeField] private GameObject roomRenderer;
+
+    private void Awake()
+    {
+        StartCoroutine(GenerateMapTimed());
+    }
 
     private void Start()
     {
@@ -158,7 +165,7 @@ public class EVNT_Intro : MonoBehaviour
         playerReverb.gameObject.SetActive(true);
         playerController.transform.position = skipIntroTransform.position;
         roomRenderer.SetActive(true);
-        generatedMap.SetActive(true);
+        generatedMapParent.SetActive(true);
         cont173Lighting.SetActive(true);
         AmbienceController.Instance.ChangeZone(1);
         StartCoroutine(BringTheFellow());
@@ -176,6 +183,15 @@ public class EVNT_Intro : MonoBehaviour
             guard01.Say(ulgrinSpeeches[randomIndex]);
             guard02.Say(otherGuardSpeeches[randomIndex]);
         }
+    }
+
+    private IEnumerator GenerateMapTimed()
+    {
+        generatedMapParent.SetActive(false);
+        mapGenerator.CreateWorld();
+        yield return new WaitForSeconds(0.1f);
+        navigationBaker.BakeNavigationMesh();
+        generatedMapParent.SetActive(false);
     }
 
     private IEnumerator PASystem()
@@ -395,7 +411,7 @@ public class EVNT_Intro : MonoBehaviour
         yield return new WaitForSeconds(3);
         cont173Lighting.SetActive(true);
         StartCoroutine(IntroBreachAnnouncementShakes());
-        generatedMap.SetActive(true);
+        generatedMapParent.SetActive(true);
         roomRenderer.SetActive(true);
         AmbienceController.Instance.ChangeZone(1);
     }

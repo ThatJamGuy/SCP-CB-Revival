@@ -8,6 +8,7 @@ public class MapSettings : ScriptableObject
     public float cellSize = 20.5f;
     public Vector2Int gridSize = new Vector2Int(10, 10);
     public Vector2Int startingCoords = new Vector2Int(0, 0);
+    public GameObject doorPrefab;  // Add this line
 
     [Header("Zone Configuration")]
     public List<ZoneConnection> zoneConnections = new List<ZoneConnection>();
