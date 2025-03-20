@@ -157,13 +157,13 @@ public class MapGenerator : MonoBehaviour
     {
         List<Vector2Int> potentialSpots = new List<Vector2Int>();
 
-        // First try to find spots that connect to existing rooms
+        // First try to find empty spots that connect to existing rooms
         for (int x = 0; x < mapSettings.gridSize.x; x++)
         {
             for (int y = 0; y < mapSettings.gridSize.y; y++)
             {
                 Vector2Int coords = new Vector2Int(x, y);
-                if (grid[x, y].roomData == null && CanPlaceRoomAt(room, coords))
+                if (!IsPositionOccupied(coords) && CanPlaceRoomAt(room, coords))
                 {
                     potentialSpots.Add(coords);
                 }
@@ -216,6 +216,10 @@ public class MapGenerator : MonoBehaviour
 
     bool CanPlaceRoomAt(RoomData room, Vector2Int coords)
     {
+        // First check if the target position is already occupied
+        if (IsPositionOccupied(coords))
+            return false;
+
         // Check if at least one valid rotation exists that connects to existing rooms
         for (int rotation = 0; rotation < 4; rotation++)
         {
@@ -407,6 +411,9 @@ public class MapGenerator : MonoBehaviour
 
     void PlaceConnectingRoom(Vector2Int coords, Vector2Int direction)
     {
+        // Check if position is already occupied
+        if (IsPositionOccupied(coords)) return;
+
         List<RoomData> hallways = mapSettings.zones[0].rooms.FindAll(room =>
             room.shape == RoomData.RoomShape.Hallway &&
             (!room.spawnOnce || !spawnedRooms.Contains(room))
@@ -492,7 +499,24 @@ public class MapGenerator : MonoBehaviour
                 Vector2Int adjacentCoords = GetAdjacentCoordinates(coords, rotatedDirection);
                 if (IsWithinGrid(adjacentCoords) && grid[adjacentCoords.x, adjacentCoords.y].roomData == null)
                 {
-                    PlaceDeadEnd(adjacentCoords, rotatedDirection);
+                    // Check if this position can actually fit a dead end
+                    bool canPlaceDeadEnd = true;
+                    for (int dir = 0; dir < 4; dir++)
+                    {
+                        if (dir == (rotatedDirection + 2) % 4) continue; // Skip the direction we're connecting from
+
+                        Vector2Int neighborCoords = GetAdjacentCoordinates(adjacentCoords, dir);
+                        if (IsWithinGrid(neighborCoords) && grid[neighborCoords.x, neighborCoords.y].roomData != null)
+                        {
+                            canPlaceDeadEnd = false;
+                            break;
+                        }
+                    }
+
+                    if (canPlaceDeadEnd)
+                    {
+                        PlaceDeadEnd(adjacentCoords, rotatedDirection);
+                    }
                 }
             }
         }
@@ -500,6 +524,9 @@ public class MapGenerator : MonoBehaviour
 
     void PlaceDeadEnd(Vector2Int coords, int entranceDirection)
     {
+        // First verify that this position is still empty (could have been filled by another dead end)
+        if (grid[coords.x, coords.y].roomData != null) return;
+
         List<RoomData> deadEnds = mapSettings.zones[0].rooms.FindAll(room =>
             room.shape == RoomData.RoomShape.EndRoom &&
             (!room.spawnOnce || !spawnedRooms.Contains(room))
@@ -508,13 +535,19 @@ public class MapGenerator : MonoBehaviour
         if (deadEnds.Count > 0)
         {
             RoomData deadEnd = deadEnds[Random.Range(0, deadEnds.Count)];
-            spawnedRooms.Add(deadEnd);
 
+            // Verify the dead end can connect in this direction
             int rotation = ((entranceDirection + 2) % 4) * 90; // Rotate to face the connecting room
-            grid[coords.x, coords.y].roomData = deadEnd;
-            grid[coords.x, coords.y].rotation = rotation;
+            int deadEndEntranceIndex = (4 + (entranceDirection - rotation / 90)) % 4;
 
-            InstantiateRoom(deadEnd, coords, rotation);
+            if (deadEnd.entrances[deadEndEntranceIndex])
+            {
+                spawnedRooms.Add(deadEnd);
+                grid[coords.x, coords.y].roomData = deadEnd;
+                grid[coords.x, coords.y].rotation = rotation;
+
+                InstantiateRoom(deadEnd, coords, rotation);
+            }
         }
     }
 
@@ -531,6 +564,13 @@ public class MapGenerator : MonoBehaviour
 
     void PlaceAdjacentRoom(Vector2Int coords, int entranceDirection)
     {
+        // Check if position is already occupied
+        if (IsPositionOccupied(coords))
+        {
+            Debug.LogWarning($"Attempted to place room at occupied position {coords}");
+            return;
+        }
+
         // Get the room that we're connecting from
         Vector2Int sourceCoords = GetAdjacentCoordinates(coords, (entranceDirection + 2) % 4);
         GridCell sourceCell = grid[sourceCoords.x, sourceCoords.y];
@@ -662,6 +702,12 @@ public class MapGenerator : MonoBehaviour
     {
         return coords.x == 0 || coords.x == mapSettings.gridSize.x - 1 ||
                coords.y == 0 || coords.y == mapSettings.gridSize.y - 1;
+    }
+
+    bool IsPositionOccupied(Vector2Int coords)
+    {
+        if (!IsWithinGrid(coords)) return true;
+        return grid[coords.x, coords.y].roomData != null;
     }
 
     int GetValidRotation(RoomData room)
