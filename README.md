@@ -14,3 +14,5 @@ Feel free to make a pull request for any of the following reasons:
 - Bug fix
 - Code refactors/optimizations
 - Other (If there's another way you would like to contribute, ask in the Discord, or just open a PR or an issue.)
+
+![2025-03-20_00-32-04](https://github.com/user-attachments/assets/d8b6afc1-75c5-42d8-8edb-279f6d4d4c54)
