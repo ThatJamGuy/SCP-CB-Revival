@@ -599,7 +599,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 389329717}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aeab35849f5b01945986d167f60ee83f, type: 3}
   m_Name: 
@@ -615,6 +615,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1737911025}
+  - component: {fileID: 1737911027}
   - component: {fileID: 1737911026}
   m_Layer: 0
   m_Name: MapGenSystem
@@ -647,16 +648,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 1737911023}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d3254910d2a18b48b714c73c1f6ef53, type: 3}
+  m_Script: {fileID: 11500000, guid: 82d212ca1cfec4b409d54944f03dbf3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapSize:
-    xSize: 9
-    ySize: 5
-  mapGenSeed: 
-  roomsize: 20.5
-  cont173: {fileID: 0}
-  creationDone: 0
+  gMP: {fileID: 11400000, guid: d79922f1ae423df4ab9db92854bf018f, type: 2}
+  maxIterationsBeforeFallback: 8
+  debugGizmo: 1
+  disableGizmoText: 0
+  disableBFS: 0
+  disableAStar: 0
+  enableLargeRoomsFillPath: 0
+  disableSpawn: 0
+  disablePathRoomPlacement: 0
+  cleanUpOnFail: 1
+--- !u!114 &1737911027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737911023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62f08020359885c40ada2c2e9371456e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seed: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

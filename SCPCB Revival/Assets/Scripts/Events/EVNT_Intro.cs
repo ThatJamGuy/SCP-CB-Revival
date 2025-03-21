@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class EVNT_Intro : MonoBehaviour
 {
-    [SerializeField] private MapGenerator mapGenerator;
-    [SerializeField] private NavigationBaker navigationBaker;
     [SerializeField] private GameObject generatedMapParent;
     [SerializeField] private bool enablePartOne;
 
@@ -118,11 +116,6 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private GameObject emergenctTeleportTrigger;
     [SerializeField] private GameObject roomRenderer;
 
-    private void Awake()
-    {
-        StartCoroutine(GenerateMapTimed());
-    }
-
     private void Start()
     {
         if (GameSettings.Instance != null)
@@ -183,15 +176,6 @@ public class EVNT_Intro : MonoBehaviour
             guard01.Say(ulgrinSpeeches[randomIndex]);
             guard02.Say(otherGuardSpeeches[randomIndex]);
         }
-    }
-
-    private IEnumerator GenerateMapTimed()
-    {
-        generatedMapParent.SetActive(false);
-        mapGenerator.CreateWorld();
-        yield return new WaitForSeconds(0.1f);
-        navigationBaker.BakeNavigationMesh();
-        generatedMapParent.SetActive(false);
     }
 
     private IEnumerator PASystem()
