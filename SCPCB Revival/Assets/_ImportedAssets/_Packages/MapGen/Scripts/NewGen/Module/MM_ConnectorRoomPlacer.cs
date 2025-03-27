@@ -10,7 +10,7 @@ namespace ALOB.Map
     {
         bool disableBFS;
         int maxIterationsBeforeFallback;
-        
+
 
         public MM_ConPlacer(System.Random randomGen, GeneratorMapPreset gMP, bool disableBFS, int maxIterationsBeforeFallback) : base(randomGen, gMP)
         {
@@ -31,7 +31,7 @@ namespace ALOB.Map
         /// <param name="zoneObj"></param>
         bool populateGrid(ref Zone zoneObj)
         {
-            
+
             string refName = zoneObj.name;
             zoneConnector[] connectors = gMP.connections.Where(c => (c.fromZone == refName || c.toZone == refName)).ToArray();
 

@@ -78,7 +78,7 @@ namespace ALOB.Map
                     // Here we reset the zone to last working state
                     zoneObj = tempZone.Clone() as Zone;
 
-                    foreach(CellData exits in exitsBackup)
+                    foreach (CellData exits in exitsBackup)
                     {
                         zoneObj.cellGrid[exits.loc.x, exits.loc.y] = exits;
                         zoneObj.setRoomAt(exits.loc.x, exits.loc.y, exits.getRoom());
@@ -91,13 +91,13 @@ namespace ALOB.Map
                     mustBeReachable = new List<CellData>();
                     mustBeReachable.AddRange(zoneObj.getExitLocations());
 
-                    
+
                     MapGenLogger.Log("<color=yellow>[" + zoneAttempts + "] Attempt to generate " + zoneObj.name + ".</color>");
 
 
                 }
 
-                
+
 
                 failed = false;
 
@@ -154,7 +154,7 @@ namespace ALOB.Map
                         if (result == null)
                         {
                             // Try to generate the zone again.
-                            MapGenLogger.Log("<color=red>Failed to place " + rD.name  + " " + zoneObj.name + "</color>");
+                            MapGenLogger.Log("<color=red>Failed to place " + rD.name + " " + zoneObj.name + "</color>");
 
                             zoneAttempts++;
                             failed = true;
@@ -201,9 +201,13 @@ namespace ALOB.Map
             r.x = cDPreset.loc.x;
             r.y = cDPreset.loc.y;
             cDPreset.setRoom(r);
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
+
             string debugMessage = "";
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
 
             // Define if we passed the generation, this is false if we tried too many times to no avail.
+
             bool allPass = true;
 
             // Keep track of tries we had to place a room.

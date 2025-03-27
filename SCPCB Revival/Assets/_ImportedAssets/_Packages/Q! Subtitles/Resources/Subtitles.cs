@@ -24,7 +24,7 @@ public class Subtitles : MonoBehaviour
     public static void Show(string text, float duration = 5f, SubtitleEffect effect = SubtitleEffect.Fade, int size = 20, Font font = null, AudioClip clip = null)
     {
         if (subtitles == null) { Debug.LogError("Subtitle system not detected"); return; }
-        else if (FindObjectsOfType<Subtitles>().Length != 1)
+        else if (FindObjectsByType<Subtitles>(FindObjectsSortMode.None).Length != 1)
         { Debug.LogError("Cannot use global methods as more than one system was detected"); return; }
         else subtitles.ShowThis(text, duration, effect, size, font, clip);
     }

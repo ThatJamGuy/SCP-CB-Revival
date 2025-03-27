@@ -35,7 +35,7 @@ namespace ALOB.Map
         {
             foreach (CellData cD in zoneObj.getRoomExitCells(cDPreset, false, isConnectorRoom))
             {
-                
+
                 // If we are heading to null
                 if (cD == null)
                 {
@@ -139,7 +139,11 @@ namespace ALOB.Map
         /// <returns></returns>
         public int RoomPathfindingCheck(Room r, CellData cDPreset, List<CellData> pathFindTargets)
         {
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
+
             bool allPass = true;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
+
             int resCount = 0;
 
             // Debug.Log("PF For " + cDPreset + " " + r.getData().name);
@@ -196,9 +200,9 @@ namespace ALOB.Map
         public bool ExitPlacementCheck(CellData cDPreset)
         {
 
-            foreach(CellData cD in zoneObj.getSurroundingCells(cDPreset.loc, true))
+            foreach (CellData cD in zoneObj.getSurroundingCells(cDPreset.loc, true))
             {
-                if(cD != null && cD.containerType == containerType.EXIT)
+                if (cD != null && cD.containerType == containerType.EXIT)
                 {
                     return false;
                 }

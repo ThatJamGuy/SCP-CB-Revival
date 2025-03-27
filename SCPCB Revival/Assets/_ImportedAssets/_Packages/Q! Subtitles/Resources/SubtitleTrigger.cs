@@ -104,7 +104,7 @@ public class SubtitleTrigger : MonoBehaviour
                 elapsedTime >= pair.subtitles[nextSubtitleIndex].startTime)
             {
                 Subtitles.Show(pair.subtitles[nextSubtitleIndex].text,
-                              pair.subtitles[nextSubtitleIndex].duration);
+                              pair.subtitles[nextSubtitleIndex].duration, SubtitleEffect.Both);
                 nextSubtitleIndex++;
             }
 

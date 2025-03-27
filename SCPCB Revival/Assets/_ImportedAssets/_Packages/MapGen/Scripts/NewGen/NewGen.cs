@@ -93,7 +93,6 @@ namespace ALOB.Map
             MM_Connector MM_C = new MM_Connector(randomGen, gMP);
             MM_C.OnPrepareZones(zoneGrid);
 
-
             // - - - MODULES FOR ROOM SPAWNS PER GRID
 
             // Populate each zone with mustSpawn rooms on the grid.
@@ -125,9 +124,10 @@ namespace ALOB.Map
                     {
                         throw (new Exception("Generation failed for " + zoneGrid[x, y].name + ", try to increase the map size or lower the occupied rooms amount to reduce the chances of spawn errors. You can also try and increase the amount of tries to force the generator to try harder."));
 
-                        if (cleanUpOnFail)
-                            CleanUp();
-                        return false;
+                        // - Editited this out due to it being classified as Unreachable Code -
+                        //if (cleanUpOnFail)
+                        //    CleanUp();
+                        //return false;
                     }
                 }
             }
@@ -152,9 +152,10 @@ namespace ALOB.Map
                     {
                         throw (new Exception("Spawning room assets failed for " + zoneGrid[x, y].name + ", "));
 
-                        if (cleanUpOnFail)
-                            CleanUp();
-                        return false;
+                        // - Editited this out due to it being classified as Unreachable Code -
+                        //if (cleanUpOnFail)
+                        //    CleanUp();
+                        //return false;
                     }
                 }
             }
