@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NaughtyAttributes
+﻿namespace NaughtyAttributes
 {
     public interface INaughtyAttribute
     {

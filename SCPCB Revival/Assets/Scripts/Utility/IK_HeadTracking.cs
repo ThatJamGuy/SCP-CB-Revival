@@ -22,16 +22,17 @@ public class IK_HeadTracking : MonoBehaviour
 
     private void Update()
     {
-        if(POIs == null) return;
+        if (POIs == null) return;
 
-        Transform tracking  = null;
+        Transform tracking = null;
         foreach (IK_PointOfInterest poi in POIs)
         {
             Vector3 delta = poi.transform.position - transform.position;
             if (delta.sqrMagnitude < RadiusSqr)
             {
                 float angle = Vector3.Angle(transform.forward, delta);
-                if(angle < maxAngle) {
+                if (angle < maxAngle)
+                {
                     tracking = poi.transform;
                     break;
                 }
@@ -39,7 +40,7 @@ public class IK_HeadTracking : MonoBehaviour
         }
         float rigWeight = 0;
         Vector3 targetPos = transform.position + (transform.forward * 2f);
-        if(tracking != null)
+        if (tracking != null)
         {
             targetPos = tracking.position;
             rigWeight = 1;

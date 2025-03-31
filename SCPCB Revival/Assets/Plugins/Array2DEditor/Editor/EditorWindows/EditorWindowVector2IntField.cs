@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
+using UnityEngine;
 
 public class EditorWindowVector2IntField : EditorWindow
 {
@@ -18,7 +18,7 @@ public class EditorWindowVector2IntField : EditorWindow
         newFieldValue = fieldValue;
         onApply = onApplyCallback;
         fieldLabel = label;
-        
+
         controlFocused = false;
 
         // Get existing open window or if none, make a new one

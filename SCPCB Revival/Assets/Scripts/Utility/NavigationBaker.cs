@@ -1,5 +1,5 @@
-using UnityEngine;
 using Unity.AI.Navigation;
+using UnityEngine;
 
 public class NavigationBaker : MonoBehaviour
 {

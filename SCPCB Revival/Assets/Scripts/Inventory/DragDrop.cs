@@ -67,7 +67,7 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDrag
     public void ResetToOriginalSlot()
     {
         transform.SetParent(startParent);
-        transform.localPosition = Vector3.zero;  
+        transform.localPosition = Vector3.zero;
         droppedOnValidSlot = true;
     }
 

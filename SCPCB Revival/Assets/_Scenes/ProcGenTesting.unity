@@ -606,7 +606,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 389329720}
   disableRange: 25
---- !u!1 &1737911023
+--- !u!1 &1954344064
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -614,23 +614,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1737911025}
-  - component: {fileID: 1737911027}
-  - component: {fileID: 1737911026}
+  - component: {fileID: 1954344065}
+  - component: {fileID: 1954344066}
   m_Layer: 0
-  m_Name: MapGenSystem
+  m_Name: MapGenerator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1737911025
+--- !u!4 &1954344065
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1737911023}
+  m_GameObject: {fileID: 1954344064}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -639,45 +638,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1737911026
+--- !u!114 &1954344066
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1737911023}
+  m_GameObject: {fileID: 1954344064}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82d212ca1cfec4b409d54944f03dbf3f, type: 3}
+  m_Script: {fileID: 11500000, guid: eae71b1a38ffc434d9707d73b46dc376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gMP: {fileID: 11400000, guid: d79922f1ae423df4ab9db92854bf018f, type: 2}
-  maxIterationsBeforeFallback: 8
-  debugGizmo: 1
-  disableGizmoText: 0
-  disableBFS: 0
-  disableAStar: 0
-  enableLargeRoomsFillPath: 0
-  disableSpawn: 0
-  disablePathRoomPlacement: 0
-  cleanUpOnFail: 1
---- !u!114 &1737911027
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1737911023}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62f08020359885c40ada2c2e9371456e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  seed: 0
+  seed: 
+  zones:
+  - {fileID: 11400000, guid: 45840aa37c6a78b42b85992b08570d61, type: 2}
+  showDebugGrid: 1
+  cellSize: 20.5
+  testGridSize: {x: 10, y: 10}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 389329720}
   - {fileID: 94596825}
-  - {fileID: 1737911025}
+  - {fileID: 1954344065}

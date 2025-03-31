@@ -14,7 +14,7 @@ namespace Array2DEditor
 
         protected override void SetValue(SerializedProperty cell, object obj)
         {
-            cell.boolValue = (bool) obj;
+            cell.boolValue = (bool)obj;
         }
     }
 }

@@ -1,18 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace LylekGames.Tools
 {
-	[RequireComponent(typeof(MeshFilter))]
-	[RequireComponent(typeof(MeshRenderer))]
-	public class CombineMeshes : MonoBehaviour
+    [RequireComponent(typeof(MeshFilter))]
+    [RequireComponent(typeof(MeshRenderer))]
+    public class CombineMeshes : MonoBehaviour
     {
         public string path;
 
         public static string staticPath = "/MeshCombiner/";
 
-		private Matrix4x4 myMatrix;
+        private Matrix4x4 myMatrix;
 
         [HideInInspector]
         public MeshFilter myMeshFilter;
@@ -126,7 +125,7 @@ namespace LylekGames.Tools
             //EACH COMBINE-INSTANCE HERE REPRESENTS A SUBMESH
             CombineInstance[] combineInstances = new CombineInstance[combineMaterials.Count];
             myMeshFilter.sharedMesh = new Mesh();
-            for(int m = 0; m < materials.Count; m++)
+            for (int m = 0; m < materials.Count; m++)
             {
                 Material mat = materials[m];
 
@@ -167,7 +166,7 @@ namespace LylekGames.Tools
 
             CombineInstance[] combineInstances = new CombineInstance[colliders.Length + meshColliders.Length];
             int combineIndex = 0;
-            for(int i = 0; i < meshColliders.Length; i++)
+            for (int i = 0; i < meshColliders.Length; i++)
             {
                 MeshCollider collider = meshColliders[i];
 
@@ -238,7 +237,7 @@ namespace LylekGames.Tools
                 myMeshCollider.sharedMesh = mesh;
             }
         }
-		public void DisableMesh()
+        public void DisableMesh()
         {
             if (meshFilters != null && meshFilters.Length > 0)
             {
@@ -264,5 +263,5 @@ namespace LylekGames.Tools
                 return;
             }
         }
-	}
+    }
 }

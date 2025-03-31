@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Runtime.Serialization;
-
-public enum SubtitleEffect
+﻿public enum SubtitleEffect
 {
     None = 0,
     Fade = 1,

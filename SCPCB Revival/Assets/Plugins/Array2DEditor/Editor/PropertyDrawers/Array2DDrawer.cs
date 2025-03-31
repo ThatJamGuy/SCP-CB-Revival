@@ -1,13 +1,13 @@
-﻿using UnityEditor;
+﻿using System.Text.RegularExpressions;
+using UnityEditor;
 using UnityEngine;
-using System.Text.RegularExpressions;
 
 namespace Array2DEditor
 {
     public abstract class Array2DDrawer : PropertyDrawer
     {
         private static float LineHeight => EditorGUIUtility.singleLineHeight;
-        
+
         private const float firstLineMargin = 5f;
         private const float lastLineMargin = 2f;
 
@@ -32,7 +32,7 @@ namespace Array2DEditor
         #endregion
 
         #region Texts
-        
+
         static class Texts
         {
             public static readonly GUIContent reset = new GUIContent("Reset");
@@ -42,17 +42,17 @@ namespace Array2DEditor
             public const string gridSizeLabel = "Grid Size";
             public const string cellSizeLabel = "Cell Size";
         }
-        
+
         #endregion
 
         #region Abstract and virtual methods
 
         protected virtual Vector2Int GetDefaultCellSizeValue() => new Vector2Int(32, 16);
-        
+
         protected abstract object GetDefaultCellValue();
         protected abstract object GetCellValue(SerializedProperty cell);
         protected abstract void SetValue(SerializedProperty cell, object obj);
-        
+
         #endregion
 
 
@@ -70,7 +70,7 @@ namespace Array2DEditor
             {
                 return;
             }
-            
+
             // Initialize cell size to default value if not already done
             if (cellSizeProperty.vector2IntValue == default)
             {
@@ -131,7 +131,7 @@ namespace Array2DEditor
         {
             EditorWindowVector2IntField.ShowWindow(gridSizeProperty.vector2IntValue, InitNewGridAndRestorePreviousValues, Texts.gridSizeLabel);
         }
-        
+
         private void OnChangeCellSize()
         {
             EditorWindowVector2IntField.ShowWindow(cellSizeProperty.vector2IntValue, SetNewCellSize, Texts.cellSizeLabel);
@@ -155,7 +155,7 @@ namespace Array2DEditor
                 height += firstLineMargin;
 
                 height += gridSizeProperty.vector2IntValue.y * (cellSizeProperty.vector2IntValue.y + cellSpacing.y) - cellSpacing.y; // Cells lines
-                
+
                 height += lastLineMargin;
             }
 
@@ -166,24 +166,24 @@ namespace Array2DEditor
         {
             var previousGrid = GetGridValues();
             var previousGridSize = gridSizeProperty.vector2IntValue;
-            
+
             InitNewGrid(newSize);
 
             for (var y = 0; y < newSize.y; y++)
             {
                 var row = GetRowAt(y);
-                
+
                 for (var x = 0; x < newSize.x; x++)
                 {
                     var cell = row.GetArrayElementAtIndex(x);
-                    
+
                     if (x < previousGridSize.x && y < previousGridSize.y)
                     {
                         SetValue(cell, previousGrid[y][x]);
                     }
                 }
             }
-            
+
             thisProperty.serializedObject.ApplyModifiedProperties();
         }
 
@@ -214,11 +214,11 @@ namespace Array2DEditor
         private object[][] GetGridValues()
         {
             var arr = new object[gridSizeProperty.vector2IntValue.y][];
-            
+
             for (var y = 0; y < gridSizeProperty.vector2IntValue.y; y++)
             {
                 arr[y] = new object[gridSizeProperty.vector2IntValue.x];
-                
+
                 for (var x = 0; x < gridSizeProperty.vector2IntValue.x; x++)
                 {
                     arr[y][x] = GetCellValue(GetRowAt(y).GetArrayElementAtIndex(x));
@@ -260,12 +260,12 @@ namespace Array2DEditor
                 }
             }
         }
-        
+
         private SerializedProperty GetRowAt(int idx)
         {
             return cellsProperty.GetArrayElementAtIndex(idx).FindPropertyRelative("row");
         }
-        
+
         private void TryFindPropertyRelative(SerializedProperty parent, string relativePropertyPath, out SerializedProperty prop)
         {
             prop = parent.FindPropertyRelative(relativePropertyPath);
@@ -275,7 +275,7 @@ namespace Array2DEditor
                 Debug.LogError($"Couldn't find variable \"{relativePropertyPath}\" in {parent.name}");
             }
         }
-        
+
         #region Debug
 
         private void DrawDebugRect(Rect rect) => DrawDebugRect(rect, new Color(1f, 0f, 1f, .2f));

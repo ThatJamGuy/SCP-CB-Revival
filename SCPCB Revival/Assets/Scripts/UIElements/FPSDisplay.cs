@@ -1,5 +1,5 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class FPSDisplay : MonoBehaviour
 {
@@ -11,17 +11,20 @@ public class FPSDisplay : MonoBehaviour
     private float time;
     private int frameCount;
 
-    private void Start() {
+    private void Start()
+    {
         fpsCounterEnabled = PlayerSettings.Instance.enableFPSCounter;
         fpsText.enabled = fpsCounterEnabled;
     }
 
-    private void Update() {
+    private void Update()
+    {
         time += Time.deltaTime;
 
         frameCount++;
 
-        if (time >= pollingTime) {
+        if (time >= pollingTime)
+        {
             int frameRate = Mathf.RoundToInt(frameCount / time);
             fpsText.text = frameRate.ToString() + " FPS";
 

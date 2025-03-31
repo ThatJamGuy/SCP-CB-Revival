@@ -1,7 +1,5 @@
-using System.Collections;
 using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class NPC_Puppet : MonoBehaviour
 {
@@ -30,32 +28,36 @@ public class NPC_Puppet : MonoBehaviour
 
     private void Start()
     {
-        if(useAnimations && playAnimOnStart && startingAinim != null) animator.Play(startingAinim.name);
+        if (useAnimations && playAnimOnStart && startingAinim != null) animator.Play(startingAinim.name);
 
-        if(useHeadIK && targetMainCamera) {
+        if (useHeadIK && targetMainCamera)
+        {
             mainCameraPointOfInterest = Camera.main.GetComponent<IK_PointOfInterest>();
-            if (mainCameraPointOfInterest != null) {
+            if (mainCameraPointOfInterest != null)
+            {
                 headTracking.POIs.Add(mainCameraPointOfInterest);
             }
         }
 
-        if(useAnimations) animator.speed = uniqueAnimSpeeds ? Random.Range(minAnimSpeed, maxAnimSpeed) : 1f;
+        if (useAnimations) animator.speed = uniqueAnimSpeeds ? Random.Range(minAnimSpeed, maxAnimSpeed) : 1f;
 
-        if(enableMovement && GetComponent<NPC_Locomotion>())
+        if (enableMovement && GetComponent<NPC_Locomotion>())
             locomotion = GetComponent<NPC_Locomotion>();
-        else if(enableMovement && !GetComponent<NPC_Locomotion>())
+        else if (enableMovement && !GetComponent<NPC_Locomotion>())
             Debug.LogWarning($"{gameObject.name} is missing a NPC_Locomotion component.");
     }
 
     private void Update()
-    {    
+    {
         if (useHeadIK && headTracking)
             headTracking.enabled = useHeadIK;
 
-        if(!targetMainCamera && mainCameraPointOfInterest != null && headTracking.POIs.Contains(mainCameraPointOfInterest)) {
+        if (!targetMainCamera && mainCameraPointOfInterest != null && headTracking.POIs.Contains(mainCameraPointOfInterest))
+        {
             headTracking.POIs.Remove(mainCameraPointOfInterest);
         }
-        if (targetMainCamera && mainCameraPointOfInterest != null && !headTracking.POIs.Contains(mainCameraPointOfInterest)) {
+        if (targetMainCamera && mainCameraPointOfInterest != null && !headTracking.POIs.Contains(mainCameraPointOfInterest))
+        {
             headTracking.POIs.Insert(0, mainCameraPointOfInterest);
         }
     }
@@ -64,10 +66,12 @@ public class NPC_Puppet : MonoBehaviour
     {
         targetMainCamera = lookAtCamera;
 
-        if(useHeadIK && targetMainCamera) {
+        if (useHeadIK && targetMainCamera)
+        {
             mainCameraPointOfInterest = Camera.main.GetComponent<IK_PointOfInterest>();
         }
-        else if(!targetMainCamera && mainCameraPointOfInterest != null && headTracking.POIs.Contains(mainCameraPointOfInterest)) {
+        else if (!targetMainCamera && mainCameraPointOfInterest != null && headTracking.POIs.Contains(mainCameraPointOfInterest))
+        {
             headTracking.POIs.Remove(mainCameraPointOfInterest);
         }
     }
@@ -76,7 +80,7 @@ public class NPC_Puppet : MonoBehaviour
 
     public void PlayAnimationConditional(string animTrigger, float speedToPlay = 1f)
     {
-        if(!useAnimations || !animator) return;
+        if (!useAnimations || !animator) return;
 
         animator.speed = speedToPlay;
         animator.applyRootMotion = true;
@@ -85,7 +89,7 @@ public class NPC_Puppet : MonoBehaviour
 
     public void MoveAgent(Transform destination)
     {
-        if(!enableMovement || !locomotion) return;   
+        if (!enableMovement || !locomotion) return;
         locomotion.WalkToPosition(destination);
     }
 

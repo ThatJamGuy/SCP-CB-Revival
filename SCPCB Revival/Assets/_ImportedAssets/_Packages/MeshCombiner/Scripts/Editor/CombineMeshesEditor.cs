@@ -1,16 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.IO;
 using UnityEditor;
-using System.Reflection;
-using System.IO;
+using UnityEngine;
 
 namespace LylekGames.Tools
 {
     [CustomEditor(typeof(CombineMeshes))]
-	public class CombineMeshesEditor : Editor
+    public class CombineMeshesEditor : Editor
     {
-		CombineMeshes myCombine;
+        CombineMeshes myCombine;
 
         public void OnEnable()
         {
@@ -20,7 +17,7 @@ namespace LylekGames.Tools
         }
         public override void OnInspectorGUI()
         {
-			myCombine = (CombineMeshes)target;
+            myCombine = (CombineMeshes)target;
 
             if (myCombine.myMeshFilter.sharedMesh == null)
             {
@@ -97,7 +94,7 @@ namespace LylekGames.Tools
         public void SaveMeshData(bool destructive = false)
         {
             #region Correct File Path
-            if(myCombine.path.Length < 3) { myCombine.path = "/MeshCombiner/"; }
+            if (myCombine.path.Length < 3) { myCombine.path = "/MeshCombiner/"; }
 
             if (myCombine.path[0] != '/') { myCombine.path = "/" + myCombine.path; }
 
@@ -140,7 +137,7 @@ namespace LylekGames.Tools
 
                 colliderPath = colliderPath.Replace(".asset", randomID.ToString() + ".asset");
 
-                i++; if(i > 8) { Debug.Log("Process Aborted! \n\n See Readme for details."); return; }
+                i++; if (i > 8) { Debug.Log("Process Aborted! \n\n See Readme for details."); return; }
             }
             #endregion
 
@@ -189,7 +186,7 @@ namespace LylekGames.Tools
             Debug.Log("Data saved successfully.");
         }
         public void CleanUp()
-        {            
+        {
             ///REMOVE OUR CHILD OBJECTS
             int childCount = myCombine.myMeshFilter.gameObject.transform.childCount;
 

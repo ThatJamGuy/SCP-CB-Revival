@@ -53,7 +53,7 @@ public class DoorButton : MonoBehaviour
                     NotifyAndCooldown("A keycard with security clearance " + door.requiredKeyLevel + " or higher is required to operate this door.", lockedSFX);
                     InventorySystem.instance.UnequipItem();
                 }
-                else 
+                else
                 {
                     NotifyAndCooldown("A keycard is required to operate this door.", lockedSFX);
                 }

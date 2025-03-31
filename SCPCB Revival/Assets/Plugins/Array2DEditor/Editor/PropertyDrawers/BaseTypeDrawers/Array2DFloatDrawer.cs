@@ -11,7 +11,7 @@ namespace Array2DEditor
 
         protected override void SetValue(SerializedProperty cell, object obj)
         {
-            cell.floatValue = (float) obj;
+            cell.floatValue = (float)obj;
         }
     }
 }

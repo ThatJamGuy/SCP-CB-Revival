@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor;
 
 namespace LylekGames.Tools
 {
-	public class CreateCombinedStaticMeshInstance
+    public class CreateCombinedStaticMeshInstance
     {
         [MenuItem("Tools/Combine/Static Meshes")]
         private static void CombineStaticMeshesNewCollider()
@@ -38,12 +36,12 @@ namespace LylekGames.Tools
             {
                 myCombine = myObject.GetComponent<CombineMeshes>();
 
-                if(!myCombine)
+                if (!myCombine)
                 {
                     myCombine = myObject.AddComponent<CombineMeshes>();
                 }
             }
-           
+
             myCombine.Start();
 
             myCombine.CombineMultiMaterialMesh();

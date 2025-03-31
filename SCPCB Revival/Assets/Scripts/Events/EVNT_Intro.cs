@@ -167,7 +167,7 @@ public class EVNT_Intro : MonoBehaviour
 
     public void GuardSpeech()
     {
-        // Play a random speech from the ulgrin speech array, then find the matching one in the other guard array and play that
+        // Play a random speech from the ulgrin speech array, then find the matching one in the other guard array and play that.
         if (guard01.isActiveAndEnabled && guard02.isActiveAndEnabled)
         {
             int randomIndex = Random.Range(0, ulgrinSpeeches.Length);
@@ -213,13 +213,18 @@ public class EVNT_Intro : MonoBehaviour
     {
         walkingFranklin.MoveAgent(scFranklinp1.transform);
         yield return new WaitForSeconds(7f);
-        if (scFranklinDoor1.gameObject.activeSelf)
-            scFranklinDoor1.GetComponent<Door>().OpenDoor();
-        if (scFranklinDoor1.gameObject.activeSelf)
+        if (scFranklinDoor1.activeSelf)
+        {
+            Door door = scFranklinDoor1.GetComponent<Door>();
+            door.OpenDoor();
             walkingFranklin.MoveAgent(scFranklinp2.transform);
+        }
         yield return new WaitForSeconds(4f);
-        if (scFranklinDoor1.gameObject.activeSelf)
-            scFranklinDoor1.GetComponent<Door>().CloseDoor();
+        if (scFranklinDoor1.activeSelf)
+        {
+            Door door = scFranklinDoor1.GetComponent<Door>();
+            door.CloseDoor();
+        }
         yield return new WaitForSeconds(1);
         walkingFranklin.gameObject.SetActive(false);
     }
@@ -372,7 +377,7 @@ public class EVNT_Intro : MonoBehaviour
         guardGuy.transform.position = scpNode3.position;
         guardGuy.transform.rotation = scpNode3.rotation;
         scp173.SetActive(false);
-        scp173_2.SetActive(true); // Grab a seperate SCP-173 for the upper bit cuz the normal one runs to the corner isntead of going up. :/
+        scp173_2.SetActive(true); // Use a separate SCP-173 for the upper part.
         yield return new WaitForSeconds(0.5f);
         lightingAnimator.gameObject.SetActive(false);
         emergencyLights.SetActive(true);
@@ -394,7 +399,7 @@ public class EVNT_Intro : MonoBehaviour
         cont173.SetActive(true);
         yield return new WaitForSeconds(3);
         cont173Lighting.SetActive(true);
-        StartCoroutine(IntroBreachAnnouncementShakes());
+        StartCoroutine(DelayedAnnouncement(9f));
         generatedMapParent.SetActive(true);
         roomRenderer.SetActive(true);
         AmbienceController.Instance.ChangeZone(1);
@@ -420,9 +425,10 @@ public class EVNT_Intro : MonoBehaviour
         playerController.transform.position = skipIntroTransform.position;
     }
 
-    IEnumerator IntroBreachAnnouncementShakes()
+    // Unified coroutine for delayed camera shakes and announcement playback.
+    private IEnumerator DelayedAnnouncement(float initialDelay)
     {
-        yield return new WaitForSeconds(9f);
+        yield return new WaitForSeconds(initialDelay);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
         yield return new WaitForSeconds(37.5f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
@@ -433,6 +439,7 @@ public class EVNT_Intro : MonoBehaviour
 
     public IEnumerator SkipIntroShakes()
     {
+        // Different initial delay for skip intro shakes.
         yield return new WaitForSeconds(11.5f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
         yield return new WaitForSeconds(37.5f);

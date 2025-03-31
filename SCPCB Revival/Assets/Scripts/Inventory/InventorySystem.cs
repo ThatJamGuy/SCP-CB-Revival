@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,7 +40,7 @@ public class InventorySystem : MonoBehaviour
     }
 
     public void AddToInventory(string itemName)
-    { 
+    {
         whatSlotToEquip = FindNextEmptySlot();
 
         itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
@@ -56,7 +55,7 @@ public class InventorySystem : MonoBehaviour
 
         foreach (GameObject slot in slotList)
         {
-            if(slot.transform.childCount > 0)
+            if (slot.transform.childCount > 0)
             {
                 counter += 1;
             }
@@ -105,7 +104,7 @@ public class InventorySystem : MonoBehaviour
 
     public void EquipDocument(string documentName, Sprite documentImage, AudioClip audioClip)
     {
-        if(currentHeldItemDisplay.activeSelf)
+        if (currentHeldItemDisplay.activeSelf)
             return;
 
         currentHeldItem = documentName;

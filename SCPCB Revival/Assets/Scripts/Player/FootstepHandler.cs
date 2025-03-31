@@ -13,7 +13,7 @@ public class FootstepHandler : MonoBehaviour
     private bool isMoving;
     private float footstepTimer;
     private float footstepInterval;
-    
+
     public void Initialize(CharacterController controller)
     {
         characterController = controller;

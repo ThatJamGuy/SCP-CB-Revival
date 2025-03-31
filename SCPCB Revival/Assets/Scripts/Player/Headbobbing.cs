@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class HeadBob : MonoBehaviour
+public class HeadBobbing : MonoBehaviour
 {
     [SerializeField] private PlayerController playerController;
     [SerializeField] private FootstepHandler footstepHandler;
@@ -34,7 +34,6 @@ public class HeadBob : MonoBehaviour
         {
             bobTimer += Time.deltaTime * movementSpeed;
 
-            // Position Bob
             float bobOffset = Mathf.Sin(bobTimer) * bobAmount;
             transform.localPosition = new Vector3(
                 transform.localPosition.x,
@@ -42,7 +41,6 @@ public class HeadBob : MonoBehaviour
                 transform.localPosition.z
             );
 
-            // Rotation Bob (SCP-like left and right rotation)
             float rotationOffset = Mathf.Sin(bobTimer * rotationSpeed) * maxRotationAngle * rotationStrength;
 
             transform.localRotation = Quaternion.Euler(
@@ -51,7 +49,6 @@ public class HeadBob : MonoBehaviour
                 defaultRotation.z + rotationOffset
             );
 
-            // Footstep Logic
             if (bobOffset < 0 && !hasPlayedFootstep)
             {
                 footstepHandler.PlayFootstepAudio();

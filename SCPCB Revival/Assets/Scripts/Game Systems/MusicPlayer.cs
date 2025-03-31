@@ -17,7 +17,7 @@ public class MusicPlayer : MonoBehaviour
     }
 
     public void StartMusic(AudioClip music)
-    {   
+    {
         musicSource.Stop();
         musicSource.clip = music;
         musicSource.Play();
@@ -27,12 +27,12 @@ public class MusicPlayer : MonoBehaviour
     {
         StartCoroutine(ChangeMusicCoroutine(newMusic));
     }
-    
+
     private IEnumerator ChangeMusicCoroutine(AudioClip newMusic)
     {
         float fadeOutTime = 0.5f;
         float fadeInTime = 0.5f;
-    
+
         float timer = 0f;
         while (timer < fadeOutTime)
         {
@@ -41,7 +41,7 @@ public class MusicPlayer : MonoBehaviour
             yield return null;
         }
         musicSource.Stop();
-    
+
         musicSource.clip = newMusic;
         musicSource.Play();
         timer = 0f;

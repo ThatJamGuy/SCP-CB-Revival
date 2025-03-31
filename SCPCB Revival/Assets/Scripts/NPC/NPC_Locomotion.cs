@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.AI;
-using NaughtyAttributes;
 
 public class NPC_Locomotion : MonoBehaviour
 {

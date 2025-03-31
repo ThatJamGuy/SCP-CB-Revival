@@ -1,7 +1,6 @@
 #if UNITY_EDITOR
-using UnityEngine;
 using UnityEditor;
-using System.Collections;
+using UnityEngine;
 
 [InitializeOnLoad]
 public class RateStaticMeshCombiner : Editor
@@ -11,12 +10,12 @@ public class RateStaticMeshCombiner : Editor
     public static string rateUrl;
     public static float timer;
 
-    static RateStaticMeshCombiner() 
+    static RateStaticMeshCombiner()
     {
         namePackage = "Static Mesh Combiner";
         rateUrl = "https://assetstore.unity.com/packages/tools/modeling/same-material-static-mesh-combiner-139565";
         timer = 300f;
-        
+
         if (!EditorPrefs.GetBool("RateAsset_" + namePackage + "_bool"))
             EditorApplication.update += UpdateTime;
     }
@@ -44,6 +43,6 @@ public class RateStaticMeshCombiner : Editor
                 break;
         }
         EditorPrefs.SetBool("RateAsset_" + namePackage + "_bool", true);
-    } 
+    }
 }
 #endif
