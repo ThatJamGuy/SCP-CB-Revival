@@ -26,7 +26,7 @@ public class RoomData : ScriptableObject
     [Tooltip("Does the room expand into other cells?")]
     public bool isLarge = false;
     [Tooltip("In which directions and by how much does the room expand?")]
-    [ShowIf("isLarge")] public Vector2[] extendedSize;
+    [ShowIf(nameof(isLarge))] public Vector2[] extendedSize;
 
     public enum RoomType { Normal, ZoneConnection, MustSpawn, DeadEnd }
     public enum RoomShape { TwoWay, ThreeWay, FourWay, Corner, DeadEnd }

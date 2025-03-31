@@ -10,6 +10,6 @@ public class MapGenerator : MonoBehaviour
     [Button("Generate Map")]
     public void GenerateMap()
     {
-        
+
     }
 }
