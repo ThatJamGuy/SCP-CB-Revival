@@ -1,7 +1,6 @@
 using UnityEngine;
 using NaughtyAttributes;
 using System.Collections.Generic;
-using UnityEngine.AddressableAssets;
 using System;
 
 [CreateAssetMenu(fileName = "New Zone", menuName = "Map Generator/Zone Data")]

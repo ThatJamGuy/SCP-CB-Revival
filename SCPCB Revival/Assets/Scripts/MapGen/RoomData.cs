@@ -57,6 +57,15 @@ public class RoomData : ScriptableObject
     }
 #endif
 
+#if UNITY_EDITOR
+    [ContextMenu("Show Current Directions")]
+    private void ShowCurrentDirections()
+    {
+        string directions = string.Join(", ", entranceDirections);
+        Debug.Log($"[{roomName}] Current entrance directions: {directions}");
+    }
+#endif
+
     private void OnValidate()
     {
         if (roomPrefab == null)
