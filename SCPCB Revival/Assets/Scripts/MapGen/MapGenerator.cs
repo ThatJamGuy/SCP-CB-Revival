@@ -99,12 +99,16 @@ public class MapGenerator : MonoBehaviour
         }
 
         isGenerating = true;
+        CleanupExistingRooms();
         InitializeSeed();
         placedRooms = new Dictionary<int, List<PlacedRoom>>();
 
         yield return InitializeZoneGridsAsync();
         yield return PlaceMustSpawnRoomsAsync();
         yield return PlaceZoneConnectionsAsync();
+
+        // Instantiate all placed rooms
+        InstantiateAllRooms();
 
         isGenerating = false;
     }
@@ -400,6 +404,67 @@ public class MapGenerator : MonoBehaviour
             RotationDegrees = rotationDegrees,
             WorldPosition = positionGrid[gridPosition.x, gridPosition.y]
         });
+    }
+    #endregion
+
+    #region Private Methods - Room Instantiation
+    private async void InstantiateRoom(PlacedRoom placedRoom)
+    {
+        if (placedRoom.RoomData == null || placedRoom.RoomData.roomPrefab == null)
+        {
+            Debug.LogError($"Cannot instantiate room: invalid room data or missing prefab reference");
+            return;
+        }
+
+        try
+        {
+            // Load and instantiate the room prefab
+            GameObject roomInstance = await placedRoom.RoomData.roomPrefab.InstantiateAsync(placedRoom.WorldPosition,
+                Quaternion.Euler(0, placedRoom.RotationDegrees, 0), transform).Task;
+
+            if (roomInstance != null)
+            {
+                roomInstance.name = $"{placedRoom.RoomData.roomName} ({placedRoom.GridPosition.x}, {placedRoom.GridPosition.y})";
+            }
+            else
+            {
+                Debug.LogError($"Failed to instantiate room: {placedRoom.RoomData.roomName}");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error instantiating room {placedRoom.RoomData.roomName}: {e.Message}");
+        }
+    }
+
+    private async void InstantiateAllRooms()
+    {
+        if (placedRooms == null) return;
+
+        foreach (var zoneRooms in placedRooms.Values)
+        {
+            foreach (var placedRoom in zoneRooms)
+            {
+                InstantiateRoom(placedRoom);
+                await System.Threading.Tasks.Task.Delay(10); // Small delay to prevent freezing
+            }
+        }
+    }
+
+    private void CleanupExistingRooms()
+    {
+        // Remove all existing room instances
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            if (Application.isPlaying)
+            {
+                Destroy(transform.GetChild(i).gameObject);
+            }
+            else
+            {
+                DestroyImmediate(transform.GetChild(i).gameObject);
+            }
+        }
     }
     #endregion
 
