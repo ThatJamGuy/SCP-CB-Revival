@@ -15,14 +15,21 @@ public class RoomData : ScriptableObject
     public AssetReferenceGameObject roomPrefab;
 
     [Header("Connection Settings")]
-    public HashSet<CardinalDirection> entranceDirections = new HashSet<CardinalDirection>();
+    [Space(5)]
+    [SerializeField, BoxGroup("Entrances")] private bool hasNorthEntrance;
+    [SerializeField, BoxGroup("Entrances")] private bool hasEastEntrance;
+    [SerializeField, BoxGroup("Entrances")] private bool hasSouthEntrance;
+    [SerializeField, BoxGroup("Entrances")] private bool hasWestEntrance;
+
+    [Space(10)]
     [Range(0, 1)] public float spawnWeight = 0.5f;
     public bool canRotate = true;
 
     [Header("Advanced Settings")]
-    [Tooltip("Does the room expand into other cells?")]
+    [Tooltip("Additional weight added when connecting to other rooms")]
     public float connectionBonusWeight = 0.2f;
 
+    [Space(5)]
     [Tooltip("Does the room expand into other cells?")]
     public bool isLarge = false;
     [Tooltip("In which directions and by how much does the room expand?")]
@@ -32,42 +39,39 @@ public class RoomData : ScriptableObject
     public enum RoomShape { TwoWay, ThreeWay, FourWay, Corner, DeadEnd }
     public enum CardinalDirection { North, East, South, West }
 
-#if UNITY_EDITOR
-    [ContextMenu("Auto-Set Directions Based on Shape")]
-    private void AutoSetDirections()
+    // Cache the HashSet and rebuild it when needed
+    private HashSet<CardinalDirection> _entranceDirections;
+    public HashSet<CardinalDirection> entranceDirections
     {
-        entranceDirections.Clear();
-
-        var shapeDirections = new Dictionary<RoomShape, CardinalDirection[]>
+        get
         {
-            { RoomShape.TwoWay, new[] { CardinalDirection.North, CardinalDirection.South } },
-            { RoomShape.ThreeWay, new[] { CardinalDirection.South, CardinalDirection.East, CardinalDirection.West } },
-            { RoomShape.FourWay, new[] { CardinalDirection.North, CardinalDirection.East, CardinalDirection.South, CardinalDirection.West } },
-            { RoomShape.Corner, new[] { CardinalDirection.South, CardinalDirection.East } },
-            { RoomShape.DeadEnd, new[] { CardinalDirection.South } }
-        };
-
-        if (shapeDirections.TryGetValue(roomShape, out var directions))
-        {
-            foreach (var direction in directions)
+            if (_entranceDirections == null)
             {
-                entranceDirections.Add(direction);
+                RebuildEntranceDirections();
             }
+            return _entranceDirections;
         }
     }
-#endif
 
-#if UNITY_EDITOR
-    [ContextMenu("Show Current Directions")]
-    private void ShowCurrentDirections()
+    private void RebuildEntranceDirections()
     {
-        string directions = string.Join(", ", entranceDirections);
-        Debug.Log($"[{roomName}] Current entrance directions: {directions}");
+        _entranceDirections = new HashSet<CardinalDirection>();
+
+        if (hasNorthEntrance) _entranceDirections.Add(CardinalDirection.North);
+        if (hasEastEntrance) _entranceDirections.Add(CardinalDirection.East);
+        if (hasSouthEntrance) _entranceDirections.Add(CardinalDirection.South);
+        if (hasWestEntrance) _entranceDirections.Add(CardinalDirection.West);
     }
-#endif
 
     private void OnValidate()
     {
+        // Force rebuild of entrance directions
+        RebuildEntranceDirections();
+
+        // Validate shape matches entrances
+        ValidateShapeAndEntrances();
+
+        // Other validations
         if (roomPrefab == null)
         {
             Debug.LogWarning($"{nameof(roomPrefab)} is not assigned in {nameof(RoomData)}: {roomName}");
@@ -83,4 +87,40 @@ public class RoomData : ScriptableObject
             Debug.LogWarning($"{nameof(extendedSize)} must be assigned for large rooms in {nameof(RoomData)}: {roomName}");
         }
     }
+
+    private void ValidateShapeAndEntrances()
+    {
+        int entranceCount = (hasNorthEntrance ? 1 : 0) + (hasEastEntrance ? 1 : 0) +
+                           (hasSouthEntrance ? 1 : 0) + (hasWestEntrance ? 1 : 0);
+
+        RoomShape expectedShape = entranceCount switch
+        {
+            1 => RoomShape.DeadEnd,
+            2 => hasNorthEntrance && hasSouthEntrance ? RoomShape.TwoWay :
+                 hasEastEntrance && hasWestEntrance ? RoomShape.TwoWay : RoomShape.Corner,
+            3 => RoomShape.ThreeWay,
+            4 => RoomShape.FourWay,
+            _ => roomShape
+        };
+
+        if (roomShape != expectedShape)
+        {
+            Debug.LogWarning($"Room {roomName}: Entrance configuration suggests {expectedShape} but shape is set to {roomShape}");
+        }
+    }
+
+#if UNITY_EDITOR
+    [Button("Show Current Directions")]
+    private void ShowCurrentDirections()
+    {
+        var directions = new System.Collections.Generic.List<string>();
+        if (hasNorthEntrance) directions.Add("North");
+        if (hasEastEntrance) directions.Add("East");
+        if (hasSouthEntrance) directions.Add("South");
+        if (hasWestEntrance) directions.Add("West");
+
+        string directionString = string.Join(", ", directions);
+        Debug.Log($"[{roomName}] Current entrance directions: {directionString}");
+    }
+#endif
 }

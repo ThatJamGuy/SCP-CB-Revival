@@ -230,8 +230,70 @@ public class MapGenerator : MonoBehaviour
 
     private void PlaceStartingRoom(ZoneData zone)
     {
+        // Get a random viable starting room
         RoomData startRoom = zone.ViableStartingRooms[GetRandomRange(0, zone.ViableStartingRooms.Count - 1)];
-        PlaceRoom(zone, startRoom, zone.StartingCellLocation, GetRandomRotation(startRoom));
+
+        // Get all valid rotations that ensure at least one south-facing entrance
+        var validRotations = GetRotationsWithSouthernExit(startRoom);
+
+        if (validRotations.Count == 0)
+        {
+            Debug.LogError($"Starting room {startRoom.roomName} cannot be rotated to have a southern entrance. Please check room configuration.");
+            // Fall back to random rotation if no valid rotation found
+            PlaceRoom(zone, startRoom, zone.StartingCellLocation, GetRandomRotation(startRoom));
+            return;
+        }
+
+        // Pick a random rotation from valid options
+        int randomIndex = GetRandomRange(0, validRotations.Count - 1);
+        int rotation = validRotations[randomIndex];
+
+        PlaceRoom(zone, startRoom, zone.StartingCellLocation, rotation);
+    }
+
+    private List<int> GetRotationsWithSouthernExit(RoomData room)
+    {
+        var validRotations = new List<int>();
+
+        // If room can't rotate, only check the default rotation
+        if (!room.canRotate)
+        {
+            if (room.entranceDirections.Contains(RoomData.CardinalDirection.South))
+            {
+                validRotations.Add(0);
+            }
+            return validRotations;
+        }
+
+        // Try all possible rotations (0, 90, 180, 270 degrees)
+        for (int rot = 0; rot < 4; rot++)
+        {
+            int rotation = rot * 90;
+            if (HasSouthernEntranceAfterRotation(room.entranceDirections, rotation))
+            {
+                validRotations.Add(rotation);
+            }
+        }
+
+        return validRotations;
+    }
+
+    private bool HasSouthernEntranceAfterRotation(HashSet<RoomData.CardinalDirection> entrances, int rotationDegrees)
+    {
+        // Calculate how many 90-degree rotations we're doing
+        int rotationSteps = ((rotationDegrees % 360) + 360) % 360 / 90;
+
+        foreach (var entrance in entrances)
+        {
+            // Rotate the entrance direction
+            int newDirection = (((int)entrance + rotationSteps) % 4 + 4) % 4;
+            if ((RoomData.CardinalDirection)newDirection == RoomData.CardinalDirection.South)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private IEnumerator PlaceMustSpawnRoomsForZone(ZoneData zone)
