@@ -7,6 +7,17 @@ using System.Linq;
 
 public class MapGenerator : MonoBehaviour
 {
+    #region Structs
+    private struct PlacedRoom
+    {
+        public RoomData RoomData;
+        public Vector2Int GridPosition;
+        public int RotationDegrees;
+        public Vector3 WorldPosition;
+    }
+    #endregion
+
+    #region Serialized Fields
     [Header("Map Settings")]
     [SerializeField] private string seed;
     [Tooltip("If empty, uses current timestamp as seed")]
@@ -17,13 +28,14 @@ public class MapGenerator : MonoBehaviour
     [Header("Generation Settings")]
     [SerializeField] private bool generateOnStart = false;
     [SerializeField] private bool isGenerating = false;
-    public bool IsGenerating => isGenerating;
 
     [Header("Gizmo Settings")]
     [SerializeField] private bool showGizmos = true;
     [SerializeField] private Color baseGridColor = new Color(0.8f, 0.8f, 0.8f, 0.5f);
     [SerializeField] private Color zoneConnectionColor = new Color(1f, 0.5f, 0f, 0.8f);
+    #endregion
 
+    #region Private Fields
     // Grid storage for each zone
     private Dictionary<int, Vector3[,]> zoneGrids;
     private Dictionary<int, bool[,]> zoneOccupancy;
@@ -31,15 +43,13 @@ public class MapGenerator : MonoBehaviour
 
     // Track placed rooms and their rotations
     private Dictionary<int, List<PlacedRoom>> placedRooms;
+    #endregion
 
-    private struct PlacedRoom
-    {
-        public RoomData RoomData;
-        public Vector2Int GridPosition;
-        public int RotationDegrees;
-        public Vector3 WorldPosition;
-    }
+    #region Properties
+    public bool IsGenerating => isGenerating;
+    #endregion
 
+    #region Unity Callbacks
     private void Start()
     {
         if (generateOnStart)
@@ -48,6 +58,32 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    private void OnDrawGizmos()
+    {
+        if (!showGizmos || zoneGrids == null) return;
+
+        // Store original Gizmos color
+        Color originalColor = Gizmos.color;
+
+        foreach (var zoneEntry in zoneGrids)
+        {
+            int zoneId = zoneEntry.Key;
+            Vector3[,] grid = zoneEntry.Value;
+            ZoneData zoneData = zones.Length > zoneId - 1 ? zones[zoneId - 1] : null;
+
+            if (zoneData == null) continue;
+
+            DrawZoneGrid(zoneData, grid);
+            DrawZoneLabel(grid[0, 0], zoneData.ZoneID);
+            DrawPlacedRooms(zoneId);
+        }
+
+        // Restore original Gizmos color
+        Gizmos.color = originalColor;
+    }
+    #endregion
+
+    #region Public Methods
     [Button("Generate Map")]
     public void GenerateMap()
     {
@@ -73,6 +109,39 @@ public class MapGenerator : MonoBehaviour
         isGenerating = false;
     }
 
+    // Get the current seed
+    public string GetCurrentSeed()
+    {
+        return seed;
+    }
+
+    // Set a specific seed
+    public void SetSeed(string newSeed)
+    {
+        seed = newSeed;
+        useRandomSeed = false;
+    }
+
+    // Helper method to get a random value
+    public float GetRandomValue()
+    {
+        return (float)random.NextDouble();
+    }
+
+    // Helper method to get a random range
+    public float GetRandomRange(float min, float max)
+    {
+        return min + (float)(random.NextDouble() * (max - min));
+    }
+
+    // Helper method to get a random int range (inclusive)
+    public int GetRandomRange(int min, int max)
+    {
+        return random.Next(min, max + 1);
+    }
+    #endregion
+
+    #region Private Methods - Initialization
     private void InitializeSeed()
     {
         if (useRandomSeed || string.IsNullOrEmpty(seed))
@@ -80,7 +149,6 @@ public class MapGenerator : MonoBehaviour
             seed = DateTime.Now.Ticks.ToString();
         }
 
-        // Create deterministic random number generator
         random = new System.Random(seed.GetHashCode());
         Debug.Log($"Generating map with seed: {seed}");
     }
@@ -93,101 +161,109 @@ public class MapGenerator : MonoBehaviour
             yield break;
         }
 
-        // Initialize dictionaries
         zoneGrids = new Dictionary<int, Vector3[,]>();
         zoneOccupancy = new Dictionary<int, bool[,]>();
-
         Vector3 currentZoneOffset = Vector3.zero;
 
-        // Process each zone
         for (int i = 0; i < zones.Length; i++)
         {
             ZoneData zone = zones[i];
             Vector2Int gridSize = zone.ZoneGridSize;
-
-            // Adjust grid size to include the connection area
             Vector2Int adjustedGridSize = new Vector2Int(gridSize.x, gridSize.y + 1);
 
-            // Create position grid and occupancy grid for this zone
             Vector3[,] positionGrid = new Vector3[adjustedGridSize.x, adjustedGridSize.y];
             bool[,] occupancyGrid = new bool[adjustedGridSize.x, adjustedGridSize.y];
 
-            // Calculate grid positions with gaps between zones
-            for (int x = 0; x < adjustedGridSize.x; x++)
-            {
-                for (int y = 0; y < adjustedGridSize.y; y++)
-                {
-                    // Calculate world position for each cell
-                    positionGrid[x, y] = currentZoneOffset + new Vector3(x * cellSize, 0, y * cellSize);
-                    occupancyGrid[x, y] = false; // Initialize as unoccupied
-                }
+            yield return InitializeZoneGrid(positionGrid, occupancyGrid, adjustedGridSize, currentZoneOffset);
 
-                // Yield every few rows to prevent frame drops
-                if (x % 10 == 0)
-                {
-                    yield return null;
-                }
-            }
-
-            // Store grids in dictionaries
             zoneGrids[zone.ZoneID] = positionGrid;
             zoneOccupancy[zone.ZoneID] = occupancyGrid;
 
-            // Update offset for next zone (including gap)
-            currentZoneOffset.z += (gridSize.y * cellSize) + cellSize; // Add extra cellSize as gap
-
-            // Yield after each zone
+            currentZoneOffset.z += (gridSize.y * cellSize) + cellSize;
             yield return null;
         }
     }
 
+    private IEnumerator InitializeZoneGrid(Vector3[,] positionGrid, bool[,] occupancyGrid, Vector2Int gridSize, Vector3 offset)
+    {
+        for (int x = 0; x < gridSize.x; x++)
+        {
+            for (int y = 0; y < gridSize.y; y++)
+            {
+                positionGrid[x, y] = offset + new Vector3(x * cellSize, 0, y * cellSize);
+                occupancyGrid[x, y] = false;
+            }
+
+            if (x % 10 == 0) yield return null;
+        }
+    }
+    #endregion
+
+    #region Private Methods - Room Placement
     private IEnumerator PlaceMustSpawnRoomsAsync()
     {
         foreach (var zone in zones)
         {
-            if (!placedRooms.ContainsKey(zone.ZoneID))
-            {
-                placedRooms[zone.ZoneID] = new List<PlacedRoom>();
-            }
+            InitializeZoneRoomList(zone.ZoneID);
 
-            // First place the starting room if specified
             if (zone.CreateStartingRoom && zone.ViableStartingRooms.Count > 0)
             {
-                RoomData startRoom = zone.ViableStartingRooms[GetRandomRange(0, zone.ViableStartingRooms.Count - 1)];
-                PlaceRoom(zone, startRoom, zone.StartingCellLocation, GetRandomRotation(startRoom));
+                PlaceStartingRoom(zone);
                 yield return null;
             }
 
-            // Then place must-spawn rooms
-            var mustSpawnRooms = zone.RoomTable.Where(r => r.roomType == RoomData.RoomType.MustSpawn).ToList();
-            foreach (var room in mustSpawnRooms)
+            yield return PlaceMustSpawnRoomsForZone(zone);
+        }
+    }
+
+    private void InitializeZoneRoomList(int zoneId)
+    {
+        if (!placedRooms.ContainsKey(zoneId))
+        {
+            placedRooms[zoneId] = new List<PlacedRoom>();
+        }
+    }
+
+    private void PlaceStartingRoom(ZoneData zone)
+    {
+        RoomData startRoom = zone.ViableStartingRooms[GetRandomRange(0, zone.ViableStartingRooms.Count - 1)];
+        PlaceRoom(zone, startRoom, zone.StartingCellLocation, GetRandomRotation(startRoom));
+    }
+
+    private IEnumerator PlaceMustSpawnRoomsForZone(ZoneData zone)
+    {
+        var mustSpawnRooms = zone.RoomTable.Where(r => r.roomType == RoomData.RoomType.MustSpawn).ToList();
+
+        foreach (var room in mustSpawnRooms)
+        {
+            yield return AttemptToPlaceRoom(zone, room);
+        }
+    }
+
+    private IEnumerator AttemptToPlaceRoom(ZoneData zone, RoomData room)
+    {
+        bool placed = false;
+        int attempts = 0;
+        const int maxAttempts = 100;
+
+        while (!placed && attempts < maxAttempts)
+        {
+            Vector2Int randomPos = GetRandomGridPosition(zone);
+            int rotation = GetRandomRotation(room);
+
+            if (CanPlaceRoomAt(zone, room, randomPos, rotation))
             {
-                bool placed = false;
-                int attempts = 0;
-                const int maxAttempts = 100;
-
-                while (!placed && attempts < maxAttempts)
-                {
-                    Vector2Int randomPos = GetRandomGridPosition(zone);
-                    int rotation = GetRandomRotation(room);
-
-                    if (CanPlaceRoomAt(zone, room, randomPos, rotation))
-                    {
-                        PlaceRoom(zone, room, randomPos, rotation);
-                        placed = true;
-                    }
-
-                    attempts++;
-                    if (attempts % 10 == 0) yield return null;
-                }
-
-                if (!placed)
-                {
-                    Debug.LogWarning($"Failed to place must-spawn room {room.roomName} in zone {zone.ZoneID}");
-                }
-
-                yield return null;
+                PlaceRoom(zone, room, randomPos, rotation);
+                placed = true;
             }
+
+            attempts++;
+            if (attempts % 10 == 0) yield return null;
+        }
+
+        if (!placed)
+        {
+            Debug.LogWarning($"Failed to place must-spawn room {room.roomName} in zone {zone.ZoneID}");
         }
     }
 
@@ -195,52 +271,54 @@ public class MapGenerator : MonoBehaviour
     {
         foreach (var zone in zones)
         {
-            if (!placedRooms.ContainsKey(zone.ZoneID))
-            {
-                placedRooms[zone.ZoneID] = new List<PlacedRoom>();
-            }
+            InitializeZoneRoomList(zone.ZoneID);
 
             Vector2Int gridSize = zone.ZoneGridSize;
             Vector2Int adjustedGridSize = new Vector2Int(gridSize.x, gridSize.y + 1);
 
             if (zone.ConnectsToNextZone)
             {
-                // Place zone connections in the last row of the adjusted grid (inside the connection zone)
-                int connectionsToPlace = zone.AmountOfConnections;
-                List<int> availableColumns = Enumerable.Range(0, adjustedGridSize.x).ToList();
-
-                for (int i = 0; i < connectionsToPlace && availableColumns.Count > 0; i++)
-                {
-                    // Pick random column for connection
-                    int columnIndex = GetRandomRange(0, availableColumns.Count - 1);
-                    int column = availableColumns[columnIndex];
-                    availableColumns.RemoveAt(columnIndex);
-
-                    // Place in the last row of the adjusted grid (inside the connection zone)
-                    Vector2Int connectionPos = new Vector2Int(column, adjustedGridSize.y - 1);
-                    PlaceRoom(zone, zone.ToNextZoneConnector, connectionPos, 0); // Face towards next zone
-                    yield return null;
-                }
+                yield return PlaceZoneConnections(zone, adjustedGridSize);
             }
             else if (zone.SurfaceExits != null && zone.SurfaceExits.Count > 0)
             {
-                // Place surface exits in the last row of the adjusted grid similar to zone connections
-                List<int> availableColumns = Enumerable.Range(0, adjustedGridSize.x).ToList();
-
-                foreach (var exitRoom in zone.SurfaceExits)
-                {
-                    if (availableColumns.Count == 0) break;
-
-                    // Pick random column for surface exit
-                    int columnIndex = GetRandomRange(0, availableColumns.Count - 1);
-                    int column = availableColumns[columnIndex];
-                    availableColumns.RemoveAt(columnIndex);
-
-                    Vector2Int exitPos = new Vector2Int(column, adjustedGridSize.y - 1);
-                    PlaceRoom(zone, exitRoom, exitPos, 0); // Face outward
-                    yield return null;
-                }
+                yield return PlaceSurfaceExits(zone, adjustedGridSize);
             }
+        }
+    }
+
+    private IEnumerator PlaceZoneConnections(ZoneData zone, Vector2Int gridSize)
+    {
+        int connectionsToPlace = zone.AmountOfConnections;
+        List<int> availableColumns = Enumerable.Range(0, gridSize.x).ToList();
+
+        for (int i = 0; i < connectionsToPlace && availableColumns.Count > 0; i++)
+        {
+            int columnIndex = GetRandomRange(0, availableColumns.Count - 1);
+            int column = availableColumns[columnIndex];
+            availableColumns.RemoveAt(columnIndex);
+
+            Vector2Int connectionPos = new Vector2Int(column, gridSize.y - 1);
+            PlaceRoom(zone, zone.ToNextZoneConnector, connectionPos, 0);
+            yield return null;
+        }
+    }
+
+    private IEnumerator PlaceSurfaceExits(ZoneData zone, Vector2Int gridSize)
+    {
+        List<int> availableColumns = Enumerable.Range(0, gridSize.x).ToList();
+
+        foreach (var exitRoom in zone.SurfaceExits)
+        {
+            if (availableColumns.Count == 0) break;
+
+            int columnIndex = GetRandomRange(0, availableColumns.Count - 1);
+            int column = availableColumns[columnIndex];
+            availableColumns.RemoveAt(columnIndex);
+
+            Vector2Int exitPos = new Vector2Int(column, gridSize.y - 1);
+            PlaceRoom(zone, exitRoom, exitPos, 0);
+            yield return null;
         }
     }
 
@@ -248,7 +326,6 @@ public class MapGenerator : MonoBehaviour
     {
         if (edgeOnly)
         {
-            // Return a random edge position
             bool useXEdge = GetRandomValue() > 0.5f;
             if (useXEdge)
             {
@@ -279,23 +356,19 @@ public class MapGenerator : MonoBehaviour
         if (!zoneOccupancy.TryGetValue(zone.ZoneID, out var occupancyGrid))
             return false;
 
-        // Check if the base cell is available
         if (occupancyGrid[position.x, position.y])
             return false;
 
-        // If the room is large, check extended size
         if (room.isLarge && room.extendedSize != null)
         {
             foreach (var extension in room.extendedSize)
             {
                 Vector2Int extendedPos = position + new Vector2Int((int)extension.x, (int)extension.y);
 
-                // Check if position is within grid bounds
                 if (extendedPos.x < 0 || extendedPos.x >= zone.ZoneGridSize.x ||
                     extendedPos.y < 0 || extendedPos.y >= zone.ZoneGridSize.y)
                     return false;
 
-                // Check if position is occupied
                 if (occupancyGrid[extendedPos.x, extendedPos.y])
                     return false;
             }
@@ -309,10 +382,8 @@ public class MapGenerator : MonoBehaviour
         var occupancyGrid = zoneOccupancy[zone.ZoneID];
         var positionGrid = zoneGrids[zone.ZoneID];
 
-        // Mark the base cell as occupied
         occupancyGrid[gridPosition.x, gridPosition.y] = true;
 
-        // Mark extended cells for large rooms
         if (room.isLarge && room.extendedSize != null)
         {
             foreach (var extension in room.extendedSize)
@@ -322,7 +393,6 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        // Record the placed room
         placedRooms[zone.ZoneID].Add(new PlacedRoom
         {
             RoomData = room,
@@ -331,103 +401,46 @@ public class MapGenerator : MonoBehaviour
             WorldPosition = positionGrid[gridPosition.x, gridPosition.y]
         });
     }
+    #endregion
 
-    // Helper method to get a random value
-    public float GetRandomValue()
+    #region Private Methods - Gizmos
+    private void DrawZoneGrid(ZoneData zoneData, Vector3[,] grid)
     {
-        return (float)random.NextDouble();
-    }
+        int rows = grid.GetLength(0);
+        int cols = grid.GetLength(1);
 
-    // Helper method to get a random range
-    public float GetRandomRange(float min, float max)
-    {
-        return min + (float)(random.NextDouble() * (max - min));
-    }
-
-    // Helper method to get a random int range (inclusive)
-    public int GetRandomRange(int min, int max)
-    {
-        return random.Next(min, max + 1);
-    }
-
-    // Get the current seed
-    public string GetCurrentSeed()
-    {
-        return seed;
-    }
-
-    // Set a specific seed
-    public void SetSeed(string newSeed)
-    {
-        seed = newSeed;
-        useRandomSeed = false;
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (!showGizmos || zoneGrids == null) return;
-
-        // Store original Gizmos color
-        Color originalColor = Gizmos.color;
-
-        foreach (var zoneEntry in zoneGrids)
+        for (int x = 0; x < rows; x++)
         {
-            int zoneId = zoneEntry.Key;
-            Vector3[,] grid = zoneEntry.Value;
-            ZoneData zoneData = zones.Length > zoneId - 1 ? zones[zoneId - 1] : null;
-
-            if (zoneData == null) continue;
-
-            int rows = grid.GetLength(0);
-            int cols = grid.GetLength(1);
-
-            // Draw cells
-            for (int x = 0; x < rows; x++)
+            for (int z = 0; z < cols; z++)
             {
-                for (int z = 0; z < cols; z++)
+                Vector3 cellCenter = grid[x, z];
+                Gizmos.color = baseGridColor;
+                DrawCellOutline(cellCenter, cellSize);
+
+                if (zoneData.ConnectsToNextZone && z == cols - 1)
                 {
-                    Vector3 cellCenter = grid[x, z];
-
-                    // Draw cell outline
-                    Gizmos.color = baseGridColor;
-                    DrawCellOutline(cellCenter, cellSize);
-
-                    // If this is a zone connection area, highlight it
-                    if (zoneData.ConnectsToNextZone && z == cols - 1)
-                    {
-                        Gizmos.color = zoneConnectionColor;
-                        DrawCellOutline(cellCenter + new Vector3(0, 0, cellSize), cellSize);
-                    }
-                }
-            }
-
-            // Draw zone label
-            DrawZoneLabel(grid[0, 0], zoneData.ZoneID);
-
-            // Draw placed rooms
-            if (placedRooms != null && placedRooms.TryGetValue(zoneId, out var zoneRooms))
-            {
-                foreach (var placedRoom in zoneRooms)
-                {
-                    // Choose color based on room type
-                    Gizmos.color = GetRoomTypeColor(placedRoom.RoomData.roomType);
-
-                    // Draw room outline
-                    Vector3 roomCenter = placedRoom.WorldPosition;
-                    DrawRoomOutline(roomCenter, cellSize, placedRoom);
-
-                    // Draw room name and rotation
-#if UNITY_EDITOR
-                    Vector3 labelPos = roomCenter + Vector3.up * 0.5f;
-                    string roomLabel = $"{placedRoom.RoomData.roomName}\n{placedRoom.RotationDegrees}°";
-                    UnityEditor.Handles.Label(labelPos, roomLabel);
-#endif
+                    Gizmos.color = zoneConnectionColor;
+                    DrawCellOutline(cellCenter + new Vector3(0, 0, cellSize), cellSize);
                 }
             }
         }
+    }
 
-        // Restore original Gizmos color
-        Gizmos.color = originalColor;
+    private void DrawPlacedRooms(int zoneId)
+    {
+        if (placedRooms == null || !placedRooms.TryGetValue(zoneId, out var zoneRooms)) return;
+
+        foreach (var placedRoom in zoneRooms)
+        {
+            Gizmos.color = GetRoomTypeColor(placedRoom.RoomData.roomType);
+            DrawRoomOutline(placedRoom.WorldPosition, cellSize, placedRoom);
+
+#if UNITY_EDITOR
+            Vector3 labelPos = placedRoom.WorldPosition + Vector3.up * 0.5f;
+            string roomLabel = $"{placedRoom.RoomData.roomName}\n{placedRoom.RotationDegrees}°";
+            UnityEditor.Handles.Label(labelPos, roomLabel);
+#endif
+        }
     }
 
     private Color GetRoomTypeColor(RoomData.RoomType roomType)
@@ -447,21 +460,17 @@ public class MapGenerator : MonoBehaviour
 
     private void DrawRoomOutline(Vector3 center, float size, PlacedRoom placedRoom)
     {
-        // Draw base cell
         Gizmos.DrawWireCube(center + Vector3.up * 0.02f, new Vector3(size, 0, size));
 
-        // Draw direction arrow
         Vector3 arrowStart = center + Vector3.up * 0.03f;
         Vector3 arrowEnd = arrowStart + Quaternion.Euler(0, placedRoom.RotationDegrees, 0) * Vector3.forward * (size * 0.4f);
         Gizmos.DrawLine(arrowStart, arrowEnd);
 
-        // Draw arrow head
         Vector3 right = Quaternion.Euler(0, placedRoom.RotationDegrees + 45, 0) * Vector3.forward * (size * 0.1f);
         Vector3 left = Quaternion.Euler(0, placedRoom.RotationDegrees - 45, 0) * Vector3.forward * (size * 0.1f);
         Gizmos.DrawLine(arrowEnd, arrowEnd - right);
         Gizmos.DrawLine(arrowEnd, arrowEnd - left);
 
-        // If room is large, draw extended size
         if (placedRoom.RoomData.isLarge && placedRoom.RoomData.extendedSize != null)
         {
             foreach (var extension in placedRoom.RoomData.extendedSize)
@@ -474,8 +483,6 @@ public class MapGenerator : MonoBehaviour
 
     private void DrawCellOutline(Vector3 center, float size)
     {
-        Vector3 halfSize = new Vector3(size * 0.5f, 0, size * 0.5f);
-
         Vector3 heightOffset = new Vector3(0, 0.01f, 0);
         Gizmos.DrawWireCube(center + heightOffset, new Vector3(size, 0, size));
     }
@@ -487,4 +494,5 @@ public class MapGenerator : MonoBehaviour
         UnityEditor.Handles.Label(labelPosition, $"Zone {zoneId}");
 #endif
     }
+    #endregion
 }
