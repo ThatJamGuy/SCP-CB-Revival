@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using NaughtyAttributes;
 using System.Collections.Generic;
 using System.Collections;
@@ -43,6 +43,8 @@ public class MapGenerator : MonoBehaviour
 
     // Track placed rooms and their rotations
     private Dictionary<int, List<PlacedRoom>> placedRooms;
+
+    private const int MUST_SPAWN_PADDING = 1;
     #endregion
 
     #region Properties
@@ -106,6 +108,11 @@ public class MapGenerator : MonoBehaviour
         yield return InitializeZoneGridsAsync();
         yield return PlaceMustSpawnRoomsAsync();
         yield return PlaceZoneConnectionsAsync();
+
+        foreach (var zone in zones)
+        {
+            yield return ConnectRoomsInZone(zone);
+        }
 
         // Instantiate all placed rooms
         InstantiateAllRooms();
@@ -312,12 +319,38 @@ public class MapGenerator : MonoBehaviour
         int attempts = 0;
         const int maxAttempts = 100;
 
+        // Special handling for must-spawn rooms
+        bool isMustSpawn = room.roomType == RoomData.RoomType.MustSpawn;
+        bool isStartingRoom = zone.CreateStartingRoom && zone.ViableStartingRooms.Contains(room);
+
         while (!placed && attempts < maxAttempts)
         {
             Vector2Int randomPos = GetRandomGridPosition(zone);
-            int rotation = GetRandomRotation(room);
+            int rotation;
 
-            if (CanPlaceRoomAt(zone, room, randomPos, rotation))
+            // For starting rooms, use existing rotation logic
+            if (isStartingRoom)
+            {
+                rotation = GetRandomRotation(room);
+            }
+            // For other rooms, ensure no off-grid entrances
+            else
+            {
+                rotation = GetValidRotationForPosition(zone, room, randomPos);
+
+                // Skip this position if no valid rotation found
+                if (HasOffGridEntrances(zone, room, randomPos, rotation))
+                {
+                    attempts++;
+                    continue;
+                }
+            }
+
+            bool isValidPosition = isMustSpawn ?
+                IsPositionValidForMustSpawn(zone, room, randomPos) :
+                CanPlaceRoomAt(zone, room, randomPos, rotation);
+
+            if (isValidPosition)
             {
                 PlaceRoom(zone, room, randomPos, rotation);
                 placed = true;
@@ -329,8 +362,39 @@ public class MapGenerator : MonoBehaviour
 
         if (!placed)
         {
-            Debug.LogWarning($"Failed to place must-spawn room {room.roomName} in zone {zone.ZoneID}");
+            Debug.LogWarning($"Failed to place {(isMustSpawn ? "must-spawn" : "normal")} room {room.roomName} in zone {zone.ZoneID}");
         }
+    }
+
+    private bool IsPositionValidForMustSpawn(ZoneData zone, RoomData room, Vector2Int position)
+    {
+        // Check if position is within padded bounds
+        if (position.x < MUST_SPAWN_PADDING ||
+            position.x >= zone.ZoneGridSize.x - MUST_SPAWN_PADDING ||
+            position.y < MUST_SPAWN_PADDING ||
+            position.y >= zone.ZoneGridSize.y - MUST_SPAWN_PADDING)
+        {
+            return false;
+        }
+
+        // For large rooms, check if extended size stays within padded bounds
+        if (room.isLarge && room.extendedSize != null)
+        {
+            foreach (var extension in room.extendedSize)
+            {
+                Vector2Int extendedPos = position + new Vector2Int((int)extension.x, (int)extension.y);
+                if (extendedPos.x < MUST_SPAWN_PADDING ||
+                    extendedPos.x >= zone.ZoneGridSize.x - MUST_SPAWN_PADDING ||
+                    extendedPos.y < MUST_SPAWN_PADDING ||
+                    extendedPos.y >= zone.ZoneGridSize.y - MUST_SPAWN_PADDING)
+                {
+                    return false;
+                }
+            }
+        }
+
+        // Check if position is not occupied
+        return !zoneOccupancy[zone.ZoneID][position.x, position.y];
     }
 
     private IEnumerator PlaceZoneConnectionsAsync()
@@ -405,9 +469,10 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
+        // For must-spawn rooms, ensure we're getting a position within the padded area
         return new Vector2Int(
-            GetRandomRange(0, zone.ZoneGridSize.x - 1),
-            GetRandomRange(0, zone.ZoneGridSize.y - 1)
+            GetRandomRange(MUST_SPAWN_PADDING, zone.ZoneGridSize.x - MUST_SPAWN_PADDING - 1),
+            GetRandomRange(MUST_SPAWN_PADDING, zone.ZoneGridSize.y - MUST_SPAWN_PADDING - 1)
         );
     }
 
@@ -466,6 +531,710 @@ public class MapGenerator : MonoBehaviour
             RotationDegrees = rotationDegrees,
             WorldPosition = positionGrid[gridPosition.x, gridPosition.y]
         });
+    }
+
+    private bool HasOffGridEntrances(ZoneData zone, RoomData room, Vector2Int position, int rotation)
+    {
+        var rotatedEntrances = GetRotatedEntrances(room.entranceDirections, rotation);
+
+        foreach (var entrance in rotatedEntrances)
+        {
+            Vector2Int entranceOffset = DirectionToOffset(entrance);
+            Vector2Int entrancePos = position + entranceOffset;
+
+            // Check if the entrance position is off the grid
+            if (!IsValidPosition(zone, entrancePos))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private int GetValidRotationForPosition(ZoneData zone, RoomData room, Vector2Int position)
+    {
+        if (!room.canRotate)
+        {
+            return 0;
+        }
+
+        List<int> validRotations = new List<int>();
+
+        // Try all possible rotations (0, 90, 180, 270 degrees)
+        for (int rot = 0; rot < 4; rot++)
+        {
+            int rotation = rot * 90;
+            if (!HasOffGridEntrances(zone, room, position, rotation))
+            {
+                validRotations.Add(rotation);
+            }
+        }
+
+        // If we found valid rotations, pick one randomly
+        if (validRotations.Count > 0)
+        {
+            return validRotations[GetRandomRange(0, validRotations.Count - 1)];
+        }
+
+        // If no valid rotation found, return 0 (this should be prevented by earlier checks)
+        return 0;
+    }
+    #endregion
+
+    #region Room Connection Methods
+    private struct ConnectionPoint
+    {
+        public Vector2Int Position;
+        public RoomData.CardinalDirection Direction;
+        public bool IsConnected;
+
+        public ConnectionPoint(Vector2Int pos, RoomData.CardinalDirection dir)
+        {
+            Position = pos;
+            Direction = dir;
+            IsConnected = false;
+        }
+    }
+
+    private List<ConnectionPoint> GetRoomConnectionPoints(PlacedRoom room)
+    {
+        var points = new List<ConnectionPoint>();
+        var rotatedDirections = GetRotatedEntrances(room.RoomData.entranceDirections, room.RotationDegrees);
+
+        foreach (var direction in rotatedDirections)
+        {
+            Vector2Int offset = DirectionToOffset(direction);
+            Vector2Int connectionPos = room.GridPosition + offset;
+            points.Add(new ConnectionPoint(connectionPos, direction));
+        }
+
+        return points;
+    }
+
+    private HashSet<RoomData.CardinalDirection> GetRotatedEntrances(HashSet<RoomData.CardinalDirection> originalEntrances, int rotationDegrees)
+    {
+        var rotated = new HashSet<RoomData.CardinalDirection>();
+        int rotationSteps = ((rotationDegrees % 360) + 360) % 360 / 90;
+
+        foreach (var entrance in originalEntrances)
+        {
+            int newDirection = (((int)entrance + rotationSteps) % 4 + 4) % 4;
+            rotated.Add((RoomData.CardinalDirection)newDirection);
+        }
+
+        return rotated;
+    }
+
+    private Vector2Int DirectionToOffset(RoomData.CardinalDirection direction)
+    {
+        return direction switch
+        {
+            RoomData.CardinalDirection.North => new Vector2Int(0, 1),
+            RoomData.CardinalDirection.East => new Vector2Int(1, 0),
+            RoomData.CardinalDirection.South => new Vector2Int(0, -1),
+            RoomData.CardinalDirection.West => new Vector2Int(-1, 0),
+            _ => Vector2Int.zero
+        };
+    }
+
+    private RoomData.CardinalDirection OppositeDirection(RoomData.CardinalDirection direction)
+    {
+        return direction switch
+        {
+            RoomData.CardinalDirection.North => RoomData.CardinalDirection.South,
+            RoomData.CardinalDirection.South => RoomData.CardinalDirection.North,
+            RoomData.CardinalDirection.East => RoomData.CardinalDirection.West,
+            RoomData.CardinalDirection.West => RoomData.CardinalDirection.East,
+            _ => direction
+        };
+    }
+
+    private IEnumerator ConnectRoomsInZone(ZoneData zone)
+    {
+        if (!placedRooms.TryGetValue(zone.ZoneID, out var zoneRooms))
+            yield break;
+
+        var roomsByPosition = new Dictionary<Vector2Int, PlacedRoom>();
+        var unconnectedEntrances = new List<(Vector2Int Position, RoomData.CardinalDirection Direction, PlacedRoom SourceRoom)>();
+
+        // First pass: Map rooms and gather unconnected entrances
+        foreach (var room in zoneRooms)
+        {
+            roomsByPosition[room.GridPosition] = room;
+            var entrances = GetRoomConnectionPoints(room);
+
+            foreach (var entrance in entrances)
+            {
+                // Check if this entrance leads to a valid position
+                if (IsValidPosition(zone, entrance.Position))
+                {
+                    unconnectedEntrances.Add((entrance.Position, entrance.Direction, room));
+                }
+            }
+        }
+          
+        // Second pass: Try to connect unconnected entrances
+        foreach (var entrance in unconnectedEntrances)
+        {
+            if (roomsByPosition.ContainsKey(entrance.Position))
+            {
+                // Space already occupied, check if connection is valid
+                var existingRoom = roomsByPosition[entrance.Position];
+                var targetEntrances = GetRotatedEntrances(existingRoom.RoomData.entranceDirections, existingRoom.RotationDegrees);
+
+                if (!targetEntrances.Contains(OppositeDirection(entrance.Direction)))
+                {
+                    Debug.LogWarning($"Mismatched connection at {entrance.Position}");
+                }
+            }
+            else
+            {
+                // Try to place a connecting room
+                yield return TryPlaceConnectingRoom(zone, entrance.Position, entrance.Direction, roomsByPosition);
+            }
+
+            yield return null;
+        }
+    }
+
+    private bool IsValidPosition(ZoneData zone, Vector2Int position)
+    {
+        return position.x >= 0 && position.x < zone.ZoneGridSize.x &&
+               position.y >= 0 && position.y < zone.ZoneGridSize.y;
+    }
+
+    private IEnumerator TryPlaceConnectingRoom(ZoneData zone, Vector2Int position, RoomData.CardinalDirection incomingDirection, Dictionary<Vector2Int, PlacedRoom> roomsByPosition)
+    {
+        // Get potential connections from adjacent cells
+        var requiredConnections = new HashSet<RoomData.CardinalDirection> { OppositeDirection(incomingDirection) };
+
+        // Check all directions for potential connections
+        foreach (RoomData.CardinalDirection dir in Enum.GetValues(typeof(RoomData.CardinalDirection)))
+        {
+            if (dir == incomingDirection) continue;
+
+            Vector2Int adjacentPos = position + DirectionToOffset(dir);
+            if (roomsByPosition.TryGetValue(adjacentPos, out var adjacentRoom))
+            {
+                var adjacentEntrances = GetRotatedEntrances(adjacentRoom.RoomData.entranceDirections, adjacentRoom.RotationDegrees);
+                if (adjacentEntrances.Contains(OppositeDirection(dir)))
+                {
+                    requiredConnections.Add(dir);
+                }
+            }
+        }
+
+        // Find a suitable room that matches our connection requirements
+        var suitableRooms = zone.RoomTable
+            .Where(r => r.roomType == RoomData.RoomType.Normal &&
+                        IsRoomSuitableForConnections(r, requiredConnections) &&
+                        !HasOffGridEntrances(zone, r, position, GetBestRotationForConnections(r, requiredConnections)))
+            .OrderByDescending(r => r.spawnWeight + r.connectionBonusWeight * requiredConnections.Count)
+            .ToList();
+
+        if (suitableRooms.Count > 0)
+        {
+            // Pick a random room from the top 3 most suitable rooms
+            int index = GetRandomRange(0, Mathf.Min(2, suitableRooms.Count - 1));
+            var selectedRoom = suitableRooms[index];
+
+            // Find the correct rotation
+            int rotation = GetBestRotationForConnections(selectedRoom, requiredConnections);
+
+            if (CanPlaceRoomAt(zone, selectedRoom, position, rotation))
+            {
+                PlaceRoom(zone, selectedRoom, position, rotation);
+                roomsByPosition[position] = placedRooms[zone.ZoneID].Last();
+            }
+        }
+
+        yield return null;
+    }
+
+    private bool IsRoomSuitableForConnections(RoomData room, HashSet<RoomData.CardinalDirection> requiredConnections)
+    {
+        if (!room.canRotate)
+        {
+            return requiredConnections.All(dir => room.entranceDirections.Contains(dir));
+        }
+
+        // Try all rotations
+        for (int rotation = 0; rotation < 360; rotation += 90)
+        {
+            var rotatedEntrances = GetRotatedEntrances(room.entranceDirections, rotation);
+            if (requiredConnections.All(dir => rotatedEntrances.Contains(dir)))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private int GetBestRotationForConnections(RoomData room, HashSet<RoomData.CardinalDirection> requiredConnections)
+    {
+        if (!room.canRotate) return 0;
+
+        for (int rotation = 0; rotation < 360; rotation += 90)
+        {
+            var rotatedEntrances = GetRotatedEntrances(room.entranceDirections, rotation);
+            if (requiredConnections.All(dir => rotatedEntrances.Contains(dir)))
+            {
+                return rotation;
+            }
+        }
+
+        return 0;
+    }
+
+    private RoomData FindSuitableConnectingRoom(ZoneData zone, params RoomData.CardinalDirection[] requiredDirections)
+    {
+        return zone.RoomTable
+            .Where(r => r.roomType != RoomData.RoomType.ZoneConnection &&
+                        r.roomType != RoomData.RoomType.MustSpawn)
+            .FirstOrDefault(r => requiredDirections.All(d => r.entranceDirections.Contains(d)));
+    }
+
+    private int GetRotationForDirections(RoomData room, params RoomData.CardinalDirection[] requiredDirections)
+    {
+        if (!room.canRotate) return 0;
+
+        for (int rotation = 0; rotation < 360; rotation += 90)
+        {
+            var rotatedEntrances = GetRotatedEntrances(room.entranceDirections, rotation);
+            if (requiredDirections.All(d => rotatedEntrances.Contains(d)))
+            {
+                return rotation;
+            }
+        }
+
+        return 0;
+    }
+    #endregion
+
+    #region Room Connectivity Validation
+    private class RoomNode
+    {
+        public Vector2Int Position { get; set; }
+        public HashSet<Vector2Int> ConnectedTo { get; set; } = new HashSet<Vector2Int>();
+        public PlacedRoom Room { get; set; }
+        public bool Visited { get; set; } = false;
+    }
+
+    private IEnumerator ValidateAndFixConnectivity(ZoneData zone)
+    {
+        if (!placedRooms.TryGetValue(zone.ZoneID, out var zoneRooms))
+            yield break;
+
+        // Build connectivity graph
+        Dictionary<Vector2Int, RoomNode> nodes = BuildRoomGraph(zoneRooms);
+
+        // Find starting point (prefer starting room or must-spawn rooms)
+        var startNode = FindStartNode(nodes, zone);
+        if (startNode == null)
+        {
+            Debug.LogError($"No valid start node found in zone {zone.ZoneID}");
+            yield break;
+        }
+
+        // Perform DFS to find unreachable rooms
+        HashSet<Vector2Int> reachableRooms = new HashSet<Vector2Int>();
+        Stack<RoomNode> pathStack = new Stack<RoomNode>();
+        pathStack.Push(startNode);
+
+        while (pathStack.Count > 0)
+        {
+            var currentNode = pathStack.Pop();
+            if (!reachableRooms.Contains(currentNode.Position))
+            {
+                reachableRooms.Add(currentNode.Position);
+
+                foreach (var connectedPos in currentNode.ConnectedTo)
+                {
+                    if (nodes.TryGetValue(connectedPos, out var connectedNode) &&
+                        !reachableRooms.Contains(connectedPos))
+                    {
+                        pathStack.Push(connectedNode);
+                    }
+                }
+            }
+
+            if (pathStack.Count % 10 == 0) yield return null;
+        }
+
+        // Fix unreachable rooms
+        foreach (var node in nodes.Values)
+        {
+            if (!reachableRooms.Contains(node.Position))
+            {
+                yield return FixUnreachableRoom(zone, node, nodes, reachableRooms);
+            }
+        }
+
+        // Final pass - replace dead-end normal rooms with proper dead ends
+        yield return OptimizeDeadEnds(zone, nodes);
+    }
+
+    private Dictionary<Vector2Int, RoomNode> BuildRoomGraph(List<PlacedRoom> zoneRooms)
+    {
+        var nodes = new Dictionary<Vector2Int, RoomNode>();
+
+        foreach (var room in zoneRooms)
+        {
+            var node = new RoomNode
+            {
+                Position = room.GridPosition,
+                Room = room
+            };
+
+            // Get all valid connections based on room entrances
+            var entrances = GetRoomConnectionPoints(room);
+            foreach (var entrance in entrances)
+            {
+                foreach (var otherRoom in zoneRooms)
+                {
+                    if (otherRoom.GridPosition == entrance.Position)
+                    {
+                        var otherEntrances = GetRotatedEntrances(otherRoom.RoomData.entranceDirections, otherRoom.RotationDegrees);
+                        if (otherEntrances.Contains(OppositeDirection(entrance.Direction)))
+                        {
+                            node.ConnectedTo.Add(entrance.Position);
+                        }
+                    }
+                }
+            }
+
+            nodes[room.GridPosition] = node;
+        }
+
+        return nodes;
+    }
+
+    private RoomNode FindStartNode(Dictionary<Vector2Int, RoomNode> nodes, ZoneData zone)
+    {
+        // First, try to find the starting room if it exists
+        if (zone.CreateStartingRoom)
+        {
+            if (nodes.TryGetValue(zone.StartingCellLocation, out var startNode))
+                return startNode;
+        }
+
+        // Then, try to find any must-spawn room
+        foreach (var node in nodes.Values)
+        {
+            if (node.Room.RoomData.roomType == RoomData.RoomType.MustSpawn)
+                return node;
+        }
+
+        // Finally, fall back to any room
+        return nodes.Values.FirstOrDefault();
+    }
+
+    private IEnumerator FixUnreachableRoom(ZoneData zone, RoomNode unreachableNode,
+        Dictionary<Vector2Int, RoomNode> nodes, HashSet<Vector2Int> reachableRooms)
+    {
+        // If it's a must-spawn room or zone connection, we need to create a path to it
+        if (unreachableNode.Room.RoomData.roomType == RoomData.RoomType.MustSpawn ||
+            unreachableNode.Room.RoomData.roomType == RoomData.RoomType.ZoneConnection)
+        {
+            yield return CreatePathToRoom(zone, unreachableNode, nodes, reachableRooms);
+        }
+        else
+        {
+            // For normal rooms, we can replace them with dead ends or remove them
+            RoomData deadEnd = FindSuitableDeadEnd(zone, unreachableNode);
+            if (deadEnd != null)
+            {
+                ReplaceRoom(zone, unreachableNode.Room, deadEnd);
+            }
+            else
+            {
+                // Remove the room if we can't find a suitable dead end
+                RemoveRoom(zone, unreachableNode.Room);
+            }
+        }
+    }
+
+    private IEnumerator CreatePathToRoom(ZoneData zone, RoomNode targetNode,
+        Dictionary<Vector2Int, RoomNode> nodes, HashSet<Vector2Int> reachableRooms)
+    {
+        // Find nearest reachable room
+        var nearestReachable = FindNearestReachableRoom(targetNode.Position, reachableRooms, nodes);
+        if (nearestReachable == null) yield break;
+
+        // Create a path between the rooms
+        var path = FindPath(nearestReachable.Position, targetNode.Position, zone.ZoneGridSize);
+        foreach (var pos in path)
+        {
+            if (!nodes.ContainsKey(pos))
+            {
+                // Place connecting room
+                var directions = GetRequiredDirectionsForPath(pos, path);
+                var connectingRoom = FindSuitableConnectingRoom(zone, directions.ToArray());
+                if (connectingRoom != null)
+                {
+                    int rotation = GetRotationForDirections(connectingRoom, directions.ToArray());
+                    PlaceRoom(zone, connectingRoom, pos, rotation);
+                    yield return null;
+                }
+            }
+        }
+    }
+
+    private IEnumerator OptimizeDeadEnds(ZoneData zone, Dictionary<Vector2Int, RoomNode> nodes)
+    {
+        foreach (var node in nodes.Values.ToList()) // Create a copy to allow modification
+        {
+            if (node.ConnectedTo.Count == 1 &&
+                node.Room.RoomData.roomType == RoomData.RoomType.Normal)
+            {
+                // This is a dead end - replace with proper dead end room if available
+                RoomData deadEnd = FindSuitableDeadEnd(zone, node);
+                if (deadEnd != null)
+                {
+                    ReplaceRoom(zone, node.Room, deadEnd);
+                    yield return null;
+                }
+            }
+        }
+    }
+
+    private RoomData FindSuitableDeadEnd(ZoneData zone, RoomNode node)
+    {
+        if (node.ConnectedTo.Count == 0) return null;
+
+        // Get the direction to the only connection
+        var connectedPos = node.ConnectedTo.First();
+        var direction = GetDirectionBetweenPositions(node.Position, connectedPos);
+
+        return zone.RoomTable
+            .Where(r => r.roomType == RoomData.RoomType.DeadEnd)
+            .FirstOrDefault(r => r.entranceDirections.Contains(direction));
+    }
+
+    private void ReplaceRoom(ZoneData zone, PlacedRoom oldRoom, RoomData newRoom)
+    {
+        // Remove old room
+        RemoveRoom(zone, oldRoom);
+
+        // Place new room
+        PlaceRoom(zone, newRoom, oldRoom.GridPosition,
+            GetRotationForDirections(newRoom, GetConnectedDirections(oldRoom).ToArray()));
+    }
+
+    private void RemoveRoom(ZoneData zone, PlacedRoom room)
+    {
+        var zoneRooms = placedRooms[zone.ZoneID];
+        zoneRooms.Remove(room);
+
+        // Clear occupancy
+        var occupancyGrid = zoneOccupancy[zone.ZoneID];
+        occupancyGrid[room.GridPosition.x, room.GridPosition.y] = false;
+
+        if (room.RoomData.isLarge)
+        {
+            foreach (var extension in room.RoomData.extendedSize)
+            {
+                Vector2Int extendedPos = room.GridPosition + new Vector2Int((int)extension.x, (int)extension.y);
+                occupancyGrid[extendedPos.x, extendedPos.y] = false;
+            }
+        }
+    }
+
+    private RoomData.CardinalDirection GetDirectionBetweenPositions(Vector2Int from, Vector2Int to)
+    {
+        Vector2Int diff = to - from;
+        if (diff.x > 0) return RoomData.CardinalDirection.East;
+        if (diff.x < 0) return RoomData.CardinalDirection.West;
+        if (diff.y > 0) return RoomData.CardinalDirection.North;
+        return RoomData.CardinalDirection.South;
+    }
+
+    private HashSet<RoomData.CardinalDirection> GetConnectedDirections(PlacedRoom room)
+    {
+        var directions = new HashSet<RoomData.CardinalDirection>();
+        var connectionPoints = GetRoomConnectionPoints(room);
+        foreach (var point in connectionPoints)
+        {
+            directions.Add(point.Direction);
+        }
+        return directions;
+    }
+    #endregion
+
+    #region Pathfinding Methods
+    private List<Vector2Int> FindPath(Vector2Int start, Vector2Int end, Vector2Int gridSize)
+    {
+        var path = new List<Vector2Int>();
+        var openSet = new PriorityQueue<Vector2Int, float>();
+        var cameFrom = new Dictionary<Vector2Int, Vector2Int>();
+        var gScore = new Dictionary<Vector2Int, float>();
+        var fScore = new Dictionary<Vector2Int, float>();
+
+        openSet.Enqueue(start, 0);
+        gScore[start] = 0;
+        fScore[start] = ManhattanDistance(start, end);
+
+        while (openSet.Count > 0)
+        {
+            var current = openSet.Dequeue();
+
+            if (current == end)
+            {
+                // Reconstruct path
+                while (current != start)
+                {
+                    path.Add(current);
+                    current = cameFrom[current];
+                }
+                path.Add(start);
+                path.Reverse();
+                return path;
+            }
+
+            foreach (var neighbor in GetValidNeighbors(current, gridSize))
+            {
+                var tentativeGScore = gScore[current] + 1;
+
+                if (!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor])
+                {
+                    cameFrom[neighbor] = current;
+                    gScore[neighbor] = tentativeGScore;
+                    float h = ManhattanDistance(neighbor, end);
+                    fScore[neighbor] = gScore[neighbor] + h;
+
+                    if (!openSet.Contains(neighbor))
+                    {
+                        openSet.Enqueue(neighbor, fScore[neighbor]);
+                    }
+                }
+            }
+        }
+
+        // No path found, return direct path (might be invalid but will be handled by room placement)
+        return GetDirectPath(start, end);
+    }
+
+    private List<Vector2Int> GetDirectPath(Vector2Int start, Vector2Int end)
+    {
+        var path = new List<Vector2Int>();
+        var current = start;
+
+        while (current != end)
+        {
+            path.Add(current);
+            var diff = end - current;
+            var step = new Vector2Int(
+                Math.Sign(diff.x),
+                diff.x == 0 ? Math.Sign(diff.y) : 0
+            );
+            current += step;
+        }
+        path.Add(end);
+        return path;
+    }
+
+    private float ManhattanDistance(Vector2Int a, Vector2Int b)
+    {
+        return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y);
+    }
+
+    private IEnumerable<Vector2Int> GetValidNeighbors(Vector2Int pos, Vector2Int gridSize)
+    {
+        var directions = new[]
+        {
+        new Vector2Int(0, 1),  // North
+        new Vector2Int(1, 0),  // East
+        new Vector2Int(0, -1), // South
+        new Vector2Int(-1, 0)  // West
+    };
+
+        foreach (var dir in directions)
+        {
+            var neighbor = pos + dir;
+            if (IsValidPosition(neighbor, gridSize))
+            {
+                yield return neighbor;
+            }
+        }
+    }
+
+    private bool IsValidPosition(Vector2Int pos, Vector2Int gridSize)
+    {
+        return pos.x >= 0 && pos.x < gridSize.x &&
+               pos.y >= 0 && pos.y < gridSize.y;
+    }
+
+    private HashSet<RoomData.CardinalDirection> GetRequiredDirectionsForPath(Vector2Int position, List<Vector2Int> path)
+    {
+        var directions = new HashSet<RoomData.CardinalDirection>();
+        int index = path.IndexOf(position);
+
+        if (index < 0) return directions;
+
+        // Check previous position
+        if (index > 0)
+        {
+            var prevPos = path[index - 1];
+            directions.Add(GetDirectionBetweenPositions(position, prevPos));
+        }
+
+        // Check next position
+        if (index < path.Count - 1)
+        {
+            var nextPos = path[index + 1];
+            directions.Add(GetDirectionBetweenPositions(position, nextPos));
+        }
+
+        return directions;
+    }
+
+    private RoomNode FindNearestReachableRoom(Vector2Int position, HashSet<Vector2Int> reachableRooms, Dictionary<Vector2Int, RoomNode> nodes)
+    {
+        RoomNode nearest = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var reachablePos in reachableRooms)
+        {
+            if (nodes.TryGetValue(reachablePos, out var node))
+            {
+                float distance = ManhattanDistance(position, reachablePos);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearest = node;
+                }
+            }
+        }
+
+        return nearest;
+    }
+
+    // Priority Queue implementation for pathfinding
+    private class PriorityQueue<TItem, TPriority> where TPriority : IComparable<TPriority>
+    {
+        private readonly List<(TItem item, TPriority priority)> elements = new List<(TItem, TPriority)>();
+
+        public int Count => elements.Count;
+
+        public void Enqueue(TItem item, TPriority priority)
+        {
+            elements.Add((item, priority));
+            elements.Sort((x, y) => x.priority.CompareTo(y.priority));
+        }
+
+        public TItem Dequeue()
+        {
+            var item = elements[0].item;
+            elements.RemoveAt(0);
+            return item;
+        }
+
+        public bool Contains(TItem item)
+        {
+            return elements.Any(x => x.item.Equals(item));
+        }
     }
     #endregion
 
@@ -564,7 +1333,7 @@ public class MapGenerator : MonoBehaviour
 
 #if UNITY_EDITOR
             Vector3 labelPos = placedRoom.WorldPosition + Vector3.up * 0.5f;
-            string roomLabel = $"{placedRoom.RoomData.roomName}\n{placedRoom.RotationDegrees}°";
+            string roomLabel = $"{placedRoom.RoomData.roomName}\n{placedRoom.RotationDegrees}ï¿½";
             UnityEditor.Handles.Label(labelPos, roomLabel);
 #endif
         }
@@ -622,4 +1391,18 @@ public class MapGenerator : MonoBehaviour
 #endif
     }
     #endregion
+
+    private class GenerationFrontier
+    {
+        public Vector2Int Position { get; set; }
+        public RoomData.CardinalDirection IncomingDirection { get; set; }
+        public float Priority { get; set; }
+
+        public GenerationFrontier(Vector2Int pos, RoomData.CardinalDirection dir, float priority)
+        {
+            Position = pos;
+            IncomingDirection = dir;
+            Priority = priority;
+        }
+    }
 }
