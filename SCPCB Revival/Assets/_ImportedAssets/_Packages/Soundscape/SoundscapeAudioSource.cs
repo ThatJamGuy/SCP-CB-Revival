@@ -32,8 +32,8 @@ public class SoundscapeAudioSource : MonoBehaviour {
 	
 	void Awake() {
 
-		audioListener = GameObject.FindObjectOfType<AudioListener>().transform;
-		audioSource = GetComponent<AudioSource>();
+        audioListener = Object.FindFirstObjectByType<AudioListener>()?.transform;
+        audioSource = GetComponent<AudioSource>();
 		lowPassFilter = GetComponent<AudioLowPassFilter>();
 
 		defaultVolume = audioSource.volume;

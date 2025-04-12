@@ -9,24 +9,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dd467522033d154fafd1e0d502743a2, type: 3}
+  m_Script: {fileID: 11500000, guid: 3d63fc08d9677db46839dec722e759fc, type: 3}
   m_Name: Room1_EndRoom_LCZ
   m_EditorClassIdentifier: 
-  roomName: Room1_EndRoom_LCZ
-  roomType: 3
-  roomShape: 4
   roomPrefab:
     m_AssetGUID: 98effd5118952124e97c96356c87a1da
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
-  hasNorthEntrance: 0
-  hasEastEntrance: 0
-  hasSouthEntrance: 1
-  hasWestEntrance: 0
-  spawnWeight: 0.5
-  canRotate: 1
-  connectionBonusWeight: 0.2
+  roomShape: 4
+  roomType: 0
+  entranceDirections:
+    north: 0
+    east: 0
+    south: 1
+    west: 0
   isLarge: 0
-  extendedSize: []
+  extensionDirections: []
+  validForStartingRoom: 0
+  roomChance: 0.5

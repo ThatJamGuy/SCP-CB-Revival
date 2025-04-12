@@ -606,7 +606,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 389329720}
   disableRange: 25
---- !u!1 &1954344064
+--- !u!1 &813278066
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -614,8 +614,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1954344065}
-  - component: {fileID: 1954344066}
+  - component: {fileID: 813278067}
+  - component: {fileID: 813278068}
   m_Layer: 0
   m_Name: MapGenerator
   m_TagString: Untagged
@@ -623,13 +623,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1954344065
+--- !u!4 &813278067
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1954344064}
+  m_GameObject: {fileID: 813278066}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -638,32 +638,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1954344066
+--- !u!114 &813278068
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1954344064}
+  m_GameObject: {fileID: 813278066}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eae71b1a38ffc434d9707d73b46dc376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 638796501805183084
-  useRandomSeed: 1
-  cellSize: 20.5
+  mapSeed: 0
   zones:
   - {fileID: 11400000, guid: 45840aa37c6a78b42b85992b08570d61, type: 2}
-  generateOnStart: 0
-  isGenerating: 0
-  showGizmos: 1
-  baseGridColor: {r: 0.8, g: 0.8, b: 0.8, a: 0.5}
-  zoneConnectionColor: {r: 1, g: 0.5, b: 0, a: 0.8}
+  - {fileID: 11400000, guid: 8abc2d688a7f95c4b97c1688c3828ccc, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 389329720}
   - {fileID: 94596825}
-  - {fileID: 1954344065}
+  - {fileID: 813278067}
