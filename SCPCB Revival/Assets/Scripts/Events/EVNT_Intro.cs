@@ -114,7 +114,7 @@ public class EVNT_Intro : MonoBehaviour
     [SerializeField] private Transform skipIntroTransform;
     [SerializeField] private AudioReverbZone playerReverb;
     [SerializeField] private GameObject emergenctTeleportTrigger;
-    [SerializeField] private GameObject roomRenderer;
+    //[SerializeField] private GameObject roomRenderer;
 
     private void Start()
     {
@@ -157,7 +157,7 @@ public class EVNT_Intro : MonoBehaviour
         alarmSource.Play();
         playerReverb.gameObject.SetActive(true);
         playerController.transform.position = skipIntroTransform.position;
-        roomRenderer.SetActive(true);
+        //roomRenderer.SetActive(true);
         generatedMapParent.SetActive(true);
         cont173Lighting.SetActive(true);
         AmbienceController.Instance.ChangeZone(1);
@@ -401,7 +401,7 @@ public class EVNT_Intro : MonoBehaviour
         cont173Lighting.SetActive(true);
         StartCoroutine(DelayedAnnouncement(9f));
         generatedMapParent.SetActive(true);
-        roomRenderer.SetActive(true);
+        //roomRenderer.SetActive(true);
         AmbienceController.Instance.ChangeZone(1);
     }
 
@@ -435,17 +435,21 @@ public class EVNT_Intro : MonoBehaviour
         yield return new WaitForSeconds(10f);
         paSystemSource.clip = scriptedVoiceLine5;
         paSystemSource.Play();
+        yield return new WaitForSeconds(39f);
+        GlobalCameraShake.Instance.ShakeCamera(0.1f, 0f, 5f);
     }
 
     public IEnumerator SkipIntroShakes()
     {
         // Different initial delay for skip intro shakes.
-        yield return new WaitForSeconds(11.5f);
+        yield return new WaitForSeconds(11f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
         yield return new WaitForSeconds(37.5f);
         GlobalCameraShake.Instance.ShakeCamera(0.2f, 0f, 4f);
         yield return new WaitForSeconds(10f);
         paSystemSource.clip = scriptedVoiceLine5;
         paSystemSource.Play();
+        yield return new WaitForSeconds(39f);
+        GlobalCameraShake.Instance.ShakeCamera(0.1f, 0f, 5f);
     }
 }

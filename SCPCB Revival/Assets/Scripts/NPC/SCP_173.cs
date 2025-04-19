@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
+using vectorarts.scpcbr;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class SCP_173 : MonoBehaviour
@@ -125,6 +126,7 @@ public class SCP_173 : MonoBehaviour
             hasPlayedNearSound = false;
             MusicPlayer.Instance.ChangeMusic(GameManager.Instance.zone1Music);
             Debug.Log("Despawning SCSP-173.");
+            SCP_Spawner.Instance.active173 = false;
             Destroy(gameObject);
         }
     }
@@ -183,5 +185,12 @@ public class SCP_173 : MonoBehaviour
     private void DoHolidayCheck()
     {
         christmasHat.SetActive(DateTime.Now.Month == 12);
+    }
+
+    private void OnDestroy() {
+        if (SCP_Spawner.Instance != null)
+        {
+            SCP_Spawner.Instance.OnSCPDestroyed();
+        }
     }
 }
