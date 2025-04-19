@@ -2,8 +2,7 @@
 using UnityEngine.UI;
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerController : MonoBehaviour
-{
+public class PlayerController : MonoBehaviour {
     [System.Serializable]
     public struct FootstepData { public Texture texture; public AudioClip[] walkingFootstepAudio; public AudioClip[] runningFootstepAudio; }
 
@@ -42,6 +41,7 @@ public class PlayerController : MonoBehaviour
     public bool infiniteStamina = false;
     public bool isMoving;
     public bool isSprinting;
+    public bool isCrouching;
 
     private CharacterController characterController;
     private Vector3 moveDirection;
@@ -51,8 +51,13 @@ public class PlayerController : MonoBehaviour
     private float blinkOverlayDuration = 0.2f;
     private float blinkOverlayHoldDuration = 0.2f;
 
-    private void Start()
-    {
+    private Vector3 targetScale;
+    private Vector3 crouchScale = new Vector3(1, 0.65f, 1);
+    private Vector3 standScale = new Vector3(1, 1.1f, 1);
+    [SerializeField] private float crouchSmoothSpeed = 8f;
+
+
+    private void Start() {
         characterController = GetComponent<CharacterController>();
         footstepHandler.Initialize(characterController);
         UpdateCursorState();
@@ -62,8 +67,7 @@ public class PlayerController : MonoBehaviour
         blinkOverlay.enabled = false;
     }
 
-    private void Update()
-    {
+    private void Update() {
         if (GameManager.Instance.disablePlayerInputs) return;
 
         HandleNoclip();
@@ -71,11 +75,26 @@ public class PlayerController : MonoBehaviour
         HandleLook();
         HandleStamina();
         HandleBlinking();
+        HandleCrouch();
         footstepHandler.UpdateFootsteps(isMoving, isSprinting);
     }
 
-    private void HandleNoclip()
-    {
+    private void HandleCrouch() {
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            isCrouching = !isCrouching;
+
+            if (isCrouching)
+            {
+                isSprinting = false;
+            }
+        }
+
+        targetScale = isCrouching ? crouchScale : standScale;
+        transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * crouchSmoothSpeed);
+    }
+
+    private void HandleNoclip() {
         if (enabledNoclip)
         {
             characterController.enabled = false;
@@ -95,8 +114,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void HandleMovement()
-    {
+    private void HandleMovement() {
         if (enabledNoclip) return;
 
         if (characterController.isGrounded)
@@ -116,23 +134,27 @@ public class PlayerController : MonoBehaviour
                 isMoving = false;
             }
 
-            isSprinting = Input.GetKey(KeyCode.LeftShift) && isMoving && (infiniteStamina || stamina > 0);
+            isSprinting = Input.GetKey(KeyCode.LeftShift)
+                          && isMoving
+                          && !isCrouching
+                          && (infiniteStamina || stamina > 0);
         }
 
         moveDirection.y -= gravity * Time.deltaTime;
         characterController.Move(moveDirection * Time.deltaTime);
     }
 
+    private float DetermineCurrentSpeed() {
+        if (isCrouching)
+            return crouchSpeed;
 
-    private float DetermineCurrentSpeed()
-    {
-        if (isSprinting) return sprintSpeed;
-        if (Input.GetKey(KeyCode.LeftControl)) return crouchSpeed;
+        if (isSprinting)
+            return sprintSpeed;
+
         return walkSpeed;
     }
 
-    private void HandleLook()
-    {
+    private void HandleLook() {
         float mouseX = Input.GetAxis("Mouse X") * lookSpeed;
         float mouseY = Input.GetAxis("Mouse Y") * lookSpeed;
 
@@ -142,9 +164,8 @@ public class PlayerController : MonoBehaviour
         Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0, currentRotation.eulerAngles.z);
     }
 
-    private void HandleStamina()
-    {
-        if (isSprinting && !infiniteStamina)
+    private void HandleStamina() {
+        if (isSprinting && !infiniteStamina && !isCrouching)
         {
             float adjustedDrainRate = staminaDrainRate * (1 + staminaDepletionModifier);
             stamina = Mathf.Max(stamina - adjustedDrainRate * Time.deltaTime, 0f);
@@ -158,8 +179,7 @@ public class PlayerController : MonoBehaviour
         staminaSlider.value = stamina / maxStamina;
     }
 
-    private void HandleBlinking()
-    {
+    private void HandleBlinking() {
         if (infiniteBlink)
         {
             blinkTimer = 1f;
@@ -190,8 +210,7 @@ public class PlayerController : MonoBehaviour
         blinkSlider.value = blinkTimer;
     }
 
-    private void TriggerBlink()
-    {
+    private void TriggerBlink() {
         blinkOverlay.enabled = true;
         isBlinking = true;
         isBlinkingOverlayActive = true;
@@ -199,15 +218,13 @@ public class PlayerController : MonoBehaviour
         Invoke(nameof(EndBlink), blinkOverlayDuration);
     }
 
-    private void EndBlink()
-    {
+    private void EndBlink() {
         blinkOverlay.enabled = false;
         isBlinking = false;
         isBlinkingOverlayActive = false;
     }
 
-    private void UpdateCursorState()
-    {
+    private void UpdateCursorState() {
         bool disablePlayerInputs = GameManager.Instance.disablePlayerInputs;
         Cursor.lockState = disablePlayerInputs ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = disablePlayerInputs;

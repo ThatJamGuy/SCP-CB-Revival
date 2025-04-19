@@ -62,8 +62,6 @@ public class LoadingSystem : MonoBehaviour
             float progressValue = Mathf.Clamp01(operation.progress / 0.9f);
             testSlider.value = progressValue;
 
-            //Debug.Log(progressValue);
-
             if (isMapLoader)
             {
                 if (progressValue >= 0.9f)
@@ -78,8 +76,10 @@ public class LoadingSystem : MonoBehaviour
                     }
                 }
                 if ((Input.GetMouseButtonDown(0) || Input.anyKeyDown) && progressValue >= 0.9f)
+                {
+                    PlayerPrefs.SetInt("GenerateMapOnLoad", 1);
                     operation.allowSceneActivation = true;
-
+                }
             }
 
             yield return null;

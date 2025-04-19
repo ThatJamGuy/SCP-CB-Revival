@@ -599,7 +599,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 389329717}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aeab35849f5b01945986d167f60ee83f, type: 3}
   m_Name: 
@@ -653,13 +653,23 @@ MonoBehaviour:
   mapSeed: 
   zones:
   - {fileID: 11400000, guid: 45840aa37c6a78b42b85992b08570d61, type: 2}
-  - {fileID: 11400000, guid: 8abc2d688a7f95c4b97c1688c3828ccc, type: 2}
   gridModule:
     perZoneGridWidth: 5
     perZoneGridHeight: 5
     cellSize: 20.5
     showGizmos: 1
     showLabels: 1
+  roomModule:
+    deadEndChance: 0.15
+    maxPlacementAttempts: 8
+    optimizationPasses: 6
+  instantiationModule:
+    roomParent: {fileID: 813278067}
+    instantiateOnGeneration: 1
+  instantiateRoomsOnGeneration: 1
+  OnMapFinishedGenerating:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,11 +1,13 @@
 using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
-namespace vectorarts.scpcbr {
+namespace vectorarts.scpcbr
+{
     [CreateAssetMenu(fileName = "New Zone", menuName = "MapGen/Zone")]
-    public class Zone : ScriptableObject {
+    public class Zone : ScriptableObject
+    {
         public int zoneID;
+        public GameObject zoneDoorPrefab;
         public Rooms rooms;
 
         [Header("Room Settings")]

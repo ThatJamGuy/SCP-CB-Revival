@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
 
 namespace vectorarts.scpcbr {
     [System.Serializable]
@@ -17,6 +18,7 @@ namespace vectorarts.scpcbr {
         private MapGenerator generator;
         private readonly Dictionary<Vector2Int, Cell> globalGrid = new();
         private readonly Dictionary<int, List<Cell>> zoneCells = new();
+        public Dictionary<int, int> zoneStartY { get; private set; } = new();
 
         public void Initialize(MapGenerator generator) {
             this.generator = generator;
@@ -26,17 +28,23 @@ namespace vectorarts.scpcbr {
         private void GenerateGlobalGrid() {
             globalGrid.Clear();
             zoneCells.Clear();
+            zoneStartY.Clear();
 
             if (generator.zones?.Length == 0) return;
 
             int currentY = 0;
 
-            foreach (var zone in generator.zones) {
+            foreach (var zone in generator.zones)
+            {
+                Debug.Log($"Generating grid for Zone {zone.zoneID}");
+                zoneStartY[zone.zoneID] = currentY;
                 var cells = new List<Cell>();
                 zoneCells[zone.zoneID] = cells;
 
-                for (int y = 0; y < perZoneGridHeight; y++) {
-                    for (int x = 0; x < perZoneGridWidth; x++) {
+                for (int y = 0; y < perZoneGridHeight; y++)
+                {
+                    for (int x = 0; x < perZoneGridWidth; x++)
+                    {
                         Vector2Int pos = new(x, currentY + y);
                         var cell = new Cell(pos, zone.zoneID);
                         globalGrid[pos] = cell;
@@ -46,10 +54,15 @@ namespace vectorarts.scpcbr {
 
                 currentY += perZoneGridHeight;
 
-                if (zone.connectsToNextZone || (zone.surfaceExitRooms?.Length ?? 0) > 0) {
-                    for (int x = 0; x < perZoneGridWidth; x++) {
+                if (zone.connectsToNextZone || (zone.surfaceExitRooms?.Length ?? 0) > 0)
+                {
+                    Debug.Log($"Adding connector row for Zone {zone.zoneID} at Y={currentY}");
+                    for (int x = 0; x < perZoneGridWidth; x++)
+                    {
                         Vector2Int pos = new(x, currentY);
-                        globalGrid[pos] = new Cell(pos, -1, true);
+                        var connectorCell = new Cell(pos, zone.zoneID, true);
+                        globalGrid[pos] = connectorCell;
+                        cells.Add(connectorCell);
                     }
                     currentY += 1;
                 }
@@ -59,11 +72,42 @@ namespace vectorarts.scpcbr {
         public Cell GetCell(Vector2Int position) => globalGrid.TryGetValue(position, out var cell) ? cell : null;
         public List<Cell> GetCellsInZone(int zoneID) => zoneCells.TryGetValue(zoneID, out var list) ? list : null;
 
+        public IEnumerable<Cell> GetAllCells() {
+            return globalGrid.Values;
+        }
+
+        public Vector3 GetWorldPosition(Vector2Int gridPosition) {
+            return generator.transform.position + new Vector3(gridPosition.x * cellSize, 0, gridPosition.y * cellSize);
+        }
+
+        public int GetZoneEndY(int zoneID) {
+            if (!zoneStartY.TryGetValue(zoneID, out int startY))
+            {
+                Debug.LogError($"Zone {zoneID} not found in zoneStartY dictionary");
+                return 0;
+            }
+
+            var zone = generator.zones.FirstOrDefault(z => z.zoneID == zoneID);
+            if (zone == null)
+            {
+                Debug.LogError($"Zone {zoneID} not found in generator.zones");
+                return 0;
+            }
+
+            int endY = startY + perZoneGridHeight;
+            return endY;
+        }
+
+        public bool IsPositionWithinGrid(Vector2Int pos) {
+            return pos.x >= 0 && pos.y >= 0 && pos.x < perZoneGridWidth && pos.y < perZoneGridHeight;
+        }
+
         public void DrawGizmos(Vector3 origin) {
             if (!showGizmos || globalGrid.Count == 0) return;
 
-            foreach (var (pos, cell) in globalGrid) {
-                Vector3 worldPos = origin + new Vector3(pos.x * cellSize, 0, pos.y * cellSize);
+            foreach (var (pos, cell) in globalGrid)
+            {
+                Vector3 worldPos = GetWorldPosition(pos);
 
                 Gizmos.color = cell.isConnector ? Color.gray :
                                cell.occupied ? Color.red :

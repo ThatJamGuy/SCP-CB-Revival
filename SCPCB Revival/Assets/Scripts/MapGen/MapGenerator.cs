@@ -1,6 +1,7 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using NaughtyAttributes;
-using System.Collections;
+using UnityEngine.Events;
 
 namespace vectorarts.scpcbr {
     public class MapGenerator : MonoBehaviour {
@@ -11,15 +12,61 @@ namespace vectorarts.scpcbr {
         [Header("Modules")]
         [SerializeField] private GridCreationModule gridModule;
         [SerializeField] private SeedCreationModule seedModule;
+        [SerializeField] private RoomPlacementModule roomModule;
+        [SerializeField] private RoomInstantiationModule instantiationModule;
+
+        [Header("Generation Options")]
+        [SerializeField] private bool instantiateRoomsOnGeneration = true;
+
+        [Header("Events")]
+        public UnityEvent OnMapFinishedGenerating;
+
+        private const string GENERATE_ON_LOAD_KEY = "GenerateMapOnLoad";
 
         private void Awake() {
+            InitializeModules();
+        }
+
+        private async void Start() {
+            if (PlayerPrefs.GetInt(GENERATE_ON_LOAD_KEY, 0) == 1)
+            {
+                PlayerPrefs.DeleteKey(GENERATE_ON_LOAD_KEY);
+                await Task.Yield(); // Wait one frame to ensure scene is fully loaded
+                GenerateMap();
+            }
+        }
+
+        private void InitializeModules() {
             gridModule.Initialize(this);
             seedModule.Initialize(this);
+            roomModule.Initialize(this, gridModule);
+            instantiationModule.Initialize(this, gridModule, roomModule);
         }
 
         [Button("Generate Map")]
-        public void GenerateMap() {
+        public async void GenerateMap() {
+            InitializeModules();
             PrepareSeed();
+
+            roomModule.GenerateRooms();
+
+            if (instantiateRoomsOnGeneration) {
+                await InstantiateRooms();
+                await InstantiateDoors(); // Instantiate doors after rooms
+            }
+
+            OnMapFinishedGenerating?.Invoke();
+        }
+
+        [Button("Instantiate Rooms")]
+        public async Task InstantiateRooms() {
+            await instantiationModule.InstantiateAllRooms();
+            OnMapFinishedGenerating?.Invoke();
+        }
+
+        [Button("Instantiate Doors")]
+        public async Task InstantiateDoors() {
+            await instantiationModule.InstantiateAllDoors();
         }
 
         private void PrepareSeed() {
@@ -27,7 +74,7 @@ namespace vectorarts.scpcbr {
             Debug.Log($"Using seed: {seed}");
 
             int seedValue = seedModule.ConvertSeedToInt(seed);
-            UnityEngine.Random.InitState(seedValue);
+            Random.InitState(seedValue);
         }
 
         private void OnDrawGizmos() {
