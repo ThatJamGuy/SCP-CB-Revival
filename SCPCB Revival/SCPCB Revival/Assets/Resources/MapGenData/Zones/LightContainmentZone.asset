@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d48a52890c23a7646b46a76f4184860f, type: 3}
+  m_Name: LightContainmentZone
+  m_EditorClassIdentifier: 
+  zoneID: 1
+  zoneDoorPrefab: {fileID: 2898040842600793760, guid: 192a28040a68f3a49ad3d93a848f0fa5,
+    type: 3}
+  rooms:
+    normalRooms:
+    - {fileID: 11400000, guid: 0933dc06101c40b4a9c357f0cbb997cd, type: 2}
+    - {fileID: 11400000, guid: 8d1566f6740a94542b5bbd45acbb4222, type: 2}
+    - {fileID: 11400000, guid: ff1833719819af74c9fd99de06a10093, type: 2}
+    - {fileID: 11400000, guid: b641ec8866063fa44a90ac6e53f1e98d, type: 2}
+    - {fileID: 11400000, guid: cac3675970a7ca7478a0bd92c797e60c, type: 2}
+    requiredRooms:
+    - {fileID: 11400000, guid: e654bb3775027fc4da8b0028886c2fbc, type: 2}
+  utilizeStartingRoom: 1
+  startingRoomCellPosition: {x: 2, y: 0}
+  connectsToNextZone: 1
+  zoneConnectorRoom: {fileID: 11400000, guid: 8f0bffd0d707a9b41b5c76b924372732, type: 2}
+  numberOfZoneConnectors: 2
+  nextZoneID: 2
+  surfaceExitRooms: []
