@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.HighDefinition;
+using UnityEngine.Rendering.Universal;
 using vectorarts.scpcbr;
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -109,7 +109,7 @@ public class SCP_173 : MonoBehaviour
 
         if (isVisible && !playerController.isBlinking)
         {
-            if (skyAndFogVolume.profile.TryGet(out Vignette vignette))
+            if (skyAndFogVolume.profile.TryGet(out UnityEngine.Rendering.Universal.Vignette vignette))
             {
                 float vignetteIntensity = Mathf.Lerp(maxVignetteIntensity, minVignetteIntensity, distanceToPlayer / vignetteRange);
                 vignette.intensity.value = vignetteIntensity;
