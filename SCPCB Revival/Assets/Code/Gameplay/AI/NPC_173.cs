@@ -116,8 +116,8 @@ public class NPC_173 : MonoBehaviour {
         float distance = Vector3.Distance(rayOrigin, transform.position);
 
         if (Physics.Raycast(rayOrigin, direction, out hit, distance, obstructionLayers)) {
-            // Check if the hit object is not the NPC itself
-            hasDirectLineOfSight = hit.collider.gameObject == gameObject;
+            // Check if the hit object is the NPC itself or something else
+            hasDirectLineOfSight = hit.collider.transform == transform;
         }
         else {
             hasDirectLineOfSight = true;
@@ -126,7 +126,7 @@ public class NPC_173 : MonoBehaviour {
 
     private void UpdateMovementSound() {
         if (movementSource != null) {
-            bool shouldPlay = agent.velocity.magnitude > movementSoundThreshold;
+            bool shouldPlay = agent.velocity.magnitude > movementSoundThreshold && !isVisible;
             if (movementSource.enabled != shouldPlay) {
                 movementSource.enabled = shouldPlay;
             }
@@ -137,7 +137,7 @@ public class NPC_173 : MonoBehaviour {
         if (isChasing) {
             agent.speed = chaseSpeed;
             agent.acceleration = acceleration * 2f;
-            agent.stoppingDistance = 0.5f; // Get closer during chase
+            agent.stoppingDistance = 0.5f;
         }
         else {
             agent.speed = roamSpeed;
@@ -147,7 +147,8 @@ public class NPC_173 : MonoBehaviour {
     }
 
     private void HandleMovement() {
-        if (isVisible && !hasDirectLineOfSight) {
+        // Freeze movement when visible to player, regardless of chase state
+        if (isVisible && hasDirectLineOfSight) {
             StopMoving();
             return;
         }
@@ -224,8 +225,10 @@ public class NPC_173 : MonoBehaviour {
         }
 
         // Draw line of sight debug
-        if (playerCam != null && isVisible) {
-            Gizmos.color = hasDirectLineOfSight ? Color.green : Color.red;
+        if (playerCam != null) {
+            Gizmos.color = isVisible ?
+                (hasDirectLineOfSight ? Color.green : Color.yellow) :
+                Color.red;
             Gizmos.DrawLine(playerCam.transform.position, transform.position);
         }
     }
