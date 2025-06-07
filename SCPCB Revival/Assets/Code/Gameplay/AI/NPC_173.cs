@@ -9,6 +9,17 @@ public class NPC_173 : MonoBehaviour {
     [SerializeField] private float chaseDistanceThreshold = 10f;
     [SerializeField] private float doorCheckRadius = 5f;
     [SerializeField] private float freeRoamRadius = 10f;
+    [SerializeField] private LayerMask obstructionLayers;
+
+    [Header("Movement")]
+    [SerializeField] private float roamSpeed = 3.5f;
+    [SerializeField] private float chaseSpeed = 7f;
+    [SerializeField] private float acceleration = 8f;
+
+    [Header("Timing")]
+    [SerializeField] private float visibilityCheckInterval = 0.1f;
+    [SerializeField] private float chaseMovementInterval = 0.1f;
+    [SerializeField] private float roamMovementInterval = 1f;
 
     [Header("Audio")]
     [SerializeField] private AudioSource movementSource;
@@ -19,14 +30,18 @@ public class NPC_173 : MonoBehaviour {
     private Camera playerCam;
 
     private bool isVisible;
+    private bool hasDirectLineOfSight;
     private float distanceFromPlayer;
-    private bool isChasing = true;
+    private bool isChasing = false;
+    private float lastVisibilityCheckTime;
     private float lastMovementTime;
-    private const float movementUpdateInterval = 0.1f;
+    private Vector3 currentRoamDestination;
     private const float doorCheckInterval = 10f;
+    private float originalStoppingDistance;
 
     private void Awake() {
         agent = GetComponent<NavMeshAgent>();
+        originalStoppingDistance = agent.stoppingDistance;
     }
 
     private void Start() {
@@ -38,32 +53,42 @@ public class NPC_173 : MonoBehaviour {
             enabled = false;
             return;
         }
+
+        currentRoamDestination = GetRandomNavMeshPosition(transform.position, freeRoamRadius);
+        UpdateMovementParameters();
     }
 
     private void Update() {
         if (player == null) return;
 
-        UpdateDistanceFromPlayer();
-        UpdateVisibility();
-        UpdateMovementSound();
-
-        // Handle movement updates in Update instead of coroutine for more responsive behavior
-        if (Time.time - lastMovementTime >= movementUpdateInterval) {
-            HandleMovement();
-            lastMovementTime = Time.time;
+        // Handle visibility checks with high frequency
+        if (Time.time - lastVisibilityCheckTime >= visibilityCheckInterval) {
+            UpdateDistanceFromPlayer();
+            UpdateVisibility();
+            CheckLineOfSight();
+            lastVisibilityCheckTime = Time.time;
         }
+
+        UpdateMovementSound();
+        HandleMovement();
     }
 
     private void UpdateDistanceFromPlayer() {
         distanceFromPlayer = Vector3.Distance(transform.position, player.transform.position);
 
-        // Toggle between chase and roam based on distance
-        if (isChasing && distanceFromPlayer > chaseDistanceThreshold) {
+        // Start chasing if player sees 173 (direct line of sight) or enters radius
+        bool shouldChase = (hasDirectLineOfSight && isVisible) ||
+                         (distanceFromPlayer <= chaseDistanceThreshold);
+
+        if (isChasing && !shouldChase && distanceFromPlayer > chaseDistanceThreshold) {
             isChasing = false;
             Debug.Log("NPC-173 stopped chasing the player, now free roaming.");
+            UpdateMovementParameters();
         }
-        else if (!isChasing && distanceFromPlayer <= chaseDistanceThreshold) {
+        else if (!isChasing && shouldChase) {
             isChasing = true;
+            Debug.Log("NPC-173 started chasing the player!");
+            UpdateMovementParameters();
         }
     }
 
@@ -79,6 +104,26 @@ public class NPC_173 : MonoBehaviour {
         isVisible = angle < viewAngle && inView;
     }
 
+    private void CheckLineOfSight() {
+        if (!isVisible) {
+            hasDirectLineOfSight = false;
+            return;
+        }
+
+        RaycastHit hit;
+        Vector3 rayOrigin = playerCam.transform.position;
+        Vector3 direction = (transform.position - rayOrigin).normalized;
+        float distance = Vector3.Distance(rayOrigin, transform.position);
+
+        if (Physics.Raycast(rayOrigin, direction, out hit, distance, obstructionLayers)) {
+            // Check if the hit object is not the NPC itself
+            hasDirectLineOfSight = hit.collider.gameObject == gameObject;
+        }
+        else {
+            hasDirectLineOfSight = true;
+        }
+    }
+
     private void UpdateMovementSound() {
         if (movementSource != null) {
             bool shouldPlay = agent.velocity.magnitude > movementSoundThreshold;
@@ -88,22 +133,46 @@ public class NPC_173 : MonoBehaviour {
         }
     }
 
+    private void UpdateMovementParameters() {
+        if (isChasing) {
+            agent.speed = chaseSpeed;
+            agent.acceleration = acceleration * 2f;
+            agent.stoppingDistance = 0.5f; // Get closer during chase
+        }
+        else {
+            agent.speed = roamSpeed;
+            agent.acceleration = acceleration;
+            agent.stoppingDistance = originalStoppingDistance;
+        }
+    }
+
     private void HandleMovement() {
-        if (isVisible) {
+        if (isVisible && !hasDirectLineOfSight) {
             StopMoving();
             return;
         }
 
-        if (isChasing) {
-            agent.SetDestination(player.transform.position);
-        }
-        else if (canRoam) {
-            agent.SetDestination(GetRandomNavMeshPosition(transform.position, freeRoamRadius));
+        float movementInterval = isChasing ? chaseMovementInterval : roamMovementInterval;
+
+        if (Time.time - lastMovementTime >= movementInterval) {
+            if (isChasing) {
+                agent.SetDestination(player.transform.position);
+            }
+            else if (canRoam) {
+                // Only get new destination when close to current one or after interval
+                if (Vector3.Distance(transform.position, currentRoamDestination) < agent.stoppingDistance ||
+                    Time.time - lastMovementTime >= roamMovementInterval * 3f) {
+                    currentRoamDestination = GetRandomNavMeshPosition(transform.position, freeRoamRadius);
+                }
+                agent.SetDestination(currentRoamDestination);
+            }
+            lastMovementTime = Time.time;
         }
     }
 
     private void StopMoving() {
         if (agent.hasPath) {
+            agent.SetDestination(transform.position);
             agent.ResetPath();
             agent.velocity = Vector3.zero;
         }
@@ -115,7 +184,6 @@ public class NPC_173 : MonoBehaviour {
         return navHit.position;
     }
 
-    // Using InvokeRepeating instead of coroutine for door checks
     private void OnEnable() {
         InvokeRepeating(nameof(CheckForDoors), doorCheckInterval, doorCheckInterval);
     }
@@ -145,9 +213,20 @@ public class NPC_173 : MonoBehaviour {
         }
     }
 
-    // Visualize door check radius in editor
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, doorCheckRadius);
+
+        if (!isChasing && canRoam) {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(transform.position, currentRoamDestination);
+            Gizmos.DrawWireSphere(currentRoamDestination, 0.5f);
+        }
+
+        // Draw line of sight debug
+        if (playerCam != null && isVisible) {
+            Gizmos.color = hasDirectLineOfSight ? Color.green : Color.red;
+            Gizmos.DrawLine(playerCam.transform.position, transform.position);
+        }
     }
 }
