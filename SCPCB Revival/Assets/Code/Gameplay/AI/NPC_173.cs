@@ -11,6 +11,9 @@ public class NPC_173 : MonoBehaviour {
     [SerializeField] private float freeRoamRadius = 10f;
     [SerializeField] private LayerMask obstructionLayers;
 
+    [Header("References")]
+    [SerializeField] private Renderer npcRenderer;
+
     [Header("Movement")]
     [SerializeField] private float roamSpeed = 3.5f;
     [SerializeField] private float chaseSpeed = 7f;
@@ -22,6 +25,8 @@ public class NPC_173 : MonoBehaviour {
     [SerializeField] private float roamMovementInterval = 1f;
 
     [Header("Audio")]
+    [SerializeField] private AudioSource horrorSource;
+    [SerializeField] private AudioClip[] horrorSounds;
     [SerializeField] private AudioSource movementSource;
     [SerializeField] private float movementSoundThreshold = 0.1f;
 
@@ -31,6 +36,7 @@ public class NPC_173 : MonoBehaviour {
 
     private bool isVisible;
     private bool hasDirectLineOfSight;
+    private bool hasPlayedHorrorSound = false;
     private float distanceFromPlayer;
     private bool isChasing = false;
     private float lastVisibilityCheckTime;
@@ -54,6 +60,15 @@ public class NPC_173 : MonoBehaviour {
             return;
         }
 
+        if (npcRenderer == null) {
+            npcRenderer = GetComponentInChildren<Renderer>();
+            if (npcRenderer == null) {
+                Debug.LogError("NPC Renderer not found!");
+                enabled = false;
+                return;
+            }
+        }
+
         currentRoamDestination = GetRandomNavMeshPosition(transform.position, freeRoamRadius);
         UpdateMovementParameters();
     }
@@ -61,11 +76,9 @@ public class NPC_173 : MonoBehaviour {
     private void Update() {
         if (player == null) return;
 
-        // Handle visibility checks with high frequency
         if (Time.time - lastVisibilityCheckTime >= visibilityCheckInterval) {
             UpdateDistanceFromPlayer();
-            UpdateVisibility();
-            CheckLineOfSight();
+            CheckVisibility();
             lastVisibilityCheckTime = Time.time;
         }
 
@@ -76,51 +89,72 @@ public class NPC_173 : MonoBehaviour {
     private void UpdateDistanceFromPlayer() {
         distanceFromPlayer = Vector3.Distance(transform.position, player.transform.position);
 
-        // Start chasing if player sees 173 (direct line of sight) or enters radius
-        bool shouldChase = (hasDirectLineOfSight && isVisible) ||
-                         (distanceFromPlayer <= chaseDistanceThreshold);
+        bool shouldChase = (hasDirectLineOfSight && isVisible) || (distanceFromPlayer <= chaseDistanceThreshold);
 
         if (isChasing && !shouldChase && distanceFromPlayer > chaseDistanceThreshold) {
             isChasing = false;
-            Debug.Log("NPC-173 stopped chasing the player, now free roaming.");
             UpdateMovementParameters();
         }
         else if (!isChasing && shouldChase) {
             isChasing = true;
-            Debug.Log("NPC-173 started chasing the player!");
             UpdateMovementParameters();
         }
     }
 
-    private void UpdateVisibility() {
-        Vector3 toNPC = (transform.position - playerCam.transform.position).normalized;
+    private void CheckVisibility() {
+        // First check if mesh is visible to any camera (efficient pre-filter)
+        if (!npcRenderer.isVisible) {
+            isVisible = false;
+            hasDirectLineOfSight = false;
+            return;
+        }
+
+        // Check if within player's FOV using mesh bounds center
+        Vector3 meshCenter = npcRenderer.bounds.center;
+        Vector3 toNPC = (meshCenter - playerCam.transform.position).normalized;
         float angle = Vector3.Angle(playerCam.transform.forward, toNPC);
 
-        Vector3 viewportPos = playerCam.WorldToViewportPoint(transform.position);
-        bool inView = viewportPos.z > 0 &&
-                     viewportPos.x > 0 && viewportPos.x < 1 &&
-                     viewportPos.y > 0 && viewportPos.y < 1;
+        Vector3 viewportPos = playerCam.WorldToViewportPoint(meshCenter);
+        bool inPlayerView = viewportPos.z > 0 && viewportPos.x > 0 && viewportPos.x < 1 && viewportPos.y > 0 && viewportPos.y < 1;
 
-        isVisible = angle < viewAngle && inView;
-    }
+        isVisible = angle < viewAngle && inPlayerView;
 
-    private void CheckLineOfSight() {
         if (!isVisible) {
             hasDirectLineOfSight = false;
             return;
         }
 
-        RaycastHit hit;
+        // Check for obstructions using multiple raycast points
         Vector3 rayOrigin = playerCam.transform.position;
-        Vector3 direction = (transform.position - rayOrigin).normalized;
-        float distance = Vector3.Distance(rayOrigin, transform.position);
+        Bounds bounds = npcRenderer.bounds;
 
-        if (Physics.Raycast(rayOrigin, direction, out hit, distance, obstructionLayers)) {
-            // Check if the hit object is the NPC itself or something else
-            hasDirectLineOfSight = hit.collider.transform == transform;
+        Vector3[] checkPoints = {
+            bounds.center,
+            bounds.center + Vector3.up * (bounds.size.y * 0.25f),
+            bounds.center - Vector3.up * (bounds.size.y * 0.25f),
+            bounds.center + Vector3.right * (bounds.size.x * 0.25f),
+            bounds.center + Vector3.left * (bounds.size.x * 0.25f)
+        };
+
+        bool anyPointVisible = false;
+        foreach (Vector3 point in checkPoints) {
+            Vector3 direction = (point - rayOrigin).normalized;
+            float distance = Vector3.Distance(rayOrigin, point) - 0.1f;
+
+            if (!Physics.Raycast(rayOrigin, direction, distance, obstructionLayers)) {
+                anyPointVisible = true;
+                break;
+            }
         }
-        else {
-            hasDirectLineOfSight = true;
+
+        hasDirectLineOfSight = anyPointVisible;
+
+        if (hasDirectLineOfSight && !hasPlayedHorrorSound) {
+            hasPlayedHorrorSound = true;
+            if (horrorSource != null && horrorSounds.Length > 0) {
+                horrorSource.clip = horrorSounds[Random.Range(0, horrorSounds.Length)];
+                horrorSource.Play();
+            }
         }
     }
 
@@ -147,7 +181,6 @@ public class NPC_173 : MonoBehaviour {
     }
 
     private void HandleMovement() {
-        // Freeze movement when visible to player, regardless of chase state
         if (isVisible && hasDirectLineOfSight) {
             StopMoving();
             return;
@@ -160,9 +193,7 @@ public class NPC_173 : MonoBehaviour {
                 agent.SetDestination(player.transform.position);
             }
             else if (canRoam) {
-                // Only get new destination when close to current one or after interval
-                if (Vector3.Distance(transform.position, currentRoamDestination) < agent.stoppingDistance ||
-                    Time.time - lastMovementTime >= roamMovementInterval * 3f) {
+                if (Vector3.Distance(transform.position, currentRoamDestination) < agent.stoppingDistance || Time.time - lastMovementTime >= roamMovementInterval * 3f) {
                     currentRoamDestination = GetRandomNavMeshPosition(transform.position, freeRoamRadius);
                 }
                 agent.SetDestination(currentRoamDestination);
@@ -210,7 +241,6 @@ public class NPC_173 : MonoBehaviour {
 
         if (closestDoor != null && Random.value < doorOpenChance) {
             closestDoor.OpenDoor();
-            Debug.Log($"NPC-173 opened a door: {closestDoor.name}");
         }
     }
 
@@ -224,12 +254,27 @@ public class NPC_173 : MonoBehaviour {
             Gizmos.DrawWireSphere(currentRoamDestination, 0.5f);
         }
 
-        // Draw line of sight debug
-        if (playerCam != null) {
-            Gizmos.color = isVisible ?
-                (hasDirectLineOfSight ? Color.green : Color.yellow) :
-                Color.red;
-            Gizmos.DrawLine(playerCam.transform.position, transform.position);
+        if (playerCam != null && npcRenderer != null) {
+            Gizmos.color = isVisible ? (hasDirectLineOfSight ? Color.green : Color.yellow) : Color.red;
+            Gizmos.DrawLine(playerCam.transform.position, npcRenderer.bounds.center);
+
+            // Draw raycast check points
+            if (isVisible) {
+                Bounds bounds = npcRenderer.bounds;
+                Vector3[] points = {
+                    bounds.center,
+                    bounds.center + Vector3.up * (bounds.size.y * 0.25f),
+                    bounds.center + Vector3.up * (bounds.size.y * 1f),
+                    bounds.center - Vector3.up * (bounds.size.y * 0.25f),
+                    bounds.center + Vector3.right * (bounds.size.x * 0.25f),
+                    bounds.center + Vector3.left * (bounds.size.x * 0.25f)
+                };
+
+                Gizmos.color = Color.blue;
+                foreach (Vector3 point in points) {
+                    Gizmos.DrawWireSphere(point, 0.1f);
+                }
+            }
         }
     }
 }
