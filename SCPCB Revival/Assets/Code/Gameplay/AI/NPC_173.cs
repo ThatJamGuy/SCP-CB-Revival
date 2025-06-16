@@ -9,6 +9,7 @@ public class NPC_173 : MonoBehaviour {
     [SerializeField] private float chaseDistanceThreshold = 10f;
     [SerializeField] private float doorCheckRadius = 5f;
     [SerializeField] private float freeRoamRadius = 10f;
+    [SerializeField] private float closeDistanceThreshold = 2f;
     [SerializeField] private LayerMask obstructionLayers;
 
     [Header("References")]
@@ -102,32 +103,82 @@ public class NPC_173 : MonoBehaviour {
     }
 
     private void CheckVisibility() {
-        // First check if mesh is visible to any camera (efficient pre-filter)
         if (!npcRenderer.isVisible) {
             isVisible = false;
             hasDirectLineOfSight = false;
             return;
         }
 
-        // Check if within player's FOV using mesh bounds center
-        Vector3 meshCenter = npcRenderer.bounds.center;
-        Vector3 toNPC = (meshCenter - playerCam.transform.position).normalized;
-        float angle = Vector3.Angle(playerCam.transform.forward, toNPC);
+        Vector3 camPos = playerCam.transform.position;
+        Bounds bounds = npcRenderer.bounds;
+        float distanceToNPC = Vector3.Distance(camPos, bounds.center);
 
-        Vector3 viewportPos = playerCam.WorldToViewportPoint(meshCenter);
-        bool inPlayerView = viewportPos.z > 0 && viewportPos.x > 0 && viewportPos.x < 1 && viewportPos.y > 0 && viewportPos.y < 1;
+        bool inPlayerView = false;
 
-        isVisible = angle < viewAngle && inPlayerView;
+        if (distanceToNPC <= closeDistanceThreshold) {
+            // For close range, check multiple key points on the NPC bounds
+            Vector3[] keyPoints = {
+                bounds.center,
+                bounds.min + Vector3.up * bounds.size.y * 0.8f, // Upper portion
+                bounds.center + Vector3.up * bounds.size.y * 0.3f, // Upper center
+                bounds.center - Vector3.up * bounds.size.y * 0.3f, // Lower center
+                bounds.center + playerCam.transform.right * bounds.size.x * 0.3f, // Right side
+                bounds.center - playerCam.transform.right * bounds.size.x * 0.3f  // Left side
+            };
+
+            foreach (Vector3 point in keyPoints) {
+                Vector3 viewportPos = playerCam.WorldToViewportPoint(point);
+                if (viewportPos.z > 0 &&
+                    viewportPos.x >= -0.8f && viewportPos.x <= 1.8f &&
+                    viewportPos.y >= -0.8f && viewportPos.y <= 1.8f) {
+                    inPlayerView = true;
+                    break;
+                }
+            }
+
+            // Additional check: if any corner of the bounds is in front of camera
+            if (!inPlayerView) {
+                Vector3[] corners = {
+                    new Vector3(bounds.min.x, bounds.min.y, bounds.min.z),
+                    new Vector3(bounds.min.x, bounds.min.y, bounds.max.z),
+                    new Vector3(bounds.min.x, bounds.max.y, bounds.min.z),
+                    new Vector3(bounds.min.x, bounds.max.y, bounds.max.z),
+                    new Vector3(bounds.max.x, bounds.min.y, bounds.min.z),
+                    new Vector3(bounds.max.x, bounds.min.y, bounds.max.z),
+                    new Vector3(bounds.max.x, bounds.max.y, bounds.min.z),
+                    new Vector3(bounds.max.x, bounds.max.y, bounds.max.z)
+                };
+
+                foreach (Vector3 corner in corners) {
+                    Vector3 viewportPos = playerCam.WorldToViewportPoint(corner);
+                    if (viewportPos.z > 0 &&
+                        viewportPos.x >= -0.3f && viewportPos.x <= 1.3f &&
+                        viewportPos.y >= -0.3f && viewportPos.y <= 1.3f) {
+                        inPlayerView = true;
+                        break;
+                    }
+                }
+            }
+        }
+        else {
+            // Standard distance detection
+            Vector3 toNPC = (bounds.center - camPos).normalized;
+            float angle = Vector3.Angle(playerCam.transform.forward, toNPC);
+            Vector3 viewportPos = playerCam.WorldToViewportPoint(bounds.center);
+            inPlayerView = angle < viewAngle &&
+                          viewportPos.z > 0 &&
+                          viewportPos.x > 0 && viewportPos.x < 1 &&
+                          viewportPos.y > 0 && viewportPos.y < 1;
+        }
+
+        isVisible = inPlayerView;
 
         if (!isVisible) {
             hasDirectLineOfSight = false;
             return;
         }
 
-        // Check for obstructions using multiple raycast points
-        Vector3 rayOrigin = playerCam.transform.position;
-        Bounds bounds = npcRenderer.bounds;
-
+        Vector3 rayOrigin = camPos;
         Vector3[] checkPoints = {
             bounds.center,
             bounds.center + Vector3.up * (bounds.size.y * 0.25f),
@@ -139,8 +190,15 @@ public class NPC_173 : MonoBehaviour {
         bool anyPointVisible = false;
         foreach (Vector3 point in checkPoints) {
             Vector3 direction = (point - rayOrigin).normalized;
-            float distance = Vector3.Distance(rayOrigin, point) - 0.1f;
+            float distance = Vector3.Distance(rayOrigin, point);
 
+            // For very close distances, reduce raycast distance to prevent self-collision
+            if (distance <= 0.5f) {
+                anyPointVisible = true;
+                break;
+            }
+
+            distance -= 0.1f;
             if (!Physics.Raycast(rayOrigin, direction, distance, obstructionLayers)) {
                 anyPointVisible = true;
                 break;
@@ -258,7 +316,6 @@ public class NPC_173 : MonoBehaviour {
             Gizmos.color = isVisible ? (hasDirectLineOfSight ? Color.green : Color.yellow) : Color.red;
             Gizmos.DrawLine(playerCam.transform.position, npcRenderer.bounds.center);
 
-            // Draw raycast check points
             if (isVisible) {
                 Bounds bounds = npcRenderer.bounds;
                 Vector3[] points = {
