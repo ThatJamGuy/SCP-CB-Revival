@@ -3,264 +3,169 @@ using UnityEngine.AI;
 
 public class NPC_173 : MonoBehaviour {
     [Header("Settings")]
-    [SerializeField] private bool canRoam = true;
-    [SerializeField][Range(0f, 1f)] private float doorOpenChance = 0.3f;
-    [SerializeField][Range(0f, 180f)] private float viewAngle = 60f;
-    [SerializeField] private float chaseDistanceThreshold = 10f;
-    [SerializeField] private float doorCheckRadius = 5f;
-    [SerializeField] private float freeRoamRadius = 10f;
-    [SerializeField] private float closeDistanceThreshold = 2f;
-    [SerializeField] private LayerMask obstructionLayers;
+    [SerializeField] bool canRoam = true;
+    [SerializeField, Range(0f, 1f)] float doorOpenChance = 0.3f;
+    [SerializeField, Range(0f, 180f)] float viewAngle = 60f;
+    [SerializeField] float chaseDistanceThreshold = 10f;
+    [SerializeField] float doorCheckRadius = 5f;
+    [SerializeField] float freeRoamRadius = 10f;
+    [SerializeField] float closeDistanceThreshold = 2f;
+    [SerializeField] LayerMask obstructionLayers;
 
     [Header("References")]
-    [SerializeField] private Renderer npcRenderer;
+    [SerializeField] Renderer npcRenderer;
 
     [Header("Movement")]
-    [SerializeField] private float roamSpeed = 3.5f;
-    [SerializeField] private float chaseSpeed = 7f;
-    [SerializeField] private float acceleration = 8f;
+    [SerializeField] float roamSpeed = 3.5f;
+    [SerializeField] float chaseSpeed = 7f;
+    [SerializeField] float acceleration = 8f;
 
     [Header("Timing")]
-    [SerializeField] private float visibilityCheckInterval = 0.1f;
-    [SerializeField] private float chaseMovementInterval = 0.1f;
-    [SerializeField] private float roamMovementInterval = 1f;
+    [SerializeField] float visibilityCheckInterval = 0.1f;
+    [SerializeField] float chaseMovementInterval = 0.1f;
+    [SerializeField] float roamMovementInterval = 1f;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource horrorSource;
-    [SerializeField] private AudioClip[] horrorSounds;
-    [SerializeField] private AudioSource movementSource;
-    [SerializeField] private float movementSoundThreshold = 0.1f;
+    [SerializeField] AudioSource horrorSource;
+    [SerializeField] AudioClip[] horrorSounds;
+    [SerializeField] AudioSource movementSource;
+    [SerializeField] float movementSoundThreshold = 0.1f;
 
-    private NavMeshAgent agent;
-    private PlayerController player;
-    private Camera playerCam;
+    NavMeshAgent agent;
+    PlayerController player;
+    Camera playerCam;
 
-    private bool isVisible;
-    private bool hasDirectLineOfSight;
-    private bool hasPlayedHorrorSound = false;
-    private float distanceFromPlayer;
-    private bool isChasing = false;
-    private float lastVisibilityCheckTime;
-    private float lastMovementTime;
-    private Vector3 currentRoamDestination;
-    private const float doorCheckInterval = 10f;
-    private float originalStoppingDistance;
+    bool isVisible, hasDirectLineOfSight, hasPlayedHorrorSound, isChasing;
+    float distanceFromPlayer, lastVisibilityCheckTime, lastMovementTime, originalStoppingDistance;
+    Vector3 currentRoamDestination;
+    const float doorCheckInterval = 10f;
 
-    private void Awake() {
+    void Awake() {
         agent = GetComponent<NavMeshAgent>();
         originalStoppingDistance = agent.stoppingDistance;
     }
 
-    private void Start() {
+    void Start() {
         player = GameObject.FindWithTag("Player")?.GetComponent<PlayerController>();
         playerCam = GameObject.FindWithTag("PlayerCam")?.GetComponent<Camera>();
-
-        if (player == null || playerCam == null) {
-            Debug.LogError("Player or PlayerCam not found!");
-            enabled = false;
-            return;
+        if (!player || !playerCam || (npcRenderer == null && !(npcRenderer = GetComponentInChildren<Renderer>()))) {
+            Debug.LogError("Missing required components."); enabled = false; return;
         }
-
-        if (npcRenderer == null) {
-            npcRenderer = GetComponentInChildren<Renderer>();
-            if (npcRenderer == null) {
-                Debug.LogError("NPC Renderer not found!");
-                enabled = false;
-                return;
-            }
-        }
-
         currentRoamDestination = GetRandomNavMeshPosition(transform.position, freeRoamRadius);
         UpdateMovementParameters();
     }
 
-    private void Update() {
+    void Update() {
         if (player == null) return;
-
         if (Time.time - lastVisibilityCheckTime >= visibilityCheckInterval) {
             UpdateDistanceFromPlayer();
             CheckVisibility();
             lastVisibilityCheckTime = Time.time;
         }
-
         UpdateMovementSound();
         HandleMovement();
     }
 
-    private void UpdateDistanceFromPlayer() {
+    void UpdateDistanceFromPlayer() {
         distanceFromPlayer = Vector3.Distance(transform.position, player.transform.position);
-
-        bool shouldChase = (hasDirectLineOfSight && isVisible) || (distanceFromPlayer <= chaseDistanceThreshold);
-
-        if (isChasing && !shouldChase && distanceFromPlayer > chaseDistanceThreshold) {
-            isChasing = false;
-            UpdateMovementParameters();
-        }
-        else if (!isChasing && shouldChase) {
-            isChasing = true;
+        bool shouldChase = (hasDirectLineOfSight && isVisible) || distanceFromPlayer <= chaseDistanceThreshold;
+        if (isChasing != shouldChase) {
+            isChasing = shouldChase;
             UpdateMovementParameters();
         }
     }
 
-    private void CheckVisibility() {
-        if (!npcRenderer.isVisible) {
-            isVisible = false;
-            hasDirectLineOfSight = false;
-            return;
-        }
-
-        Vector3 camPos = playerCam.transform.position;
-        Bounds bounds = npcRenderer.bounds;
-        float distanceToNPC = Vector3.Distance(camPos, bounds.center);
-
+    void CheckVisibility() {
+        if (!npcRenderer.isVisible) { isVisible = hasDirectLineOfSight = false; return; }
+        var camPos = playerCam.transform.position;
+        var bounds = npcRenderer.bounds;
+        float distToNPC = Vector3.Distance(camPos, bounds.center);
         bool inPlayerView = false;
 
-        if (distanceToNPC <= closeDistanceThreshold) {
-            // For close range, check multiple key points on the NPC bounds
+        if (distToNPC <= closeDistanceThreshold) {
             Vector3[] keyPoints = {
                 bounds.center,
-                bounds.min + Vector3.up * bounds.size.y * 0.8f, // Upper portion
-                bounds.center + Vector3.up * bounds.size.y * 0.3f, // Upper center
-                bounds.center - Vector3.up * bounds.size.y * 0.3f, // Lower center
-                bounds.center + playerCam.transform.right * bounds.size.x * 0.3f, // Right side
-                bounds.center - playerCam.transform.right * bounds.size.x * 0.3f  // Left side
+                bounds.min + Vector3.up * bounds.size.y * 0.8f,
+                bounds.center + Vector3.up * bounds.size.y * 0.3f,
+                bounds.center - Vector3.up * bounds.size.y * 0.3f,
+                bounds.center + playerCam.transform.right * bounds.size.x * 0.3f,
+                bounds.center - playerCam.transform.right * bounds.size.x * 0.3f
             };
-
-            foreach (Vector3 point in keyPoints) {
-                Vector3 viewportPos = playerCam.WorldToViewportPoint(point);
-                if (viewportPos.z > 0 &&
-                    viewportPos.x >= -0.8f && viewportPos.x <= 1.8f &&
-                    viewportPos.y >= -0.8f && viewportPos.y <= 1.8f) {
-                    inPlayerView = true;
-                    break;
-                }
+            foreach (var p in keyPoints) {
+                var v = playerCam.WorldToViewportPoint(p);
+                if (v.z > 0 && v.x >= -0.8f && v.x <= 1.8f && v.y >= -0.8f && v.y <= 1.8f) { inPlayerView = true; break; }
             }
-
-            // Additional check: if any corner of the bounds is in front of camera
             if (!inPlayerView) {
                 Vector3[] corners = {
-                    new Vector3(bounds.min.x, bounds.min.y, bounds.min.z),
-                    new Vector3(bounds.min.x, bounds.min.y, bounds.max.z),
-                    new Vector3(bounds.min.x, bounds.max.y, bounds.min.z),
-                    new Vector3(bounds.min.x, bounds.max.y, bounds.max.z),
-                    new Vector3(bounds.max.x, bounds.min.y, bounds.min.z),
-                    new Vector3(bounds.max.x, bounds.min.y, bounds.max.z),
-                    new Vector3(bounds.max.x, bounds.max.y, bounds.min.z),
-                    new Vector3(bounds.max.x, bounds.max.y, bounds.max.z)
+                    bounds.min, new(bounds.min.x, bounds.min.y, bounds.max.z),
+                    new(bounds.min.x, bounds.max.y, bounds.min.z), new(bounds.min.x, bounds.max.y, bounds.max.z),
+                    new(bounds.max.x, bounds.min.y, bounds.min.z), new(bounds.max.x, bounds.min.y, bounds.max.z),
+                    new(bounds.max.x, bounds.max.y, bounds.min.z), bounds.max
                 };
-
-                foreach (Vector3 corner in corners) {
-                    Vector3 viewportPos = playerCam.WorldToViewportPoint(corner);
-                    if (viewportPos.z > 0 &&
-                        viewportPos.x >= -0.3f && viewportPos.x <= 1.3f &&
-                        viewportPos.y >= -0.3f && viewportPos.y <= 1.3f) {
-                        inPlayerView = true;
-                        break;
-                    }
+                foreach (var c in corners) {
+                    var v = playerCam.WorldToViewportPoint(c);
+                    if (v.z > 0 && v.x >= -0.3f && v.x <= 1.3f && v.y >= -0.3f && v.y <= 1.3f) { inPlayerView = true; break; }
                 }
             }
         }
         else {
-            // Standard distance detection
-            Vector3 toNPC = (bounds.center - camPos).normalized;
-            float angle = Vector3.Angle(playerCam.transform.forward, toNPC);
-            Vector3 viewportPos = playerCam.WorldToViewportPoint(bounds.center);
-            inPlayerView = angle < viewAngle &&
-                          viewportPos.z > 0 &&
-                          viewportPos.x > 0 && viewportPos.x < 1 &&
-                          viewportPos.y > 0 && viewportPos.y < 1;
+            var toNPC = (bounds.center - camPos).normalized;
+            var angle = Vector3.Angle(playerCam.transform.forward, toNPC);
+            var v = playerCam.WorldToViewportPoint(bounds.center);
+            inPlayerView = angle < viewAngle && v.z > 0 && v.x > 0 && v.x < 1 && v.y > 0 && v.y < 1;
         }
 
         isVisible = inPlayerView;
+        if (!isVisible) { hasDirectLineOfSight = false; return; }
 
-        if (!isVisible) {
-            hasDirectLineOfSight = false;
-            return;
-        }
-
-        Vector3 rayOrigin = camPos;
         Vector3[] checkPoints = {
             bounds.center,
-            bounds.center + Vector3.up * (bounds.size.y * 0.25f),
-            bounds.center - Vector3.up * (bounds.size.y * 0.25f),
-            bounds.center + Vector3.right * (bounds.size.x * 0.25f),
-            bounds.center + Vector3.left * (bounds.size.x * 0.25f)
+            bounds.center + Vector3.up * bounds.size.y * 0.25f,
+            bounds.center - Vector3.up * bounds.size.y * 0.25f,
+            bounds.center + Vector3.right * bounds.size.x * 0.25f,
+            bounds.center - Vector3.right * bounds.size.x * 0.25f
         };
-
-        bool anyPointVisible = false;
-        foreach (Vector3 point in checkPoints) {
-            Vector3 direction = (point - rayOrigin).normalized;
-            float distance = Vector3.Distance(rayOrigin, point);
-
-            // For very close distances, reduce raycast distance to prevent self-collision
-            if (distance <= 0.5f) {
-                anyPointVisible = true;
-                break;
-            }
-
-            distance -= 0.1f;
-            if (!Physics.Raycast(rayOrigin, direction, distance, obstructionLayers)) {
-                anyPointVisible = true;
-                break;
-            }
-        }
-
-        hasDirectLineOfSight = anyPointVisible;
-
-        if (hasDirectLineOfSight && !hasPlayedHorrorSound) {
-            hasPlayedHorrorSound = true;
-            if (horrorSource != null && horrorSounds.Length > 0) {
-                horrorSource.clip = horrorSounds[Random.Range(0, horrorSounds.Length)];
-                horrorSource.Play();
-            }
-        }
-    }
-
-    private void UpdateMovementSound() {
-        if (movementSource != null) {
-            bool shouldPlay = agent.velocity.magnitude > movementSoundThreshold && !isVisible;
-            if (movementSource.enabled != shouldPlay) {
-                movementSource.enabled = shouldPlay;
-            }
-        }
-    }
-
-    private void UpdateMovementParameters() {
-        if (isChasing) {
-            agent.speed = chaseSpeed;
-            agent.acceleration = acceleration * 2f;
-            agent.stoppingDistance = 0.5f;
-        }
-        else {
-            agent.speed = roamSpeed;
-            agent.acceleration = acceleration;
-            agent.stoppingDistance = originalStoppingDistance;
-        }
-    }
-
-    private void HandleMovement() {
-        if (isVisible && hasDirectLineOfSight) {
-            StopMoving();
-            return;
-        }
-
-        float movementInterval = isChasing ? chaseMovementInterval : roamMovementInterval;
-
-        if (Time.time - lastMovementTime >= movementInterval) {
-            if (isChasing) {
-                agent.SetDestination(player.transform.position);
-            }
-            else if (canRoam) {
-                if (Vector3.Distance(transform.position, currentRoamDestination) < agent.stoppingDistance || Time.time - lastMovementTime >= roamMovementInterval * 3f) {
-                    currentRoamDestination = GetRandomNavMeshPosition(transform.position, freeRoamRadius);
+        foreach (var p in checkPoints) {
+            var dir = (p - camPos).normalized;
+            var dist = Vector3.Distance(camPos, p);
+            if (dist <= 0.5f || !Physics.Raycast(camPos, dir, dist - 0.1f, obstructionLayers)) {
+                hasDirectLineOfSight = true;
+                if (!hasPlayedHorrorSound && horrorSource && horrorSounds.Length > 0) {
+                    hasPlayedHorrorSound = true;
+                    horrorSource.clip = horrorSounds[Random.Range(0, horrorSounds.Length)];
+                    horrorSource.Play();
                 }
+                return;
+            }
+        }
+        hasDirectLineOfSight = false;
+    }
+
+    void UpdateMovementSound() {
+        if (movementSource) movementSource.enabled = agent.velocity.magnitude > movementSoundThreshold && !isVisible;
+    }
+
+    void UpdateMovementParameters() {
+        agent.speed = isChasing ? chaseSpeed : roamSpeed;
+        agent.acceleration = isChasing ? acceleration * 2f : acceleration;
+        agent.stoppingDistance = isChasing ? 0.5f : originalStoppingDistance;
+    }
+
+    void HandleMovement() {
+        if (isVisible && hasDirectLineOfSight) { StopMoving(); return; }
+        float moveInterval = isChasing ? chaseMovementInterval : roamMovementInterval;
+        if (Time.time - lastMovementTime >= moveInterval) {
+            if (isChasing) agent.SetDestination(player.transform.position);
+            else if (canRoam) {
+                if (Vector3.Distance(transform.position, currentRoamDestination) < agent.stoppingDistance || Time.time - lastMovementTime >= roamMovementInterval * 3f)
+                    currentRoamDestination = GetRandomNavMeshPosition(transform.position, freeRoamRadius);
                 agent.SetDestination(currentRoamDestination);
             }
             lastMovementTime = Time.time;
         }
     }
 
-    private void StopMoving() {
+    void StopMoving() {
         if (agent.hasPath) {
             agent.SetDestination(transform.position);
             agent.ResetPath();
@@ -268,70 +173,38 @@ public class NPC_173 : MonoBehaviour {
         }
     }
 
-    private Vector3 GetRandomNavMeshPosition(Vector3 origin, float radius) {
-        Vector3 randomDirection = Random.insideUnitSphere * radius + origin;
-        NavMesh.SamplePosition(randomDirection, out NavMeshHit navHit, radius, NavMesh.AllAreas);
-        return navHit.position;
+    Vector3 GetRandomNavMeshPosition(Vector3 origin, float radius) {
+        var randomDir = Random.insideUnitSphere * radius + origin;
+        NavMesh.SamplePosition(randomDir, out var hit, radius, NavMesh.AllAreas);
+        return hit.position;
     }
 
-    private void OnEnable() {
-        InvokeRepeating(nameof(CheckForDoors), doorCheckInterval, doorCheckInterval);
-    }
+    void OnEnable() => InvokeRepeating(nameof(CheckForDoors), doorCheckInterval, doorCheckInterval);
+    void OnDisable() => CancelInvoke(nameof(CheckForDoors));
 
-    private void OnDisable() {
-        CancelInvoke(nameof(CheckForDoors));
-    }
-
-    private void CheckForDoors() {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, doorCheckRadius);
-        Door closestDoor = null;
-        float minDist = Mathf.Infinity;
-
-        foreach (var col in colliders) {
+    void CheckForDoors() {
+        var colliders = Physics.OverlapSphere(transform.position, doorCheckRadius);
+        Door nearest = null;
+        float minDist = float.MaxValue;
+        foreach (var col in colliders)
             if (col.TryGetComponent(out Door door)) {
-                float dist = Vector3.Distance(transform.position, col.transform.position);
-                if (dist < minDist) {
-                    minDist = dist;
-                    closestDoor = door;
-                }
+                var dist = Vector3.Distance(transform.position, col.transform.position);
+                if (dist < minDist) { minDist = dist; nearest = door; }
             }
-        }
-
-        if (closestDoor != null && Random.value < doorOpenChance) {
-            closestDoor.OpenDoor();
-        }
+        if (nearest && Random.value < doorOpenChance) nearest.OpenDoor();
     }
 
-    private void OnDrawGizmosSelected() {
+    void OnDrawGizmosSelected() {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, doorCheckRadius);
-
         if (!isChasing && canRoam) {
             Gizmos.color = Color.blue;
             Gizmos.DrawLine(transform.position, currentRoamDestination);
             Gizmos.DrawWireSphere(currentRoamDestination, 0.5f);
         }
-
-        if (playerCam != null && npcRenderer != null) {
+        if (playerCam && npcRenderer) {
             Gizmos.color = isVisible ? (hasDirectLineOfSight ? Color.green : Color.yellow) : Color.red;
             Gizmos.DrawLine(playerCam.transform.position, npcRenderer.bounds.center);
-
-            if (isVisible) {
-                Bounds bounds = npcRenderer.bounds;
-                Vector3[] points = {
-                    bounds.center,
-                    bounds.center + Vector3.up * (bounds.size.y * 0.25f),
-                    bounds.center + Vector3.up * (bounds.size.y * 1f),
-                    bounds.center - Vector3.up * (bounds.size.y * 0.25f),
-                    bounds.center + Vector3.right * (bounds.size.x * 0.25f),
-                    bounds.center + Vector3.left * (bounds.size.x * 0.25f)
-                };
-
-                Gizmos.color = Color.blue;
-                foreach (Vector3 point in points) {
-                    Gizmos.DrawWireSphere(point, 0.1f);
-                }
-            }
         }
     }
 }
