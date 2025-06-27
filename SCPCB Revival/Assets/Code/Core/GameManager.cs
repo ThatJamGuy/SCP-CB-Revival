@@ -8,28 +8,24 @@ public class GameManager : MonoBehaviour
     public bool disablePlayerInputs;
     public bool inventoryPausesGame;
 
-    private void Awake()
-    {
+    private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
 
-    public void ChangeMusic(AudioClip music)
-    {
+    public void ChangeMusic(string trackName) {
         if (MusicPlayer.Instance != null)
-            MusicPlayer.Instance.ChangeMusic(music);
+            MusicPlayer.Instance.ChangeMusic(trackName);
     }
 
-    public void PauseGame()
-    {
+    public void PauseGame() {
         bool isPaused = Time.timeScale == 0.0f;
 
         AudioListener.pause = !isPaused;
         Time.timeScale = isPaused ? 1.0f : 0.0f;
     }
 
-    public void TogglePlayerInput(bool alsoToggleMouse)
-    {
+    public void TogglePlayerInput(bool alsoToggleMouse) {
         disablePlayerInputs = !disablePlayerInputs;
 
         if (alsoToggleMouse)

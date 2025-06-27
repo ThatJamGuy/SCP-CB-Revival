@@ -38,12 +38,13 @@ public class MusicPlayer : MonoBehaviour
         musicSource.Play();
     }
 
-    public void ChangeMusic(AudioClip newMusic)
+    // Modified to use track name system
+    public void ChangeMusic(string trackName)
     {
-        StartCoroutine(ChangeMusicCoroutine(newMusic));
+        StartCoroutine(ChangeMusicCoroutine(trackName));
     }
 
-    private IEnumerator ChangeMusicCoroutine(AudioClip newMusic)
+    private IEnumerator ChangeMusicCoroutine(string trackName)
     {
         float fadeOutTime = 0.5f;
         float fadeInTime = 0.5f;
@@ -57,7 +58,12 @@ public class MusicPlayer : MonoBehaviour
         }
         musicSource.Stop();
 
-        musicSource.clip = newMusic;
+        if (currentSoundtrack == null && soundtracks.Length > 0) currentSoundtrack = soundtracks[0];
+        if (currentSoundtrack == null) yield break;
+        var track = System.Array.Find(currentSoundtrack.tracks, t => t.trackName == trackName);
+        if (track == null || track.clip == null) yield break;
+
+        musicSource.clip = track.clip;
         musicSource.Play();
         timer = 0f;
         while (timer < fadeInTime)

@@ -12,17 +12,17 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHATEST_ON
   - _DISABLE_SSR_TRANSPARENT
   - _DOUBLESIDED_ON
   - _ENABLE_FOG_ON_TRANSPARENT
   - _MATERIAL_FEATURE_IRIDESCENCE
+  - _NORMALMAP
   - _NORMALMAP_TANGENT_SPACE
-  - _REFRACTION_THIN
+  - _REFRACTION_PLANE
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 2
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 1
   m_CustomRenderQueue: 3000
   stringTagMap:
@@ -84,7 +84,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 70230fb01c6481d4a80d775e5e4e003e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMapOS:
@@ -139,16 +139,16 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlbedoAffectEmissive: 0
     - _AlphaCutoff: 0
-    - _AlphaCutoffEnable: 1
+    - _AlphaCutoffEnable: 0
     - _AlphaCutoffPostpass: 0.5
     - _AlphaCutoffPrepass: 0.5
     - _AlphaCutoffShadow: 1
-    - _AlphaDstBlend: 1
+    - _AlphaDstBlend: 10
     - _AlphaRemapMax: 1
-    - _AlphaRemapMin: 0.17021276
+    - _AlphaRemapMin: 0
     - _AlphaSrcBlend: 1
     - _Anisotropy: 0
-    - _BlendMode: 1
+    - _BlendMode: 0
     - _CoatMask: 0
     - _CullMode: 0
     - _CullModeForward: 2
@@ -165,7 +165,7 @@ Material:
     - _DoubleSidedEnable: 1
     - _DoubleSidedGIMode: 1
     - _DoubleSidedNormalMode: 1
-    - _DstBlend: 1
+    - _DstBlend: 10
     - _DstBlend2: 10
     - _EmissiveColorMode: 1
     - _EmissiveExposureWeight: 1
@@ -185,7 +185,7 @@ Material:
     - _HeightTessAmplitude: 2
     - _HeightTessCenter: 0.5
     - _InvTilingScale: 1
-    - _Ior: 1.5
+    - _Ior: 1
     - _IridescenceMask: 0.1
     - _IridescenceThickness: 1
     - _LinkDetailsWithBase: 1
@@ -207,7 +207,7 @@ Material:
     - _RayTracing: 0
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 0
-    - _RefractionModel: 3
+    - _RefractionModel: 1
     - _Smoothness: 0.9
     - _SmoothnessRemapMax: 1
     - _SmoothnessRemapMin: 0
@@ -244,7 +244,7 @@ Material:
     - _UseEmissiveIntensity: 0
     - _UseShadowThreshold: 0
     - _ZTestDepthEqualForOpaque: 4
-    - _ZTestGBuffer: 3
+    - _ZTestGBuffer: 4
     - _ZTestTransparent: 4
     - _ZWrite: 0
     m_Colors:
