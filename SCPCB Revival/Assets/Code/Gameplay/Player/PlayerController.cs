@@ -1,64 +1,62 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour {
-    [System.Serializable]
-    public struct FootstepData { public Texture texture; public AudioClip[] walkingFootstepAudio; public AudioClip[] runningFootstepAudio; }
 
-    [Header("Input Settings")]
-    public InputActionAsset playerControls;
-
+    #region Public Variables
     [Header("Movement Settings")]
-    [SerializeField] private float walkSpeed = 5f;
-    [SerializeField] private float sprintSpeed = 10f;
-    [SerializeField] private float crouchSpeed = 2.5f;
-    [SerializeField] private float gravity = 9.81f;
+    public InputActionAsset playerControls;
+    public float walkSpeed = 4f;
+    public float sprintSpeed = 7f;
+    public float crouchSpeed = 1f;
+    public float crouchSmoothSpeed = 8f;
+    public float gravity = 9.81f;
 
     [Header("Look Settings")]
     public Camera playerCamera;
-    [SerializeField] private float lookSpeed = 2f;
-    [SerializeField] private float maxLookX = 90f;
-    [SerializeField] private float minLookX = -90f;
+    public float lookSpeed = 0.3f;
+    public float maxLookX = 80f;
+    public float minLookX = -80f;
 
-    [Header("Footstep Settings")]
-    [SerializeField] private FootstepHandler footstepHandler;
+    [Header("Blink")]
+    public bool infiniteBlink;
+    public float blinkDrainRate = 0.05f;
+    public float blinkDepletionModifier = 0f;
+    public float blinkOverlayDuration = 0.2f;
+    public float blinkOverlayHoldDuration = 0.2f;
+    public Image blinkOverlay;
+    public Slider blinkSlider;
 
-    [Header("Blinking Settings")]
-    public bool isBlinking = false;
-    [SerializeField] private Image blinkOverlay;
-    [SerializeField] private float blinkDrainRate = 0.2f;
-    [SerializeField] private Slider blinkSlider;
-    [SerializeField] private float blinkDepletionModifier = 0f;
+    [Header("Stamina")]
+    public bool infiniteStamina;
+    public float maxStamina = 1f;
+    public float staminaDrainRate = 0.2f;
+    public float staminaRegenRate = 0.1f;
+    public float staminaDepletionModifier = 0f;
+    [SerializeField, Range(0, 1)] float stamina = 1f;
+    [SerializeField] Slider staminaSlider;
 
-    [Header("Stamina Settings")]
-    [SerializeField, Range(0, 1)] private float stamina = 1f;
-    [SerializeField] private float maxStamina = 1f;
-    [SerializeField] private float staminaDrainRate = 0.2f;
-    [SerializeField] private float staminaRegenRate = 0.1f;
-    [SerializeField] private Slider staminaSlider;
-    [SerializeField] private float staminaDepletionModifier = 0f;
-
-    [Header("Other Settings")]
-    public bool infiniteBlink = false;
-    public bool infiniteStamina = false;
+    [Header("States")]
     public bool isMoving;
     public bool isSprinting;
     public bool isCrouching;
+    public bool isBlinking;
+    #endregion
 
+    #region Private Variables
     private CharacterController characterController;
     private Vector3 moveDirection;
     private float rotationX;
     private bool isBlinkingOverlayActive;
     private float blinkTimer;
-    private float blinkOverlayDuration = 0.2f;
-    private float blinkOverlayHoldDuration = 0.2f;
 
     private Vector3 targetScale;
     private Vector3 crouchScale = new Vector3(1, 0.65f, 1);
     private Vector3 standScale = new Vector3(1, 1.1f, 1);
-    [SerializeField] private float crouchSmoothSpeed = 8f;
+    #endregion
 
     private void OnEnable() {
         playerControls.Enable();
@@ -70,7 +68,6 @@ public class PlayerController : MonoBehaviour {
 
     private void Start() {
         characterController = GetComponent<CharacterController>();
-        footstepHandler.Initialize(characterController);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         staminaSlider.value = stamina;
@@ -87,16 +84,13 @@ public class PlayerController : MonoBehaviour {
         HandleStamina();
         HandleBlinking();
         HandleCrouch();
-        footstepHandler.UpdateFootsteps(isMoving, isSprinting);
     }
 
     private void HandleCrouch() {
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
+        if (Input.GetKeyDown(KeyCode.LeftControl)) {
             isCrouching = !isCrouching;
 
-            if (isCrouching)
-            {
+            if (isCrouching) {
                 isSprinting = false;
             }
         }
@@ -106,17 +100,14 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void HandleMovement() {
-        if (characterController.isGrounded)
-        {
+        if (characterController.isGrounded) {
             Vector2 moveInput = playerControls.FindAction("Move").ReadValue<Vector2>();
 
-            if (moveInput.x != 0 || moveInput.y != 0)
-            {
+            if (moveInput.x != 0 || moveInput.y != 0) {
                 moveDirection = transform.TransformDirection(new Vector3(moveInput.x, 0, moveInput.y)) * DetermineCurrentSpeed();
                 isMoving = true;
             }
-            else
-            {
+            else {
                 moveDirection.x = 0;
                 moveDirection.z = 0;
                 isMoving = false;
@@ -152,14 +143,12 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void HandleStamina() {
-        if (isSprinting && !infiniteStamina && !isCrouching)
-        {
+        if (isSprinting && !infiniteStamina && !isCrouching) {
             float adjustedDrainRate = staminaDrainRate * (1 + staminaDepletionModifier);
             stamina = Mathf.Max(stamina - adjustedDrainRate * Time.deltaTime, 0f);
             if (stamina == 0f) isSprinting = false;
         }
-        else if (stamina < maxStamina)
-        {
+        else if (stamina < maxStamina) {
             stamina = Mathf.Min(stamina + staminaRegenRate * Time.deltaTime, maxStamina);
         }
 
@@ -167,21 +156,17 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void HandleBlinking() {
-        if (infiniteBlink)
-        {
+        if (infiniteBlink) {
             blinkTimer = 1f;
         }
-        else if (!isBlinkingOverlayActive)
-        {
+        else if (!isBlinkingOverlayActive) {
             float modifiedDrainRate = blinkDrainRate * (1 + blinkDepletionModifier);
             blinkTimer = Mathf.Max(blinkTimer - modifiedDrainRate * Time.deltaTime, 0f);
             if (blinkTimer == 0) TriggerBlink();
         }
 
-        if (Input.GetKey(KeyCode.Space) && !infiniteBlink)
-        {
-            if (!isBlinkingOverlayActive)
-            {
+        if (Input.GetKey(KeyCode.Space) && !infiniteBlink) {
+            if (!isBlinkingOverlayActive) {
                 blinkOverlay.enabled = true;
                 isBlinking = true;
                 isBlinkingOverlayActive = true;
@@ -189,8 +174,7 @@ public class PlayerController : MonoBehaviour {
                 CancelInvoke(nameof(EndBlink));
             }
         }
-        else if (Input.GetKeyUp(KeyCode.Space) && isBlinkingOverlayActive)
-        {
+        else if (Input.GetKeyUp(KeyCode.Space) && isBlinkingOverlayActive) {
             Invoke(nameof(EndBlink), blinkOverlayHoldDuration);
         }
 

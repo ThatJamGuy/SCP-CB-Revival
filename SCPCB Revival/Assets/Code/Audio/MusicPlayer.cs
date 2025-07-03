@@ -38,7 +38,6 @@ public class MusicPlayer : MonoBehaviour
         musicSource.Play();
     }
 
-    // Modified to use track name system
     public void ChangeMusic(string trackName)
     {
         StartCoroutine(ChangeMusicCoroutine(trackName));

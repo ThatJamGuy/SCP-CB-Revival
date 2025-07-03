@@ -45,7 +45,7 @@ public class SoundscapeAudioSource : MonoBehaviour {
 	
 	void FixedUpdate() {
 		//stop linecasts when the player is outside of audible range
-		if ((audioListener.position - transform.position).sqrMagnitude < distanceThreshold)	{
+		if (audioListener != null && (audioListener.position - transform.position).sqrMagnitude < distanceThreshold)	{
 
 			RaycastHit hit;
 			bool occluded = Physics.Linecast(transform.position, audioListener.position, out hit, OcclusionLayer);

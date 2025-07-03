@@ -261,7 +261,7 @@ public class EVNT_Intro : MonoBehaviour
         if (!readyForEscort)
             cellDoor.GetComponent<Door>().CloseDoor();
         if (!readyForEscort)
-            GameManager.Instance.ChangeMusic("RefuseToCooperate"); // Use the track name here
+            //GameManager.Instance.ChangeMusic("RefuseToCooperate"); // Use the track name here
         yield return new WaitForSeconds(1f);
         StartCoroutine(RefuseExitCellKill());
     }

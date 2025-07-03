@@ -15,12 +15,10 @@ public class AmbienceController : MonoBehaviour {
     [SerializeField] AudioClip[] zone3Ambience;
     [SerializeField] AudioClip[] commotionSounds;
 
-    [Header("Player")]
-    [SerializeField] Transform player;
-
     private int currentCommotionIndex;
     private Dictionary<int, AudioClip[]> zoneAmbienceMap;
     private Coroutine ambienceCoroutine;
+    private Transform player;
 
     private void Awake() {
         if (Instance == null) Instance = this;
