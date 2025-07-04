@@ -6,6 +6,10 @@ public class InventorySystem : MonoBehaviour
 {
     public static InventorySystem instance { get; set; }
 
+    [Header("References")]
+    [SerializeField] private PlayerMenus playerMenus;
+    [SerializeField] private Camera playerCamera;
+
     public List<GameObject> slotList = new List<GameObject>();
     public List<string> itemList = new List<string>();
 
@@ -45,6 +49,7 @@ public class InventorySystem : MonoBehaviour
 
         itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
         itemToAdd.transform.SetParent(whatSlotToEquip.transform);
+        itemToAdd.GetComponent<DragDrop>().SetPlayerCamera(playerCamera);
 
         itemList.Add(itemName);
     }
@@ -140,6 +145,6 @@ public class InventorySystem : MonoBehaviour
 
     public void CloseInventory()
     {
-        MenuManager.Instance.ToggleMenu(2);
+        playerMenus.ToggleInventory(new UnityEngine.InputSystem.InputAction.CallbackContext());
     }
 }

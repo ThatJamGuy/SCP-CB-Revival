@@ -18,12 +18,21 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDrag
 
     private bool droppedOnValidSlot;
 
+    // Multiplayer-safe player camera reference
+    private Camera playerCamera;
+
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         canvas = FindFirstObjectByType<Canvas>();
         inventoryItem = GetComponent<InventoryItem>();
+    }
+
+    // Call this after instantiating the inventory item to set the correct player camera
+    public void SetPlayerCamera(Camera cam)
+    {
+        playerCamera = cam;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -75,12 +84,15 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDrag
     {
         if (inventoryItem.itemPrefab == null) return;
 
-        Transform playerCamera = Camera.main.transform;
-        Vector3 spawnPosition = playerCamera.position + playerCamera.forward * 1.5f;
+        // Use the assigned playerCamera, fallback to Camera.main if not set (for legacy support)
+        Camera cam = playerCamera != null ? playerCamera : Camera.main;
+        if (cam == null) return;
+        Transform camTransform = cam.transform;
+        Vector3 spawnPosition = camTransform.position + camTransform.forward * 1.5f;
 
         Instantiate(inventoryItem.itemPrefab, spawnPosition, Quaternion.identity);
 
-        InventorySystem.instance.itemList.Remove(inventoryItem.itemPrefab.name);
+        InventorySystem.instance.itemList.Remove(inventoryItem.thisName);
         Destroy(gameObject);
     }
 }

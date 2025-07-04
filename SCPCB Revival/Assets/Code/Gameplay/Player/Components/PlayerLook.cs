@@ -6,6 +6,7 @@ public class PlayerLook : MonoBehaviour {
     public InputActionAsset playerControls;
 
     [Header("References")]
+    [SerializeField] private PlayerBase playerBase;
     public Transform playerBody;
     public Transform head;
 
@@ -49,7 +50,7 @@ public class PlayerLook : MonoBehaviour {
 
     #region Private Methods
     private void RotateView() {
-        if (lookInput == Vector2.zero) return;
+        if (lookInput == Vector2.zero || !playerBase.allowInput) return;
 
         Vector2 delta = lookInput * sensitivity;
 

@@ -32,6 +32,9 @@ public class PlayerHeadbob : MonoBehaviour {
     private void Update() {
         float movementSpeed = playerBase.isSprinting ? sprintBobSpeed : walkBobSpeed;
 
+        if (playerBase.isCrouching)
+            movementSpeed = walkBobSpeed;
+
         if (playerBase.isMoving) {
             bobTimer += Time.deltaTime * movementSpeed;
 

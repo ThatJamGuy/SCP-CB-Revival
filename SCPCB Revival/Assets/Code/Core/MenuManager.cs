@@ -50,7 +50,7 @@ public class MenuManager : MonoBehaviour
         menu.isActive = !menu.isActive;
         menu.menu.SetActive(menu.isActive);
         if (menu.pausesGame) GameManager.Instance.PauseGame();
-        if (menu.togglesInput) GameManager.Instance.TogglePlayerInput(true);
+        //if (menu.togglesInput) GameManager.Instance.TogglePlayerInput(true);
     }
 
     private bool IsAnyMenuOpen()

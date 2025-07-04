@@ -7,6 +7,7 @@ public class InteractionSystem : MonoBehaviour {
     public InputActionAsset playerControls;
 
     [Header("References")]
+    [SerializeField] private PlayerBase playerBase;
     public Camera playerCamera;
 
     [Header("Settings")]
@@ -37,6 +38,8 @@ public class InteractionSystem : MonoBehaviour {
     }
 
     void Update() {
+        if (!playerBase.allowInput) return;
+
         FindClosestInteractable();
         HandleInteraction();
     }
