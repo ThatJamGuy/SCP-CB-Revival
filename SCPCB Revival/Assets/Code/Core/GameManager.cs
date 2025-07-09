@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public bool testPlayerSpawn;
 
     [Header("Global Settings")]
-    public bool inventoryPausesGame;
+    public bool menusPauseGame;
 
     [Header("Player References")]
     public GameObject playerPrefab;
@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         Instance.playerPrefab = Instantiate(playerPrefab, spawnPos, Quaternion.identity);
     }
 
-    public void PauseGame() {
+    public void PauseGameToggle() {
         bool isPaused = Time.timeScale == 0.0f;
 
         AudioListener.pause = !isPaused;
