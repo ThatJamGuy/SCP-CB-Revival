@@ -9,6 +9,8 @@ public class MusicPlayer : MonoBehaviour
     private AudioSource musicSource;
     private Soundtrack currentSoundtrack;
 
+    private string currentTrackName;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -27,11 +29,15 @@ public class MusicPlayer : MonoBehaviour
     }
 
     public void StartMusicByName(string trackName) {
-        if (currentSoundtrack == null && soundtracks.Length > 0) currentSoundtrack = soundtracks[0];
+        if (currentSoundtrack == null && soundtracks.Length > 0) currentSoundtrack = soundtracks[SettingsManager.Instance.CurrentSettings.soundtrack];
         if (currentSoundtrack == null) return;
+
+        Debug.Log($"Starting music: {trackName} from soundtrack: {currentSoundtrack.soundtrackName}");
 
         var track = System.Array.Find(currentSoundtrack.tracks, t => t.trackName == trackName);
         if (track == null || track.clip == null) return;
+
+        currentTrackName = trackName;
 
         musicSource.Stop();
         musicSource.clip = track.clip;
@@ -40,6 +46,7 @@ public class MusicPlayer : MonoBehaviour
 
     public void ChangeMusic(string trackName)
     {
+        currentTrackName = trackName;
         StartCoroutine(ChangeMusicCoroutine(trackName));
     }
 
@@ -71,5 +78,14 @@ public class MusicPlayer : MonoBehaviour
             timer += Time.deltaTime;
             yield return null;
         }
+    }
+
+    public void SetCurrentSoundtrack(int index)
+    {
+        if (soundtracks == null || soundtracks.Length == 0) return;
+        if (index < 0 || index >= soundtracks.Length) return;
+        if (currentTrackName == null) return;
+        currentSoundtrack = soundtracks[index];
+        StartMusicByName(currentTrackName);
     }
 }

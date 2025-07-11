@@ -59,5 +59,10 @@ public class PlayerMenus : MonoBehaviour {
         if (pauseOpen)
             TogglePauseMenu(default);
     }
+
+    public void QuitToMainMenu() {
+        GameManager.Instance.PauseGameToggle();
+        SceneLoader.Instance.LoadScene("LoadingScene", "ModernMenu", LoadType.LoadMenu);
+    }
     #endregion
 }

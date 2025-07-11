@@ -80,17 +80,6 @@ public class SettingsManager : MonoBehaviour {
     public void ApplySettings() {
         if (_currentSettings == null) return;
 
-        // Apply audio settings
-        AudioListener.volume = _currentSettings.masterVolume;
-
-        // Apply graphics settings
-        //QualitySettings.SetQualityLevel(_currentSettings.qualityLevel);
-        Screen.SetResolution(
-            _currentSettings.resolutionWidth,
-            _currentSettings.resolutionHeight,
-            _currentSettings.fullscreen
-        );
-
         // Trigger event
         OnSettingsChanged?.Invoke();
     }

@@ -1,11 +1,17 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class ModernMenu : MonoBehaviour
 {
-    private void Awake() {
+    private void Start() {
         MusicPlayer.Instance.StartMusicByName("Menu");
+    }
+
+    public void StartGame() {
+        SceneLoader.Instance.LoadScene("LoadingScene", "TestRoom", LoadType.LoadHeavy);
+    }
+
+    public void OpenLink(string link) {
+        Application.OpenURL(link);
     }
 
     public void QuitGame() {
