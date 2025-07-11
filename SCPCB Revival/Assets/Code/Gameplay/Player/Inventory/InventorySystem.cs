@@ -2,149 +2,133 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventorySystem : MonoBehaviour
-{
-    public static InventorySystem instance { get; set; }
+namespace scpcbr {
+    public class InventorySystem : MonoBehaviour {
+        public static InventorySystem instance { get; set; }
 
-    [Header("References")]
-    [SerializeField] private PlayerMenus playerMenus;
-    [SerializeField] private Camera playerCamera;
+        [Header("References")]
+        [SerializeField] private PlayerMenus playerMenus;
+        [SerializeField] private Camera playerCamera;
 
-    public List<GameObject> slotList = new List<GameObject>();
-    public List<string> itemList = new List<string>();
+        public List<GameObject> slotList = new List<GameObject>();
+        public List<string> itemList = new List<string>();
 
-    public GameObject itemInfoUI;
-    [SerializeField] private GameObject currentHeldItemDisplay;
-    [SerializeField] private GameObject currentHeldDocumentDisplay;
-    [SerializeField] private AudioSource itemEquipUnequipSource;
+        public GameObject itemInfoUI;
+        [SerializeField] private GameObject currentHeldItemDisplay;
+        [SerializeField] private GameObject currentHeldDocumentDisplay;
+        [SerializeField] private AudioSource itemEquipUnequipSource;
 
-    public string currentHeldItem;
-    public int currentKeyLevel;
+        public string currentHeldItem;
+        public int currentKeyLevel;
 
-    private GameObject itemToAdd;
-    private GameObject whatSlotToEquip;
+        private GameObject itemToAdd;
+        private GameObject whatSlotToEquip;
 
-    private void Awake()
-    {
-        if (instance != null && instance != this)
-            Destroy(gameObject);
-        else
-            instance = this;
-    }
-
-    private void Update()
-    {
-        if (Input.GetMouseButtonUp(1) && currentHeldItem != null)
-        {
-            if (currentHeldDocumentDisplay != null && currentHeldDocumentDisplay.activeSelf)
-                UnequipDocument();
+        private void Awake() {
+            if (instance != null && instance != this)
+                Destroy(gameObject);
             else
-                UnequipItem();
+                instance = this;
         }
-    }
 
-    public void AddToInventory(string itemName)
-    {
-        whatSlotToEquip = FindNextEmptySlot();
-
-        itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
-        itemToAdd.transform.SetParent(whatSlotToEquip.transform);
-        itemToAdd.GetComponent<DragDrop>().SetPlayerCamera(playerCamera);
-
-        itemList.Add(itemName);
-    }
-
-    public bool CheckIfFull()
-    {
-        int counter = 0;
-
-        foreach (GameObject slot in slotList)
-        {
-            if (slot.transform.childCount > 0)
-            {
-                counter += 1;
+        private void Update() {
+            if (Input.GetMouseButtonUp(1) && currentHeldItem != null) {
+                if (currentHeldDocumentDisplay != null && currentHeldDocumentDisplay.activeSelf)
+                    UnequipDocument();
+                else
+                    UnequipItem();
             }
         }
 
-        if (counter == 10)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+        public void AddToInventory(string itemName) {
+            whatSlotToEquip = FindNextEmptySlot();
 
-    private GameObject FindNextEmptySlot()
-    {
-        foreach (GameObject slot in slotList)
-        {
-            if (slot.transform.childCount == 0)
-            {
-                return slot;
+            itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
+            itemToAdd.transform.SetParent(whatSlotToEquip.transform);
+            itemToAdd.GetComponent<DragDrop>().SetPlayerCamera(playerCamera);
+
+            itemList.Add(itemName);
+        }
+
+        public bool CheckIfFull() {
+            int counter = 0;
+
+            foreach (GameObject slot in slotList) {
+                if (slot.transform.childCount > 0) {
+                    counter += 1;
+                }
+            }
+
+            if (counter == 10) {
+                return true;
+            }
+            else {
+                return false;
             }
         }
 
-        return new GameObject();
-    }
+        private GameObject FindNextEmptySlot() {
+            foreach (GameObject slot in slotList) {
+                if (slot.transform.childCount == 0) {
+                    return slot;
+                }
+            }
 
-    public void EquipItem(string itemName, Sprite itemImage, AudioClip audioClip, int keyLevel)
-    {
-        if (currentHeldDocumentDisplay.activeSelf)
-            return;
+            return new GameObject();
+        }
 
-        currentHeldItem = itemName;
-        currentKeyLevel = keyLevel;
+        public void EquipItem(string itemName, Sprite itemImage, AudioClip audioClip, int keyLevel) {
+            if (currentHeldDocumentDisplay.activeSelf)
+                return;
 
-        currentHeldItemDisplay.GetComponent<Image>().sprite = itemImage;
-        currentHeldItemDisplay.SetActive(true);
+            currentHeldItem = itemName;
+            currentKeyLevel = keyLevel;
 
-        itemEquipUnequipSource.clip = audioClip;
-        itemEquipUnequipSource.Stop();
-        itemEquipUnequipSource.Play();
+            currentHeldItemDisplay.GetComponent<Image>().sprite = itemImage;
+            currentHeldItemDisplay.SetActive(true);
 
-        CloseInventory();
-    }
+            itemEquipUnequipSource.clip = audioClip;
+            itemEquipUnequipSource.Stop();
+            itemEquipUnequipSource.Play();
 
-    public void EquipDocument(string documentName, Sprite documentImage, AudioClip audioClip)
-    {
-        if (currentHeldItemDisplay.activeSelf)
-            return;
+            CloseInventory();
+        }
 
-        currentHeldItem = documentName;
+        public void EquipDocument(string documentName, Sprite documentImage, AudioClip audioClip) {
+            if (currentHeldItemDisplay.activeSelf)
+                return;
 
-        currentHeldDocumentDisplay.GetComponent<Image>().sprite = documentImage;
-        currentHeldDocumentDisplay.SetActive(true);
+            currentHeldItem = documentName;
 
-        itemEquipUnequipSource.clip = audioClip;
-        itemEquipUnequipSource.Stop();
-        itemEquipUnequipSource.Play();
+            currentHeldDocumentDisplay.GetComponent<Image>().sprite = documentImage;
+            currentHeldDocumentDisplay.SetActive(true);
 
-        CloseInventory();
-    }
+            itemEquipUnequipSource.clip = audioClip;
+            itemEquipUnequipSource.Stop();
+            itemEquipUnequipSource.Play();
 
-    public void UnequipDocument()
-    {
-        currentHeldDocumentDisplay.SetActive(false);
-        itemEquipUnequipSource.Stop();
-        itemEquipUnequipSource.Play();
+            CloseInventory();
+        }
 
-        currentHeldItem = null;
-    }
+        public void UnequipDocument() {
+            currentHeldDocumentDisplay.SetActive(false);
+            itemEquipUnequipSource.Stop();
+            itemEquipUnequipSource.Play();
 
-    public void UnequipItem()
-    {
-        currentHeldItemDisplay.SetActive(false);
-        itemEquipUnequipSource.Stop();
-        itemEquipUnequipSource.Play();
+            currentHeldItem = null;
+        }
 
-        currentHeldItem = null;
-        currentKeyLevel = 0;
-    }
+        public void UnequipItem() {
+            currentHeldItemDisplay.SetActive(false);
+            itemEquipUnequipSource.Stop();
+            itemEquipUnequipSource.Play();
 
-    public void CloseInventory()
-    {
-        playerMenus.ToggleInventory(new UnityEngine.InputSystem.InputAction.CallbackContext());
+            currentHeldItem = null;
+            currentKeyLevel = 0;
+        }
+
+        public void CloseInventory() {
+            playerMenus.ToggleInventory(new UnityEngine.InputSystem.InputAction.CallbackContext());
+        }
     }
 }

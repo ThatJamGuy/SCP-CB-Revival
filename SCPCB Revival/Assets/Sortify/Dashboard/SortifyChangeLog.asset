@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c9475ebd2cffad489227cbc1890a43c, type: 3}
+  m_Name: SortifyChangeLog
+  m_EditorClassIdentifier: 
+  _changelogEntries:
+  - version: Release 1.0
+    year: 2024
+    month: 11
+    day: 3
+    details: "The first release of Sortify provides a streamlined toolset to enhance
+      your Unity workflow, focusing on organization and customization within the
+      project hierarchy. Below is a summary of the core features available in this
+      version:\n\nKey Features in Basic Version\n\u2022 Color Coding for Objects:
+      Easily assign colors to objects in the hierarchy, improving visual organization
+      and making important items stand out.\n\u2022 Personal Notes: Attach notes
+      to objects directly in the hierarchy to organize project details and keep track
+      of essential information.\n\u2022 Quick Add for Components: Quickly add frequently
+      used components directly from the hierarchy, saving time and boosting efficiency.\n\u2022
+      Basic Custom Attributes: Utilize basic attributes like toggles and headers
+      to create more organized Inspector layouts.\n\nQuality of Life Improvements\n\u2022
+      Optimized Hierarchy Performance: This version is optimized for smooth navigation,
+      even in large scenes.\n\u2022 Local Data Storage: Sortify saves user-specific
+      settings locally, allowing for customization without affecting project files."
+  - version: 1.05 Hotfix
+    year: 2024
+    month: 11
+    day: 25
+    details: "\u2022 Fixed an issue occurring after changing the Build Target.\n\u2022
+      Fixed a display bug for component icons in the hierarchy."
+  - version: 1.1
+    year: 2024
+    month: 12
+    day: 2
+    details: "New Features\n\u2022 Highlight Module: Added object highlighting when
+      hovering over it in the hierarchy, making it easier to locate objects in the
+      scene.\n\nBug Fixes\n\u2022 Addressed several other minor bugs to improve overall
+      stability and performance."
+  - version: 1.2
+    year: 2024
+    month: 12
+    day: 23
+    details: "New Attributes\n\u2022 Layer Attribute\r\n\u2022 Tag Attribute\r\n\u2022
+      Unit Attribute\r\n\u2022 Validate Attribute\n\nBug Fixes\n\u2022 Resolved a
+      problem with the Button attribute. It now also works in Scriptable Objects.\n\u2022
+      Improved the saving mechanism for hierarchy settings."
+  - version: 1.25 Hotfix
+    year: 2025
+    month: 1
+    day: 9
+    details: "\u2022 Fixed a critical issue with saving certain object settings in
+      the hierarchy. Detailed explanation of the issue is available on Discord.\n\u2022
+      Object settings are no longer displayed in Play Mode. A message \"Play Mode
+      Active - Simplified View\" has been added to the hierarchy for clarity. The
+      reason for disabling settings in Play Mode is explained on Discord."
+  - version: 1.3
+    year: 2025
+    month: 2
+    day: 24
+    details: "\u2022 Added the ability to save settings in the project, allowing
+      settings to be transferred between computers. To enable saving settings in
+      the project, go to Settings \u2192 Save In Project."
+  - version: 1.35
+    year: 2025
+    month: 5
+    day: 21
+    details: "\u2022 Improved JSON save reliability.\r\n\u2022 Implemented per-file
+      backups (up to 3 versions) with automatic recovery on corruption.\r\n\u2022
+      Fixed the problem of losing settings when recompiling the script."

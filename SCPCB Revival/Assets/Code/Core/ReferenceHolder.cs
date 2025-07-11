@@ -1,11 +1,11 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class ReferenceHolder : MonoBehaviour
-{
-    public static ReferenceHolder Instance { get; private set; }
+namespace scpcbr {
+    public class ReferenceHolder : MonoBehaviour {
+        public static ReferenceHolder Instance { get; private set; }
 
-    void Awake() {
-        Instance = this;
+        void Awake() {
+            Instance = this;
+        }
     }
 }

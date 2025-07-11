@@ -1,23 +1,21 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class EVNT_Trigger : MonoBehaviour
-{
-    [SerializeField] private bool triggerOnce;
-    public UnityEvent OnTriggerEnterEvent;
+namespace scpcbr {
+    public class EVNT_Trigger : MonoBehaviour {
+        [SerializeField] private bool triggerOnce;
+        public UnityEvent OnTriggerEnterEvent;
 
-    private bool hasBeenTriggered = false;
+        private bool hasBeenTriggered = false;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "Player")
-        {
-            if (triggerOnce && hasBeenTriggered) return;
+        private void OnTriggerEnter(Collider other) {
+            if (other.tag == "Player") {
+                if (triggerOnce && hasBeenTriggered) return;
 
-            if (OnTriggerEnterEvent != null)
-            {
-                OnTriggerEnterEvent.Invoke();
-                hasBeenTriggered = true;
+                if (OnTriggerEnterEvent != null) {
+                    OnTriggerEnterEvent.Invoke();
+                    hasBeenTriggered = true;
+                }
             }
         }
     }
