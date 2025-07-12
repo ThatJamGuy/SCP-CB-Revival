@@ -7,7 +7,7 @@ namespace scpcbr {
         }
 
         public void StartGame() {
-            SceneLoader.Instance.LoadScene("LoadingScene", "TestRoom", LoadType.LoadHeavy);
+            SceneLoader.Instance.LoadScene("LoadingScene", "Game", LoadType.LoadHeavy);
         }
 
         public void OpenLink(string link) {

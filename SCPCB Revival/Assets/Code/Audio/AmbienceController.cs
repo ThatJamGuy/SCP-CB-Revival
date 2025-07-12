@@ -19,7 +19,7 @@ namespace scpcbr {
         private int currentCommotionIndex;
         private Dictionary<int, AudioClip[]> zoneAmbienceMap;
         private Coroutine ambienceCoroutine;
-        private Transform player;
+        private Transform[] player;
 
         private void Awake() {
             if (Instance == null) Instance = this;
@@ -27,9 +27,13 @@ namespace scpcbr {
         }
 
         private void Start() {
+            GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+            player = new Transform[playerObjects.Length];
+            for (int i = 0; i < playerObjects.Length; i++) {
+                player[i] = playerObjects[i].transform;
+            }
             InitializeZoneAmbienceMap();
             StartAmbience();
-            PlayNextCommotion();
         }
 
         private void InitializeZoneAmbienceMap() {
@@ -81,9 +85,11 @@ namespace scpcbr {
         }
 
         private Vector3 RandomPositionAroundPlayer() {
+            if (player == null || player.Length == 0) return Vector3.zero;
+            Transform randomPlayer = player[Random.Range(0, player.Length)];
             var offset = Random.onUnitSphere * Random.Range(5f, 15f);
             offset.y = Mathf.Clamp(offset.y, 0.5f, 3f);
-            return player.position + offset;
+            return randomPlayer.position + offset;
         }
 
         public void ChangeZone(int newZone) {
