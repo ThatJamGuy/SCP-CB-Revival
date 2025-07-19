@@ -29,6 +29,10 @@ namespace scpcbr {
             Instance.playerPrefab = Instantiate(playerPrefab, spawnPos, Quaternion.identity);
         }
 
+        public void RemoteChangeMusic(string trackName) {
+            MusicPlayer.Instance.ChangeMusic(trackName);
+        }
+
         public void PauseGameToggle() {
             bool isPaused = Time.timeScale == 0.0f;
 

@@ -37,6 +37,9 @@ namespace scpcbr {
         public bool infiniteBlink;
         public bool infiniteStamina;
 
+        [Header("Developer")]
+        public bool registerToAmbientZones = true;
+
         private CharacterController characterController;
         private PlayerFootsteps playerFootsteps;
         private InputAction moveAction, sprintAction, crouchAction;
@@ -85,6 +88,13 @@ namespace scpcbr {
         private void Start() {
             characterController = GetComponent<CharacterController>();
             playerFootsteps = GetComponentInChildren<PlayerFootsteps>();
+
+            if(registerToAmbientZones) {
+                AmbientZones[] ambientZones = FindObjectsByType<AmbientZones>(FindObjectsSortMode.None);
+                foreach (AmbientZones zone in ambientZones) {
+                    zone.RegisterPlayer(gameObject);
+                }
+            }
         }
 
         private void Update() {
@@ -100,6 +110,11 @@ namespace scpcbr {
             Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible = Cursor.lockState != CursorLockMode.Locked;
             allowInput = !allowInput;
+        }
+
+        public void KillPlayer(string reason) {
+            PlayerMenus playerMenus = GetComponentInChildren<PlayerMenus>();
+            playerMenus.OpenDeathScreen(reason);
         }
         #endregion
 

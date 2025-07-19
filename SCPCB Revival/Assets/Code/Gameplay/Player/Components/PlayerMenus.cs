@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 namespace scpcbr {
     public class PlayerMenus : MonoBehaviour {
@@ -10,6 +11,8 @@ namespace scpcbr {
         [SerializeField] private PlayerBase playerBase;
         [SerializeField] private GameObject inventoryScreen;
         [SerializeField] private GameObject pauseMenuScreen;
+        [SerializeField] private GameObject deathScreen;
+        [SerializeField] private TextMeshProUGUI deathReason;
 
         private InputAction inventoryAction, pauseAction;
 
@@ -56,6 +59,15 @@ namespace scpcbr {
                 GameManager.Instance.PauseGameToggle();
         }
 
+        public void OpenDeathScreen(string reason) {
+            playerBase.TogglePlayerInputs();
+            deathScreen.SetActive(true);
+            deathReason.text = reason;
+
+            //if (GameManager.Instance.menusPauseGame)
+                //GameManager.Instance.PauseGameToggle();
+        }
+
         public void ResumeGame() {
             if (pauseOpen)
                 TogglePauseMenu(default);
@@ -63,6 +75,10 @@ namespace scpcbr {
 
         public void QuitToMainMenu() {
             GameManager.Instance.PauseGameToggle();
+            SceneLoader.Instance.LoadScene("LoadingScene", "ModernMenu", LoadType.LoadMenu);
+        }
+
+        public void QuitToMainMenuDeath() {
             SceneLoader.Instance.LoadScene("LoadingScene", "ModernMenu", LoadType.LoadMenu);
         }
         #endregion

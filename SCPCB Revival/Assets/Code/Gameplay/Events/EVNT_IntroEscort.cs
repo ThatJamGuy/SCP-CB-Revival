@@ -7,6 +7,7 @@ namespace scpcbr {
         [SerializeField] private int timeUntilBeforeCellOpen = 10;
         [SerializeField] private int timeUntilDoorOpens = 7;
         [SerializeField] private Door cellDoor;
+        [SerializeField] private float franklingDoorCloseTime = 10;
 
         [Header("Audio Clips")]
         [SerializeField] private AudioClip stepOutCell;
@@ -17,19 +18,24 @@ namespace scpcbr {
         [SerializeField] private AudioSource ulgrinVoiceSource;
         [SerializeField] private AudioSource thomasVoiceSource;
 
-        [Header("Escprt Nodes")]
+        [Header("Escort Nodes")]
         [SerializeField] private Transform[] escortNodes;
+        [SerializeField] private float nodeArrivalThreshold = 1f;
 
         [Header("References")]
-        [SerializeField] private NavMeshAgent ulgrinAgent;
-        [SerializeField] private Animator ulgrinAnimator;
+        [SerializeField] private Door[] doorsToOpen;
+        [SerializeField] private GameObject ulgrin;
+        [SerializeField] private GameObject thomas;
 
-        private int currentNodeIndex;
+        private NPC_RootMotionAgent ulgrinAgent;
+        private NPC_RootMotionAgent thomasAgent;
+
+        private bool isEscorting = false;
+        private int currentNodeIndex = 0;
 
         private void Start() {
-            ulgrinAgent.updatePosition = false;
-            ulgrinAgent.updateRotation = false;
-
+            ulgrinAgent = ulgrin.GetComponent<NPC_RootMotionAgent>();
+            thomasAgent = thomas.GetComponent<NPC_RootMotionAgent>();
             StartCoroutine(OpenDoorAfterDelay());
         }
 
@@ -39,6 +45,27 @@ namespace scpcbr {
             StartCoroutine(EscortPlayer());
         }
 
+        private void Update() {
+            if (!isEscorting) return;
+
+            ulgrinAgent.WalkToPosition(escortNodes[currentNodeIndex].position);
+            thomasAgent.WalkToPosition(ulgrin.transform.position);
+
+            float dist = Vector3.Distance(ulgrin.transform.position, escortNodes[currentNodeIndex].position);
+            if (dist <= nodeArrivalThreshold) {
+                if (currentNodeIndex < escortNodes.Length - 1) {
+                    currentNodeIndex++;
+                }
+                else {
+                    isEscorting = false;
+                }
+            }
+        }
+
+        public void TriggerFranklinWalkInOffice() {
+            StartCoroutine(franklinWalkInOffice());
+        }
+
         private IEnumerator OpenDoorAfterDelay() {
             yield return new WaitForSeconds(timeUntilBeforeCellOpen);
             beforeCellOpenSource.Play();
@@ -46,33 +73,21 @@ namespace scpcbr {
             cellDoor.OpenDoor();
             ulgrinVoiceSource.clip = stepOutCell;
             ulgrinVoiceSource.Play();
+            StartCoroutine(EscortPlayer());
         }
 
         private IEnumerator EscortPlayer() {
-            yield return new WaitForSeconds(ulgrinVoiceSource.clip.length);
-            currentNodeIndex = 0;
-            MoveToNextNode();
+            yield return new WaitForSeconds(15);
+            isEscorting = true;
+            yield return new WaitForSeconds(13);
+            doorsToOpen[0].OpenDoor();
+            yield return new WaitForSeconds(10);
+            doorsToOpen[1].OpenDoor();
         }
 
-        private void MoveToNextNode() {
-            if (currentNodeIndex >= escortNodes.Length) {
-                ulgrinAgent.ResetPath();
-                ulgrinAnimator.SetBool("IsMoving", false);
-                return;
-            }
-            ulgrinAgent.SetDestination(escortNodes[currentNodeIndex].position);
-            ulgrinAnimator.SetBool("IsMoving", true);
-            currentNodeIndex++;
-        }
-
-        private void OnAnimatorMove() {
-            if (!ulgrinAgent.hasPath) {
-                ulgrinAnimator.SetBool("IsMoving", false);
-                return;
-            }
-            ulgrinAgent.nextPosition = ulgrinAnimator.rootPosition;
-            transform.position = ulgrinAgent.nextPosition;
-            transform.rotation = ulgrinAnimator.rootRotation;
+        private IEnumerator franklinWalkInOffice() {
+            yield return new WaitForSeconds(franklingDoorCloseTime);
+            doorsToOpen[2].CloseDoor();
         }
     }
 }
