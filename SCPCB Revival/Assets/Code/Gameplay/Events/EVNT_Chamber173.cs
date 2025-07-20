@@ -27,6 +27,8 @@ public class EVNT_Chamber173 : MonoBehaviour {
     public AudioClip[] wtfs;
     public AudioClip ohShit;
     public AudioSource horror;
+    public AudioSource ventBreak;
+    public AudioSource breachAnnouncement;
 
     [Header("Objects")]
     public Door chamberDoor;
@@ -36,6 +38,11 @@ public class EVNT_Chamber173 : MonoBehaviour {
     public Animator chamberRoomAnimator;
     public SkinnedMeshRenderer[] npcRenderers;
     public GameObject gunshotLight;
+    public GameObject currChamber;
+    public GameObject nextChamber;
+    public GameObject introFog;
+    public GameObject introFogDark;
+    public GameObject gameplayFog;
 
     [Header("Nodes")]
     public Transform enterNode1;
@@ -173,9 +180,9 @@ public class EVNT_Chamber173 : MonoBehaviour {
         yield return new WaitForSeconds(2);
         npcDClass1.GetComponent<NPC_RootMotionAgent>().ToggleAgent();
         npcDClass1.GetComponent<Animator>().SetTrigger("WalkBack");
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(3);
         guardVoice.PlayOneShot(wtfs[Random.Range(0, wtfs.Length)]);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(2);
         GlobalCameraShake.Instance.ShakeCamera(0.5f, 0f, 4);
         dClass1Speak.Play();
         chamberRoomAnimator.SetTrigger("Flicker");
@@ -189,7 +196,6 @@ public class EVNT_Chamber173 : MonoBehaviour {
         npcDClass2.GetComponent<Animator>().SetTrigger("FallBack");
         yield return new WaitForSeconds(1);
         chamberRoomAnimator.SetTrigger("Flicker");
-        bangSound.Play();
         StopCoroutine(FlickerLights());
         StartCoroutine(FlickerLights());
         yield return new WaitForSeconds(0.5f);
@@ -197,12 +203,14 @@ public class EVNT_Chamber173 : MonoBehaviour {
         npc173.transform.rotation = killNode2.rotation;
         npcDClass2.GetComponent<Animator>().SetTrigger("173Die2");
         dClass2Speak.PlayOneShot(neckBreak1);
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(4);
         chamberRoomAnimator.SetTrigger("Flicker");
         StopCoroutine(FlickerLights());
         StartCoroutine(FlickerLights());
         GlobalCameraShake.Instance.ShakeCamera(0.1f, 0f, 3);
         bangSound.Play();
+        ApplyLightmap(roomMesh, darkLightMap, 0);
+        introFog.SetActive(false);
         npc173.transform.position = killNode3.position;
         npc173.transform.rotation = killNode3.rotation;
         guard.transform.LookAt(npc173.transform);
@@ -210,18 +218,29 @@ public class EVNT_Chamber173 : MonoBehaviour {
         guard.GetComponent<Animator>().SetTrigger("Aim");
         yield return new WaitForSeconds(1);
         gunshotLight.SetActive(true);
-        yield return new WaitForSeconds(1.7f);
+        yield return new WaitForSeconds(2.5f);
         chamberRoomAnimator.SetTrigger("Flicker");
-        bangSound.Play();
+        introFog.SetActive(false);
         StopCoroutine(FlickerLights());
         StartCoroutine(FlickerLights());
+        bangSound.Play();
         npc173.transform.position = killNode4.position;
         guard.GetComponent<Animator>().SetTrigger("Die173");
         guardVoice.PlayOneShot(neckBreak2);
+        gunshotLight.SetActive(false);
         yield return new WaitForSeconds(1);
+        introFogDark.SetActive(true);
+        GlobalCameraShake.Instance.ShakeCamera(0.1f, 0f, 3);
+        currChamber.SetActive(false);
+        nextChamber.SetActive(true);
+        ventBreak.Play();
+        breachAnnouncement.Play();
+        yield return new WaitForSeconds(1);
+        introFogDark.SetActive(false);
+        gameplayFog.SetActive(true);
     }
 
-    // Because of the baked lighting, I had to do a few hacky things to make the flickering work alongside the animation.
+    // Because of the baked lighting, I had to do a few hacky things to make the flickering work alongside the animation. Kinda scuffed ima be honest.
     private IEnumerator FlickerLights() {
         ApplyLightmap(roomMesh, darkLightMap, 0);
         foreach (var renderer in npcRenderers) { renderer.enabled = false; }
