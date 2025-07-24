@@ -9679,7 +9679,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &355191876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12610,12 +12610,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 528973120}
   m_Mesh: {fileID: 1665543143663601593, guid: ef5766e97645be24f92b26587d832fc6, type: 3}
---- !u!137 &530631360 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 6938222252148294905, guid: 5c3aef589d6a9b847bd430ac2adfd766,
-    type: 3}
-  m_PrefabInstance: {fileID: 1031847838}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &532643363 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5968922416201790518, guid: 3a0fe6637207724458dcd723e0447ede,
@@ -13402,37 +13396,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 560893842}
   m_Mesh: {fileID: -4405861414567079948, guid: e94c5edb273ef6f47b85fd31cbb3e6d5, type: 3}
---- !u!1 &562626642
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 562626643}
-  m_Layer: 0
-  m_Name: IntroSpawnPos
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &562626643
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 562626642}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -40.9, y: 1.6, z: 0.4}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1314612270}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &562810475
 GameObject:
   m_ObjectHideFlags: 0
@@ -14065,13 +14028,14 @@ GameObject:
   m_Component:
   - component: {fileID: 566264100}
   - component: {fileID: 566264101}
+  - component: {fileID: 566264102}
   m_Layer: 0
-  m_Name: IntroFogDark
+  m_Name: FlickerFog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &566264100
 Transform:
   m_ObjectHideFlags: 0
@@ -14094,7 +14058,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 566264099}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1fbb15bf92b84f40a1eb030765b5afe, type: 3}
   m_Name: 
@@ -14124,6 +14088,28 @@ MonoBehaviour:
     maskMode: 0
     materialMask: {fileID: 0}
   m_Version: 3
+--- !u!95 &566264102
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566264099}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 8b9e32c17c3bb4145b90e78901102cfc, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &567050354
 GameObject:
   m_ObjectHideFlags: 0
@@ -21983,6 +21969,18 @@ MonoBehaviour:
   OnTriggerEnterEvent:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 1399438461}
+        m_TargetAssemblyTypeName: EVNT_Chamber173, Assembly-CSharp
+        m_MethodName: TriggerStartEnterChamber
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
       - m_Target: {fileID: 1827999920}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
@@ -22005,18 +22003,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1502161487}
-        m_TargetAssemblyTypeName: scpcbr.GameManager, Assembly-CSharp
-        m_MethodName: RemoteChangeMusic
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: SCP-173 Chamber
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 484091169}
@@ -22387,7 +22373,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1502161486}
-  - {fileID: 1314612270}
   - {fileID: 4627452179506702664}
   - {fileID: 355191877}
   m_Father: {fileID: 0}
@@ -40102,38 +40087,6 @@ Transform:
   - {fileID: 967427004}
   m_Father: {fileID: 1709369288}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1314612269
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1314612270}
-  m_Layer: 0
-  m_Name: ===MISCSTUFF===
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1314612270
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1314612269}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 562626643}
-  m_Father: {fileID: 848189398}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1317633726 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2765621354133165525, guid: 62571eed72c62844c917ee1a1b6d7f4c,
@@ -42008,7 +41961,7 @@ GameObject:
   - component: {fileID: 1399438460}
   - component: {fileID: 1399438461}
   m_Layer: 0
-  m_Name: IntroSequence_Temp
+  m_Name: IntroSequence_Chamber
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42033,6 +41986,7 @@ Transform:
   - {fileID: 423362876}
   - {fileID: 144336521}
   - {fileID: 655264523}
+  - {fileID: 1788967502}
   - {fileID: 618281336}
   m_Father: {fileID: 1502161486}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -42078,26 +42032,17 @@ MonoBehaviour:
   horror: {fileID: 423362877}
   ventBreak: {fileID: 144336522}
   breachAnnouncement: {fileID: 655264524}
+  modernAlarm: {fileID: 1788967503}
   chamberDoor: {fileID: 6452757863160518072}
   killPlayerGunTrigger: {fileID: 2016718566}
   flickerOffAnimator: {fileID: 807520360}
   flickerVFX: {fileID: 887821978}
-  chamberRoomAnimator: {fileID: 6808632308380275128}
-  npcRenderers:
-  - {fileID: 8566282968835721926}
-  - {fileID: 1049995394}
-  - {fileID: 4698247546264753720}
-  - {fileID: 4698247545326855827}
-  - {fileID: 1571577762}
-  - {fileID: 530631360}
-  - {fileID: 1576853781}
-  - {fileID: 1822172093}
   gunshotLight: {fileID: 691546555}
   currChamber: {fileID: 7895156426832161888}
   nextChamber: {fileID: 1863634044}
   introFog: {fileID: 706331307}
-  introFogDark: {fileID: 566264099}
   gameplayFog: {fileID: 1695563457}
+  flickerFogAnimator: {fileID: 566264102}
   enterNode1: {fileID: 1609261780}
   enterNode2: {fileID: 691478675}
   apprachNode1: {fileID: 1292570162}
@@ -46266,12 +46211,6 @@ Transform:
   - {fileID: 87079657}
   m_Father: {fileID: 5792793962012549219}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &1571577762 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 481252828764507481, guid: 5c3aef589d6a9b847bd430ac2adfd766,
-    type: 3}
-  m_PrefabInstance: {fileID: 1031847838}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1573097655
 GameObject:
   m_ObjectHideFlags: 0
@@ -46529,12 +46468,6 @@ Transform:
   - {fileID: 1760608757}
   m_Father: {fileID: 5792793962012549219}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &1576853781 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 1461129335099944544, guid: 5c3aef589d6a9b847bd430ac2adfd766,
-    type: 3}
-  m_PrefabInstance: {fileID: 1031847838}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1579157848
 GameObject:
   m_ObjectHideFlags: 0
@@ -50152,7 +50085,7 @@ GameObject:
   - component: {fileID: 1762744933}
   - component: {fileID: 1762744934}
   m_Layer: 0
-  m_Name: IntroSequence
+  m_Name: IntroSequence_Escort
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50612,6 +50545,136 @@ Transform:
   - {fileID: 1979441390}
   m_Father: {fileID: 1941416084}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1788967501
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1788967502}
+  - component: {fileID: 1788967503}
+  m_Layer: 0
+  m_Name: ModernAlarm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1788967502
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1788967501}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalPosition: {x: -4.8, y: 7.657, z: -7.69}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1399438460}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1788967503
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1788967501}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: -6996945593879847873, guid: 3fd2804d04e2d4b4ab754059de8b8cd6,
+    type: 2}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: ddb77e586e3b6d34dbfac2828e1fce49, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.7
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 50
+  Pan2D: 0
+  rolloffMode: 1
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1789804275
 GameObject:
   m_ObjectHideFlags: 0
@@ -51281,12 +51344,6 @@ Transform:
   - {fileID: 1547912013}
   m_Father: {fileID: 1661895970}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &1822172093 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 3533364266387894851, guid: 5c3aef589d6a9b847bd430ac2adfd766,
-    type: 3}
-  m_PrefabInstance: {fileID: 1031847838}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1823206805
 GameObject:
   m_ObjectHideFlags: 0

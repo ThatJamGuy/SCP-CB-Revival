@@ -29,20 +29,19 @@ public class EVNT_Chamber173 : MonoBehaviour {
     public AudioSource horror;
     public AudioSource ventBreak;
     public AudioSource breachAnnouncement;
+    public AudioSource modernAlarm;
 
     [Header("Objects")]
     public Door chamberDoor;
     public GameObject killPlayerGunTrigger;
     public Animator flickerOffAnimator;
     public GameObject flickerVFX;
-    public Animator chamberRoomAnimator;
-    public SkinnedMeshRenderer[] npcRenderers;
     public GameObject gunshotLight;
     public GameObject currChamber;
     public GameObject nextChamber;
     public GameObject introFog;
-    public GameObject introFogDark;
     public GameObject gameplayFog;
+    public Animator flickerFogAnimator;
 
     [Header("Nodes")]
     public Transform enterNode1;
@@ -105,6 +104,9 @@ public class EVNT_Chamber173 : MonoBehaviour {
         targetRenderer.lightmapIndex = lightmapIndex;
     }
 
+    public void TriggerStartEnterChamber() {
+        MusicPlayer.Instance.StartMusicByName("SCP-173 Chamber");
+    }
 
     public void TriggerEnterChamber() {
         StartCoroutine(EnterChamberPart());
@@ -185,28 +187,24 @@ public class EVNT_Chamber173 : MonoBehaviour {
         yield return new WaitForSeconds(2);
         GlobalCameraShake.Instance.ShakeCamera(0.5f, 0f, 4);
         dClass1Speak.Play();
-        chamberRoomAnimator.SetTrigger("Flicker");
+        flickerFogAnimator.SetTrigger("Flicker");
         horror.Play();
         bangSound.Play();
-        StartCoroutine(FlickerLights());
+        flickerFogAnimator.SetTrigger("Flicker");
         npc173.transform.position = killNode1.position;
         npc173.transform.rotation = killNode1.rotation;
         yield return new WaitForSeconds(0.8f);
         npcDClass1.GetComponent<Animator>().SetTrigger("173Die1");
         npcDClass2.GetComponent<Animator>().SetTrigger("FallBack");
         yield return new WaitForSeconds(1);
-        chamberRoomAnimator.SetTrigger("Flicker");
-        StopCoroutine(FlickerLights());
-        StartCoroutine(FlickerLights());
+        flickerFogAnimator.SetTrigger("Flicker");
         yield return new WaitForSeconds(0.5f);
         npc173.transform.position = killNode2.position;
         npc173.transform.rotation = killNode2.rotation;
         npcDClass2.GetComponent<Animator>().SetTrigger("173Die2");
         dClass2Speak.PlayOneShot(neckBreak1);
         yield return new WaitForSeconds(4);
-        chamberRoomAnimator.SetTrigger("Flicker");
-        StopCoroutine(FlickerLights());
-        StartCoroutine(FlickerLights());
+        flickerFogAnimator.SetTrigger("Flicker");
         GlobalCameraShake.Instance.ShakeCamera(0.1f, 0f, 3);
         bangSound.Play();
         ApplyLightmap(roomMesh, darkLightMap, 0);
@@ -219,51 +217,23 @@ public class EVNT_Chamber173 : MonoBehaviour {
         yield return new WaitForSeconds(1);
         gunshotLight.SetActive(true);
         yield return new WaitForSeconds(2.5f);
-        chamberRoomAnimator.SetTrigger("Flicker");
         introFog.SetActive(false);
-        StopCoroutine(FlickerLights());
-        StartCoroutine(FlickerLights());
+        gameplayFog.SetActive(true);
+        flickerFogAnimator.SetTrigger("Flicker");
         bangSound.Play();
         npc173.transform.position = killNode4.position;
         guard.GetComponent<Animator>().SetTrigger("Die173");
         guardVoice.PlayOneShot(neckBreak2);
         gunshotLight.SetActive(false);
         yield return new WaitForSeconds(1);
-        introFogDark.SetActive(true);
+        flickerFogAnimator.SetTrigger("Flicker");
         GlobalCameraShake.Instance.ShakeCamera(0.1f, 0f, 3);
         currChamber.SetActive(false);
         nextChamber.SetActive(true);
         ventBreak.Play();
         breachAnnouncement.Play();
         yield return new WaitForSeconds(1);
-        introFogDark.SetActive(false);
-        gameplayFog.SetActive(true);
-    }
-
-    // Because of the baked lighting, I had to do a few hacky things to make the flickering work alongside the animation. Kinda scuffed ima be honest.
-    private IEnumerator FlickerLights() {
-        ApplyLightmap(roomMesh, darkLightMap, 0);
-        foreach (var renderer in npcRenderers) { renderer.enabled = false; }
-        npc173.GetComponent<MeshRenderer>().enabled = false;
-        yield return new WaitForSeconds(1);
-        ApplyLightmap(roomMesh, brightLightMap, 0);
-        foreach (var renderer in npcRenderers) { renderer.enabled = true; }
-        npc173.GetComponent<MeshRenderer>().enabled = true;
-        yield return new WaitForSeconds(0.03f);
-        ApplyLightmap(roomMesh, darkLightMap, 0);
-        foreach (var renderer in npcRenderers) { renderer.enabled = false; }
-        npc173.GetComponent<MeshRenderer>().enabled = false;
-        yield return new WaitForSeconds(0.03f);
-        ApplyLightmap(roomMesh, brightLightMap, 0);
-        foreach (var renderer in npcRenderers) { renderer.enabled = true; }
-        npc173.GetComponent<MeshRenderer>().enabled = true;
-        yield return new WaitForSeconds(0.03f);
-        ApplyLightmap(roomMesh, darkLightMap, 0);
-        foreach (var renderer in npcRenderers) { renderer.enabled = false; }
-        npc173.GetComponent<MeshRenderer>().enabled = false;
-        yield return new WaitForSeconds(0.06f);
-        ApplyLightmap(roomMesh, brightLightMap, 0);
-        foreach (var renderer in npcRenderers) { renderer.enabled = true; }
-        npc173.GetComponent<MeshRenderer>().enabled = true;
+        MusicPlayer.Instance.StartMusicByName("The Breach");
+        modernAlarm.Play();
     }
 }

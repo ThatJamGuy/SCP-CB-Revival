@@ -4,16 +4,20 @@ using UnityEngine;
 namespace scpcbr {
     public class MusicPlayer : MonoBehaviour {
         public static MusicPlayer Instance { get; private set; }
+
         public Soundtrack[] soundtracks;
 
-        private AudioSource musicSource;
-        private Soundtrack currentSoundtrack;
+        AudioSource musicSource;
+        Soundtrack currentSoundtrack;
+        string currentTrackName;
 
-        private string currentTrackName;
+        void Awake() {
+            if (Instance != null) {
+                Destroy(gameObject);
+                return;
+            }
 
-        private void Awake() {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
+            Instance = this;
             DontDestroyOnLoad(gameObject);
 
             musicSource = GetComponent<AudioSource>();
@@ -21,36 +25,37 @@ namespace scpcbr {
         }
 
         public void StartMusic(AudioClip music) {
+            if (music == null) return;
             musicSource.Stop();
             musicSource.clip = music;
             musicSource.Play();
         }
 
         public void StartMusicByName(string trackName) {
-            if (currentSoundtrack == null && soundtracks.Length > 0) currentSoundtrack = soundtracks[SettingsManager.Instance.CurrentSettings.soundtrack];
+            if (string.IsNullOrEmpty(trackName)) return;
+            if (currentSoundtrack == null) {
+                int index = SettingsManager.Instance?.CurrentSettings?.soundtrack ?? 0;
+                if (soundtracks.Length > index) currentSoundtrack = soundtracks[index];
+            }
             if (currentSoundtrack == null) return;
 
-            Debug.Log($"Starting music: {trackName} from soundtrack: {currentSoundtrack.soundtrackName}");
-
             var track = System.Array.Find(currentSoundtrack.tracks, t => t.trackName == trackName);
-            if (track == null || track.clip == null) return;
+            if (track?.clip == null) return;
 
             currentTrackName = trackName;
-
             musicSource.Stop();
             musicSource.clip = track.clip;
             musicSource.Play();
         }
 
         public void ChangeMusic(string trackName) {
+            if (trackName == currentTrackName || string.IsNullOrEmpty(trackName)) return;
             currentTrackName = trackName;
-            StartCoroutine(ChangeMusicCoroutine(trackName));
+            StopAllCoroutines();
+            StartCoroutine(FadeToTrack(trackName, 0.5f, 0.5f));
         }
 
-        private IEnumerator ChangeMusicCoroutine(string trackName) {
-            float fadeOutTime = 0.5f;
-            float fadeInTime = 0.5f;
-
+        IEnumerator FadeToTrack(string trackName, float fadeOutTime, float fadeInTime) {
             float timer = 0f;
             while (timer < fadeOutTime) {
                 musicSource.volume = Mathf.Lerp(1f, 0f, timer / fadeOutTime);
@@ -59,10 +64,9 @@ namespace scpcbr {
             }
             musicSource.Stop();
 
-            if (currentSoundtrack == null && soundtracks.Length > 0) currentSoundtrack = soundtracks[0];
-            if (currentSoundtrack == null) yield break;
-            var track = System.Array.Find(currentSoundtrack.tracks, t => t.trackName == trackName);
-            if (track == null || track.clip == null) yield break;
+            if (currentSoundtrack == null) currentSoundtrack = soundtracks.Length > 0 ? soundtracks[0] : null;
+            var track = System.Array.Find(currentSoundtrack?.tracks, t => t.trackName == trackName);
+            if (track?.clip == null) yield break;
 
             musicSource.clip = track.clip;
             musicSource.Play();
@@ -72,12 +76,11 @@ namespace scpcbr {
                 timer += Time.deltaTime;
                 yield return null;
             }
+            musicSource.volume = 1f;
         }
 
         public void SetCurrentSoundtrack(int index) {
-            if (soundtracks == null || soundtracks.Length == 0) return;
-            if (index < 0 || index >= soundtracks.Length) return;
-            if (currentTrackName == null) return;
+            if (soundtracks == null || index < 0 || index >= soundtracks.Length || string.IsNullOrEmpty(currentTrackName)) return;
             currentSoundtrack = soundtracks[index];
             StartMusicByName(currentTrackName);
         }
