@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.Audio;
 using TMPro;
 using System.Linq;
+using System.Collections;
 
 namespace scpcbr {
     public class OptionsMenu : MonoBehaviour {
