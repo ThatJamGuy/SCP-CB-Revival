@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 namespace scpcbr {
     public class Slot : MonoBehaviour, IDropHandler {
@@ -37,9 +38,11 @@ namespace scpcbr {
         }
 
         private bool IsMouseOverSlot() {
-            Vector2 mousePosition;
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, Input.mousePosition, null, out mousePosition)) {
-                return rectTransform.rect.Contains(mousePosition);
+            if (Mouse.current == null) return false;
+
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, mousePosition, null, out var localPoint)) {
+                return rectTransform.rect.Contains(localPoint);
             }
             return false;
         }

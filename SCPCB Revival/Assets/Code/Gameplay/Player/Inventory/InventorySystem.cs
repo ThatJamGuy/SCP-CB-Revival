@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace scpcbr {
     public class InventorySystem : MonoBehaviour {
         public static InventorySystem instance { get; set; }
+
+        [Header("Input")]
+        public InputActionAsset playerControls;
 
         [Header("References")]
         [SerializeField] private PlayerMenus playerMenus;
@@ -24,20 +28,26 @@ namespace scpcbr {
         private GameObject itemToAdd;
         private GameObject whatSlotToEquip;
 
+        private InputAction rightClickAction;
+
+        private void OnEnable() {
+            playerControls.Enable();
+
+            rightClickAction = playerControls.FindAction("RightClick");
+            rightClickAction.performed += OnRightClick;
+        }
+
+        private void OnDisable() {
+            rightClickAction.performed -= OnRightClick;
+
+            playerControls.Disable();
+        }
+
         private void Awake() {
             if (instance != null && instance != this)
                 Destroy(gameObject);
             else
                 instance = this;
-        }
-
-        private void Update() {
-            if (Input.GetMouseButtonUp(1) && currentHeldItem != null) {
-                if (currentHeldDocumentDisplay != null && currentHeldDocumentDisplay.activeSelf)
-                    UnequipDocument();
-                else
-                    UnequipItem();
-            }
         }
 
         public void AddToInventory(string itemName) {
@@ -48,6 +58,15 @@ namespace scpcbr {
             itemToAdd.GetComponent<DragDrop>().SetPlayerCamera(playerCamera);
 
             itemList.Add(itemName);
+        }
+
+        private void OnRightClick(InputAction.CallbackContext ctx) {
+            if (!string.IsNullOrEmpty(currentHeldItem)) {
+                if (currentHeldDocumentDisplay != null && currentHeldDocumentDisplay.activeSelf)
+                    UnequipDocument();
+                else
+                    UnequipItem();
+            }
         }
 
         public bool CheckIfFull() {
