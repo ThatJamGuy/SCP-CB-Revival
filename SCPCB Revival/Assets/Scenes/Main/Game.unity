@@ -14514,11 +14514,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 629807814}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 510249bd2c082ed4991a4fb8450212a9, type: 3}
+  m_Script: {fileID: 11500000, guid: 2772febd58a8f1945bfebed679be0687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
-  registerPlayerToSubEmitters: 1
+  registerAsPlayer: 1
 --- !u!4 &630417992 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5363291649485042727, guid: 2f4b038f19a7a6643a4e5b8edf1b3c9f,
@@ -51166,6 +51165,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1823206806}
   - component: {fileID: 1823206807}
+  - component: {fileID: 1823206808}
   m_Layer: 0
   m_Name: IntercomSource
   m_TagString: Untagged
@@ -51200,7 +51200,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 5346825872910694531, guid: 3fd2804d04e2d4b4ab754059de8b8cd6,
     type: 2}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 4a503596d2fb5d949835a0cd8803b80e, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -51286,6 +51286,46 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1823206808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823206805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bfce785bc0527647be0f2910959dc7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  emissionRadius: 50
+  subGroups:
+  - associatedVoiceLine: {fileID: 8300000, guid: 4a503596d2fb5d949835a0cd8803b80e,
+      type: 3}
+    subtitles:
+    - startTime: 0
+      duration: 5
+      text: Attention all <color=orange>CLASS-D</color> Personnel, please enter the
+        containment chamber.
+  - associatedVoiceLine: {fileID: 8300000, guid: d706cdc218c30cb41a266f03197d6aaf,
+      type: 3}
+    subtitles:
+    - startTime: 0
+      duration: 5
+      text: Please approach <color=yellow>SCP-173</color> for testing.
+  - associatedVoiceLine: {fileID: 8300000, guid: 7bc80eb246835ed4da5f8661083e125d,
+      type: 3}
+    subtitles:
+    - startTime: 0
+      duration: 5
+      text: Umm, there seems to be a problem with the door control system.
+    - startTime: 3.7
+      duration: 5
+      text: The door isn't responding to any of our attempts to close it, so...
+    - startTime: 7.5
+      duration: 5
+      text: Please maintain direct eye contact with <color=yellow>SCP-173</color>
+        and-
 --- !u!1 &1827881187
 GameObject:
   m_ObjectHideFlags: 0
@@ -97084,7 +97124,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6808632308380275127}
-  - component: {fileID: 6808632308380275128}
   m_Layer: 0
   m_Name: 173Room
   m_TagString: Untagged
@@ -103831,28 +103870,6 @@ Transform:
   - {fileID: 1392002163}
   m_Father: {fileID: 1192647250280947900}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!95 &6808632308380275128
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5727426362485547206}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: e32e3d417e84bab40aebbe759edb2b3c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &6810583943412290493
 Transform:
   m_ObjectHideFlags: 0

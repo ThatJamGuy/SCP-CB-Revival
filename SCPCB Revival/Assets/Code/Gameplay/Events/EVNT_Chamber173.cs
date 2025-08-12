@@ -164,7 +164,8 @@ public class EVNT_Chamber173 : MonoBehaviour {
     private IEnumerator InChamberPart() {
         chamberDoor.CloseDoor();
         yield return new WaitForSeconds(4);
-        intercomSource.PlayOneShot(intercomClips[1]);
+        intercomSource.clip = intercomClips[1];
+        intercomSource.Play();
         yield return new WaitForSeconds(3);
         npcDClass1.GetComponent<NPC_RootMotionAgent>().WalkToPosition(apprachNode1.position);
         yield return new WaitForSeconds(4);
@@ -175,7 +176,8 @@ public class EVNT_Chamber173 : MonoBehaviour {
         chamberDoor.OpenDoor();
         npcDClass2.GetComponent<Animator>().SetTrigger("LookBehind");
         yield return new WaitForSeconds(2);
-        intercomSource.PlayOneShot(intercomClips[2]);
+        intercomSource.clip = intercomClips[2];
+        intercomSource.Play();
         yield return new WaitForSeconds(3);
         GlobalCameraShake.Instance.ShakeCamera(0f, 0.03f, 10);
         yield return new WaitForSeconds(2);
