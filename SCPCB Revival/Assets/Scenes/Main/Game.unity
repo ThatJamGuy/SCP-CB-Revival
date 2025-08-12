@@ -7590,6 +7590,7 @@ GameObject:
   m_Component:
   - component: {fileID: 305912514}
   - component: {fileID: 305912515}
+  - component: {fileID: 305912516}
   m_Layer: 0
   m_Name: VoiceSource
   m_TagString: Untagged
@@ -7710,6 +7711,26 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &305912516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 305912513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bfce785bc0527647be0f2910959dc7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  emissionRadius: 50
+  subGroups:
+  - associatedVoiceLine: {fileID: 8300000, guid: 31b844dba3c54df4d9a31fb9ef23eff8,
+      type: 3}
+    subtitles:
+    - startTime: 0
+      duration: 5
+      text: <i><color=orange>Wait, what the-</color></i>
 --- !u!1 &308335130
 GameObject:
   m_ObjectHideFlags: 0
@@ -8986,9 +9007,6 @@ Transform:
   - {fileID: 57500460}
   - {fileID: 1835689452}
   - {fileID: 1595923169}
-  - {fileID: 1715437357}
-  - {fileID: 555200481}
-  - {fileID: 720036412}
   - {fileID: 2036515161}
   m_Father: {fileID: 648879137727310678}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10189,6 +10207,12 @@ Transform:
   - {fileID: 602683909}
   m_Father: {fileID: 938408668}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &452668338 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3468614204776412201, guid: 5c3aef589d6a9b847bd430ac2adfd766,
+    type: 3}
+  m_PrefabInstance: {fileID: 1031847838}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &452758406
 GameObject:
   m_ObjectHideFlags: 0
@@ -12317,10 +12341,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 823707903377835475}
   - {fileID: 1468558719}
-  - {fileID: 4376494159936887085}
-  - {fileID: 4376494159312513414}
   - {fileID: 564276085}
   - {fileID: 7240974984568264255}
   m_Father: {fileID: 6808632308380275127}
@@ -12387,14 +12408,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 555200480}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -7.2000003, y: 3.84, z: 7.67}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 7.2000003, y: 3.84, z: -7.67}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 625913364}
   - {fileID: 1251592323}
-  m_Father: {fileID: 363097481}
+  m_Father: {fileID: 5708346973845690199}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &558507303
 GameObject:
@@ -15275,6 +15296,7 @@ GameObject:
   m_Component:
   - component: {fileID: 655264523}
   - component: {fileID: 655264524}
+  - component: {fileID: 655264525}
   m_Layer: 0
   m_Name: BreachAnnouncement
   m_TagString: Untagged
@@ -15290,12 +15312,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 655264522}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: -4.8, y: 7.657, z: -7.69}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1399438460}
+  m_Father: {fileID: 1045997520}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &655264524
 AudioSource:
@@ -15395,6 +15417,30 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &655264525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 655264522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bfce785bc0527647be0f2910959dc7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  emissionRadius: 50
+  subGroups:
+  - associatedVoiceLine: {fileID: 8300000, guid: e0fed3f030562934598943fbf97d29db,
+      type: 3}
+    subtitles:
+    - startTime: 0.6
+      duration: 5
+      text: THE SITE IS EXPERIENCING MULTIPLE <color=red>KETER</color> AND <color=yellow>EUCLID</color>
+        LEVEL CONTAINMENT BREACHES.
+    - startTime: 4.3
+      duration: 5
+      text: FULL SITE LOCKDOWN INITIATED.
 --- !u!1 &657813989
 GameObject:
   m_ObjectHideFlags: 0
@@ -17110,11 +17156,11 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: -6996945593879847873, guid: 3fd2804d04e2d4b4ab754059de8b8cd6,
     type: 2}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 7a5b81b3ee460244d987eb35e2598132, type: 3}
+  m_Resource: {fileID: 8300000, guid: d4ed2a9231efd194289890b228cecf11, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.7
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -17876,14 +17922,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 720036411}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -7.2000003, y: 3.84, z: -2.57}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 7.2000003, y: 3.84, z: 2.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1000577294}
   - {fileID: 1778320631}
-  m_Father: {fileID: 363097481}
+  m_Father: {fileID: 5708346973845690199}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &722616060
 GameObject:
@@ -32002,6 +32048,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: NPC_GuardGeneric
       objectReference: {fileID: 0}
+    - target: {fileID: 2623812596982876143, guid: 5c3aef589d6a9b847bd430ac2adfd766,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5817824026674171335, guid: 5c3aef589d6a9b847bd430ac2adfd766,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -32079,7 +32130,11 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 691546556}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3468614204776412201, guid: 5c3aef589d6a9b847bd430ac2adfd766,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1324823758}
   m_SourcePrefab: {fileID: 100100000, guid: 5c3aef589d6a9b847bd430ac2adfd766, type: 3}
 --- !u!1 &1034953032
 GameObject:
@@ -32233,6 +32288,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1045997520}
+  - component: {fileID: 1045997521}
   m_Layer: 0
   m_Name: IntroSequence_Breach
   m_TagString: Untagged
@@ -32252,9 +32308,23 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 655264523}
   m_Father: {fileID: 146520183}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1045997521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1045997519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b9948b7102822542b46df3a9be8b0d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  breachAnnouncement: {fileID: 655264524}
 --- !u!1 &1049995392
 GameObject:
   m_ObjectHideFlags: 0
@@ -34862,7 +34932,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mode: 1
-  size: {x: 119.84021, y: 24.130234, z: 57.559303}
+  size: {x: 119.84021, y: 24.130234, z: 57.559296}
   overrideRendererFilters: 0
   minRendererVolumeSize: 0.1
   objectLayerMask:
@@ -34902,7 +34972,7 @@ Transform:
   m_GameObject: {fileID: 1134592598}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -37.940002, y: -0.40500164, z: -11.850353}
+  m_LocalPosition: {x: -37.940002, y: -0.40500164, z: -11.850357}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -39890,6 +39960,38 @@ AudioSource:
     type: 3}
   m_PrefabInstance: {fileID: 1031847838}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1324823758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 452668338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bfce785bc0527647be0f2910959dc7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  emissionRadius: 50
+  subGroups:
+  - associatedVoiceLine: {fileID: 8300000, guid: a441d41213350bc42b1a2d253ce4b18b,
+      type: 3}
+    subtitles:
+    - startTime: 0
+      duration: 5
+      text: What the fuck is happening!?
+  - associatedVoiceLine: {fileID: 8300000, guid: 5930f2d933633dc43be72f85fabda0e0,
+      type: 3}
+    subtitles:
+    - startTime: 0
+      duration: 5
+      text: What the fuck is happening!?
+  - associatedVoiceLine: {fileID: 8300000, guid: 6ae0d7371e7c28446a6dcd1a22d09412,
+      type: 3}
+    subtitles:
+    - startTime: 0
+      duration: 5
+      text: Oh shit, oh shit, SHIT!
 --- !u!1 &1327245642
 GameObject:
   m_ObjectHideFlags: 0
@@ -41778,7 +41880,6 @@ Transform:
   - {fileID: 643033678}
   - {fileID: 423362876}
   - {fileID: 144336521}
-  - {fileID: 655264523}
   - {fileID: 1788967502}
   - {fileID: 618281336}
   m_Father: {fileID: 146520183}
@@ -41824,7 +41925,6 @@ MonoBehaviour:
   ohShit: {fileID: 8300000, guid: 6ae0d7371e7c28446a6dcd1a22d09412, type: 3}
   horror: {fileID: 423362877}
   ventBreak: {fileID: 144336522}
-  breachAnnouncement: {fileID: 655264524}
   modernAlarm: {fileID: 1788967503}
   chamberDoor: {fileID: 6452757863160518072}
   killPlayerGunTrigger: {fileID: 2016718566}
@@ -41836,6 +41936,8 @@ MonoBehaviour:
   introFog: {fileID: 706331307}
   gameplayFog: {fileID: 1695563457}
   flickerFogAnimator: {fileID: 566264102}
+  flickerOffObjects: {fileID: 2204100674420527260}
+  introShakes: {fileID: 1045997521}
   enterNode1: {fileID: 1609261780}
   enterNode2: {fileID: 691478675}
   apprachNode1: {fileID: 1292570162}
@@ -43790,6 +43892,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1483587022}
   - component: {fileID: 1483587023}
+  - component: {fileID: 1483587024}
   m_Layer: 0
   m_Name: VoiceSource
   m_TagString: Untagged
@@ -43910,6 +44013,26 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1483587024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1483587021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bfce785bc0527647be0f2910959dc7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  emissionRadius: 50
+  subGroups:
+  - associatedVoiceLine: {fileID: 8300000, guid: 5ff3fc585d9a4d641892a7f8a332b0df,
+      type: 3}
+    subtitles:
+    - startTime: 0
+      duration: 5
+      text: <i><color=orange>I don't like this... I really don't...</color></i>
 --- !u!1 &1484884481
 GameObject:
   m_ObjectHideFlags: 0
@@ -48872,14 +48995,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1715437356}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -12.4, y: 3.84, z: 7.65}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 12.4, y: 3.84, z: -7.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1267608285}
   - {fileID: 1541326914}
-  m_Father: {fileID: 363097481}
+  m_Father: {fileID: 5708346973845690199}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1001 &1717268987
 PrefabInstance:
@@ -62973,13 +63096,13 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 9, y: 3.6571321, z: -4.5}
-  m_LocalScale: {x: 0.40000007, y: 0.4, z: 0.40000007}
+  m_LocalScale: {x: 0.4000001, y: 0.4, z: 0.4000001}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2597526712774452292}
   - {fileID: 6653628542417012569}
   - {fileID: 8987606652635909719}
-  m_Father: {fileID: 551534896}
+  m_Father: {fileID: 5708346973845690199}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!33 &825996887832278835
 MeshFilter:
@@ -87410,14 +87533,14 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -0.5, y: -0.000027656555, z: -2.7}
-  m_LocalScale: {x: 0.34999996, y: 0.35, z: 0.34999996}
+  m_LocalScale: {x: 0.34999993, y: 0.35, z: 0.34999993}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1431669079061694481}
   - {fileID: 7747427560032234252}
   - {fileID: 1853053481}
   - {fileID: 305912514}
-  m_Father: {fileID: 551534896}
+  m_Father: {fileID: 5708346973845690199}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!4 &4376494159936887085
 Transform:
@@ -87429,14 +87552,14 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -1.6, y: -0.000027656555, z: -5.1}
-  m_LocalScale: {x: 0.34999996, y: 0.35, z: 0.34999996}
+  m_LocalScale: {x: 0.34999993, y: 0.35, z: 0.34999993}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1431669078679550138}
   - {fileID: 7747427559334353831}
   - {fileID: 5433715102250799785}
   - {fileID: 1483587022}
-  m_Father: {fileID: 551534896}
+  m_Father: {fileID: 5708346973845690199}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!4 &4376941707683323946
 Transform:
@@ -96911,6 +97034,12 @@ Transform:
   - {fileID: 1830748616}
   - {fileID: 543450651984537159}
   - {fileID: 1564423570}
+  - {fileID: 1715437357}
+  - {fileID: 555200481}
+  - {fileID: 720036412}
+  - {fileID: 823707903377835475}
+  - {fileID: 4376494159936887085}
+  - {fileID: 4376494159312513414}
   m_Father: {fileID: 6808632308380275127}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &5708617078633723096
