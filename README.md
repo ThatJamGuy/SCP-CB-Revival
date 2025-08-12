@@ -10,6 +10,9 @@ Discord: https://discord.gg/rarnCP68Dk
 >[!WARNING]
 >Beware - the source code is perhaps more horrifying than the game itself!
 
+# "This repo looks outdated"
+Check the UNSTABLE branch. All my recent changes are being pushed there and will be merged with the main branch when a version release is ready.
+
 # Contributing
 Feel free to make a pull request for any of the following reasons:
 - Feature Addition (Adding a feature from the main game that's not there yet)
