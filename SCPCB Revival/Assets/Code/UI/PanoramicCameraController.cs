@@ -1,26 +1,23 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
+// Giving the main menu some spiiice with the sexy panoramic camera movement
+// Recommended to keep the variables as the default as I already tuned them pretty well, but fell free to experiment if necessary
 namespace scpcbr {
     public class PanoramicCameraController : MonoBehaviour {
-        public float rotationSpeed = 5f, maxHorizontalAngle = 30f, maxVerticalAngle = 15f, returnSpeed = 2f;
-        public float mouseSensitivity = 1f, smoothTime = 0.3f;
-        public bool invertX, invertY;
+        public float rotationSpeed = 1f, maxHorizontalAngle = 10f, maxVerticalAngle = 5f, returnSpeed = 1f, mouseSensitivity = 5f, smoothTime = 0.3f;
 
-        Vector2 velocity, mouseInput, smoothInput;
-        Vector3 initialRotation;
+        private Vector2 velocity, mouseInput, smoothInput;
+        private Vector3 initialRotation;
 
-        void Start() {
+        private void Start() {
             initialRotation = transform.eulerAngles;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
 
-        void Update() {
-            mouseInput.Set(
-                Input.GetAxis("Mouse X") * mouseSensitivity * (invertX ? -1 : 1),
-                Input.GetAxis("Mouse Y") * mouseSensitivity * (invertY ? -1 : 1)
-            );
-
+        private void Update() {
+            mouseInput = Mouse.current.delta.ReadValue() * mouseSensitivity * rotationSpeed * Time.deltaTime;
             smoothInput = Vector2.SmoothDamp(smoothInput, mouseInput, ref velocity, smoothTime);
 
             float x = Mathf.Clamp(initialRotation.x - smoothInput.y, initialRotation.x - maxVerticalAngle, initialRotation.x + maxVerticalAngle);
