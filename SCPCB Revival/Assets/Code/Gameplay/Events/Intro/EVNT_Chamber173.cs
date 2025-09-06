@@ -30,6 +30,7 @@ public class EVNT_Chamber173 : MonoBehaviour {
     public AudioSource horror;
     public AudioSource ventBreak;
     public AudioSource modernAlarm;
+    public AudioSource doorAlarmSource;
 
     [Header("Objects")]
     public Door chamberDoor;
@@ -187,6 +188,7 @@ public class EVNT_Chamber173 : MonoBehaviour {
         npcDClass1.GetComponent<NPC_RootMotionAgent>().ToggleAgent();
         npcDClass1.GetComponent<Animator>().SetTrigger("WalkBack");
         yield return new WaitForSeconds(3);
+        guard.GetComponent<Animator>().SetTrigger("Panic");
         guardVoice.clip = wtfs[Random.Range(0, wtfs.Length)];
         guardVoice.Play();
         yield return new WaitForSeconds(2);
@@ -243,6 +245,7 @@ public class EVNT_Chamber173 : MonoBehaviour {
         introShakes.TriggerIntroShakes();
         yield return new WaitForSeconds(1);
         MusicPlayer.Instance.StartMusicByName("The Breach");
+        doorAlarmSource.Stop();
         modernAlarm.Play();
     }
 }
