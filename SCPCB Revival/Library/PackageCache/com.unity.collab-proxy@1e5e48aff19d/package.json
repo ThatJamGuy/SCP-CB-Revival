@@ -1,0 +1,43 @@
+{
+  "name": "com.unity.collab-proxy",
+  "displayName": "Unity Version Control",
+  "version": "2.10.0",
+  "unity": "2021.3",
+  "unityRelease": "0f1",
+  "description": "The package gives you the ability to use Unity Version Control in the Unity editor. To use Unity Version Control, a subscription is required. Learn more about how you can get started for free by visiting https://unity.com/solutions/version-control",
+  "dependencies": {},
+  "keywords": [
+    "backup",
+    "cloud",
+    "collab",
+    "collaborate",
+    "collaboration",
+    "control",
+    "devops",
+    "plastic",
+    "plasticscm",
+    "source",
+    "team",
+    "teams",
+    "version",
+    "vcs",
+    "uvcs"
+  ],
+  "category": "Editor",
+  "relatedPackages": {
+    "com.unity.collab-proxy.tests": "2.10.0"
+  },
+  "_upm": {
+    "changelog": "### Added\n\n- Added a new Editor Toolbar Button for Unity Version Control that lets you view project status, track changes, and perform key actions with one click.\n- Added Unity Version Control status icons to prefab assets in the hierarchy view in \"Edit Mode\".\n- Added Unity Version Control actions to the prefab and prefab variant header context menus.\n\n### Changed\n\n- Improved overlay icons to align with the Unity Editor design. Added icons for \"Controlled\" and \"Changed\" items, removed the icon for \"Private\" items, and added a \"Contains Changes\" overlay for directories containing changes.\n\n### Fixed\n\n- Fixed applying shelves when some files cannot be checked out due to exclusive checkout lock rules. These files are now applied as local changes instead of failing the whole operation. A shelve report popup is displayed to the user.\n- Fixed the missing \"Hide\" contextual menu on the Unity Version Control button in the Unity 6.3 Toolbar.\n- Fixed incorrect tab name showing as \"Unity.PlasticSCM.Editor.x\" with no icon when upgrading a project to Unity 6.x.\n- Fixed debug log \"Package com.unity.collab-proxy version: 0.0.0\" to output the actual package version."
+  },
+  "upmCi": {
+    "footprint": "5bbbdb85cba7fc2977d2ac5d87d2e65de23dccc3"
+  },
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.collab-proxy@2.10/manual/index.html",
+  "repository": {
+    "url": "https://github.cds.internal.unity3d.com/unity/com.unity.cloud.collaborate.git",
+    "type": "git",
+    "revision": "1704702c409b3f64731bd9a086aff217f6242a58"
+  },
+  "_fingerprint": "1e5e48aff19daaf7562fad196714be852e56fff3"
+}
