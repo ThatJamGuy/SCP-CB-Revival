@@ -1,0 +1,27 @@
+{
+  "name": "com.unity.burst",
+  "displayName": "Burst",
+  "version": "1.8.25",
+  "unity": "2021.3",
+  "description": "Burst is a compiler that translates from IL/.NET bytecode to highly optimized native code using LLVM.",
+  "dependencies": {
+    "com.unity.mathematics": "1.2.1",
+    "com.unity.modules.jsonserialize": "1.0.0"
+  },
+  "relatedPackages": {
+    "com.unity.burst.tests": "1.8.25"
+  },
+  "_upm": {
+    "changelog": "### Fixed\n- Fixed infinite loop and unbounded memory consumption when having a (possibly indirectly) recursive method with the `[MethodImpl(MethodImplOptions.AggressiveInlining)]` attribute\n- Fixes an issue where `math.min` and `math.max` would do signed comparisons on unsigned integers when compiling with `FloatMode.Fast`.\n- Fixed a crash on some Android devices what would be triggered when \"Enable ARMv9 Security Features\" was enabled.\n- Fixed a rare crash that could happen when the Burst package was unloaded.\n- Fixed relocation error when stack protection was enabled on 32-bit Android.\n\n### Added\n- Added LLVM 20 support\n- Added guards to UWP ARM32 to be available only for versions lower than 6.3 [PLAT-15016](https://jira.unity3d.com/browse/PLAT-15016)\n- `FloatMode.Deterministic` is now supported by Burst. Please refer to the documentation for details."
+  },
+  "upmCi": {
+    "footprint": "099d960031645247ac4c585bf09b8df4de69b899"
+  },
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/index.html",
+  "repository": {
+    "url": "https://github.cds.internal.unity3d.com/unity/burst.git",
+    "type": "git",
+    "revision": "05afff266a602147349dc3706f2c09210e05ec2f"
+  },
+  "_fingerprint": "1df634d836b8106f13dc82401a91b336d615a874"
+}
