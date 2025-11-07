@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1234131614428964}
+  m_IsPrefabParent: 1
+--- !u!1 &1234131614428964
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4542836548630450}
+  - component: {fileID: 114956379640869078}
+  m_Layer: 0
+  m_Name: DevConsole
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4542836548630450
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1234131614428964}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114956379640869078
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1234131614428964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ce637cb12db94a4ab39265715f4f6c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toolbar:
+    height: 24
+    spacing: 5
+    tabWidth: 80
+  logger:
+    scrollView:
+      scrollBar:
+        minHeight: 30
+        invert: 0
+        width: 20
+        sensitivity: 10
+      position: {x: 0, y: 0}
+    capacity: 1000
+  _input:
+    height: 24
+    color: {r: 0.9044118, g: 0.9044118, b: 0.9044118, a: 1}
+    cursorColor: {r: 0, g: 0, b: 0, a: 1}
+    spacing: 10
+    text: 
+  _openButton:
+    width: 50
+    height: 20
+  _history:
+    scrollView:
+      scrollBar:
+        minHeight: 10
+        invert: 0
+        width: 15
+        sensitivity: 10
+      position: {x: 0, y: 0}
+    capacity: 20
+    minWidth: 500
+    expandToFitContents: 1
+    entriesToShow: 5
+  _autoComplete:
+    scrollView:
+      scrollBar:
+        minHeight: 10
+        invert: 0
+        width: 15
+        sensitivity: 10
+      position: {x: 0, y: 0}
+    capacity: -1
+    minWidth: 500
+    expandToFitContents: 1
+    entriesToShow: 5
+  settingsPanel:
+    scrollView:
+      scrollBar:
+        minHeight: 30
+        invert: 0
+        width: 20
+        sensitivity: 10
+      position: {x: 0, y: 0}
