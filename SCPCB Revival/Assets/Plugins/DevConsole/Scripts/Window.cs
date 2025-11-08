@@ -64,7 +64,7 @@ namespace SickDev.DevConsole {
         }
 
         public void AddRange(T[] entries) {
-            for(int i = 0; i < entries.Length; i++)
+            for (int i = 0; i < entries.Length; i++)
                 AddInternal(entries[i]);
             NavigateToLast();
         }
@@ -76,7 +76,7 @@ namespace SickDev.DevConsole {
 
         void AddInternal(T entry) {
             entries.Add(entry);
-            if(capacity != -1 && entries.Count > capacity)
+            if (capacity != -1 && entries.Count > capacity)
                 entries.RemoveAt(0);
         }
 
@@ -102,11 +102,11 @@ namespace SickDev.DevConsole {
         }
 
         public void Draw(Vector2 position) {
-            if(!isOpen)
+            if (!isOpen)
                 return;
 
             float width = CalculateWidth(position);
-            if(DevConsole.settings.fontSize != lastFontSize) {
+            if (DevConsole.settings.fontSize != lastFontSize) {
                 entryHeight = GUIUtils.textStyle.CalcHeight(new GUIContent(), width);
                 lastFontSize = DevConsole.settings.fontSize;
             }
@@ -115,21 +115,21 @@ namespace SickDev.DevConsole {
         }
 
         float CalculateWidth(Vector2 position) {
-            float maxWidth = Screen.width/DevConsole.settings.scale - position.x;
+            float maxWidth = Screen.width / DevConsole.settings.scale - position.x;
             float width = minWidth;
-            if(minWidth == -1)
+            if (minWidth == -1)
                 width = maxWidth;
-            else if(expandToFitContents) {
-                width = Mathf.Max(minWidth, largestEntry)+padding;
-                if(scrollView.isScrollbarVisible)
+            else if (expandToFitContents) {
+                width = Mathf.Max(minWidth, largestEntry) + padding;
+                if (scrollView.isScrollbarVisible)
                     width += scrollView.scrollBarWidth;
             }
-            width = Mathf.Min(maxWidth, width); 
+            width = Mathf.Min(maxWidth, width);
             return width;
         }
 
         void DrawWindow(int id) {
-            if(Event.current.type == EventType.Layout)
+            if (Event.current.type == EventType.Layout)
                 return;
             rect.x = rect.y = 0;
             GUIUtils.DrawBox(rect, backgroundColor);
@@ -148,7 +148,7 @@ namespace SickDev.DevConsole {
             GUI.Label(rect, titleContent, GUIUtils.centeredTextStyle);
             rect.width = titleHeight;
             rect.x = width - rect.width;
-            if(GUIUtils.DrawButton(rect, closeButtonContent, Color.clear))
+            if (GUIUtils.DrawButton(rect, closeButtonContent, Color.clear))
                 Close();
             rect.x = 0;
             rect.width = width;
@@ -170,15 +170,15 @@ namespace SickDev.DevConsole {
             largestEntry = 0;
 
             int size = this.size;
-            for(int i = 0; i < size; i++) {
+            for (int i = 0; i < size; i++) {
                 float positionY = entryHeight * i;
                 bool isVisible = positionY + entryHeight > scrollPosition.y && positionY < scrollPosition.y + rect.height;
-                if(!isVisible)
+                if (!isVisible)
                     continue;
 
                 largestEntry = Mathf.Max(GetEntryWidth(entries[i]), largestEntry);
-                Rect entryRect = new Rect(0, positionY, Mathf.Max(largestEntry, rect.width)+padding, entryHeight);
-                if(GUIUtils.DrawButton(entryRect, GUIContent.none, currentIndex == i ? DevConsole.settings.secondaryColor : entriesColor)) {
+                Rect entryRect = new Rect(0, positionY, Mathf.Max(largestEntry, rect.width) + padding, entryHeight);
+                if (GUIUtils.DrawButton(entryRect, GUIContent.none, currentIndex == i ? DevConsole.settings.secondaryColor : entriesColor)) {
                     NavigateTo(i);
                     OnEntryClicked(entries[i]);
                 }
@@ -203,7 +203,7 @@ namespace SickDev.DevConsole {
         }
 
         public void ToggleOpen() {
-            if(isOpen)
+            if (isOpen)
                 Close();
             else
                 Open();

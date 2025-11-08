@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace SickDev.DevConsole {
-    public class EntryGroup { 
+    public class EntryGroup {
         List<Entry> entryList = new List<Entry>();
         public GUIContent content;
 
@@ -23,13 +23,13 @@ namespace SickDev.DevConsole {
         }
 
         void UpdateContent() {
-            content.text = "("+entryList.Count.ToString()+")";
+            content.text = "(" + entryList.Count.ToString() + ")";
         }
 
         public void Remove(Entry entry) {
             entryList.Remove(entry);
             entries = entryList.ToArray();
-            if(lastEntry == entry && entries.Length > 0)
+            if (lastEntry == entry && entries.Length > 0)
                 lastEntry = entries[entries.Length - 1];
             UpdateContent();
         }

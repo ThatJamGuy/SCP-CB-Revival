@@ -1,11 +1,9 @@
 ﻿using System;
 using UnityEngine.Serialization;
 
-namespace FMODUnity
-{
+namespace FMODUnity {
     [Serializable]
-    public struct AutomatableSlots
-    {
+    public struct AutomatableSlots {
         public const int Count = 16;
 
         [FormerlySerializedAs("slot00")]
@@ -41,10 +39,8 @@ namespace FMODUnity
         [FormerlySerializedAs("slot15")]
         public float Slot15;
 
-        public float GetValue(int index)
-        {
-            switch(index)
-            {
+        public float GetValue(int index) {
+            switch (index) {
                 case 0:
                     return Slot00;
                 case 1:

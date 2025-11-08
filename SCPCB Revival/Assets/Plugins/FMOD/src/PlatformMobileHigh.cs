@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace FMODUnity
-{
+namespace FMODUnity {
 #if UNITY_EDITOR
     [InitializeOnLoad]
 #endif
-    public class PlatformMobileHigh : PlatformMobileLow
-    {
-        static PlatformMobileHigh()
-        {
+    public class PlatformMobileHigh : PlatformMobileLow {
+        static PlatformMobileHigh() {
             Settings.AddPlatformTemplate<PlatformMobileHigh>("fd7c55dab0fce234b8c25f6ffca523c1");
         }
 
@@ -24,12 +18,9 @@ namespace FMODUnity
 
         internal override float Priority { get { return base.Priority + 1; } }
 
-        internal override bool MatchesCurrentEnvironment
-        {
-            get
-            {
-                if (!Active)
-                {
+        internal override bool MatchesCurrentEnvironment {
+            get {
+                if (!Active) {
                     return false;
                 }
 

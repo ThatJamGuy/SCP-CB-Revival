@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using SickDev.CommandSystem;
+﻿using SickDev.CommandSystem;
+using UnityEngine;
 
 namespace SickDev.DevConsole.Example {
     public class Room9 : Room {
@@ -11,12 +11,12 @@ namespace SickDev.DevConsole.Example {
         }
 
         void OpenRoomWithPassword(string password) {
-            if(isComplete) {
+            if (isComplete) {
                 Debug.LogWarning("Great! But you already did this. Try something new...");
                 return;
             }
 
-            if(password != this.password) {
+            if (password != this.password) {
                 Debug.LogWarning("Nope. That's not the password for this room. Try using GetRoomPassword first");
                 return;
             }

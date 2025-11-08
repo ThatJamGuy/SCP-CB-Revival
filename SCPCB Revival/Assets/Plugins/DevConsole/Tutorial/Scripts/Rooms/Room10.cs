@@ -3,7 +3,7 @@
         bool lastActive;
 
         void Update() {
-            if(!lastActive && nextRoom.gameObject.activeSelf) {
+            if (!lastActive && nextRoom.gameObject.activeSelf) {
                 lastActive = true;
                 Complete();
             }

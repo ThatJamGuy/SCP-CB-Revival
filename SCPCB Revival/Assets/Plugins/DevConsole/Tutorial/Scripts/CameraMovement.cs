@@ -12,14 +12,14 @@ namespace SickDev.DevConsole.Example {
         Camera _cameraComponent;
         public Camera cameraComponent {
             get {
-                if(_cameraComponent == null)
+                if (_cameraComponent == null)
                     _cameraComponent = GetComponent<Camera>();
                 return _cameraComponent;
             }
         }
 
         void LateUpdate() {
-            transform.position = new Vector3(Mathf.Lerp(transform.position.x, target.position.x, speed*Time.deltaTime), transform.position.y, transform.position.z);
+            transform.position = new Vector3(Mathf.Lerp(transform.position.x, target.position.x, speed * Time.deltaTime), transform.position.y, transform.position.z);
         }
     }
 }

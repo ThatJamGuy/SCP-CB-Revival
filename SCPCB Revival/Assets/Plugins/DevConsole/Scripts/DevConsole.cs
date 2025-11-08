@@ -1,8 +1,8 @@
-﻿using System;
-using System.Text;
-using System.Reflection;
+﻿using SickDev.CommandSystem;
+using System;
 using System.Collections;
-using SickDev.CommandSystem;
+using System.Reflection;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +12,7 @@ namespace SickDev.CommandSystem {
     }
 }
 
-namespace SickDev.DevConsole{
+namespace SickDev.DevConsole {
     public class DevConsole : MonoBehaviour, ISerializationCallbackReceiver {
         public delegate void OnOpenStateChanged(bool isOpen);
 
@@ -57,7 +57,7 @@ namespace SickDev.DevConsole{
         static DevConsole _singleton;
         public static DevConsole singleton {
             get {
-                if(_singleton == null)
+                if (_singleton == null)
                     Instantiate();
                 return _singleton;
             }
@@ -67,7 +67,7 @@ namespace SickDev.DevConsole{
         static Settings _settings;
         public static Settings settings {
             get {
-                if(_settings == null) {
+                if (_settings == null) {
                     _settings = Resources.Load<Settings>("DevConsoleSettings");
                     settingsCopy = Instantiate(settings);
                 }
@@ -78,7 +78,7 @@ namespace SickDev.DevConsole{
         CommandsManager _commandsManager;
         public CommandsManager commandsManager {
             get {
-                if(_commandsManager == null)
+                if (_commandsManager == null)
                     _commandsManager = CreateCommandsManager();
                 return _commandsManager;
             }
@@ -86,30 +86,30 @@ namespace SickDev.DevConsole{
 
         [RuntimeInitializeOnLoadMethod(loadType: RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void InitializeOnLoad() {
-            if(settings.autoInstantiate)
+            if (settings.autoInstantiate)
                 Instantiate();
         }
 
         static void Instantiate() {
             _singleton = FindObjectOfType<DevConsole>();
-            if(_singleton == null)
+            if (_singleton == null)
                 _singleton = Instantiate(Resources.Load<DevConsole>("DevConsole"));
         }
 
         public void OnBeforeSerialize() {
-            if(Application.isPlaying)
+            if (Application.isPlaying)
                 serializedSettings = settingsCopy;
         }
 
         public void OnAfterDeserialize() { }
 
         void Awake() {
-            if(singleton != this) {
+            if (singleton != this) {
                 Debug.LogWarning("There can only be one Console per project");
                 DestroyImmediate(gameObject);
                 return;
             }
-            if(settings.dontDestroyOnLoad)
+            if (settings.dontDestroyOnLoad)
                 DontDestroyOnLoad(gameObject);
             useGUILayout = false;
             openCoroutine = null;
@@ -131,13 +131,13 @@ namespace SickDev.DevConsole{
 
         void OnLogMessageReceived(string condition, string stackTrace, LogType type) {
             LogLevel level = (LogLevel)Enum.Parse(typeof(LogLevel), type.ToString());
-            if((settings.attachedLogLevel & level) == level) {
+            if ((settings.attachedLogLevel & level) == level) {
                 EntryData entry = new EntryData(condition, level.ToString());
                 entry.stackTrace = stackTrace;
 
-                if(level == LogLevel.Exception || level == LogLevel.Error)
+                if (level == LogLevel.Exception || level == LogLevel.Error)
                     LogError(entry);
-                else if(level == LogLevel.Warning)
+                else if (level == LogLevel.Warning)
                     LogWarning(entry);
                 else
                     Log(entry);
@@ -204,14 +204,14 @@ namespace SickDev.DevConsole{
         }
 
         public void Open() {
-            if(!CanSetOpenState(true))
+            if (!CanSetOpenState(true))
                 return;
             SetOpenState(true);
             input.Focus();
         }
 
         public void Close() {
-            if(!CanSetOpenState(false))
+            if (!CanSetOpenState(false))
                 return;
             SetOpenState(false);
             history.Close();
@@ -219,7 +219,7 @@ namespace SickDev.DevConsole{
         }
 
         public void ToggleOpen() {
-            if(open)
+            if (open)
                 Close();
             else
                 Open();
@@ -237,19 +237,19 @@ namespace SickDev.DevConsole{
         }
 
         IEnumerator OpenCoroutine() {
-            if(openCoroutine != null)
+            if (openCoroutine != null)
                 yield break;
 
             float time = 0;
             do {
                 time = Mathf.Clamp(time + Time.unscaledDeltaTime, 0, settings.animationDuration);
                 float evaluateTime = time / settings.animationDuration;
-                if(!open)
+                if (!open)
                     evaluateTime = 1 - evaluateTime;
                 EvaluatePosition(evaluateTime);
                 RepositionBlockers(evaluateTime);
                 yield return null;
-            } while(time < settings.animationDuration);
+            } while (time < settings.animationDuration);
 
             openCoroutine = null;
             if (settings.clearInputOnClose)
@@ -262,7 +262,7 @@ namespace SickDev.DevConsole{
         }
 
         void RepositionBlockers(float percentage) {
-            if(windowBlocker == null)
+            if (windowBlocker == null)
                 return;
             float windowBlockerHeight = height * settings.scale * percentage;
             windowBlocker.rectTransform.sizeDelta = new Vector2(0, windowBlockerHeight);
@@ -270,12 +270,12 @@ namespace SickDev.DevConsole{
         }
 
         void OnGUI() {
-            if(ShouldSkipEvent())
+            if (ShouldSkipEvent())
                 return;
-            if(Event.current.type == EventType.Repaint)
+            if (Event.current.type == EventType.Repaint)
                 Reposition();
 
-            if(!initialized)
+            if (!initialized)
                 Initialize();
 
             DetectInput();
@@ -284,22 +284,22 @@ namespace SickDev.DevConsole{
         }
 
         bool ShouldSkipEvent() {
-            if(Event.current.type != EventType.MouseDrag)
+            if (Event.current.type != EventType.MouseDrag)
                 return false;
 
-            if(lastFrame != Time.frameCount) {
+            if (lastFrame != Time.frameCount) {
                 lastFrame = Time.frameCount;
                 mouseDragEventProcessed = false;
             }
-            if(mouseDragEventProcessed)
+            if (mouseDragEventProcessed)
                 return true;
             mouseDragEventProcessed = true;
             return false;
         }
 
         void Reposition() {
-            if(Screen.height != lastScreenHeight) {
-                if(openCoroutine == null && !isOpen)
+            if (Screen.height != lastScreenHeight) {
+                if (openCoroutine == null && !isOpen)
                     EvaluatePosition(0);
                 lastScreenHeight = Screen.height;
             }
@@ -317,7 +317,7 @@ namespace SickDev.DevConsole{
             history.Initialize();
             autoComplete.Initialize();
             initialized = true;
-            if(serializedSettings != null)
+            if (serializedSettings != null)
                 settingsCopy.CopyFrom(serializedSettings);
         }
 
@@ -325,15 +325,15 @@ namespace SickDev.DevConsole{
             Event e = Event.current;
 
             //Prevent tabbing
-            if(e.type == EventType.Layout || e.type == EventType.Repaint)
+            if (e.type == EventType.Layout || e.type == EventType.Repaint)
                 return;
-            else if(e.character == '\t')
+            else if (e.character == '\t')
                 e.Use();
-            else if(e.type == EventType.KeyDown) {
-                if(e.keyCode == settings.openKey)
+            else if (e.type == EventType.KeyDown) {
+                if (e.keyCode == settings.openKey)
                     ToggleOpen();
                 else {
-                    if(!isOpen)
+                    if (!isOpen)
                         return;
                     if (e.keyCode == KeyCode.Return) {
                         if (autoComplete.isOpen) {
@@ -386,7 +386,7 @@ namespace SickDev.DevConsole{
         }
 
         void Navigate(int direction) {
-            if(autoComplete.isOpen)
+            if (autoComplete.isOpen)
                 autoComplete.Navigate(direction);
             else
                 history.Navigate(direction);
@@ -401,16 +401,16 @@ namespace SickDev.DevConsole{
         }
 
         void Draw() {
-            if(settings.showOpenButton)
+            if (settings.showOpenButton)
                 openButton.Draw(height);
-            if(buttonBlocker != null)
+            if (buttonBlocker != null)
                 buttonBlocker.rectTransform.sizeDelta = settings.showOpenButton ? new Vector2(openButton.width * settings.scale, openButton.height * settings.scale) : Vector2.zero;
-            if(!isOpen)
+            if (!isOpen)
                 return;
 
             Vector2 windowPosition = new Vector2(input.offsetX, height - input.height);
             //When layouting, only AutoComplete & History need to be drawn
-            if(Event.current.type == EventType.Layout) {
+            if (Event.current.type == EventType.Layout) {
                 history.Draw(windowPosition);
                 autoComplete.Draw(windowPosition);
                 return;
@@ -419,7 +419,7 @@ namespace SickDev.DevConsole{
             DrawInput();
             toolbar.Draw();
             float mainWindowHeight = height - input.height - toolbar.height;
-            if(isSettingsOpen)
+            if (isSettingsOpen)
                 settingsPanel.Draw(toolbar.height, mainWindowHeight);
             else
                 logger.Draw(toolbar.height, mainWindowHeight);
@@ -436,18 +436,18 @@ namespace SickDev.DevConsole{
 
         public void SubmitInputText() {
             string text = input.text.Trim();
-            if(text == string.Empty)
+            if (text == string.Empty)
                 return;
             Log(new EntryData() { text = "> " + text, stackTrace = "User input: no stack trace info available." });
-            if(history.CanEntryBeAdded(text)) {
+            if (history.CanEntryBeAdded(text)) {
                 history.UpdateLastEntry(text);
                 history.Add(string.Empty);
             }
             history.NavigateToLast();
 
-            if(history.isOpen)
+            if (history.isOpen)
                 history.Close();
-            else if(autoComplete.isOpen)
+            else if (autoComplete.isOpen)
                 autoComplete.Close();
 
             input.Clear();
@@ -496,29 +496,29 @@ namespace SickDev.DevConsole{
 
         void ExecuteIfCommand(string text) {
             CommandExecuter executer = commandsManager.GetCommandExecuter(text);
-            if(executer.isValidCommand) {
+            if (executer.isValidCommand) {
                 try {
                     object result = executer.Execute();
-                    if(executer.hasReturnValue) {
+                    if (executer.hasReturnValue) {
                         string resultString = ConvertCommandResultToString(result);
                         Log(resultString);
                     }
                 }
-                catch(CommandSystemException exception) {
+                catch (CommandSystemException exception) {
                     Debug.LogException(exception);
                 }
             }
         }
 
         string ConvertCommandResultToString(object result) {
-            if(result == null)
+            if (result == null)
                 return "null";
-            else if(result is Array) {
+            else if (result is Array) {
                 Array resultArray = (Array)result;
                 StringBuilder builder = new StringBuilder();
-                for(int i = 0; i < resultArray.Length; i++) {
+                for (int i = 0; i < resultArray.Length; i++) {
                     builder.Append(resultArray.GetValue(i).ToString());
-                    if(i < resultArray.Length - 1)
+                    if (i < resultArray.Length - 1)
                         builder.Append(", ");
                 }
                 return builder.ToString();

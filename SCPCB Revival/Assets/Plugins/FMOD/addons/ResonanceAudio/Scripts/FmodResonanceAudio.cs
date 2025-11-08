@@ -12,20 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using UnityEngine;
+using FMODUnity;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using FMODUnity;
+using UnityEngine;
 
-namespace FMODUnityResonance
-{
+namespace FMODUnityResonance {
     /// This is the main Resonance Audio class that communicates with the FMOD Unity integration. Native
     /// functions of the system can only be called through this class to preserve the internal system
     /// functionality.
-    public static class FmodResonanceAudio
-    {
+    public static class FmodResonanceAudio {
         /// Maximum allowed gain value in decibels.
         public const float MaxGainDb = 24.0f;
 
@@ -70,23 +67,18 @@ namespace FMODUnityResonance
 
         /// Updates the room effects of the environment with given |room| properties.
         /// @note This should only be called from the main Unity thread.
-        public static void UpdateAudioRoom(FmodResonanceAudioRoom room, bool roomEnabled)
-        {
+        public static void UpdateAudioRoom(FmodResonanceAudioRoom room, bool roomEnabled) {
             // Update the enabled rooms list.
-            if (roomEnabled)
-            {
-                if (!enabledRooms.Contains(room))
-                {
+            if (roomEnabled) {
+                if (!enabledRooms.Contains(room)) {
                     enabledRooms.Add(room);
                 }
             }
-            else
-            {
+            else {
                 enabledRooms.Remove(room);
             }
             // Update the current room effects to be applied.
-            if (enabledRooms.Count > 0)
-            {
+            if (enabledRooms.Count > 0) {
                 FmodResonanceAudioRoom currentRoom = enabledRooms[enabledRooms.Count - 1];
                 RoomProperties roomProperties = GetRoomProperties(currentRoom);
                 // Pass the room properties into a pointer.
@@ -96,16 +88,14 @@ namespace FMODUnityResonance
                                                                                roomPropertiesSize));
                 Marshal.FreeHGlobal(roomPropertiesPtr);
             }
-            else
-            {
+            else {
                 // Set the room properties to a null room, which will effectively disable the room effects.
                 ListenerPlugin.setParameterData(roomPropertiesIndex, GetBytes(IntPtr.Zero, 0));
             }
         }
 
         /// Returns whether the listener is currently inside the given |room| boundaries.
-        public static bool IsListenerInsideRoom(FmodResonanceAudioRoom room)
-        {
+        public static bool IsListenerInsideRoom(FmodResonanceAudioRoom room) {
             // Compute the room position relative to the listener.
             FMOD.VECTOR unused;
             RuntimeManager.CoreSystem.get3DListenerAttributes(0, out listenerPositionFmod, out unused,
@@ -120,8 +110,7 @@ namespace FMODUnityResonance
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct RoomProperties
-        {
+        private struct RoomProperties {
             // Center position of the room in world space.
             public float PositionX;
             public float PositionY;
@@ -163,12 +152,9 @@ namespace FMODUnityResonance
         };
 
         // Returns the FMOD Resonance Audio Listener Plugin.
-        private static FMOD.DSP ListenerPlugin
-        {
-            get
-            {
-                if (!listenerPlugin.hasHandle())
-                {
+        private static FMOD.DSP ListenerPlugin {
+            get {
+                if (!listenerPlugin.hasHandle()) {
                     listenerPlugin = Initialize();
                 }
                 return listenerPlugin;
@@ -176,15 +162,13 @@ namespace FMODUnityResonance
         }
 
         // Converts given |db| value to its amplitude equivalent where 'dB = 20 * log10(amplitude)'.
-        private static float ConvertAmplitudeFromDb(float db)
-        {
+        private static float ConvertAmplitudeFromDb(float db) {
             return Mathf.Pow(10.0f, 0.05f * db);
         }
 
         // Converts given |position| and |rotation| from Unity space to audio space.
         private static void ConvertAudioTransformFromUnity(ref Vector3 position,
-          ref Quaternion rotation)
-        {
+          ref Quaternion rotation) {
             // Compose the transformation matrix.
             Matrix4x4 transformMatrix = Matrix4x4.TRS(position, rotation, Vector3.one);
             // Convert the transformation matrix from left-handed to right-handed.
@@ -195,10 +179,8 @@ namespace FMODUnityResonance
         }
 
         // Returns a byte array of |length| created from |ptr|.
-        private static byte[] GetBytes(IntPtr ptr, int length)
-        {
-            if (ptr != IntPtr.Zero)
-            {
+        private static byte[] GetBytes(IntPtr ptr, int length) {
+            if (ptr != IntPtr.Zero) {
                 byte[] byteArray = new byte[length];
                 Marshal.Copy(ptr, byteArray, 0, length);
                 return byteArray;
@@ -208,8 +190,7 @@ namespace FMODUnityResonance
         }
 
         // Returns room properties of the given |room|.
-        private static RoomProperties GetRoomProperties(FmodResonanceAudioRoom room)
-        {
+        private static RoomProperties GetRoomProperties(FmodResonanceAudioRoom room) {
             RoomProperties roomProperties;
             Vector3 position = room.transform.position;
             Quaternion rotation = room.transform.rotation;
@@ -239,22 +220,19 @@ namespace FMODUnityResonance
         }
 
         // Initializes and returns the FMOD Resonance Audio Listener Plugin.
-        private static FMOD.DSP Initialize()
-        {
+        private static FMOD.DSP Initialize() {
             // Search through all busses on in banks.
             int numBanks = 0;
             FMOD.DSP dsp = new FMOD.DSP();
             FMOD.Studio.Bank[] banks = null;
             RuntimeManager.StudioSystem.getBankCount(out numBanks);
             RuntimeManager.StudioSystem.getBankList(out banks);
-            for (int currentBank = 0; currentBank < numBanks; ++currentBank)
-            {
+            for (int currentBank = 0; currentBank < numBanks; ++currentBank) {
                 int numBusses = 0;
                 FMOD.Studio.Bus[] busses = null;
                 banks[currentBank].getBusCount(out numBusses);
                 banks[currentBank].getBusList(out busses);
-                for (int currentBus = 0; currentBus < numBusses; ++currentBus)
-                {
+                for (int currentBus = 0; currentBus < numBusses; ++currentBus) {
                     // Make sure the channel group of the current bus is assigned properly.
                     string busPath = null;
                     busses[currentBus].getPath(out busPath);
@@ -263,19 +241,16 @@ namespace FMODUnityResonance
                     RuntimeManager.StudioSystem.flushCommands();
                     FMOD.ChannelGroup channelGroup;
                     busses[currentBus].getChannelGroup(out channelGroup);
-                    if (channelGroup.hasHandle())
-                    {
+                    if (channelGroup.hasHandle()) {
                         int numDsps = 0;
                         channelGroup.getNumDSPs(out numDsps);
-                        for (int currentDsp = 0; currentDsp < numDsps; ++currentDsp)
-                        {
+                        for (int currentDsp = 0; currentDsp < numDsps; ++currentDsp) {
                             channelGroup.getDSP(currentDsp, out dsp);
                             string dspNameSb;
                             int unusedInt = 0;
                             uint unusedUint = 0;
                             dsp.getInfo(out dspNameSb, out unusedUint, out unusedInt, out unusedInt, out unusedInt);
-                            if (dspNameSb.ToString().Equals(listenerPluginName) && dsp.hasHandle())
-                            {
+                            if (dspNameSb.ToString().Equals(listenerPluginName) && dsp.hasHandle()) {
                                 return dsp;
                             }
                         }

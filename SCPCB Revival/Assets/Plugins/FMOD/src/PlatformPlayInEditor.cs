@@ -7,68 +7,55 @@ using UnityEditor;
 #endif
 
 #if UNITY_EDITOR
-namespace FMOD
-{
-    public partial class VERSION
-    {
+namespace FMOD {
+    public partial class VERSION {
         public const string dll = "fmodstudioL";
     }
 }
 
-namespace FMOD.Studio
-{
-    public partial class STUDIO_VERSION
-    {
+namespace FMOD.Studio {
+    public partial class STUDIO_VERSION {
         public const string dll = "fmodstudioL";
     }
 }
 #endif
 
-namespace FMODUnity
-{
-    public class PlatformPlayInEditor : Platform
-    {
-        public PlatformPlayInEditor()
-        {
+namespace FMODUnity {
+    public class PlatformPlayInEditor : Platform {
+        public PlatformPlayInEditor() {
             Identifier = "playInEditor";
         }
 
         internal override string DisplayName { get { return "Editor"; } }
-        internal override void DeclareRuntimePlatforms(Settings settings)
-        {
+        internal override void DeclareRuntimePlatforms(Settings settings) {
             settings.DeclareRuntimePlatform(RuntimePlatform.OSXEditor, this);
             settings.DeclareRuntimePlatform(RuntimePlatform.WindowsEditor, this);
             settings.DeclareRuntimePlatform(RuntimePlatform.LinuxEditor, this);
         }
 #if UNITY_EDITOR
-        internal override IEnumerable<BuildTarget> GetBuildTargets()
-        {
+        internal override IEnumerable<BuildTarget> GetBuildTargets() {
             yield break;
         }
 
         internal override Legacy.Platform LegacyIdentifier { get { return Legacy.Platform.PlayInEditor; } }
 
-        protected override BinaryAssetFolderInfo GetBinaryAssetFolder(BuildTarget buildTarget)
-        {
+        protected override BinaryAssetFolderInfo GetBinaryAssetFolder(BuildTarget buildTarget) {
             return null;
         }
 
-        protected override IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix)
-        {
+        protected override IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix) {
             yield break;
         }
 #endif
 
         internal override bool IsIntrinsic { get { return true; } }
 
-        internal override string GetBankFolder()
-        {
+        internal override string GetBankFolder() {
             // Use original asset location because streaming asset folder will contain platform specific banks
             Settings globalSettings = Settings.Instance;
 
             string bankFolder = globalSettings.SourceBankPath;
-            if (globalSettings.HasPlatforms)
-            {
+            if (globalSettings.HasPlatforms) {
                 bankFolder = RuntimeUtils.GetCommonPlatformPath(Path.Combine(bankFolder, BuildDirectory));
             }
 
@@ -76,8 +63,7 @@ namespace FMODUnity
         }
 
 #if UNITY_EDITOR
-        internal override string GetPluginPath(string pluginName)
-        {
+        internal override string GetPluginPath(string pluginName) {
             string platformsFolder = Path.GetFullPath($"{RuntimeUtils.PluginBasePath}/platforms");
 #if UNITY_EDITOR_WIN
             return string.Format("{0}/win/lib/{1}/{2}.dll", platformsFolder, RuntimeUtils.GetPluginArchitectureFolder(), pluginName);
@@ -104,13 +90,11 @@ namespace FMODUnity
         }
 #endif
 
-        internal override void LoadStaticPlugins(FMOD.System coreSystem, Action<FMOD.RESULT, string> reportResult)
-        {
+        internal override void LoadStaticPlugins(FMOD.System coreSystem, Action<FMOD.RESULT, string> reportResult) {
             // Ignore static plugins when playing in the editor
         }
 
-        internal override void InitializeProperties()
-        {
+        internal override void InitializeProperties() {
             base.InitializeProperties();
 
             PropertyAccessors.LiveUpdate.Set(this, TriStateBool.Enabled);

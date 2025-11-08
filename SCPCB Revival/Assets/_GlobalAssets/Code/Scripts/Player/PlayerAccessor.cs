@@ -1,5 +1,4 @@
 using UnityEngine;
-using SickDev.CommandSystem;
 
 public class PlayerAccessor : MonoBehaviour {
     public static PlayerAccessor playerAccessor;

@@ -1,25 +1,20 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace FMODUnity
-{
+namespace FMODUnity {
     [CustomPropertyDrawer(typeof(ParamRefAttribute))]
-    public class ParamRefDrawer : PropertyDrawer
-    {
-        public bool MouseDrag(Event e)
-        {
+    public class ParamRefDrawer : PropertyDrawer {
+        public bool MouseDrag(Event e) {
             bool isDragging = false;
 
-            if (e.type == EventType.DragPerform)
-            {
+            if (e.type == EventType.DragPerform) {
                 isDragging = true;
             }
 
             return isDragging;
         }
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             Texture browseIcon = EditorUtils.LoadImage("SearchIconBlack.png");
             Texture openIcon = EditorUtils.LoadImage("BrowserIcon.png");
             Texture addIcon = EditorUtils.LoadImage("AddIcon.png");
@@ -28,23 +23,19 @@ namespace FMODUnity
             SerializedProperty pathProperty = property;
 
             Event e = Event.current;
-            if (MouseDrag(e) && position.Contains(e.mousePosition))
-            {
+            if (MouseDrag(e) && position.Contains(e.mousePosition)) {
                 if (DragAndDrop.objectReferences.Length > 0 &&
                     DragAndDrop.objectReferences[0] != null &&
-                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorParamRef))
-                {
+                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorParamRef)) {
                     pathProperty.stringValue = ((EditorParamRef)DragAndDrop.objectReferences[0]).Name;
                     GUI.changed = true;
                     e.Use();
                 }
             }
-            if (e.type == EventType.DragUpdated && position.Contains(e.mousePosition))
-            {
+            if (e.type == EventType.DragUpdated && position.Contains(e.mousePosition)) {
                 if (DragAndDrop.objectReferences.Length > 0 &&
                     DragAndDrop.objectReferences[0] != null &&
-                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorParamRef))
-                {
+                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorParamRef)) {
                     DragAndDrop.visualMode = DragAndDropVisualMode.Move;
                     DragAndDrop.AcceptDrag();
                     e.Use();
@@ -66,8 +57,7 @@ namespace FMODUnity
 
             EditorGUI.PropertyField(pathRect, pathProperty, GUIContent.none);
 
-            if (GUI.Button(searchRect, new GUIContent(browseIcon, "Search"), buttonStyle))
-            {
+            if (GUI.Button(searchRect, new GUIContent(browseIcon, "Search"), buttonStyle)) {
                 var eventBrowser = ScriptableObject.CreateInstance<EventBrowser>();
 
                 eventBrowser.ChooseParameter(property);

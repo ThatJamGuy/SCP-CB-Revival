@@ -22,14 +22,14 @@ namespace SickDev.DevConsole {
 
         public static void Initialize() {
             style = new GUIStyle(GUI.skin.horizontalSlider);
-            style.normal = new GUIStyleState() { background = DevConsole.settings.sliderIcon};
+            style.normal = new GUIStyleState() { background = DevConsole.settings.sliderIcon };
             thumbStyle = new GUIStyle();
             thumbStyle.normal = thumbStyle.active = thumbStyle.focused = thumbStyle.hover = new GUIStyleState() { background = DevConsole.settings.sliderThumbIcon };
             thumbStyle.overflow = new RectOffset(8, 8, 8, 8);
             thumbStyle.fixedHeight = thumbStyle.fixedWidth = 16;
         }
 
-        public Slider(string label, SliderGetter getter, SliderSetter setter):this(new GUIContent(label), getter, setter) { }
+        public Slider(string label, SliderGetter getter, SliderSetter setter) : this(new GUIContent(label), getter, setter) { }
         public Slider(GUIContent label, SliderGetter getter, SliderSetter setter) {
             this.label = label;
             this.getter = getter;
@@ -39,9 +39,9 @@ namespace SickDev.DevConsole {
         public void Draw(Rect rect, float min, float max) {
             ChangeSkinStylesIfNecessary();
             float originalValue = getter();
-            float value = hasFocus && delayed?delayedValue:originalValue;
+            float value = hasFocus && delayed ? delayedValue : originalValue;
 
-            float widthFraction = rect.width/10;
+            float widthFraction = rect.width / 10;
             rect.y += rect.height / 2;
             DrawLabel(ref rect, widthFraction);
             DrawSlider(ref rect, widthFraction, ref value, min, max);
@@ -67,26 +67,26 @@ namespace SickDev.DevConsole {
         void DrawValue(ref Rect rect, float widthFraction, float value) {
             rect.width = 2 * widthFraction;
             string valueToShow = CutDecimals(value).ToString();
-            GUI.Label(rect, hasFocus && delayed?"*"+ valueToShow+"*":valueToShow, GUIUtils.rightTextStyle);
+            GUI.Label(rect, hasFocus && delayed ? "*" + valueToShow + "*" : valueToShow, GUIUtils.rightTextStyle);
         }
 
         void CallSetterIfAppropriate(float originalValue, float value) {
-            if(hasFocus)
+            if (hasFocus)
                 delayedValue = value;
 
-            if(originalValue != value) {
-                if(!delayed || lastHasFocus && !hasFocus)
+            if (originalValue != value) {
+                if (!delayed || lastHasFocus && !hasFocus)
                     setter(value);
             }
             lastHasFocus = hasFocus;
         }
 
         void ChangeSkinStylesIfNecessary() {
-            if(GUI.skin.horizontalSlider != style) {
+            if (GUI.skin.horizontalSlider != style) {
                 originalStyle = GUI.skin.horizontalSlider;
                 GUI.skin.horizontalSlider = style;
             }
-            if(GUI.skin.horizontalSliderThumb != thumbStyle) {
+            if (GUI.skin.horizontalSliderThumb != thumbStyle) {
                 originalThumbStyle = GUI.skin.horizontalSliderThumb;
                 GUI.skin.horizontalSliderThumb = thumbStyle;
             }
@@ -94,7 +94,7 @@ namespace SickDev.DevConsole {
 
         float CutDecimals(float value) {
             int factor = 1;
-            for(int i = 0; i < decimalsToShow; i++)
+            for (int i = 0; i < decimalsToShow; i++)
                 factor *= 10;
             value = (int)(factor * value);
             value /= factor;
@@ -102,11 +102,11 @@ namespace SickDev.DevConsole {
         }
 
         void RestoreSkinStylesIfNecessary() {
-            if(DevConsole.settings.optimizeForOnGUI)
+            if (DevConsole.settings.optimizeForOnGUI)
                 return;
-            if(originalStyle != null)
+            if (originalStyle != null)
                 GUI.skin.horizontalSlider = originalStyle;
-            if(originalThumbStyle != null)
+            if (originalThumbStyle != null)
                 GUI.skin.horizontalSliderThumb = originalThumbStyle;
         }
     }

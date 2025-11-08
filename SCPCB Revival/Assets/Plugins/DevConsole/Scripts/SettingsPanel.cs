@@ -21,14 +21,14 @@ namespace SickDev.DevConsole {
 
         public void Initialize() {
             titleContent = new GUIContent("Settings");
-            showTimeStampToggle = new Toggle("Show time stamp", ()=>DevConsole.settings.showTimeStamp, value=>DevConsole.settings.showTimeStamp = value);
-            useAndFilteringToggle = new Toggle("Use AND filtering", ()=>DevConsole.settings.useAndFiltering, value => DevConsole.settings.useAndFiltering = value);
-            preferredHeightSlider = new Slider("Preferred Height", () => DevConsole.settings.preferredHeight*Screen.height, value => DevConsole.settings.preferredHeight = value/Screen.height);
+            showTimeStampToggle = new Toggle("Show time stamp", () => DevConsole.settings.showTimeStamp, value => DevConsole.settings.showTimeStamp = value);
+            useAndFilteringToggle = new Toggle("Use AND filtering", () => DevConsole.settings.useAndFiltering, value => DevConsole.settings.useAndFiltering = value);
+            preferredHeightSlider = new Slider("Preferred Height", () => DevConsole.settings.preferredHeight * Screen.height, value => DevConsole.settings.preferredHeight = value / Screen.height);
             preferredHeightSlider.decimalsToShow = 2;
             scaleSlider = new Slider("Scale", () => DevConsole.settings.scale, value => DevConsole.settings.scale = value);
             scaleSlider.decimalsToShow = 2;
             scaleSlider.delayed = true;
-            fontSizeSlider = new Slider("Font size", ()=>DevConsole.settings.fontSize, value=>DevConsole.settings.fontSize = (int)value);
+            fontSizeSlider = new Slider("Font size", () => DevConsole.settings.fontSize, value => DevConsole.settings.fontSize = (int)value);
 
             heightSeparation = showTimeStampToggle.height;
         }
@@ -38,7 +38,7 @@ namespace SickDev.DevConsole {
             Rect contentsRect = new Rect(viewRect.x, viewRect.y, viewRect.width, panelHeight);
             GUIUtils.DrawBox(viewRect, DevConsole.settings.mainColor);
             scrollView.Draw(viewRect, contentsRect, DrawContents);
-            if(!scrollView.isScrollbarVisible)
+            if (!scrollView.isScrollbarVisible)
                 scrollView.ScrollToTop();
         }
 
@@ -53,14 +53,14 @@ namespace SickDev.DevConsole {
             rect.width = elementWidth;
             rect.height = 32;
             DrawShowTimeStamp(rect);
-            rect.x += rect.width+ spacing.x;
+            rect.x += rect.width + spacing.x;
             DrawUseAndFiltering(rect);
-            rect.x += rect.width+ spacing.x;
+            rect.x += rect.width + spacing.x;
             DrawPreferredHeight(rect);
             rect.x = padding;
-            rect.y += heightSeparation+ spacing.y;
+            rect.y += heightSeparation + spacing.y;
             DrawScale(rect);
-            rect.x += rect.width+ spacing.x;
+            rect.x += rect.width + spacing.x;
             DrawFontSize(rect);
             rect.x += rect.width + spacing.x;
 

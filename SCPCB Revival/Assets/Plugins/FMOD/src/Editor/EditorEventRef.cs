@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEditor;
 
-namespace FMODUnity
-{
-    public class EditorEventRef : ScriptableObject
-    {
+namespace FMODUnity {
+    public class EditorEventRef : ScriptableObject {
         [SerializeField]
         public string Path;
 
@@ -31,13 +27,11 @@ namespace FMODUnity
         [SerializeField]
         public int Length;
 
-        public List<EditorParamRef> LocalParameters
-        {
+        public List<EditorParamRef> LocalParameters {
             get { return Parameters.Where(p => p.IsGlobal == false).OrderBy(p => p.Name).ToList(); }
         }
 
-        public List<EditorParamRef> GlobalParameters
-        {
+        public List<EditorParamRef> GlobalParameters {
             get { return Parameters.Where(p => p.IsGlobal == true).OrderBy(p => p.Name).ToList(); }
         }
     }

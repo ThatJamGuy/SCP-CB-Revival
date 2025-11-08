@@ -35,7 +35,7 @@ namespace SickDev.DevConsole {
 
         public event EntryDelegate onEntryRemoved;
         public event EntryDelegate onEntryRebuilt;
-        
+
         public EntryData data { get; private set; }
         public string timeStamp { get; private set; }
         public bool showStackTrace { get; set; }
@@ -65,26 +65,26 @@ namespace SickDev.DevConsole {
 
         public void Draw(float positionY, float entryWidth, bool isVisible) {
             DoLayout(entryWidth);
-            if(!isVisible)
+            if (!isVisible)
                 return;
 
             GUIUtils.DrawBox(new Rect(0, positionY, entryWidth, height), backgroundColor);
             Rect rect = new Rect(0, positionY + DevConsole.settings.entriesSpacing, 0, 0);
             DrawFoldoutToggle(ref rect);
             rect.x += rect.width;
-            if(DevConsole.settings.showTimeStamp) {
+            if (DevConsole.settings.showTimeStamp) {
                 DrawTimeStamp(ref rect);
                 rect.x += rect.width;
                 rect.x += spacing;
             }
-            if(data.icon != null) {
+            if (data.icon != null) {
                 DrawIcon(ref rect);
                 rect.x += rect.width;
                 rect.x += spacing;
             }
             DrawText(ref rect, textSize.x);
             rect.x += rect.width;
-            if(DevConsole.settings.groupIdenticalEntries) {
+            if (DevConsole.settings.groupIdenticalEntries) {
                 DrawGroupContent(ref rect);
                 rect.x += rect.width;
             }
@@ -100,28 +100,28 @@ namespace SickDev.DevConsole {
             SetContentText();
             RestoreStyle();
 
-            if(lastFontSize != DevConsole.settings.fontSize) {
+            if (lastFontSize != DevConsole.settings.fontSize) {
                 lastFontSize = DevConsole.settings.fontSize;
                 timeStampSize = textStyle.CalcSize(timeStampContent);
                 groupContentWidth = textStyle.CalcSize(group.content).x;
             }
-            else if(lastGroupContentLength != group.content.text.Length) {
+            else if (lastGroupContentLength != group.content.text.Length) {
                 lastGroupContentLength = group.content.text.Length;
                 groupContentWidth = textStyle.CalcSize(group.content).x;
             }
 
             CalculateTextSize(entryWidth);
 
-            if(!isExpanded && !showStackTrace)
+            if (!isExpanded && !showStackTrace)
                 unExpadedTextHeight = textSize.y;
 
             bool alreadyRebuilt = false;
-            if(DevConsole.settings.entriesSpacing != lastEntriesSpacing) {
+            if (DevConsole.settings.entriesSpacing != lastEntriesSpacing) {
                 lastEntriesSpacing = DevConsole.settings.entriesSpacing;
                 onEntryRebuilt(this);
                 alreadyRebuilt = true;
             }
-            if(textSize.y != lastTextHeight) {
+            if (textSize.y != lastTextHeight) {
                 lastTextHeight = textSize.y;
                 if (!alreadyRebuilt)
                     onEntryRebuilt(this);
@@ -137,22 +137,22 @@ namespace SickDev.DevConsole {
             entryWidth -= foldoutCollapsedContent.image.width;
             entryWidth -= stackTraceContent.image.width;
             entryWidth -= removeContent.image.width;
-            if(DevConsole.settings.showTimeStamp) {
+            if (DevConsole.settings.showTimeStamp) {
                 entryWidth -= timeStampSize.x;
                 entryWidth -= spacing;
             }
-            if(data.icon != null) {
+            if (data.icon != null) {
                 entryWidth -= Mathf.Min(data.icon.height, unExpadedTextHeight);
                 entryWidth -= spacing;
             }
-            if(DevConsole.settings.groupIdenticalEntries)
+            if (DevConsole.settings.groupIdenticalEntries)
                 entryWidth -= groupContentWidth;
             return entryWidth;
         }
 
         void SetContentText() {
             textContent.text = isExpanded ? data.text : builder.simpleText;
-            if(showStackTrace)
+            if (showStackTrace)
                 textContent.text += "\n\n" + data.stackTrace;
         }
 
@@ -161,9 +161,9 @@ namespace SickDev.DevConsole {
             rect.width = foldoutCollapsedContent.image.width;
             rect.height = height - textSize.y + timeStampSize.y - DevConsole.settings.entriesSpacing * 2;
             bool expand = false;
-            if(builder.needsExpandToggle) {
+            if (builder.needsExpandToggle) {
                 expand = isExpanded;
-                if(GUIUtils.DrawCenteredButton(rect, isExpanded ? foldoutExpandedContent : foldoutCollapsedContent, Color.clear))
+                if (GUIUtils.DrawCenteredButton(rect, isExpanded ? foldoutExpandedContent : foldoutCollapsedContent, Color.clear))
                     expand = !isExpanded;
             }
             isExpanded = expand;
@@ -188,7 +188,7 @@ namespace SickDev.DevConsole {
             GUIUtility.GetControlID(id, FocusType.Keyboard);
             ApplyStyle();
             GUI.SetNextControlName(name);
-            if(Application.isMobilePlatform)
+            if (Application.isMobilePlatform)
                 GUI.Label(rect, textContent.text, textStyle);
             else
                 GUI.TextField(rect, textContent.text, textStyle);
@@ -197,7 +197,7 @@ namespace SickDev.DevConsole {
 
         void ApplyStyle() {
             textStyle.fontStyle = data.options.style;
-            if(data.options.size > 0)
+            if (data.options.size > 0)
                 textStyle.fontSize = data.options.size;
             textStyle.normal.textColor = data.options.color;
         }
@@ -211,20 +211,20 @@ namespace SickDev.DevConsole {
         void DrawGroupContent(ref Rect rect) {
             rect.width = groupContentWidth;
             rect.height = height;
-            GUI.Label(rect, group.content, textStyle); 
+            GUI.Label(rect, group.content, textStyle);
         }
 
         void DrawStackTraceToggle(ref Rect rect) {
             rect.width = stackTraceContent.image.width;
-            rect.height = height - textSize.y + timeStampSize.y- DevConsole.settings.entriesSpacing * 2;
-            if(GUIUtils.DrawCenteredButton(rect, stackTraceContent, Color.clear))
+            rect.height = height - textSize.y + timeStampSize.y - DevConsole.settings.entriesSpacing * 2;
+            if (GUIUtils.DrawCenteredButton(rect, stackTraceContent, Color.clear))
                 showStackTrace = !showStackTrace;
         }
 
         void DrawRemoveButton(ref Rect rect) {
             rect.width = removeContent.image.width;
             rect.height = height - textSize.y + timeStampSize.y - DevConsole.settings.entriesSpacing * 2;
-            if(GUIUtils.DrawCenteredButton(rect, removeContent, Color.clear))
+            if (GUIUtils.DrawCenteredButton(rect, removeContent, Color.clear))
                 Remove();
         }
 
@@ -235,7 +235,7 @@ namespace SickDev.DevConsole {
         [Serializable]
         class SimpleTextBuilder {
             const string toBeContinuedText = " [...]";
-            
+
             float widthReservedForText;
             float realTextWidth;
             GUIContent content = new GUIContent();
@@ -245,7 +245,7 @@ namespace SickDev.DevConsole {
             //Entry is received as a method parameter instead of as a constructor parameter to avoid Unity recursive serialization problems
             public void RebuildIfNecessary(Entry entry, float widthReservedForText) {
                 float realTextWidth = entry.textStyle.CalcSize(entry.textContent).x;
-                if(Event.current.type == EventType.Repaint && (!Mathf.Approximately(widthReservedForText, this.widthReservedForText) || realTextWidth != this.realTextWidth)) {
+                if (Event.current.type == EventType.Repaint && (!Mathf.Approximately(widthReservedForText, this.widthReservedForText) || realTextWidth != this.realTextWidth)) {
                     this.realTextWidth = realTextWidth;
                     this.widthReservedForText = widthReservedForText;
                     Rebuild(entry);
@@ -254,7 +254,7 @@ namespace SickDev.DevConsole {
 
             void Rebuild(Entry entry) {
                 needsExpandToggle = NeedsExpandToggle(entry);
-                simpleText = needsExpandToggle? BuildSimpleText(entry):entry.data.text;
+                simpleText = needsExpandToggle ? BuildSimpleText(entry) : entry.data.text;
             }
 
             bool NeedsExpandToggle(Entry entry) {
@@ -268,14 +268,14 @@ namespace SickDev.DevConsole {
                 Vector2 size;
                 content.text = toBeContinuedText;
                 string lastSimpleText = content.text;
-                
-                for(int i = 0; i < entry.data.text.Length; i++) {
+
+                for (int i = 0; i < entry.data.text.Length; i++) {
                     content.text = string.Concat(entry.data.text.Substring(0, i), toBeContinuedText);
                     size = entry.textStyle.CalcSize(content);
-                    if(size.x > widthReservedForText)
+                    if (size.x > widthReservedForText)
                         break;
                     lastSimpleText = content.text;
-                    if(entry.data.text[i] == '\n' || entry.data.text[i] == '\r')
+                    if (entry.data.text[i] == '\n' || entry.data.text[i] == '\r')
                         break;
                 }
                 return lastSimpleText;

@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using SickDev.CommandSystem;
+﻿using SickDev.CommandSystem;
+using UnityEngine;
 
 namespace SickDev.DevConsole.Example {
     public class Room7 : Room {
@@ -8,16 +8,16 @@ namespace SickDev.DevConsole.Example {
         }
 
         void OpenRoomUsingArray(int[] numbers) {
-            if(isComplete) {
+            if (isComplete) {
                 Debug.LogWarning("Great! But you already did this. Try something new...");
                 return;
             }
 
             float sum = 0;
-            for(int i = 0; i < numbers.Length; i++)
+            for (int i = 0; i < numbers.Length; i++)
                 sum += numbers[i];
 
-            if(sum != 10) {
+            if (sum != 10) {
                 Debug.LogError("The sum of the numbers must be equal to 10, not " + sum);
                 return;
             }

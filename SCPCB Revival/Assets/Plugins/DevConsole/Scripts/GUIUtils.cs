@@ -92,9 +92,9 @@ namespace SickDev.DevConsole {
             darkerGrayTexture = CreateColorTexture(darkerGrayColor);
 
             buttonStyle = new GUIStyle();
-            buttonStyle.normal = new GUIStyleState() { background = whiteTexture};
-            buttonStyle.hover = new GUIStyleState() { background = slightlyGrayTexture};
-            buttonStyle.active = new GUIStyleState() { background = lightGrayTexture};
+            buttonStyle.normal = new GUIStyleState() { background = whiteTexture };
+            buttonStyle.hover = new GUIStyleState() { background = slightlyGrayTexture };
+            buttonStyle.active = new GUIStyleState() { background = lightGrayTexture };
             buttonStyle.alignment = TextAnchor.MiddleLeft;
             buttonStyle.clipping = TextClipping.Clip;
 
@@ -105,7 +105,7 @@ namespace SickDev.DevConsole {
             boxStyle.normal = new GUIStyleState() { background = whiteTexture };
 
             textStyle = new GUIStyle();
-            textStyle.normal = new GUIStyleState() { textColor = slightlyGrayColor};
+            textStyle.normal = new GUIStyleState() { textColor = slightlyGrayColor };
             textStyle.wordWrap = true;
             textStyle.richText = true;
             textStyle.clipping = TextClipping.Clip;
@@ -128,7 +128,7 @@ namespace SickDev.DevConsole {
         public static Texture2D ApplyColorToTexture(Texture2D texture, Color color) {
             Texture2D copyTexture = new Texture2D(texture.width, texture.height, TextureFormat.RGBA32, false);
             Color[] pixels = texture.GetPixels();
-            for(int i = 0; i < pixels.Length; i++)
+            for (int i = 0; i < pixels.Length; i++)
                 pixels[i] = color;
             copyTexture.SetPixels(pixels);
             copyTexture.Apply();

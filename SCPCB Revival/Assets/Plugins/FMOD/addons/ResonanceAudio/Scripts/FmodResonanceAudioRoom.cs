@@ -14,18 +14,14 @@
 
 using UnityEngine;
 using UnityEngine.Serialization;
-using System.Collections;
 
-namespace FMODUnityResonance
-{
+namespace FMODUnityResonance {
     /// Resonance Audio room component that simulates environmental effects of a room with respect to
     /// the properties of the attached game object.
     [AddComponentMenu("ResonanceAudio/FmodResonanceAudioRoom")]
-    public class FmodResonanceAudioRoom : MonoBehaviour
-    {
+    public class FmodResonanceAudioRoom : MonoBehaviour {
         /// Material type that determines the acoustic properties of a room surface.
-        public enum SurfaceMaterial
-        {
+        public enum SurfaceMaterial {
             Transparent = 0,              ///< Transparent
             AcousticCeilingTiles = 1,     ///< Acoustic ceiling tiles
             BrickBare = 2,                ///< Brick, bare
@@ -95,23 +91,19 @@ namespace FMODUnityResonance
         [FormerlySerializedAs("size")]
         public Vector3 Size = Vector3.one;
 
-        private void OnEnable()
-        {
+        private void OnEnable() {
             FmodResonanceAudio.UpdateAudioRoom(this, FmodResonanceAudio.IsListenerInsideRoom(this));
         }
 
-        private void OnDisable()
-        {
+        private void OnDisable() {
             FmodResonanceAudio.UpdateAudioRoom(this, false);
         }
 
-        private void Update()
-        {
+        private void Update() {
             FmodResonanceAudio.UpdateAudioRoom(this, FmodResonanceAudio.IsListenerInsideRoom(this));
         }
 
-        private void OnDrawGizmosSelected()
-        {
+        private void OnDrawGizmosSelected() {
             // Draw shoebox model wireframe of the room.
             Gizmos.color = Color.yellow;
             Gizmos.matrix = transform.localToWorldMatrix;

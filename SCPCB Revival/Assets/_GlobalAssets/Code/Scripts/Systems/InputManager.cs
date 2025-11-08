@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using SickDev.DevConsole;
 
 public class InputManager : MonoBehaviour {
     public static InputManager Instance { get; private set; }

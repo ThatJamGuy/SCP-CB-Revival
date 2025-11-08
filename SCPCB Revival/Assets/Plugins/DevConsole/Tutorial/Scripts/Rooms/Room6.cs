@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using SickDev.CommandSystem;
+﻿using SickDev.CommandSystem;
+using UnityEngine;
 
 namespace SickDev.DevConsole.Example {
     public class Room6 : Room {
@@ -9,11 +9,11 @@ namespace SickDev.DevConsole.Example {
         }
 
         void FixLightColor(Color32 rgbColor) {
-            if(isComplete) {
+            if (isComplete) {
                 Debug.LogWarning("This light is already fixed");
                 return;
             }
-            if(rgbColor == Color.green)
+            if (rgbColor == Color.green)
                 Complete();
             else
                 Debug.LogWarning("Try fixing it with the green color instead");

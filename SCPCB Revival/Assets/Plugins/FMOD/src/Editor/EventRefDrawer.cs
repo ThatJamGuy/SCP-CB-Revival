@@ -1,34 +1,27 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
-namespace FMODUnity
-{
+namespace FMODUnity {
     [CustomPropertyDrawer(typeof(EventReference))]
-    public class EventReferenceDrawer : PropertyDrawer
-    {
+    public class EventReferenceDrawer : PropertyDrawer {
         private static readonly Texture RepairIcon = EditorUtils.LoadImage("Wrench.png");
         private static readonly Texture WarningIcon = EditorUtils.LoadImage("NotFound.png");
-        private static readonly GUIContent NotFoundWarning = new GUIContent("Event Not Found", WarningIcon);
+        private static readonly GUIContent NotFoundWarning = new GUIContent(L10n.Tr("Event Not Found"), WarningIcon);
 
         private static GUIStyle buttonStyle;
 
-        private static Vector2 WarningSize()
-        {
+        private static Vector2 WarningSize() {
             return GUI.skin.label.CalcSize(NotFoundWarning);
         }
 
-        private static float GetBaseHeight()
-        {
+        private static float GetBaseHeight() {
             return GUI.skin.textField.CalcSize(GUIContent.none).y;
         }
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
-            if (buttonStyle == null)
-            {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+            if (buttonStyle == null) {
                 buttonStyle = new GUIStyle(GUI.skin.button);
                 buttonStyle.padding.top = 1;
                 buttonStyle.padding.bottom = 1;
@@ -39,8 +32,7 @@ namespace FMODUnity
             Texture addIcon = EditorUtils.LoadImage("AddIcon.png");
             Texture copyIcon = EditorUtils.LoadImage("CopyIcon.png");
 
-            using (new EditorGUI.PropertyScope(position, label, property))
-            {
+            using (new EditorGUI.PropertyScope(position, label, property)) {
                 HandleDragEvents(position, property);
 
                 EventReference eventReference = property.GetEventReference();
@@ -62,20 +54,21 @@ namespace FMODUnity
                 pathRect.xMax = searchRect.x - 3;
                 pathRect.height = baseHeight;
 
+#if FMOD_SERIALIZE_GUID_ONLY
+                string path = property.GetEventReferencePath();
+                EditorGUI.LabelField(pathRect, path, EditorStyles.textField);
+#else
                 SerializedProperty pathProperty = GetPathProperty(property);
-
-                using (var scope = new EditorGUI.ChangeCheckScope())
-                {
+                using (var scope = new EditorGUI.ChangeCheckScope()) {
                     EditorGUI.PropertyField(pathRect, pathProperty, GUIContent.none);
 
-                    if (scope.changed)
-                    {
+                    if (scope.changed) {
                         SetEvent(property, pathProperty.stringValue);
                     }
                 }
+#endif
 
-                if (GUI.Button(searchRect, new GUIContent(browseIcon, "Search"), buttonStyle))
-                {
+                if (GUI.Button(searchRect, new GUIContent(browseIcon, L10n.Tr("Search")), buttonStyle)) {
                     var eventBrowser = ScriptableObject.CreateInstance<EventBrowser>();
 
                     eventBrowser.ChooseEvent(property);
@@ -87,8 +80,7 @@ namespace FMODUnity
                     eventBrowser.ShowAsDropDown(windowRect, new Vector2(windowRect.width, 400));
 
                 }
-                if (GUI.Button(addRect, new GUIContent(addIcon, "Create New Event in Studio"), buttonStyle))
-                {
+                if (GUI.Button(addRect, new GUIContent(addIcon, L10n.Tr("Create New Event in Studio")), buttonStyle)) {
                     var addDropdown = EditorWindow.CreateInstance<CreateEventPopup>();
 
                     addDropdown.SelectEvent(property);
@@ -100,21 +92,22 @@ namespace FMODUnity
                     addDropdown.ShowAsDropDown(windowRect, new Vector2(windowRect.width, 500));
 
                 }
-                if (GUI.Button(openRect, new GUIContent(openIcon, "Open In Browser"), buttonStyle))
-                {
+                if (GUI.Button(openRect, new GUIContent(openIcon, L10n.Tr("Open In Browser")), buttonStyle)) {
                     EventBrowser.ShowWindow();
                     EventBrowser eventBrowser = EditorWindow.GetWindow<EventBrowser>();
+#if FMOD_SERIALIZE_GUID_ONLY
+                    eventBrowser.FrameEvent(path);
+#else
                     eventBrowser.FrameEvent(pathProperty.stringValue);
+#endif
                 }
 
-                if (editorEventRef != null)
-                {
+                if (editorEventRef != null) {
                     float labelY = headerRect.y + baseHeight;
 
                     MismatchInfo mismatch = GetMismatch(eventReference, editorEventRef);
 
-                    if (mismatch != null)
-                    {
+                    if (mismatch != null) {
                         Rect warningRect = pathRect;
                         warningRect.xMax = position.xMax;
                         warningRect.y = labelY;
@@ -125,10 +118,8 @@ namespace FMODUnity
                         labelY = warningRect.yMax;
                     }
 
-                    if (property.isExpanded)
-                    {
-                        using (new EditorGUI.IndentLevelScope())
-                        {
+                    if (property.isExpanded) {
+                        using (new EditorGUI.IndentLevelScope()) {
                             Rect labelRect = EditorGUI.IndentedRect(headerRect);
                             labelRect.y = labelY;
 
@@ -143,8 +134,7 @@ namespace FMODUnity
                             copyRect.xMin = valueRect.xMax;
                             copyRect.xMax = position.xMax;
 
-                            if (GUI.Button(copyRect, new GUIContent(copyIcon, "Copy To Clipboard")))
-                            {
+                            if (GUI.Button(copyRect, new GUIContent(copyIcon, L10n.Tr("Copy To Clipboard")))) {
                                 EditorGUIUtility.systemCopyBuffer = eventReference.Guid.ToString();
                             }
 
@@ -153,49 +143,44 @@ namespace FMODUnity
                             labelRect.y += baseHeight;
                             valueRect.y += baseHeight;
 
-                            GUI.Label(labelRect, new GUIContent("Banks"));
+                            GUI.Label(labelRect, new GUIContent(L10n.Tr("Banks")));
                             GUI.Label(valueRect, string.Join(", ", editorEventRef.Banks.Select(x => x.Name).ToArray()));
                             labelRect.y += baseHeight;
                             valueRect.y += baseHeight;
 
-                            GUI.Label(labelRect, new GUIContent("Panning"));
+                            GUI.Label(labelRect, new GUIContent(L10n.Tr("Panning")));
                             GUI.Label(valueRect, editorEventRef.Is3D ? "3D" : "2D");
                             labelRect.y += baseHeight;
                             valueRect.y += baseHeight;
 
-                            GUI.Label(labelRect, new GUIContent("Stream"));
+                            GUI.Label(labelRect, new GUIContent(L10n.Tr("Stream")));
                             GUI.Label(valueRect, editorEventRef.IsStream.ToString());
                             labelRect.y += baseHeight;
                             valueRect.y += baseHeight;
 
-                            GUI.Label(labelRect, new GUIContent("Oneshot"));
+                            GUI.Label(labelRect, new GUIContent(L10n.Tr("Oneshot")));
                             GUI.Label(valueRect, editorEventRef.IsOneShot.ToString());
                             labelRect.y += baseHeight;
                             valueRect.y += baseHeight;
                         }
                     }
                 }
-                else
-                {
+                else {
                     EditorEventRef renamedEvent = GetRenamedEventRef(eventReference);
 
-                    if (renamedEvent != null)
-                    {
+                    if (renamedEvent != null) {
                         MismatchInfo mismatch = new MismatchInfo() {
-                            Message = string.Format("Moved to {0}", renamedEvent.Path),
+                            Message = string.Format(L10n.Tr("Moved to {0}"), renamedEvent.Path),
                             HelpText = string.Format(
-                                "This event has been moved in FMOD Studio.\n" +
-                                "You can click the repair button to update the path to the new location, or run " +
-                                "the <b>{0}</b> command to scan your project for similar issues and fix them all.",
+                                L10n.Tr("This event has been moved in FMOD Studio.\nYou can click the repair button to update the path to the new location, or run the <b>{0}</b> command to scan your project for similar issues and fix them all."),
                                 EventReferenceUpdater.MenuPath),
-                            RepairTooltip = string.Format("Repair: set path to {0}", renamedEvent.Path),
+                            RepairTooltip = string.Format(L10n.Tr("Repair: set path to {0}"), renamedEvent.Path),
                             RepairAction = (p) => {
                                 p.FindPropertyRelative("Path").stringValue = renamedEvent.Path;
                             },
                         };
 
-                        using (new EditorGUI.IndentLevelScope())
-                        {
+                        using (new EditorGUI.IndentLevelScope()) {
                             Rect mismatchRect = pathRect;
 
                             mismatchRect.xMin = position.xMin;
@@ -208,8 +193,7 @@ namespace FMODUnity
                             DrawMismatchUI(mismatchRect, openRect.x, openRect.width, mismatch, property);
                         }
                     }
-                    else
-                    {
+                    else {
                         Rect labelRect = pathRect;
                         labelRect.xMax = position.xMax;
                         labelRect.y += baseHeight;
@@ -221,16 +205,13 @@ namespace FMODUnity
             }
         }
 
-        private static void HandleDragEvents(Rect position, SerializedProperty property)
-        {
+        private static void HandleDragEvents(Rect position, SerializedProperty property) {
             Event e = Event.current;
 
-            if (e.type == EventType.DragPerform && position.Contains(e.mousePosition))
-            {
+            if (e.type == EventType.DragPerform && position.Contains(e.mousePosition)) {
                 if (DragAndDrop.objectReferences.Length > 0 &&
                     DragAndDrop.objectReferences[0] != null &&
-                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorEventRef))
-                {
+                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorEventRef)) {
                     EditorEventRef eventRef = DragAndDrop.objectReferences[0] as EditorEventRef;
 
                     property.SetEventReference(eventRef.Guid, eventRef.Path);
@@ -240,12 +221,10 @@ namespace FMODUnity
                 }
             }
 
-            if (e.type == EventType.DragUpdated && position.Contains(e.mousePosition))
-            {
+            if (e.type == EventType.DragUpdated && position.Contains(e.mousePosition)) {
                 if (DragAndDrop.objectReferences.Length > 0 &&
                     DragAndDrop.objectReferences[0] != null &&
-                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorEventRef))
-                {
+                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorEventRef)) {
                     DragAndDrop.visualMode = DragAndDropVisualMode.Move;
                     DragAndDrop.AcceptDrag();
                     e.Use();
@@ -253,8 +232,7 @@ namespace FMODUnity
             }
         }
 
-        private class MismatchInfo
-        {
+        private class MismatchInfo {
             public string Message;
             public string HelpText;
             public string RepairTooltip;
@@ -262,14 +240,12 @@ namespace FMODUnity
         }
 
         private static void DrawMismatchUI(Rect rect, float repairButtonX, float repairButtonWidth,
-            MismatchInfo mismatch, SerializedProperty property)
-        {
+            MismatchInfo mismatch, SerializedProperty property) {
             rect = EditorUtils.DrawHelpButton(rect, () => new SimpleHelp(mismatch.HelpText, 400));
 
             Rect repairRect = new Rect(repairButtonX, rect.y, repairButtonWidth, GetBaseHeight());
 
-            if (GUI.Button(repairRect, new GUIContent(RepairIcon, mismatch.RepairTooltip), buttonStyle))
-            {
+            if (GUI.Button(repairRect, new GUIContent(RepairIcon, mismatch.RepairTooltip), buttonStyle)) {
                 mismatch.RepairAction(property);
             }
 
@@ -279,20 +255,15 @@ namespace FMODUnity
             GUI.Label(labelRect, new GUIContent(mismatch.Message, WarningIcon));
         }
 
-        private static MismatchInfo GetMismatch(EventReference eventReference, EditorEventRef editorEventRef)
-        {
-            if (EventManager.GetEventLinkage(eventReference) == EventLinkage.Path)
-            {
-                if (eventReference.Guid != editorEventRef.Guid)
-                {
+        private static MismatchInfo GetMismatch(EventReference eventReference, EditorEventRef editorEventRef) {
+            if (EventManager.GetEventLinkage(eventReference) == EventLinkage.Path) {
+                if (eventReference.Guid != editorEventRef.Guid) {
                     return new MismatchInfo() {
-                        Message = "GUID doesn't match path",
+                        Message = L10n.Tr("GUID doesn't match path"),
                         HelpText = string.Format(
-                            "The GUID on this EventReference doesn't match the path.\n" +
-                            "You can click the repair button to update the GUID to match the path, or run the " +
-                            "<b>{0}</b> command to scan your project for similar issues and fix them all.",
+                            L10n.Tr("The GUID on this EventReference doesn't match the path.\nYou can click the repair button to update the GUID to match the path, or run the <b>{0}</b> command to scan your project for similar issues and fix them all."),
                             EventReferenceUpdater.MenuPath),
-                        RepairTooltip = string.Format("Repair: set GUID to {0}", editorEventRef.Guid),
+                        RepairTooltip = string.Format(L10n.Tr("Repair: set GUID to {0}"), editorEventRef.Guid),
                         RepairAction = (property) => {
                             property.FindPropertyRelative("Guid").SetGuid(editorEventRef.Guid);
                         },
@@ -301,16 +272,13 @@ namespace FMODUnity
             }
             else // EventLinkage.GUID
             {
-                if (eventReference.Path != editorEventRef.Path)
-                {
+                if (eventReference.Path != editorEventRef.Path) {
                     return new MismatchInfo() {
-                        Message = "Path doesn't match GUID",
+                        Message = L10n.Tr("Path doesn't match GUID"),
                         HelpText = string.Format(
-                            "The path on this EventReference doesn't match the GUID.\n" +
-                            "You can click the repair button to update the path to match the GUID, or run the " +
-                            "<b>{0}</b> command to scan your project for similar issues and fix them all.",
+                            L10n.Tr("The path on this EventReference doesn't match the GUID.\nYou can click the repair button to update the path to match the GUID, or run the <b>{0}</b> command to scan your project for similar issues and fix them all."),
                             EventReferenceUpdater.MenuPath),
-                        RepairTooltip = string.Format("Repair: set path to '{0}'", editorEventRef.Path),
+                        RepairTooltip = string.Format(L10n.Tr("Repair: set path to '{0}'"), editorEventRef.Path),
                         RepairAction = (property) => {
                             property.FindPropertyRelative("Path").stringValue = editorEventRef.Path;
                         },
@@ -321,34 +289,27 @@ namespace FMODUnity
             return null;
         }
 
-        private static void SetEvent(SerializedProperty property, string path)
-        {
+        private static void SetEvent(SerializedProperty property, string path) {
             EditorEventRef eventRef = EventManager.EventFromPath(path);
 
-            if (eventRef != null)
-            {
+            if (eventRef != null) {
                 property.SetEventReference(eventRef.Guid, eventRef.Path);
             }
-            else
-            {
+            else {
                 property.SetEventReference(new FMOD.GUID(), path);
             }
         }
 
-        private static SerializedProperty GetGuidProperty(SerializedProperty property)
-        {
+        private static SerializedProperty GetGuidProperty(SerializedProperty property) {
             return property.FindPropertyRelative("Guid");
         }
 
-        private static SerializedProperty GetPathProperty(SerializedProperty property)
-        {
+        private static SerializedProperty GetPathProperty(SerializedProperty property) {
             return property.FindPropertyRelative("Path");
         }
 
-        private static EditorEventRef GetEditorEventRef(EventReference eventReference)
-        {
-            if (EventManager.GetEventLinkage(eventReference) == EventLinkage.Path)
-            {
+        private static EditorEventRef GetEditorEventRef(EventReference eventReference) {
+            if (EventManager.GetEventLinkage(eventReference) == EventLinkage.Path) {
                 return EventManager.EventFromPath(eventReference.Path);
             }
             else // Assume EventLinkage.GUID
@@ -357,14 +318,11 @@ namespace FMODUnity
             }
         }
 
-        private static EditorEventRef GetRenamedEventRef(EventReference eventReference)
-        {
-            if (Settings.Instance.EventLinkage == EventLinkage.Path && !eventReference.Guid.IsNull)
-            {
+        private static EditorEventRef GetRenamedEventRef(EventReference eventReference) {
+            if (Settings.Instance.EventLinkage == EventLinkage.Path && !eventReference.Guid.IsNull) {
                 EditorEventRef editorEventRef = EventManager.EventFromGUID(eventReference.Guid);
 
-                if (editorEventRef != null && editorEventRef.Path != eventReference.Path)
-                {
+                if (editorEventRef != null && editorEventRef.Path != eventReference.Path) {
                     return editorEventRef;
                 }
             }
@@ -372,32 +330,26 @@ namespace FMODUnity
             return null;
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             float baseHeight = GetBaseHeight();
 
             EventReference eventReference = property.GetEventReference();
             EditorEventRef editorEventRef = GetEditorEventRef(eventReference);
 
-            if (editorEventRef == null)
-            {
+            if (editorEventRef == null) {
                 return baseHeight + WarningSize().y;
             }
-            else
-            {
+            else {
                 float height;
 
-                if (property.isExpanded)
-                {
+                if (property.isExpanded) {
                     height = baseHeight * 6; // 5 lines of info
                 }
-                else
-                {
+                else {
                     height = baseHeight;
                 }
 
-                if (GetMismatch(eventReference, editorEventRef) != null)
-                {
+                if (GetMismatch(eventReference, editorEventRef) != null) {
                     height += WarningSize().y;
                 }
 
@@ -409,32 +361,21 @@ namespace FMODUnity
 #pragma warning disable 0618 // Suppress the warning about using the obsolete EventRefAttribute class
     [CustomPropertyDrawer(typeof(EventRefAttribute))]
 #pragma warning restore 0618
-    public class LegacyEventRefDrawer : PropertyDrawer
-    {
+    public class LegacyEventRefDrawer : PropertyDrawer {
         private GUIStyle RichTextStyle;
 
-        private const string HelpText =
-            "This field has the <b>[FMODUnity.EventRef]</b> attribute, which is obsolete.\n" +
-            "To resolve this issue:\n" +
-            "* Add a field of type <b>FMODUnity.EventReference</b> to this class\n" +
-            "* Set the <b>MigrateTo</b> property on the <b>[FMODUnity.EventRef]</b> attribute: " +
-            "<b>[FMODUnity.EventRef(MigrateTo=\"yourNewFieldName\")]</b>\n" +
-            "* Run the <b>" + EventReferenceUpdater.MenuPath + "</b> command to " +
-            "automatically migrate values from this field to the <b>FMODUnity.EventReference</b> field";
-
+        private static readonly string HelpText =
+        string.Format(L10n.Tr("This field has the <b>[FMODUnity.EventRef]</b> attribute, which is obsolete.\nTo resolve this issue:\n* Add a field of type <b>FMODUnity.EventReference</b> to this class\nSet the <b>MigrateTo</b> property on the <b>[FMODUnity.EventRef]</b> attribute: <b>[FMODUnity.EventRef(MigrateTo=\"<fieldname>\")]</b>\n Run the <b>{0}</b> command to automatically migrate values from this field to the <b>FMODUnity.EventReference</b> field"), EventReferenceUpdater.MenuPath);
         private static readonly Texture InfoIcon = EditorGUIUtility.IconContent("console.infoicon.sml").image;
         private static readonly Texture WarningIcon = EditorUtils.LoadImage("NotFound.png");
 
-        private void AffirmStyles()
-        {
-            if (RichTextStyle == null)
-            {
+        private void AffirmStyles() {
+            if (RichTextStyle == null) {
                 RichTextStyle = new GUIStyle(GUI.skin.label) { richText = true };
             }
         }
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             AffirmStyles();
 
             label = EditorGUI.BeginProperty(position, label, property);
@@ -445,8 +386,7 @@ namespace FMODUnity
             pathRect = EditorGUI.PrefixLabel(pathRect, label);
             EditorGUI.PropertyField(pathRect, property, GUIContent.none);
 
-            using (new EditorGUI.IndentLevelScope())
-            {
+            using (new EditorGUI.IndentLevelScope()) {
                 GUIContent content = StatusContent(property);
 
                 Rect infoRect = EditorGUI.IndentedRect(position);
@@ -461,51 +401,43 @@ namespace FMODUnity
             EditorGUI.EndProperty();
         }
 
-        private GUIContent StatusContent(SerializedProperty property)
-        {
+        private GUIContent StatusContent(SerializedProperty property) {
 #pragma warning disable 0618 // Suppress the warning about using the obsolete EventRefAttribute class
             string migrationTarget = (attribute as EventRefAttribute).MigrateTo;
 #pragma warning restore 0618
 
-            if (string.IsNullOrEmpty(migrationTarget))
-            {
-                return new GUIContent("<b>[FMODUnity.EventRef]</b> is obsolete - use the <b>FMODUnity.EventReference</b> type instead.",
+            if (string.IsNullOrEmpty(migrationTarget)) {
+                return new GUIContent(L10n.Tr("<b>[FMODUnity.EventRef]</b> is obsolete - use the <b>FMODUnity.EventReference</b> type instead."),
                     WarningIcon);
 
             }
-            else
-            {
+            else {
                 int parentPathLength = property.propertyPath.LastIndexOf('.');
 
-                if (parentPathLength >= 0)
-                {
+                if (parentPathLength >= 0) {
                     migrationTarget = string.Format("{0}.{1}", property.propertyPath.Remove(parentPathLength), migrationTarget);
                 }
 
                 SerializedProperty targetProperty = property.serializedObject.FindProperty(migrationTarget);
 
-                if (targetProperty != null)
-                {
-                    return new GUIContent(string.Format("Will be migrated to <b>{0}</b>", targetProperty.displayName),
+                if (targetProperty != null) {
+                    return new GUIContent(string.Format(L10n.Tr("Will be migrated to <b>{0}</b>"), targetProperty.displayName),
                         InfoIcon);
                 }
-                else
-                {
-                    return new GUIContent(string.Format("Migration target <b>{0}</b> is missing", migrationTarget),
+                else {
+                    return new GUIContent(string.Format(L10n.Tr("Migration target <b>{0}</b> is missing"), migrationTarget),
                         WarningIcon);
                 }
             }
         }
 
-        private Vector2 StatusSize(GUIContent content)
-        {
+        private Vector2 StatusSize(GUIContent content) {
             AffirmStyles();
 
             return Vector2.Max(RichTextStyle.CalcSize(content), EditorUtils.GetHelpButtonSize());
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             return EditorGUIUtility.singleLineHeight + StatusSize(StatusContent(property)).y;
         }
     }

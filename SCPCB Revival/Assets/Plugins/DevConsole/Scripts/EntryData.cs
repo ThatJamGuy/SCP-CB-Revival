@@ -14,13 +14,13 @@ namespace SickDev.DevConsole {
         public List<string> tags;
         public EntryOptions options;
 
-        public EntryData(string text, params string[] tags) :this(text, new EntryOptions(), tags) { }
-        public EntryData(string text, EntryOptions options, params string[] tags) :this(text, null, null, options, tags) { }
+        public EntryData(string text, params string[] tags) : this(text, new EntryOptions(), tags) { }
+        public EntryData(string text, EntryOptions options, params string[] tags) : this(text, null, null, options, tags) { }
 
-        public EntryData(string text, Texture2D icon, params string[] tags):this(text, icon, new EntryOptions(), tags) { }
-        public EntryData(string text, Texture2D icon, EntryOptions options, params string[] tags): this(text, icon, null, options, tags) { }
+        public EntryData(string text, Texture2D icon, params string[] tags) : this(text, icon, new EntryOptions(), tags) { }
+        public EntryData(string text, Texture2D icon, EntryOptions options, params string[] tags) : this(text, icon, null, options, tags) { }
 
-        public EntryData(string text, Texture2D icon, string stackTrace, params string[] tags) :this(text, icon, stackTrace, new EntryOptions(), tags) { }
+        public EntryData(string text, Texture2D icon, string stackTrace, params string[] tags) : this(text, icon, stackTrace, new EntryOptions(), tags) { }
         public EntryData(string text, Texture2D icon, string stackTrace, EntryOptions options, params string[] tags) {
             this.text = text;
             this.icon = icon;
@@ -31,7 +31,7 @@ namespace SickDev.DevConsole {
         }
 
         void SanitizeTags() {
-            for(int i = 0; i < tags.Count; i++)
+            for (int i = 0; i < tags.Count; i++)
                 tags[i] = SanitizeTag(tags[i]);
         }
 
@@ -44,7 +44,7 @@ namespace SickDev.DevConsole {
         }
 
         public void CutOffExceedingText() {
-            if(text.Length + stackTrace.Length > MAX_CHARACTERS) 
+            if (text.Length + stackTrace.Length > MAX_CHARACTERS)
                 text = text.Substring(0, MAX_CHARACTERS - stackTrace.Length - EXTRA_TEXT.Length) + EXTRA_TEXT;
         }
     }

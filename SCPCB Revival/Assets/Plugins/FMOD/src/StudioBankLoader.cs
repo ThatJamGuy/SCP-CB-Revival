@@ -1,11 +1,9 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-namespace FMODUnity
-{
+namespace FMODUnity {
     [AddComponentMenu("FMOD Studio/FMOD Studio Bank Loader")]
-    public class StudioBankLoader : MonoBehaviour
-    {
+    public class StudioBankLoader : MonoBehaviour {
         public LoaderGameEvent LoadEvent;
         public LoaderGameEvent UnloadEvent;
         [BankRef]
@@ -14,103 +12,83 @@ namespace FMODUnity
         public bool PreloadSamples;
         private bool isQuitting;
 
-        private void HandleGameEvent(LoaderGameEvent gameEvent)
-        {
-            if (LoadEvent == gameEvent)
-            {
+        private void HandleGameEvent(LoaderGameEvent gameEvent) {
+            if (LoadEvent == gameEvent) {
                 Load();
             }
-            if (UnloadEvent == gameEvent)
-            {
+            if (UnloadEvent == gameEvent) {
                 Unload();
             }
         }
 
-        private void Start()
-        {
+        private void Start() {
             RuntimeUtils.EnforceLibraryOrder();
             HandleGameEvent(LoaderGameEvent.ObjectStart);
         }
 
-        private void OnApplicationQuit()
-        {
+        private void OnApplicationQuit() {
             isQuitting = true;
         }
 
-        private void OnDestroy()
-        {
-            if (!isQuitting)
-            {
+        private void OnDestroy() {
+            if (!isQuitting) {
                 HandleGameEvent(LoaderGameEvent.ObjectDestroy);
             }
         }
 
 #if UNITY_PHYSICS_EXIST
-        private void OnTriggerEnter(Collider other)
-        {
-            if (string.IsNullOrEmpty(CollisionTag) || other.CompareTag(CollisionTag))
-            {
+        private void OnTriggerEnter(Collider other) {
+            if (string.IsNullOrEmpty(CollisionTag) || other.CompareTag(CollisionTag)) {
                 HandleGameEvent(LoaderGameEvent.TriggerEnter);
             }
         }
 
-        private void OnTriggerExit(Collider other)
-        {
-            if (string.IsNullOrEmpty(CollisionTag) || other.CompareTag(CollisionTag))
-            {
+        private void OnTriggerExit(Collider other) {
+            if (string.IsNullOrEmpty(CollisionTag) || other.CompareTag(CollisionTag)) {
                 HandleGameEvent(LoaderGameEvent.TriggerExit);
             }
         }
 #endif
 
 #if UNITY_PHYSICS2D_EXIST
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            if (string.IsNullOrEmpty(CollisionTag) || other.CompareTag(CollisionTag))
-            {
+        private void OnTriggerEnter2D(Collider2D other) {
+            if (string.IsNullOrEmpty(CollisionTag) || other.CompareTag(CollisionTag)) {
                 HandleGameEvent(LoaderGameEvent.TriggerEnter2D);
             }
         }
 
-        private void OnTriggerExit2D(Collider2D other)
-        {
-            if (string.IsNullOrEmpty(CollisionTag) || other.CompareTag(CollisionTag))
-            {
+        private void OnTriggerExit2D(Collider2D other) {
+            if (string.IsNullOrEmpty(CollisionTag) || other.CompareTag(CollisionTag)) {
                 HandleGameEvent(LoaderGameEvent.TriggerExit2D);
             }
         }
 #endif
 
-        private void OnEnable()
-        {
+        private void OnEnable() {
             HandleGameEvent(LoaderGameEvent.ObjectEnable);
         }
 
-        private void OnDisable()
-        {
+        private void OnDisable() {
             HandleGameEvent(LoaderGameEvent.ObjectDisable);
         }
 
-        public void Load()
-        {
-            foreach (var bankRef in Banks)
-            {
-                try
-                {
+        public void Load() {
+            foreach (var bankRef in Banks) {
+                try {
                     RuntimeManager.LoadBank(bankRef, PreloadSamples);
                 }
-                catch (BankLoadException e)
-                {
+                catch (BankLoadException e) {
                     RuntimeUtils.DebugLogException(e);
                 }
             }
-            RuntimeManager.WaitForAllSampleLoading();
+
+            if (PreloadSamples) {
+                RuntimeManager.WaitForAllSampleLoading();
+            }
         }
 
-        public void Unload()
-        {
-            foreach (var bankRef in Banks)
-            {
+        public void Unload() {
+            foreach (var bankRef in Banks) {
                 RuntimeManager.UnloadBank(bankRef);
             }
         }

@@ -1,100 +1,131 @@
+using FMOD.Studio;
+using FMODUnity;
 using SickDev.CommandSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace scpcbr {
-    public class AmbienceController : MonoBehaviour {
-        public static AmbienceController Instance { get; private set; }
+public class AmbienceController : MonoBehaviour {
+    public static AmbienceController Instance { get; private set; }
 
-        [Header("Zone")]
-        public int currentZone;
+    [Header("Zone")]
+    public int currentZone;
+    [SerializeField] private float ambienceInterval = 30f;
 
-        [Header("Ambience Clips")]
-        [SerializeField] AudioClip[] zone0Ambience;
-        [SerializeField] AudioClip[] zone1Ambience;
-        [SerializeField] AudioClip[] zone2Ambience;
-        [SerializeField] AudioClip[] zone3Ambience;
-        [SerializeField] AudioClip[] commotionSounds;
+    [Header("Commotion")]
+    [SerializeField] private float commotionInterval = 10f;
+    [SerializeField] private int commotionCount = 27;
 
-        private int currentCommotionIndex;
-        private Dictionary<int, AudioClip[]> zoneAmbienceMap;
-        private Coroutine ambienceCoroutine;
-        private Transform[] player;
+    private EventReference zoneAmbienceEvent;
+    private EventReference commotionEvent;
 
-        private void Awake() {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
+    private Dictionary<int, EventReference> zoneAmbienceMap;
+    private Coroutine ambienceCoroutine;
+    private Transform[] player;
+
+    private int currentCommotionIndex = 0;
+
+    private void Awake() {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    private void OnEnable() {
+        DevConsole.singleton.AddCommand(new ActionCommand(PlayCommotionEvent) { className = "Event" });
+    }
+
+    private void Start() {
+        GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+        player = new Transform[playerObjects.Length];
+        for (int i = 0; i < playerObjects.Length; i++) {
+            player[i] = playerObjects[i].transform;
         }
 
-        private void OnEnable() {
-            DevConsole.singleton.AddCommand(new ActionCommand(PlayNextCommotion) { className = "Ambience" });
+        if (FMODEvents.instance != null) {
+            zoneAmbienceEvent = FMODEvents.instance.zone1Ambience;
+            commotionEvent = FMODEvents.instance.commotionSounds;
+        }
+        else {
+            Debug.LogWarning("FMODEvents.instance is null - ambience will not play.");
+            zoneAmbienceEvent = default;
+            commotionEvent = default;
         }
 
-        private void Start() {
-            GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
-            player = new Transform[playerObjects.Length];
-            for (int i = 0; i < playerObjects.Length; i++) {
-                player[i] = playerObjects[i].transform;
+        InitializeZoneAmbienceMap();
+        StartAmbience();
+    }
+
+    private void InitializeZoneAmbienceMap() {
+        zoneAmbienceMap = new Dictionary<int, EventReference>
+        {
+                { 0, zoneAmbienceEvent },
+                { 1, zoneAmbienceEvent },
+                { 2, zoneAmbienceEvent },
+                { 3, zoneAmbienceEvent }
+            };
+    }
+
+    private void StartAmbience() {
+        if (ambienceCoroutine != null) StopCoroutine(ambienceCoroutine);
+        ambienceCoroutine = StartCoroutine(AmbienceWatcher());
+    }
+
+    private IEnumerator AmbienceWatcher() {
+        while (true) {
+            EventReference ev = default;
+            if (zoneAmbienceMap != null && zoneAmbienceMap.ContainsKey(currentZone)) ev = zoneAmbienceMap[currentZone];
+
+            if (ev.IsNull) {
+                yield return new WaitForSeconds(1f);
+                continue;
             }
-            InitializeZoneAmbienceMap();
-            StartAmbience();
-        }
 
-        private void InitializeZoneAmbienceMap() {
-            zoneAmbienceMap = new Dictionary<int, AudioClip[]>
-            {
-            { 0, zone0Ambience },
-            { 1, zone1Ambience },
-            { 2, zone2Ambience },
-            { 3, zone3Ambience }
-        };
-        }
-
-        private void StartAmbience() {
-            if (ambienceCoroutine != null) StopCoroutine(ambienceCoroutine);
-            ambienceCoroutine = StartCoroutine(Ambience());
-        }
-
-        private IEnumerator Ambience() {
-            while (true) {
-                if (zoneAmbienceMap.ContainsKey(currentZone) && zoneAmbienceMap[currentZone].Length > 0) {
-                    var clips = zoneAmbienceMap[currentZone];
-                    var clip = clips[Random.Range(0, clips.Length)];
-                    PlaySpatialClip(clip, RandomPositionAroundPlayer());
-                    yield return new WaitForSeconds(Random.Range(10, 30));
-                }
-                else yield return null;
+            try {
+                var instance = RuntimeManager.CreateInstance(ev);
+                instance.set3DAttributes(RuntimeUtils.To3DAttributes(RandomPositionAroundPlayer()));
+                instance.start();
+                instance.release();
             }
-        }
-
-        public void PlayNextCommotion() {
-            if (currentCommotionIndex < commotionSounds.Length) {
-                PlaySpatialClip(commotionSounds[currentCommotionIndex], RandomPositionAroundPlayer());
-                currentCommotionIndex++;
-                Invoke(nameof(PlayNextCommotion), 10f);
+            catch (System.Exception ex) {
+                Debug.LogWarning($"Failed to play ambience event: {ex.Message}");
             }
-        }
 
-        private void PlaySpatialClip(AudioClip clip, Vector3 position) {
-            var tempGO = new GameObject("TempAudio");
-            tempGO.transform.position = position;
-            var source = tempGO.AddComponent<AudioSource>();
-            source.clip = clip;
-            source.spatialBlend = 0.5f;
-            source.minDistance = 5f;
-            source.maxDistance = 25f;
-            source.rolloffMode = AudioRolloffMode.Linear;
-            source.Play();
-            Destroy(tempGO, clip.length + 0.5f);
+            yield return new WaitForSeconds(Mathf.Max(0.01f, ambienceInterval));
         }
+    }
 
-        private Vector3 RandomPositionAroundPlayer() {
-            if (player == null || player.Length == 0) return Vector3.zero;
-            Transform randomPlayer = player[Random.Range(0, player.Length)];
-            var offset = Random.onUnitSphere * Random.Range(5f, 15f);
-            offset.y = Mathf.Clamp(offset.y, 0.5f, 3f);
-            return randomPlayer.position + offset;
+    private IEnumerator CommotionSequence() {
+        while (currentCommotionIndex < commotionCount) {
+            PlayNextCommotion();
+            yield return new WaitForSeconds(commotionInterval);
+            currentCommotionIndex++;
         }
+    }
+
+    public void PlayCommotionEvent() {
+        StartCoroutine(CommotionSequence());
+    }
+
+    private void PlayNextCommotion() {
+        if (commotionEvent.IsNull) return;
+        if (AudioManager.instance == null) return;
+
+        AudioManager.instance.PlaySound(commotionEvent, RandomPositionAroundPlayer());
+    }
+
+    private Vector3 RandomPositionAroundPlayer() {
+        if (player == null || player.Length == 0) return Vector3.zero;
+        Transform randomPlayer = player[Random.Range(0, player.Length)];
+        var offset = Random.onUnitSphere * Random.Range(5f, 15f);
+        offset.y = Mathf.Clamp(offset.y, 0.5f, 3f);
+        return randomPlayer.position + offset;
+    }
+
+    private void OnDisable() {
+        CancelInvoke(nameof(PlayNextCommotion));
+    }
+
+    private void OnDestroy() {
+        CancelInvoke(nameof(PlayNextCommotion));
     }
 }

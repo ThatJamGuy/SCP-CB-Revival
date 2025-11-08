@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Linq;
 using UnityEditor;
-using System.Linq;
+using UnityEngine;
 
 namespace SickDev.DevConsole {
     [CustomEditor(typeof(Settings))]
@@ -32,21 +32,21 @@ namespace SickDev.DevConsole {
 
         void DrawTabs() {
             selectedTab.intValue = GUILayout.Toolbar(selectedTab.intValue, tabsContents);
-            switch(selectedTab.intValue) {
-            case 0:
-                DrawBehaviour();
-                break;
-            case 1:
-                DrawLookAndFeel();
-                break;
-            case 2:
-                DrawIcons();
-                break;
-            case 3:
-                GUI.enabled = !EditorApplication.isPlaying;
-                DrawBuiltInCommands();
-                GUI.enabled = true;
-                break;
+            switch (selectedTab.intValue) {
+                case 0:
+                    DrawBehaviour();
+                    break;
+                case 1:
+                    DrawLookAndFeel();
+                    break;
+                case 2:
+                    DrawIcons();
+                    break;
+                case 3:
+                    GUI.enabled = !EditorApplication.isPlaying;
+                    DrawBuiltInCommands();
+                    GUI.enabled = true;
+                    break;
             }
         }
 
@@ -116,21 +116,21 @@ namespace SickDev.DevConsole {
         void DrawBuiltInCommands() {
             SerializedProperty currentCommand = serializedObject.FindProperty("builtInCommands");
             SerializedProperty[] commands = new SerializedProperty[currentCommand.Copy().CountRemaining()];
-            for(int i = 0; currentCommand.Next(true); i++)
+            for (int i = 0; currentCommand.Next(true); i++)
                 commands[i] = currentCommand.Copy();
             commands = commands.OrderBy(x => x.name).ToArray();
 
-            int firstColumnCount = commands.Length/2;
+            int firstColumnCount = commands.Length / 2;
             SerializedProperty commandToggled = null;
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
-            for(int i = 0; i < commands.Length; i++) {
-                if (i == firstColumnCount+1)
+            for (int i = 0; i < commands.Length; i++) {
+                if (i == firstColumnCount + 1)
                     EditorGUILayout.BeginVertical();
                 EditorGUI.BeginChangeCheck();
                 EditorGUILayout.PropertyField(commands[i], true);
-                if(EditorGUI.EndChangeCheck())
-                    commandToggled = commands[i];                
+                if (EditorGUI.EndChangeCheck())
+                    commandToggled = commands[i];
                 if (i == firstColumnCount)
                     EditorGUILayout.EndVertical();
             }
@@ -141,20 +141,20 @@ namespace SickDev.DevConsole {
         }
 
         void ProcessCommandToggled(SerializedProperty command) {
-            if(command == null)
+            if (command == null)
                 return;
-            switch(command.name) {
-            case "microphone":
-                AddOrRemoveDefineSymbol("COMMAND_SYSTEM_USE_MICROPHONE", BuildTargetGroup.Android, command.boolValue);
-                break;
-            case "locationService":
-                AddOrRemoveDefineSymbol("COMMAND_SYSTEM_USE_LOCATION", BuildTargetGroup.Android, command.boolValue);
-                break;
+            switch (command.name) {
+                case "microphone":
+                    AddOrRemoveDefineSymbol("COMMAND_SYSTEM_USE_MICROPHONE", BuildTargetGroup.Android, command.boolValue);
+                    break;
+                case "locationService":
+                    AddOrRemoveDefineSymbol("COMMAND_SYSTEM_USE_LOCATION", BuildTargetGroup.Android, command.boolValue);
+                    break;
             }
         }
 
         void AddOrRemoveDefineSymbol(string define, BuildTargetGroup group, bool add) {
-            if(add)
+            if (add)
                 DefineSymbolsManager.AddDefine(define, group);
             else
                 DefineSymbolsManager.RemoveDefine(define, group);

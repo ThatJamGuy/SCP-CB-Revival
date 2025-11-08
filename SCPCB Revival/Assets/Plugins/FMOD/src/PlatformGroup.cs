@@ -4,10 +4,8 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace FMODUnity
-{
-    public class PlatformGroup : Platform
-    {
+namespace FMODUnity {
+    public class PlatformGroup : Platform {
         [SerializeField]
         private string displayName;
 
@@ -17,15 +15,13 @@ namespace FMODUnity
         internal override string DisplayName { get { return displayName; } }
         internal override void DeclareRuntimePlatforms(Settings settings) { }
 #if UNITY_EDITOR
-        internal override IEnumerable<BuildTarget> GetBuildTargets()
-        {
+        internal override IEnumerable<BuildTarget> GetBuildTargets() {
             yield break;
         }
 
         internal override Legacy.Platform LegacyIdentifier { get { return legacyIdentifier; } }
 
-        internal static PlatformGroup Create(string displayName, Legacy.Platform legacyIdentifier)
-        {
+        internal static PlatformGroup Create(string displayName, Legacy.Platform legacyIdentifier) {
             PlatformGroup group = CreateInstance<PlatformGroup>();
             group.Identifier = GUID.Generate().ToString();
             group.displayName = displayName;
@@ -35,13 +31,11 @@ namespace FMODUnity
             return group;
         }
 
-        protected override BinaryAssetFolderInfo GetBinaryAssetFolder(BuildTarget buildTarget)
-        {
+        protected override BinaryAssetFolderInfo GetBinaryAssetFolder(BuildTarget buildTarget) {
             return null;
         }
 
-        protected override IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix)
-        {
+        protected override IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix) {
             yield break;
         }
 

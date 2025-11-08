@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 
-namespace FMODUnity
-{
-    public class BankRefAttribute : PropertyAttribute
-    {
+namespace FMODUnity {
+    public class BankRefAttribute : PropertyAttribute {
     }
 }

@@ -1,5 +1,5 @@
-using UnityEngine;
 using SickDev.CommandSystem;
+using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour {
@@ -33,6 +33,8 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     void HandleMovement() {
+        if (controller == null) return;
+
         grounded = controller.isGrounded;
         if (grounded && velocity.y < 0f) velocity.y = -2f;
 

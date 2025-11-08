@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-namespace FMODUnity
-{
-    public class EditorBankRef : ScriptableObject
-    {
+namespace FMODUnity {
+    public class EditorBankRef : ScriptableObject {
         [SerializeField]
         public string Path;
 
@@ -22,14 +20,12 @@ namespace FMODUnity
 
         public bool Exists;
 
-        public DateTime LastModified
-        {
+        public DateTime LastModified {
             get { return new DateTime(lastModified); }
             set { lastModified = value.Ticks; }
         }
 
-        public static string CalculateName(string filePath, string basePath)
-        {
+        public static string CalculateName(string filePath, string basePath) {
             string relativePath = filePath.Substring(basePath.Length + 1);
             string extension = System.IO.Path.GetExtension(relativePath);
 
@@ -39,19 +35,16 @@ namespace FMODUnity
             return name;
         }
 
-        public void SetPath(string filePath, string basePath)
-        {
+        public void SetPath(string filePath, string basePath) {
             Path = RuntimeUtils.GetCommonPlatformPath(filePath);
             Name = CalculateName(filePath, basePath);
             base.name = "bank:/" + Name + System.IO.Path.GetExtension(filePath);
         }
 
-        public void SetStudioPath(string studioPath)
-        {
+        public void SetStudioPath(string studioPath) {
             string stringCmp;
             stringCmp = System.IO.Path.GetFileName(Name);
-            if (!studioPath.Contains(stringCmp))
-            {
+            if (!studioPath.Contains(stringCmp)) {
                 // No match means localization
                 studioPath = studioPath.Substring(0, studioPath.LastIndexOf("/") + 1);
                 studioPath += stringCmp;
@@ -60,13 +53,11 @@ namespace FMODUnity
         }
 
         [Serializable]
-        public class NameValuePair
-        {
+        public class NameValuePair {
             public string Name;
             public long Value;
 
-            public NameValuePair(string name, long value)
-            {
+            public NameValuePair(string name, long value) {
                 Name = name;
                 Value = value;
             }
