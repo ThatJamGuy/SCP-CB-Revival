@@ -1,56 +1,109 @@
 using SickDev.CommandSystem;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour {
+    [Header("Movement Status")]
+    [SerializeField, Range(0, 1)] private float stamina = 1f;
+
     [Header("Movement Settings")]
-    public bool movementEnabled = true;
-    [SerializeField] float walkSpeed = 4f;
-    [SerializeField] float noclipSpeed = 10f;
+    [SerializeField] private float walkSpeed = 4f;
+    [SerializeField] private float sprintSpeed = 7f;
+    [SerializeField] private float noclipSpeed = 10f;
+
+    [Header("Stamina")]
+    [SerializeField] private float maxStamina = 1f;
+    [SerializeField] private float staminaDrainRate = 0.2f;
+    [SerializeField] private float staminaRegenRate = 0.1f;
+    [SerializeField] private Slider staminaSlider;
 
     [Header("References")]
-    [SerializeField] Transform playerCameraRoot;
+    [SerializeField] private Transform playerCameraRoot;
 
-    CharacterController controller;
-    Vector3 velocity;
-    bool grounded;
-    bool noclip;
+    private PlayerAccessor playerAccessor => PlayerAccessor.instance;
+    private CharacterController controller;
+    private Vector3 velocity;
+    private bool grounded;
+    private bool noclip;
 
-    const float gravity = -9.81f;
+    private bool sprintLocked = false;
 
-    void OnEnable() {
+    private const float gravity = -9.81f;
+
+    #region Default Methods
+    private void OnEnable() {
         DevConsole.singleton.AddCommand(new ActionCommand(ToggleNoclip) { className = "Player" });
     }
 
-    void Awake() {
+    private void Awake() {
         controller = GetComponent<CharacterController>();
     }
 
-    void Update() {
-        if (!movementEnabled || playerCameraRoot == null) return;
+    private void Update() {
+        if (playerAccessor == null || !playerAccessor.allowInput) return;
+
         if (noclip) HandleNoclip();
         else HandleMovement();
     }
+    #endregion
 
-    void HandleMovement() {
+    #region Private Methods
+    private void HandleMovement() {
         if (controller == null) return;
+        HandleStamina();
 
         grounded = controller.isGrounded;
         if (grounded && velocity.y < 0f) velocity.y = -2f;
 
-        Vector3 move = GetMoveDirection(flattenY: true) * walkSpeed;
-        controller.Move(move * Time.deltaTime);
+        float currentSpeed = walkSpeed;
+
+        bool wantsToSprint = playerAccessor.isSprinting;
+        bool canSprint = !playerAccessor.isCrouching && (playerAccessor.infiniteStamina || stamina > 0f) && playerAccessor.isMoving && !sprintLocked;
+        if (wantsToSprint && canSprint) currentSpeed = sprintSpeed;
+
+        Vector3 move = GetMoveDirection(flattenY: true) * currentSpeed;
 
         velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+
+        Vector3 displacement = (move + velocity) * Time.deltaTime;
+        controller.Move(displacement);
     }
 
-    void HandleNoclip() {
+    private void HandleStamina() {
+        var inputManager = InputManager.Instance;
+
+        if (playerAccessor.isSprinting && !playerAccessor.infiniteStamina && !playerAccessor.isCrouching && playerAccessor.isMoving && !sprintLocked) {
+            float drainRate = staminaDrainRate * (1f + playerAccessor.staminaDepletionModifier);
+            stamina = Mathf.Max(stamina - drainRate * Time.deltaTime, 0f);
+
+            if (stamina <= 0f) {
+                stamina = 0f;
+                sprintLocked = true;
+            }
+        }
+        else if (stamina < maxStamina) {
+            stamina = Mathf.Min(stamina + staminaRegenRate * Time.deltaTime, maxStamina);
+
+            if (stamina > 0f && inputManager != null && !inputManager.IsSprinting) {
+                sprintLocked = false;
+            }
+        }
+
+        if (inputManager != null && !inputManager.IsSprinting) {
+            sprintLocked = false;
+        }
+
+        if (staminaSlider) staminaSlider.value = stamina / maxStamina;
+    }
+
+    private void HandleNoclip() {
         transform.position += GetMoveDirection(flattenY: false) * noclipSpeed * Time.deltaTime;
     }
 
-    Vector3 GetMoveDirection(bool flattenY) {
-        Vector2 input = InputManager.Instance.Move;
+    private Vector3 GetMoveDirection(bool flattenY) {
+        var im = InputManager.Instance;
+        Vector2 input = im != null ? im.Move : Vector2.zero;
         Vector3 forward = playerCameraRoot.forward;
         Vector3 right = playerCameraRoot.right;
 
@@ -64,10 +117,11 @@ public class PlayerMovement : MonoBehaviour {
         return move;
     }
 
-    void ToggleNoclip() {
+    private void ToggleNoclip() {
         noclip = !noclip;
-        if (controller) controller.enabled = !enabled;
+        if (controller) controller.enabled = !noclip;
         velocity = Vector3.zero;
         Debug.Log($"Toggling noclip mode to: {noclip}");
     }
+    #endregion
 }
