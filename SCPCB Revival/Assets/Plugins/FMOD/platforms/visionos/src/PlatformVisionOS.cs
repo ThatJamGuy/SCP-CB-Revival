@@ -92,10 +92,10 @@ namespace FMODUnity {
 #endif
 
 #if !UNITY_EDITOR
-        internal override void LoadPlugins(FMOD.System coreSystem, Action<FMOD.RESULT, string> reportResult)
-        {
-            PlatformIOS.StaticLoadPlugins(this, coreSystem, reportResult);
-        }
+        //internal override void LoadPlugins(FMOD.System coreSystem, Action<FMOD.RESULT, string> reportResult)
+        //{
+        //    PlatformIOS.StaticLoadPlugins(this, coreSystem, reportResult);
+        //}
 #endif
 
 #if UNITY_EDITOR

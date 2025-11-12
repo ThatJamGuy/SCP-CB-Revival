@@ -9,6 +9,7 @@ public class InputManager : MonoBehaviour {
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction sprintAction;
+    private InputAction crouchAction;
 
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);
@@ -17,10 +18,12 @@ public class InputManager : MonoBehaviour {
         moveAction = playerInput.actions["Move"];
         lookAction = playerInput.actions["Look"];
         sprintAction = playerInput.actions["Sprint"];
+        crouchAction = playerInput.actions.FindAction("Crouch", false);
     }
 
     public Vector2 Move => moveAction.ReadValue<Vector2>();
     public Vector2 Look => lookAction.ReadValue<Vector2>();
     public bool IsMoving => Move.magnitude > 0;
     public bool IsSprinting => sprintAction.ReadValue<float>() > 0;
+    public bool IsCrouchTriggered => crouchAction != null && crouchAction.triggered;
 }

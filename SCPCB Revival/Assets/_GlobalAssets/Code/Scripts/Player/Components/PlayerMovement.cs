@@ -1,3 +1,4 @@
+using PrimeTween;
 using SickDev.CommandSystem;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] private float walkSpeed = 4f;
     [SerializeField] private float sprintSpeed = 7f;
     [SerializeField] private float noclipSpeed = 10f;
+    [SerializeField] private float crouchSpeed = 2f;
 
     [Header("Stamina")]
     [SerializeField] private float maxStamina = 1f;
@@ -24,86 +26,63 @@ public class PlayerMovement : MonoBehaviour {
     private PlayerAccessor playerAccessor => PlayerAccessor.instance;
     private CharacterController controller;
     private Vector3 velocity;
+
     private bool grounded;
     private bool noclip;
-
-    private bool sprintLocked = false;
+    private bool sprintLocked;
 
     private const float gravity = -9.81f;
+    private const float standingHeight = 2.2f;
+    private const float crouchingHeight = 0.5f;
 
-    #region Default Methods
-    private void OnEnable() {
-        DevConsole.singleton.AddCommand(new ActionCommand(ToggleNoclip) { className = "Player" });
-    }
-
+    #region Unity Methods
     private void Awake() {
         controller = GetComponent<CharacterController>();
     }
 
+    private void OnEnable() {
+        DevConsole.singleton.AddCommand(new ActionCommand(ToggleNoclip) { className = "Player" });
+    }
+
     private void Update() {
         if (playerAccessor == null || !playerAccessor.allowInput) return;
+
+        var im = InputManager.Instance;
+        if (im != null && im.IsCrouchTriggered) AttemptToggleCrouch();
 
         if (noclip) HandleNoclip();
         else HandleMovement();
     }
     #endregion
 
-    #region Private Methods
+    #region Movement
     private void HandleMovement() {
         if (controller == null) return;
+
         HandleStamina();
 
         grounded = controller.isGrounded;
         if (grounded && velocity.y < 0f) velocity.y = -2f;
 
-        float currentSpeed = walkSpeed;
-
+        float currentSpeed = playerAccessor.isCrouching ? crouchSpeed : walkSpeed;
         bool wantsToSprint = playerAccessor.isSprinting;
         bool canSprint = !playerAccessor.isCrouching && (playerAccessor.infiniteStamina || stamina > 0f) && playerAccessor.isMoving && !sprintLocked;
+
         if (wantsToSprint && canSprint) currentSpeed = sprintSpeed;
 
-        Vector3 move = GetMoveDirection(flattenY: true) * currentSpeed;
-
+        Vector3 move = GetMoveDirection(true) * currentSpeed;
         velocity.y += gravity * Time.deltaTime;
-
-        Vector3 displacement = (move + velocity) * Time.deltaTime;
-        controller.Move(displacement);
-    }
-
-    private void HandleStamina() {
-        var inputManager = InputManager.Instance;
-
-        if (playerAccessor.isSprinting && !playerAccessor.infiniteStamina && !playerAccessor.isCrouching && playerAccessor.isMoving && !sprintLocked) {
-            float drainRate = staminaDrainRate * (1f + playerAccessor.staminaDepletionModifier);
-            stamina = Mathf.Max(stamina - drainRate * Time.deltaTime, 0f);
-
-            if (stamina <= 0f) {
-                stamina = 0f;
-                sprintLocked = true;
-            }
-        }
-        else if (stamina < maxStamina) {
-            stamina = Mathf.Min(stamina + staminaRegenRate * Time.deltaTime, maxStamina);
-
-            if (stamina > 0f && inputManager != null && !inputManager.IsSprinting) {
-                sprintLocked = false;
-            }
-        }
-
-        if (inputManager != null && !inputManager.IsSprinting) {
-            sprintLocked = false;
-        }
-
-        if (staminaSlider) staminaSlider.value = stamina / maxStamina;
+        controller.Move((move + velocity) * Time.deltaTime);
     }
 
     private void HandleNoclip() {
-        transform.position += GetMoveDirection(flattenY: false) * noclipSpeed * Time.deltaTime;
+        transform.position += GetMoveDirection(false) * noclipSpeed * Time.deltaTime;
     }
 
     private Vector3 GetMoveDirection(bool flattenY) {
         var im = InputManager.Instance;
         Vector2 input = im != null ? im.Move : Vector2.zero;
+
         Vector3 forward = playerCameraRoot.forward;
         Vector3 right = playerCameraRoot.right;
 
@@ -112,11 +91,62 @@ public class PlayerMovement : MonoBehaviour {
             right.y = 0f;
         }
 
-        Vector3 move = (forward.normalized * input.y + right.normalized * input.x);
+        Vector3 move = forward.normalized * input.y + right.normalized * input.x;
         if (move.sqrMagnitude > 1f) move.Normalize();
         return move;
     }
+    #endregion
 
+    #region Stamina
+    private void HandleStamina() {
+        var im = InputManager.Instance;
+
+        if (playerAccessor.isSprinting && !playerAccessor.infiniteStamina && !playerAccessor.isCrouching && playerAccessor.isMoving && !sprintLocked) {
+            float drainRate = staminaDrainRate * (1f + playerAccessor.staminaDepletionModifier);
+            stamina = Mathf.Max(stamina - drainRate * Time.deltaTime, 0f);
+            if (stamina <= 0f) { stamina = 0f; sprintLocked = true; }
+        }
+        else if (stamina < maxStamina) {
+            stamina = Mathf.Min(stamina + staminaRegenRate * Time.deltaTime, maxStamina);
+            if (stamina > 0f && im != null && !im.IsSprinting) sprintLocked = false;
+        }
+
+        if (im != null && !im.IsSprinting) sprintLocked = false;
+        if (staminaSlider) staminaSlider.value = stamina / maxStamina;
+    }
+    #endregion
+
+    #region Crouch
+    private void AttemptToggleCrouch() {
+        if (playerAccessor.isCrouching) TryStand();
+        else StartCrouch();
+    }
+
+    private void StartCrouch() {
+        if (playerAccessor.isCrouching) return;
+        playerAccessor.isCrouching = true;
+        StartHeightTween(controller.height, crouchingHeight);
+    }
+
+    private void TryStand() {
+        if (!playerAccessor.isCrouching || !CanStand()) return;
+        playerAccessor.isCrouching = false;
+        StartHeightTween(controller.height, standingHeight);
+    }
+
+    private void StartHeightTween(float from, float to) {
+        Tween.Custom(from, to, 0.1f, val => controller.height = val);
+    }
+
+    private bool CanStand() {
+        Vector3 bottom = transform.position + Vector3.up * controller.radius;
+        Vector3 top = transform.position + Vector3.up * (standingHeight - controller.radius);
+        int mask = ~(1 << LayerMask.NameToLayer("Player"));
+        return !Physics.CheckCapsule(bottom, top, controller.radius - 0.05f, mask, QueryTriggerInteraction.Ignore);
+    }
+    #endregion
+
+    #region Utility
     private void ToggleNoclip() {
         noclip = !noclip;
         if (controller) controller.enabled = !noclip;

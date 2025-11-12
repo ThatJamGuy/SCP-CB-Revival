@@ -23,8 +23,11 @@ public class PlayerAccessor : MonoBehaviour {
     }
 
     private void Update() {
-        isMoving = InputManager.Instance.IsMoving;
-        isSprinting = InputManager.Instance.IsSprinting;
+        var im = InputManager.Instance;
+        if (im != null) {
+            isMoving = im.IsMoving;
+            isSprinting = im.IsSprinting;
+        }
     }
 
     public void EnablePlayerInputs() {
