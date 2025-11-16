@@ -58,15 +58,15 @@ namespace SickDev.CommandSystem.Unity {
 
         [Parser(typeof(GameObject))]
         static GameObject ParseGameObject(string value) {
-            if(value.StartsWith("res:", StringComparison.InvariantCultureIgnoreCase))
+            if (value.StartsWith("res:", StringComparison.InvariantCultureIgnoreCase))
                 return Resources.Load<GameObject>(value.Substring(4).Trim());
 
-            for(int i = 0; i < SceneManager.sceneCount; i++) {
+            for (int i = 0; i < SceneManager.sceneCount; i++) {
                 GameObject[] root = SceneManager.GetSceneAt(i).GetRootGameObjects();
-                for(int j = 0; j < root.Length; j++) {
+                for (int j = 0; j < root.Length; j++) {
                     Transform[] children = root[j].GetComponentsInChildren<Transform>(true);
-                    for(int k = 0; k < children.Length; k++)
-                        if(children[k].name == value)
+                    for (int k = 0; k < children.Length; k++)
+                        if (children[k].name == value)
                             return children[k].gameObject;
                 }
             }
@@ -93,18 +93,18 @@ namespace SickDev.CommandSystem.Unity {
             return Resources.Load<Material>(value);
         }
 
-        static ArgumentType[] GenericParser<ArgumentType, ObjectType>(string value, int min, int max) where ArgumentType:IConvertible {
+        static ArgumentType[] GenericParser<ArgumentType, ObjectType>(string value, int min, int max) where ArgumentType : IConvertible {
             string[] array = GenericSplitter<ObjectType>(value, min, max);
 
             ArgumentType[] values = new ArgumentType[array.Length];
-            for(int i = 0; i < array.Length; i++)
+            for (int i = 0; i < array.Length; i++)
                 values[i] = (ArgumentType)Convert.ChangeType(array[i].Trim(), typeof(ArgumentType));
             return values;
         }
 
         static string[] GenericSplitter<T>(string value, int min, int max) {
             string[] array = value.Split(' ');
-            if(array.Length < min || array.Length > max)
+            if (array.Length < min || array.Length > max)
                 throw new InvalidArgumentFormatException<T>(value);
             return array;
         }

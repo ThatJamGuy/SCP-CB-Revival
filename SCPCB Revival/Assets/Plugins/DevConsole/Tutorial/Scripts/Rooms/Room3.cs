@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using SickDev.CommandSystem;
+﻿using SickDev.CommandSystem;
+using UnityEngine;
 
 namespace SickDev.DevConsole.Example {
     public class Room3 : Room {
@@ -8,11 +8,11 @@ namespace SickDev.DevConsole.Example {
         }
 
         void OpenRoom(int number) {
-            if(number < 4)
+            if (number < 4)
                 Debug.LogError("That room is already open");
-            else if(number > 4)
+            else if (number > 4)
                 Debug.LogError("Do you really wanna break the tutorial? ¬¬");
-            else if(!isComplete)
+            else if (!isComplete)
                 Complete();
             else
                 Debug.LogWarning("You have already opened that room. Move on!");

@@ -1,9 +1,9 @@
-﻿using System; 
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-namespace SickDev.DevConsole{
+namespace SickDev.DevConsole {
     [Serializable]
     public class Logger {
         [SerializeField]
@@ -37,7 +37,7 @@ namespace SickDev.DevConsole{
         public event Action<Filter> onFilterRemoved;
 
         public void Initialize() {
-            for(int i = 0; i < entriesList.Count; i++)
+            for (int i = 0; i < entriesList.Count; i++)
                 SetupEntry(entriesList[i]);
             lastGroupEntries = DevConsole.settings.groupIdenticalEntries;
         }
@@ -52,41 +52,41 @@ namespace SickDev.DevConsole{
             CalculateCurrentFilter();
             viewRect = new Rect(0, positionY, Screen.width / DevConsole.settings.scale, height);
             contentsRect = new Rect(viewRect.x, viewRect.y, viewRect.width, lastContentHeight);
-            if(buffer.Count > 0)
+            if (buffer.Count > 0)
                 AddNewEntries();
-            else if(lastGroupEntries != DevConsole.settings.groupIdenticalEntries)
+            else if (lastGroupEntries != DevConsole.settings.groupIdenticalEntries)
                 SelectDrawingEntries();
             lastGroupEntries = DevConsole.settings.groupIdenticalEntries;
             GUIUtils.DrawBox(viewRect, DevConsole.settings.mainColor);
             entryJustRemoved = false;
             scrollView.Draw(viewRect, contentsRect, DrawOnlyVisibleEntries);
-            if(!scrollView.isScrollbarVisible && lastScrollbarVisible)
+            if (!scrollView.isScrollbarVisible && lastScrollbarVisible)
                 scrollView.ScrollToTop();
-            else if(scrollView.isScrollbarVisible && !lastScrollbarVisible)
+            else if (scrollView.isScrollbarVisible && !lastScrollbarVisible)
                 scrollView.ScrollToBottom();
             lastScrollbarVisible = scrollView.isScrollbarVisible;
         }
 
         void CalculateCurrentFilter() {
             currentFilter = 0;
-            for(int i = 0; i < filters.Length; i++)
-                if(filters[i].isActive)
+            for (int i = 0; i < filters.Length; i++)
+                if (filters[i].isActive)
                     currentFilter += filters[i].hash;
         }
 
         void AddNewEntries() {
-            for(int i = 0; i < buffer.Count; i++) {
+            for (int i = 0; i < buffer.Count; i++) {
                 tempEntry = new Entry(buffer[i]);
                 SetupEntry(tempEntry);
                 entriesList.Add(tempEntry);
                 EntryDrawData drawData = new EntryDrawData();
                 drawData.justCreated = true;
-                drawData.tagsHash = CalculateTagsHash(tempEntry); 
+                drawData.tagsHash = CalculateTagsHash(tempEntry);
                 drawDataList.Add(drawData);
             }
             buffer.Clear();
 
-            while(entriesList.Count > capacity)
+            while (entriesList.Count > capacity)
                 RemoveEntry(entriesList[0]);
 
             MakeEntriesArray();
@@ -97,9 +97,9 @@ namespace SickDev.DevConsole{
             int tagsHash = 0;
             string[] tags = entry.data.tags.ToArray();
             AddFilters(tags);
-            for(int i = 0; i < tags.Length; i++) {
-                for(int j = 0; j < filters.Length; j++) {
-                    if(tags[i] == filters[j].tag) {
+            for (int i = 0; i < tags.Length; i++) {
+                for (int j = 0; j < filters.Length; j++) {
+                    if (tags[i] == filters[j].tag) {
                         tagsHash += filters[j].hash;
                         break;
                     }
@@ -110,15 +110,15 @@ namespace SickDev.DevConsole{
 
         void SetGroupToEntry(Entry entry) {
             bool createNewGroup = true;
-            for(int i = 0; i < groups.Length; i++) {
-                if(groups[i].CanAcceptEntry(entry)) {
+            for (int i = 0; i < groups.Length; i++) {
+                if (groups[i].CanAcceptEntry(entry)) {
                     groups[i].Add(entry);
                     createNewGroup = false;
                     break;
                 }
             }
 
-            if(createNewGroup) {
+            if (createNewGroup) {
                 tempGroup = new EntryGroup(entry);
                 groupsList.Add(tempGroup);
                 groups = groupsList.ToArray();
@@ -131,7 +131,7 @@ namespace SickDev.DevConsole{
         }
 
         void SelectDrawingEntries() {
-            if(DevConsole.settings.groupIdenticalEntries)
+            if (DevConsole.settings.groupIdenticalEntries)
                 SelectGroupEntries();
             else
                 SelectIndividualEntries();
@@ -140,7 +140,7 @@ namespace SickDev.DevConsole{
         void SelectGroupEntries() {
             drawingEntriesIndexes = new int[groups.Length];
             drawingDrawDataIndexes = new int[drawingEntriesIndexes.Length];
-            for(int i = 0; i < groups.Length; i++) {
+            for (int i = 0; i < groups.Length; i++) {
                 int index = entriesList.IndexOf(groups[i].lastEntry);
                 drawingEntriesIndexes[i] = index;
                 drawingDrawDataIndexes[i] = index;
@@ -150,7 +150,7 @@ namespace SickDev.DevConsole{
         void SelectIndividualEntries() {
             drawingEntriesIndexes = new int[entries.Length];
             drawingDrawDataIndexes = new int[drawingEntriesIndexes.Length];
-            for(int i = 0; i < entries.Length; i++) {
+            for (int i = 0; i < entries.Length; i++) {
                 drawingEntriesIndexes[i] = i;
                 drawingDrawDataIndexes[i] = i;
             }
@@ -161,14 +161,14 @@ namespace SickDev.DevConsole{
             float entryHeight = entry.height;
             drawDataList[index].height = entryHeight;
             drawData[index].height = entryHeight;
-            if(lastContentHeight + entryHeight > viewRect.height && scrollView.position.y + viewRect.height >= contentsRect.height)
+            if (lastContentHeight + entryHeight > viewRect.height && scrollView.position.y + viewRect.height >= contentsRect.height)
                 scrollView.ScrollToBottom();
         }
 
         void DrawOnlyVisibleEntries(Rect rect, Vector2 scrollPosition) {
             lastContentHeight = 0;
             float rectHeight = rect.height;
-            for(int i = 0; i < drawingEntriesIndexes.Length; i++) {
+            for (int i = 0; i < drawingEntriesIndexes.Length; i++) {
                 try {
                     tempEntry = entries[drawingEntriesIndexes[i]];
                 }
@@ -176,14 +176,14 @@ namespace SickDev.DevConsole{
                     tempEntry = null;
                 }
                 bool isFiltered = CheckIsEntryFiltered(drawData[drawingDrawDataIndexes[i]]);
-                if(!isFiltered)
+                if (!isFiltered)
                     continue;
                 bool isVisible = lastContentHeight + drawData[drawingDrawDataIndexes[i]].height >= scrollPosition.y && lastContentHeight < scrollPosition.y + rectHeight;
-                if(isVisible || drawData[drawingDrawDataIndexes[i]].justCreated) {
+                if (isVisible || drawData[drawingDrawDataIndexes[i]].justCreated) {
                     drawData[drawingDrawDataIndexes[i]].justCreated = false;
                     tempEntry.Draw(lastContentHeight, rect.width, isVisible);
                 }
-                if(!entryJustRemoved)
+                if (!entryJustRemoved)
                     lastContentHeight += drawData[drawingDrawDataIndexes[i]].height;
                 else {
                     entryJustRemoved = false;
@@ -192,18 +192,18 @@ namespace SickDev.DevConsole{
         }
 
         bool CheckIsEntryFiltered(EntryDrawData drawData) {
-            if(!DevConsole.settings.useAndFiltering)
+            if (!DevConsole.settings.useAndFiltering)
                 return (currentFilter & drawData.tagsHash) != 0;
             else
                 return (currentFilter & drawData.tagsHash) == currentFilter;
         }
 
         public void AddEntry(EntryData entry) {
-            if(string.IsNullOrEmpty(entry.stackTrace))
+            if (string.IsNullOrEmpty(entry.stackTrace))
                 entry.stackTrace = StackTraceUtility.ExtractStackTrace().Trim();
-            if(entry.tags == null)
+            if (entry.tags == null)
                 entry.tags = new List<string>();
-            if(entry.tags.Count == 0 && !entry.tags.Contains(DevConsole.settings.defaultTag))
+            if (entry.tags.Count == 0 && !entry.tags.Contains(DevConsole.settings.defaultTag))
                 entry.tags.Add(DevConsole.settings.defaultTag);
 
             buffer.Add(entry);
@@ -214,14 +214,14 @@ namespace SickDev.DevConsole{
         }
 
         public void Clear() {
-            for(int i = entries.Length - 1; i >= 0; i--)
+            for (int i = entries.Length - 1; i >= 0; i--)
                 RemoveEntry(entries[i]);
             MakeEntriesArray();
             SelectDrawingEntries();
         }
 
         void OnEntryRemoved(Entry entry) {
-            if(lastGroupEntries)
+            if (lastGroupEntries)
                 RemoveWholeGroup(entry.group);
             else
                 RemoveEntry(entry);
@@ -231,9 +231,9 @@ namespace SickDev.DevConsole{
 
         void RemoveWholeGroup(EntryGroup group) {
             Entry[] groupEntries = group.entries;
-            for(int i = 0; i < groupEntries.Length; i++)
+            for (int i = 0; i < groupEntries.Length; i++)
                 RemoveEntryAlone(groupEntries[i]);
-            RemoveGroup(group); 
+            RemoveGroup(group);
         }
 
         void RemoveEntryAlone(Entry entry) {
@@ -245,9 +245,9 @@ namespace SickDev.DevConsole{
         }
 
         void RemoveFiltersIfUnused(string[] tags) {
-            for(int i = 0; i < tags.Length; i++) {
+            for (int i = 0; i < tags.Length; i++) {
                 int numberOfUses = entriesList.Count(x => x.data.tags.Contains(tags[i]));
-                if(numberOfUses == 0) {
+                if (numberOfUses == 0) {
                     Filter filter = filters.First(x => x.tag == tags[i]);
                     filtersList.Remove(filter);
                     filters = filtersList.ToArray();
@@ -267,32 +267,32 @@ namespace SickDev.DevConsole{
         void RemoveEntry(Entry entry) {
             RemoveEntryAlone(entry);
             entry.group.Remove(entry);
-            if(entry.group.entries.Length == 0)
+            if (entry.group.entries.Length == 0)
                 RemoveGroup(entry.group);
         }
 
         public void AddFilters(params string[] tags) {
-            foreach(string tag in tags)
+            foreach (string tag in tags)
                 AddFilter(tag);
         }
 
         void AddFilter(string tag) {
             bool alreadyExists = false;
-            for(int i = 0; i < filters.Length; i++) {
-                if(filters[i].tag == tag) {
+            for (int i = 0; i < filters.Length; i++) {
+                if (filters[i].tag == tag) {
                     alreadyExists = true;
                     break;
                 }
             }
-            if(!alreadyExists) {
-                for(int i = 0; i < tagHashesUsed.Length; i++) {
-                    if(tagHashesUsed[i])
+            if (!alreadyExists) {
+                for (int i = 0; i < tagHashesUsed.Length; i++) {
+                    if (tagHashesUsed[i])
                         continue;
                     Filter filter = new Filter(tag, (int)Mathf.Pow(2, i));
                     filtersList.Add(filter);
                     filters = filtersList.ToArray();
                     tagHashesUsed[i] = true;
-                    if(onFilterAdded != null)
+                    if (onFilterAdded != null)
                         onFilterAdded(filter);
                     break;
                 }
@@ -300,8 +300,8 @@ namespace SickDev.DevConsole{
         }
 
         public void SetFilter(string tag, bool on) {
-            for(int i = 0; i < filters.Length; i++) {
-                if(filters[i].tag == tag) {
+            for (int i = 0; i < filters.Length; i++) {
+                if (filters[i].tag == tag) {
                     filters[i].isActive = on;
                     return;
                 }

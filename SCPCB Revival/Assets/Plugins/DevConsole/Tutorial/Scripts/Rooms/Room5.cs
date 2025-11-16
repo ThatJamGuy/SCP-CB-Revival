@@ -8,11 +8,11 @@ namespace SickDev.DevConsole.Example {
         }
 
         void OpenRoom(string name) {
-            if(name != nextRoom.name) {
+            if (name != nextRoom.name) {
                 Debug.LogError("Wrong room name, try openning \"" + nextRoom.name + "\"");
                 return;
             }
-            if(isComplete) {
+            if (isComplete) {
                 Debug.LogWarning("Great! But you already did this. Try something new...");
                 return;
             }

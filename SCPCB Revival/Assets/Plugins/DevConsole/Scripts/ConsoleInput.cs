@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
 
 namespace SickDev.DevConsole {
     [Serializable]
@@ -36,14 +36,14 @@ namespace SickDev.DevConsole {
         }
 
         public void Draw(float positionY) {
-            Rect rect = new Rect(0, positionY, Screen.width/DevConsole.settings.scale, height-lineHeight);
+            Rect rect = new Rect(0, positionY, Screen.width / DevConsole.settings.scale, height - lineHeight);
             DrawLine(rect);
             rect.y += lineHeight;
             GUIUtils.DrawBox(rect, DevConsole.settings.mainColor);
             rect.x += padding;
             rect.y += padding;
             rect.width -= padding * 2;
-            rect.height -= padding*2;
+            rect.height -= padding * 2;
             if (DevConsole.settings.autoCompleteBehaviour != Settings.AutoCompleteBehaviour.Disabled) {
                 DrawGenericButton(ref rect, autoCompleteContent, DevConsole.singleton.ToggleAutoComplete);
                 rect.x += rect.width;
@@ -69,7 +69,7 @@ namespace SickDev.DevConsole {
 
         void DrawInput(ref Rect rect) {
             rect.width = CalculateInputWidth(rect.height);
-            if(focus && GUI.enabled) {
+            if (focus && GUI.enabled) {
                 GUI.FocusControl(name);
                 focus = false;
             }
@@ -82,7 +82,7 @@ namespace SickDev.DevConsole {
             bool wasEmpty = string.IsNullOrEmpty(text.Trim());
             GUI.SetNextControlName(name);
             text = GUI.TextField(rect, text, GUIUtils.inputStyle);
-            if(DevConsole.settings.autoCompleteBehaviour == Settings.AutoCompleteBehaviour.Auto && wasEmpty && !string.IsNullOrEmpty(text.Trim())) {
+            if (DevConsole.settings.autoCompleteBehaviour == Settings.AutoCompleteBehaviour.Auto && wasEmpty && !string.IsNullOrEmpty(text.Trim())) {
                 DevConsole.singleton.autoComplete.Open();
                 DevConsole.singleton.history.Close();
             }
@@ -114,7 +114,7 @@ namespace SickDev.DevConsole {
 
         void DrawGenericButton(ref Rect rect, GUIContent content, Action callback) {
             rect.width = GetClampedButtonSize(rect.height, content.image.width);
-            if(GUIUtils.DrawCenteredButton(rect, content, Color.clear))
+            if (GUIUtils.DrawCenteredButton(rect, content, Color.clear))
                 callback();
         }
 

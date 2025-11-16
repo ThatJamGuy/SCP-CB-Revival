@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
 
 namespace SickDev.DevConsole {
     [Serializable]
@@ -8,7 +8,7 @@ namespace SickDev.DevConsole {
 
         [SerializeField]
         ScrollBar scrollBar;
-        
+
         [HideInInspector]
         public Vector2 position;
         float? targetScrollTo;
@@ -24,13 +24,13 @@ namespace SickDev.DevConsole {
             HandleScrollWheel();
             DrawVerticalScrollBar();
             DrawViewRect(contentsDrawer);
-            if(targetScrollTo.HasValue)
+            if (targetScrollTo.HasValue)
                 DoScrollToTarget();
         }
 
         void HandleScrollWheel() {
-            if(isScrollbarVisible) {
-                if(Event.current.type != EventType.ScrollWheel || !viewRect.Contains(Event.current.mousePosition))
+            if (isScrollbarVisible) {
+                if (Event.current.type != EventType.ScrollWheel || !viewRect.Contains(Event.current.mousePosition))
                     return;
                 position.y += scrollBar.sensitivity * Event.current.delta.y;
                 Event.current.Use();
@@ -38,7 +38,7 @@ namespace SickDev.DevConsole {
         }
 
         void DrawVerticalScrollBar() {
-            if(isScrollbarVisible) {
+            if (isScrollbarVisible) {
                 viewRect.width -= scrollBar.width;
                 position.y = scrollBar.Draw(new Rect(viewRect.x + viewRect.width, viewRect.y, scrollBar.width, viewRect.height), position.y, contentsRect.height);
             }

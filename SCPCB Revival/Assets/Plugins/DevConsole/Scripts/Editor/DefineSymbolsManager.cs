@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using UnityEditor;
 
-namespace SickDev.DevConsole { 
+namespace SickDev.DevConsole {
     public class DefineSymbolsManager {
         public static bool HasDefine(string define, BuildTargetGroup group) {
             return new DefineSymbolsAgent(group).Has(define);
@@ -35,14 +35,14 @@ namespace SickDev.DevConsole {
             }
 
             public void Add(string define) {
-                if(Has(define))
+                if (Has(define))
                     return;
                 PlayerSettings.SetScriptingDefineSymbolsForGroup(group, defineSymbolsString + ";" + define);
                 LoadSymbols();
             }
 
             public void Remove(string define) {
-                if(!Has(define))
+                if (!Has(define))
                     return;
 
                 int startIndex = defineSymbolsString.IndexOf(define);

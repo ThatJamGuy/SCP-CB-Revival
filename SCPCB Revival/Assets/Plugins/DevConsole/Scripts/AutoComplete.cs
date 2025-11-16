@@ -1,14 +1,14 @@
-﻿using System;
-using System.Threading;
+﻿using SickDev.CommandSystem;
+using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
-using SickDev.CommandSystem;
 
 namespace SickDev.DevConsole {
     [Serializable]
-    public class AutoComplete:Window<int, Command> {
+    public class AutoComplete : Window<int, Command> {
         string lastText = null;
         Command[] allCommands;
         Matcher matcher;
@@ -17,7 +17,7 @@ namespace SickDev.DevConsole {
         object lockObject = new object();
         bool needsCommandReload;
 
-        protected override GUIContent title { get {return new GUIContent("AUTO COMPLETE");} }
+        protected override GUIContent title { get { return new GUIContent("AUTO COMPLETE"); } }
         public override Command current { get { return allCommands[entries[currentIndex]]; } }
         public bool hasMatches { get { return entries.Count > 0; } }
 
@@ -33,9 +33,9 @@ namespace SickDev.DevConsole {
         }
 
         protected override void OnBeginDraw() {
-            if(needsCommandReload)
+            if (needsCommandReload)
                 ReloadCommands();
-            if(lastText != DevConsole.singleton.input.text) {
+            if (lastText != DevConsole.singleton.input.text) {
                 RebuildCommandsToShow();
                 lastText = DevConsole.singleton.input.text;
             }
@@ -48,18 +48,18 @@ namespace SickDev.DevConsole {
             matcher = new Matcher(allCommands);
             RebuildCommandsToShow();
         }
-        
+
         void RebuildCommandsToShow() {
             JobInfo job;
-            lock(lockObject) {
-                if(jobs.Count > 0)
+            lock (lockObject) {
+                if (jobs.Count > 0)
                     jobs[jobs.Count - 1].needed = false;
                 job = new JobInfo();
                 jobs.Add(job);
             }
 
             bool allowThreading = Application.platform != RuntimePlatform.WebGLPlayer;
-            if(allowThreading) {
+            if (allowThreading) {
                 Thread thread = new Thread(RebuildCommandsToShowThreaded);
                 thread.Start(job);
             }
@@ -70,8 +70,8 @@ namespace SickDev.DevConsole {
         void RebuildCommandsToShowThreaded(object jobObject) {
             JobInfo job = (JobInfo)jobObject;
             int[] matches = matcher.GetMatches(DevConsole.singleton.input.text);
-            lock(lockObject) {
-                if(job.needed) {
+            lock (lockObject) {
+                if (job.needed) {
                     Clear();
                     AddRange(matches);
                     NavigateToFirst();
@@ -99,7 +99,7 @@ namespace SickDev.DevConsole {
         }
 
         protected override float GetEntryWidth(int index) {
-            if(allCommands == null || index >= allCommands.Length)
+            if (allCommands == null || index >= allCommands.Length)
                 return 0;
             tempContent.text = allCommands[index].signature.raw;
             return GUIUtils.textStyle.CalcSize(tempContent).x;
@@ -123,7 +123,7 @@ namespace SickDev.DevConsole {
             static Regex _inputRegx;
             static Regex inputRegex {
                 get {
-                    if(_inputRegx == null)
+                    if (_inputRegx == null)
                         _inputRegx = new Regex(regex);
                     return _inputRegx;
                 }
@@ -161,7 +161,7 @@ namespace SickDev.DevConsole {
                 Match match = inputRegex.Match(text);
                 StringBuilder commandsRegexString = new StringBuilder(".*");
 
-                while(match.Success) {
+                while (match.Success) {
                     commandsRegexString.Append(string.Format(@"({0}|((\.|_){1})).*", match.Value, StringToFirstLowerCase(match.Value)));
                     match = match.NextMatch();
                 }
@@ -170,18 +170,18 @@ namespace SickDev.DevConsole {
 
             void CategorizeMatches(string text, Regex regex) {
                 Match match;
-                for(int i = 0; i < commands.Length; i++) {
+                for (int i = 0; i < commands.Length; i++) {
                     if (exactMatch == -1 && commands[i].IsOverloadOf(text))
                         exactMatch = i;
-                    else if(commands[i].name.StartsWith(text, StringComparison.OrdinalIgnoreCase))
+                    else if (commands[i].name.StartsWith(text, StringComparison.OrdinalIgnoreCase))
                         startsWith.Add(i);
                     else {
                         match = regex.Match(commands[i].name);
-                        if(match.Success)
+                        if (match.Success)
                             matchesRegex.Add(i);
                         else {
                             match = regex.Match(titledCaseCommands[i]);
-                            if(match.Success)
+                            if (match.Success)
                                 matchesRegexTitledCase.Add(i);
                         }
                     }
@@ -189,7 +189,7 @@ namespace SickDev.DevConsole {
             }
 
             int[] SortMatches() {
-                int size = (exactMatch!=-1?1:0) + startsWith.Count + matchesRegex.Count + matchesRegexTitledCase.Count;
+                int size = (exactMatch != -1 ? 1 : 0) + startsWith.Count + matchesRegex.Count + matchesRegexTitledCase.Count;
                 int[] sortedMatches = new int[size];
                 int lastIndex = 0;
 
@@ -197,13 +197,13 @@ namespace SickDev.DevConsole {
                 matchesRegex.Sort(CompareEntries);
                 matchesRegexTitledCase.Sort(CompareEntries);
 
-                if(exactMatch != -1)
+                if (exactMatch != -1)
                     sortedMatches[lastIndex++] = exactMatch;
-                for(int i = 0; i < startsWith.Count; i++)
+                for (int i = 0; i < startsWith.Count; i++)
                     sortedMatches[lastIndex++] = startsWith[i];
-                for(int i = 0; i < matchesRegex.Count; i++)
+                for (int i = 0; i < matchesRegex.Count; i++)
                     sortedMatches[lastIndex++] = matchesRegex[i];
-                for(int i = 0; i < matchesRegexTitledCase.Count; i++)
+                for (int i = 0; i < matchesRegexTitledCase.Count; i++)
                     sortedMatches[lastIndex++] = matchesRegexTitledCase[i];
 
                 return sortedMatches;

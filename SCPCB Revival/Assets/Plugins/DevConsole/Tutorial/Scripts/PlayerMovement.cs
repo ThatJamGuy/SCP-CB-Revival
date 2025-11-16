@@ -10,7 +10,7 @@ namespace SickDev.DevConsole.Example {
         CharacterController _characterController;
         CharacterController characterController {
             get {
-                if(_characterController == null)
+                if (_characterController == null)
                     _characterController = GetComponent<CharacterController>();
                 return _characterController;
             }
@@ -25,7 +25,7 @@ namespace SickDev.DevConsole.Example {
             Ray mouseRay = camera.ScreenPointToRay(Input.mousePosition);
             Plane plane = new Plane(Vector3.up, transform.position);
             float distance;
-            if(!plane.Raycast(mouseRay, out distance))
+            if (!plane.Raycast(mouseRay, out distance))
                 return;
 
             Vector3 worldMouse = mouseRay.origin + mouseRay.direction * distance;
@@ -33,7 +33,7 @@ namespace SickDev.DevConsole.Example {
         }
 
         void MoveBasedOnInput() {
-            float horizontalMovement = (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) ? -1 : 
+            float horizontalMovement = (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) ? -1 :
                 Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) ? 1 : 0);
             float verticalMovement = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) ? -1 :
                 Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) ? 1 : 0;

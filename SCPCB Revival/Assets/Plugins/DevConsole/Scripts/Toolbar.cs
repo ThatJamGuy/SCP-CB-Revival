@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace SickDev.DevConsole {
@@ -30,8 +30,8 @@ namespace SickDev.DevConsole {
             logger.onFilterAdded += OnFilterAdded;
             logger.onFilterRemoved += OnFilterRemoved;
             tabs = new List<Tab>();
-            Filter[] filters = logger.GetFilters(); 
-            for(int i = 0; i < filters.Length; i++)
+            Filter[] filters = logger.GetFilters();
+            for (int i = 0; i < filters.Length; i++)
                 OnFilterAdded(filters[i]);
         }
 
@@ -41,8 +41,8 @@ namespace SickDev.DevConsole {
         }
 
         void OnFilterRemoved(Filter filter) {
-            for(int i = tabs.Count-1; i >= 0; i--) {
-                if(tabs[i].filter == filter) {
+            for (int i = tabs.Count - 1; i >= 0; i--) {
+                if (tabs[i].filter == filter) {
                     tabs.RemoveAt(i);
                     return;
                 }
@@ -50,7 +50,7 @@ namespace SickDev.DevConsole {
         }
 
         public void Draw() {
-            Rect rect = new Rect(0, 0, Screen.width/ DevConsole.settings.scale, height-lineHeight);
+            Rect rect = new Rect(0, 0, Screen.width / DevConsole.settings.scale, height - lineHeight);
             GUIUtils.DrawBox(rect, DevConsole.settings.mainColor);
             DrawLine(rect);
             rect.y += padding;
@@ -72,7 +72,7 @@ namespace SickDev.DevConsole {
             rect.x += rect.width;
             rect.x += spacing;
             Color oldColor = GUI.contentColor;
-            if(DevConsole.settings.groupIdenticalEntries)
+            if (DevConsole.settings.groupIdenticalEntries)
                 GUI.contentColor = DevConsole.settings.secondaryColor;
             DrawGenericButton(ref rect, groupContent, ToggleGroupEntries);
             GUI.contentColor = oldColor;
@@ -103,7 +103,7 @@ namespace SickDev.DevConsole {
 
         void DrawGenericButton(ref Rect rect, GUIContent content, Action callback) {
             rect.width = GetClampedButtonSize(rect.height, content.image.width);
-            if(GUIUtils.DrawCenteredButton(rect, content, Color.clear))
+            if (GUIUtils.DrawCenteredButton(rect, content, Color.clear))
                 callback();
         }
 
@@ -113,9 +113,9 @@ namespace SickDev.DevConsole {
 
         void SaveLogToFile() {
             string fullPath = Application.persistentDataPath + logFileName;
-            using(StreamWriter writer = File.CreateText(fullPath)) {
+            using (StreamWriter writer = File.CreateText(fullPath)) {
                 Entry[] entries = DevConsole.singleton.GetEntries();
-                for(int i = 0; i < entries.Length; i++) {
+                for (int i = 0; i < entries.Length; i++) {
                     writer.Write(entries[i].timeStamp);
                     writer.WriteLine(entries[i].data.text);
                     writer.WriteLine(entries[i].data.stackTrace);
@@ -135,7 +135,7 @@ namespace SickDev.DevConsole {
             rect.x += padding;
             rect.width -= padding;
             rect.width = tabWidth;
-            for(int i = 0; i < tabs.Count; i++) {
+            for (int i = 0; i < tabs.Count; i++) {
                 tabs[i].Draw(rect);
                 rect.x += tabWidth + spacing;
             }

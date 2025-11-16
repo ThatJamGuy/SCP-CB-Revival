@@ -4,7 +4,7 @@
 
         void Update() {
             Room12 room = FindObjectOfType<Room12>();
-            if(!lastActive && room != null) {
+            if (!lastActive && room != null) {
                 lastActive = true;
                 Complete();
             }

@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
 
 namespace SickDev.DevConsole {
     [Serializable]
@@ -41,29 +41,29 @@ namespace SickDev.DevConsole {
 
         void DrawScrollUpButton(ref Rect rect, ref float position) {
             rect.height = GetButtonWidth(rect.width);
-            if(GUIUtils.DrawRepeatButton(rect, scrollUpContent, Color.clear))
+            if (GUIUtils.DrawRepeatButton(rect, scrollUpContent, Color.clear))
                 position -= sensitivity;
         }
 
         void DrawScrollDownButton(ref Rect rect, ref float position) {
             rect.y += rect.height - GetButtonWidth(rect.width);
             rect.height = GetButtonWidth(rect.width);
-            if(GUIUtils.DrawRepeatButton(rect, scrollDownContent, Color.clear))
+            if (GUIUtils.DrawRepeatButton(rect, scrollDownContent, Color.clear))
                 position += sensitivity;
         }
 
         void CalculateScrollBarRect(ref Rect rect, Rect originalRect) {
             rect.x += padding;
             rect.y = originalRect.y + rect.height;
-            rect.width -= padding*2;
-            rect.height = originalRect.height - rect.height*2;
+            rect.width -= padding * 2;
+            rect.height = originalRect.height - rect.height * 2;
         }
 
         void DrawScrollBar(Rect rect, ref float position, float maxValue) {
             ChangeSkinStylesIfNecessary();
             thumbStyle.fixedHeight = Mathf.Max(rect.height * rect.height / maxValue, minHeight) / DevConsole.settings.scale;
-            maxValue -= rect.height + Mathf.Min(rect.width+padding*2, scrollUpContent.image.height) * 2;
-            position = GUI.VerticalScrollbar(rect, position, 0, invert? maxValue : 0, invert?0: maxValue);
+            maxValue -= rect.height + Mathf.Min(rect.width + padding * 2, scrollUpContent.image.height) * 2;
+            position = GUI.VerticalScrollbar(rect, position, 0, invert ? maxValue : 0, invert ? 0 : maxValue);
             RestoreSkinStylesIfNecessary();
         }
 
@@ -72,18 +72,18 @@ namespace SickDev.DevConsole {
         }
 
         void ChangeSkinStylesIfNecessary() {
-            if(GUI.skin.verticalScrollbar != style) {
+            if (GUI.skin.verticalScrollbar != style) {
                 originalStyle = GUI.skin.verticalScrollbar;
                 GUI.skin.verticalScrollbar = style;
             }
-            if(GUI.skin.verticalScrollbarThumb != thumbStyle) {
+            if (GUI.skin.verticalScrollbarThumb != thumbStyle) {
                 originalThumbStyle = GUI.skin.verticalScrollbarThumb;
                 GUI.skin.verticalScrollbarThumb = thumbStyle;
             }
         }
 
         void RestoreSkinStylesIfNecessary() {
-            if(DevConsole.settings.optimizeForOnGUI)
+            if (DevConsole.settings.optimizeForOnGUI)
                 return;
             if (originalStyle != null)
                 GUI.skin.verticalScrollbar = originalStyle;

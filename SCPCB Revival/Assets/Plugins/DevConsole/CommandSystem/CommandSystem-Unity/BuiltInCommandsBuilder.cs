@@ -228,7 +228,7 @@ namespace SickDev.CommandSystem.Unity {
             manager.Add(new ActionCommand<LogType>(value => logger.filterLogType = value) { alias = "filterLogType", className = type.Name });
             manager.Add(new ActionCommand<bool>(value => logger.logEnabled = value) { alias = "logEnabled", className = type.Name });
             manager.Add(new FuncCommand<LogType>(() => logger.filterLogType) { alias = "filterLogType", className = type.Name });
-            manager.Add(new FuncCommand<bool>(() => logger.logEnabled) { alias = "logEnabled", className = type.Name});
+            manager.Add(new FuncCommand<bool>(() => logger.logEnabled) { alias = "logEnabled", className = type.Name });
         }
 
         protected void PlayerConnection() {

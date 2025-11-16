@@ -14,7 +14,7 @@ namespace SickDev.DevConsole.Example {
         protected bool isComplete { get; private set; }
 
         void Awake() {
-            if(autoHide)
+            if (autoHide)
                 gameObject.SetActive(false);
             light.TurnOff();
         }
@@ -25,7 +25,7 @@ namespace SickDev.DevConsole.Example {
 
         protected void Complete() {
             invisibleWall.SetActive(false);
-            if(nextRoom != null)
+            if (nextRoom != null)
                 nextRoom.Show();
             isComplete = true;
             light.TurnOn();

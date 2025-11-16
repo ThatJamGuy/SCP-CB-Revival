@@ -3,7 +3,7 @@
         bool lastWasOpen;
 
         void Update() {
-            if(!lastWasOpen && DevConsole.singleton.isOpen) {
+            if (!lastWasOpen && DevConsole.singleton.isOpen) {
                 lastWasOpen = true;
                 Complete();
             }

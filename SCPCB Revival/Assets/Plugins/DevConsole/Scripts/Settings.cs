@@ -1,10 +1,10 @@
-﻿using UnityEngine;
-using SickDev.Utils;
+﻿using SickDev.Utils;
 using System.Reflection;
+using UnityEngine;
 
 namespace SickDev.DevConsole {
     public class Settings : ScriptableObject {
-        public enum AutoCompleteBehaviour { Disabled = 0, Manual, Auto}
+        public enum AutoCompleteBehaviour { Disabled = 0, Manual, Auto }
 
         [SerializeField]
         int selectedTab;
@@ -75,7 +75,7 @@ namespace SickDev.DevConsole {
 
         public void CopyFrom(Settings settings) {
             FieldInfo[] fields = GetType().GetFields();
-            for(int i = 0; i < fields.Length; i++)
+            for (int i = 0; i < fields.Length; i++)
                 fields[i].SetValue(this, fields[i].GetValue(settings));
         }
 

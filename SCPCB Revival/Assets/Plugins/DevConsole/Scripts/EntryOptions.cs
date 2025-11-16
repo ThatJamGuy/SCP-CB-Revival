@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace SickDev.DevConsole{
+namespace SickDev.DevConsole {
     [Serializable]
     public struct EntryOptions {
         public FontStyle style;
@@ -12,7 +12,7 @@ namespace SickDev.DevConsole{
         Color _color;
         public Color color {
             get {
-                if(!hasColorBeenAssigned)
+                if (!hasColorBeenAssigned)
                     color = DevConsole.settings.entryDefaultColor;
                 return _color;
             }

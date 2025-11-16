@@ -21,7 +21,7 @@ namespace SickDev.DevConsole {
         }
 
         public void Draw(Rect rect) {
-            if(GUIUtils.DrawButton(rect, content, filter.isActive ? GUIUtils.grayerColor : GUIUtils.darkerGrayColor, style))
+            if (GUIUtils.DrawButton(rect, content, filter.isActive ? GUIUtils.grayerColor : GUIUtils.darkerGrayColor, style))
                 filter.isActive = !filter.isActive;
         }
     }
