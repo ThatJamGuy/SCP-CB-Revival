@@ -8,6 +8,10 @@ public class PlayerMovement : MonoBehaviour {
     [Header("Movement Status")]
     [SerializeField, Range(0, 1)] private float stamina = 1f;
 
+    public float CurrentStamina => stamina;
+    
+    public bool IsActuallySprinting { get; private set; }
+
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeed = 4f;
     [SerializeField] private float sprintSpeed = 7f;
@@ -69,6 +73,8 @@ public class PlayerMovement : MonoBehaviour {
         bool canSprint = !playerAccessor.isCrouching && (playerAccessor.infiniteStamina || stamina > 0f) && playerAccessor.isMoving && !sprintLocked;
 
         if (wantsToSprint && canSprint) currentSpeed = sprintSpeed;
+        
+        IsActuallySprinting = wantsToSprint && canSprint;
 
         Vector3 move = GetMoveDirection(true) * currentSpeed;
         velocity.y += gravity * Time.deltaTime;

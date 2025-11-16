@@ -24,7 +24,7 @@ public class PlayerAccessor : MonoBehaviour {
 
     private void Update() {
         var im = InputManager.Instance;
-        if (im != null) {
+        if (im != null && allowInput) {
             isMoving = im.IsMoving;
             isSprinting = im.IsSprinting;
         }

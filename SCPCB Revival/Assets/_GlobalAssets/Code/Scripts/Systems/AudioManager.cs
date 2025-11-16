@@ -62,7 +62,6 @@ public class AudioManager : MonoBehaviour {
             musicEventInstance.start();
         }
     }
-
     /// <summary>
     /// Set a parameter on the active music instance. This is intended for nested track control.
     /// </summary>
