@@ -17,8 +17,7 @@ public class Door : MonoBehaviour {
     [SerializeField] private float openDistance = 1.9f;
 
     [Header("FMOD Audio")]
-    [SerializeField] private EventReference doorOpenSound;
-    [SerializeField] private EventReference doorCloseSound;
+    [SerializeField] private EventReference doorEventReference;
 
     [Header("Events")]
     public UnityEvent onDoorOpening;
@@ -33,8 +32,8 @@ public class Door : MonoBehaviour {
     public GameObject doorPart01;
     public GameObject doorPart02;
 
-    Vector3 door01InitialPos, door02InitialPos;
-    Coroutine moveRoutine;
+    private Vector3 door01InitialPos, door02InitialPos;
+    private Coroutine moveRoutine;
 
     void Start() {
         door01InitialPos = doorPart01.transform.position;
@@ -54,24 +53,24 @@ public class Door : MonoBehaviour {
         Vector3 offset = GetOffset(openDistance);
         Vector3 door01Target = door01InitialPos + offset;
         Vector3 door02Target = door02InitialPos - offset;
-        StartMove(door01Target, door02Target, doorOpenSound, onDoorOpened);
+        StartMove(door01Target, door02Target, onDoorOpened);
         isOpen = true;
     }
 
     public void CloseDoor() {
         if (!isOpen || moveRoutine != null) return;
         onDoorClosing?.Invoke();
-        StartMove(door01InitialPos, door02InitialPos, doorCloseSound, onDoorClosed);
+        StartMove(door01InitialPos, door02InitialPos, onDoorClosed);
         isOpen = false;
     }
 
-    void StartMove(Vector3 door1Target, Vector3 door2Target, EventReference soundEvent, UnityEvent onComplete) {
+    void StartMove(Vector3 door1Target, Vector3 door2Target, UnityEvent onComplete) {
         if (moveRoutine != null) StopCoroutine(moveRoutine);
-        moveRoutine = StartCoroutine(MoveDoors(door1Target, door2Target, soundEvent, onComplete));
+        moveRoutine = StartCoroutine(MoveDoors(door1Target, door2Target, onComplete));
     }
 
-    IEnumerator MoveDoors(Vector3 target1, Vector3 target2, EventReference soundEvent, UnityEvent onComplete) {
-        PlaySound(soundEvent);
+    IEnumerator MoveDoors(Vector3 target1, Vector3 target2, UnityEvent onComplete) {
+        PlaySound();
         Vector3 start1 = doorPart01.transform.position;
         Vector3 start2 = doorPart02.transform.position;
         float dist = Vector3.Distance(start1, target1);
@@ -92,10 +91,23 @@ public class Door : MonoBehaviour {
         moveRoutine = null;
     }
 
-    void PlaySound(EventReference soundEvent) {
-        if (AudioManager.instance != null && !soundEvent.IsNull) {
-            AudioManager.instance.PlaySound(soundEvent, transform.position);
-        }
+    void PlaySound()
+    {
+        if (doorEventReference.Guid.IsNull)
+            return;
+
+        var instance = AudioManager.instance.CreateInstance(doorEventReference);
+        if (!instance.isValid())
+            return;
+
+        var attributes = RuntimeUtils.To3DAttributes(transform.position);
+        instance.set3DAttributes(attributes);
+
+        float doorStateValue = isOpen ? 1f : 0f;
+        instance.setParameterByName("DoorState", doorStateValue);
+
+        instance.start();
+        instance.release();
     }
 
     Vector3 GetOffset(float distance) {

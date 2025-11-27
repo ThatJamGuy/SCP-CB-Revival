@@ -1,19 +1,23 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace FMODUnity {
+namespace FMODUnity
+{
     [CustomEditor(typeof(StudioListener))]
     [CanEditMultipleObjects]
-    public class StudioListenerEditor : Editor {
+    public class StudioListenerEditor : Editor
+    {
         private SerializedProperty attenuationObject;
         private SerializedProperty nonRigidbodyVelocity;
 
-        private void OnEnable() {
+        private void OnEnable()
+        {
             attenuationObject = serializedObject.FindProperty("attenuationObject");
             nonRigidbodyVelocity = serializedObject.FindProperty("nonRigidbodyVelocity");
         }
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             serializedObject.Update();
             EditorGUI.BeginDisabledGroup(true);
             int index = ((StudioListener)serializedObject.targetObject).ListenerNumber;

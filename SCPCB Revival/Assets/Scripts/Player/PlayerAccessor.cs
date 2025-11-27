@@ -49,6 +49,17 @@ public class PlayerAccessor : MonoBehaviour {
         }
     }
 
+    public void TogglePlayerInputs(bool showMouse) {
+        allowInput = !allowInput;
+        if (allowInput) {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        } else if (showMouse) {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
     public Camera GetPlayerCamera() {
         return playerCamera;
     }

@@ -11,6 +11,7 @@ public class InputManager : MonoBehaviour {
     private InputAction sprintAction;
     private InputAction crouchAction;
     public InputAction interactAction { get; private set; }
+    public InputAction inventoryAction { get; private set; }
 
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);
@@ -21,6 +22,7 @@ public class InputManager : MonoBehaviour {
         sprintAction = playerInput.actions["Sprint"];
         crouchAction = playerInput.actions.FindAction("Crouch", false);
         interactAction = playerInput.actions["Interact"];
+        inventoryAction = playerInput.actions["Inventory"];
     }
 
     public Vector2 Move => moveAction.ReadValue<Vector2>();

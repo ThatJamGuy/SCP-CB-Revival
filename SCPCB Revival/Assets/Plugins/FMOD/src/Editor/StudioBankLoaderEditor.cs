@@ -1,11 +1,14 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace FMODUnity {
+namespace FMODUnity
+{
     [CustomEditor(typeof(StudioBankLoader))]
     [CanEditMultipleObjects]
-    public class StudioBankLoaderEditor : Editor {
-        public override void OnInspectorGUI() {
+    public class StudioBankLoaderEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
             var load = serializedObject.FindProperty("LoadEvent");
             var unload = serializedObject.FindProperty("UnloadEvent");
             var tag = serializedObject.FindProperty("CollisionTag");
@@ -16,7 +19,8 @@ namespace FMODUnity {
             EditorGUILayout.PropertyField(unload, new GUIContent(L10n.Tr("Unload")));
 
             if ((load.enumValueIndex >= 3 && load.enumValueIndex <= 6) ||
-                (unload.enumValueIndex >= 3 && unload.enumValueIndex <= 6)) {
+                (unload.enumValueIndex >= 3 && unload.enumValueIndex <= 6))
+            {
                 tag.stringValue = EditorGUILayout.TagField("Collision Tag", tag.stringValue);
             }
 
@@ -25,7 +29,8 @@ namespace FMODUnity {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel(L10n.Tr("Banks"));
             EditorGUILayout.BeginVertical();
-            if (GUILayout.Button(L10n.Tr("Add Bank"), GUILayout.ExpandWidth(false))) {
+            if (GUILayout.Button(L10n.Tr("Add Bank"), GUILayout.ExpandWidth(false)))
+            {
                 banks.InsertArrayElementAtIndex(banks.arraySize);
                 SerializedProperty newBank = banks.GetArrayElementAtIndex(banks.arraySize - 1);
                 newBank.stringValue = "";
@@ -47,11 +52,13 @@ namespace FMODUnity {
             buttonStyle.padding.left = buttonStyle.padding.right = 4;
             buttonStyle.fixedHeight = GUI.skin.textField.CalcSize(new GUIContent()).y;
 
-            for (int i = 0; i < banks.arraySize; i++) {
+            for (int i = 0; i < banks.arraySize; i++)
+            {
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.PropertyField(banks.GetArrayElementAtIndex(i), GUIContent.none);
 
-                if (GUILayout.Button(deleteContent, buttonStyle, GUILayout.ExpandWidth(false))) {
+                if (GUILayout.Button(deleteContent, buttonStyle, GUILayout.ExpandWidth(false)))
+                {
                     banks.DeleteArrayElementAtIndex(i);
                 }
                 EditorGUILayout.EndHorizontal();
@@ -61,10 +68,12 @@ namespace FMODUnity {
             EditorGUILayout.EndHorizontal();
 
             Event e = Event.current;
-            if (e.type == EventType.DragPerform) {
+            if (e.type == EventType.DragPerform)
+            {
                 if (DragAndDrop.objectReferences.Length > 0 &&
                     DragAndDrop.objectReferences[0] != null &&
-                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorBankRef)) {
+                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorBankRef))
+                {
                     int pos = banks.arraySize;
                     banks.InsertArrayElementAtIndex(pos);
                     var pathProperty = banks.GetArrayElementAtIndex(pos);
@@ -74,10 +83,12 @@ namespace FMODUnity {
                     e.Use();
                 }
             }
-            if (e.type == EventType.DragUpdated) {
+            if (e.type == EventType.DragUpdated)
+            {
                 if (DragAndDrop.objectReferences.Length > 0 &&
                     DragAndDrop.objectReferences[0] != null &&
-                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorBankRef)) {
+                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorBankRef))
+                {
                     DragAndDrop.visualMode = DragAndDropVisualMode.Move;
                     DragAndDrop.AcceptDrag();
                     e.Use();

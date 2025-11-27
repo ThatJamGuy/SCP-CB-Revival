@@ -4,50 +4,51 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour {
-    private List<EventInstance> eventInstances;
-    private List<StudioEventEmitter> eventEmitters;
-
-    private EventInstance musicEventInstance;
+    private readonly HashSet<EventInstance> trackedInstances = new HashSet<EventInstance>();
+    private readonly List<StudioEventEmitter> trackedEmitters = new List<StudioEventEmitter>();
+    private EventInstance musicInstance;
 
     public static AudioManager instance { get; private set; }
 
     private void Awake() {
-        if (instance != null) {
-            Debug.LogError("Found more than one Audio Manager in the scene.");
-        }
+        if (instance != null) Debug.LogError("Multiple AudioManager instances.");
         instance = this;
 
-        eventInstances = new List<EventInstance>();
-        eventEmitters = new List<StudioEventEmitter>();
+        foreach (var emitter in FindObjectsByType<StudioEventEmitter>(0))
+            TrackEmitter(emitter);
     }
 
     private void Start() {
         StartMusic(FMODEvents.instance.musicRevival);
     }
 
-    /// <summary>
-    /// Create and start a music EventInstance. The instance is tracked so it will be cleaned up on destroy.
-    /// </summary>
-    public void StartMusic(EventReference musicEventReference) {
-        if (musicEventInstance.isValid()) {
-            musicEventInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-            musicEventInstance.release();
+    private void TrackInstance(EventInstance e) {
+        if (e.isValid()) trackedInstances.Add(e);
+    }
+
+    private void TrackEmitter(StudioEventEmitter emitter) {
+        if (!trackedEmitters.Contains(emitter))
+            trackedEmitters.Add(emitter);
+
+        var inst = emitter.EventInstance;
+        if (!inst.isValid()) {
+            emitter.Play();
+            emitter.Stop();
+            inst = emitter.EventInstance;
         }
-
-        musicEventInstance = CreateInstance(musicEventReference);
-        musicEventInstance.start();
+        if (inst.isValid()) TrackInstance(inst);
     }
 
-    public EventInstance CreateInstance(EventReference eventReference) {
-        EventInstance eventInstance = RuntimeManager.CreateInstance(eventReference);
-        eventInstances.Add(eventInstance);
-        return eventInstance;
+    public EventInstance CreateInstance(EventReference reference) {
+        var inst = RuntimeManager.CreateInstance(reference);
+        TrackInstance(inst);
+        return inst;
     }
 
-    public StudioEventEmitter InitializeEventEmitter(EventReference eventReference, GameObject emitterGameObject) {
-        StudioEventEmitter emitter = emitterGameObject.GetComponent<StudioEventEmitter>();
-        emitter.EventReference = eventReference;
-        eventEmitters.Add(emitter);
+    public StudioEventEmitter InitializeEventEmitter(EventReference reference, GameObject target) {
+        var emitter = target.GetComponent<StudioEventEmitter>();
+        emitter.EventReference = reference;
+        TrackEmitter(emitter);
         return emitter;
     }
 
@@ -55,51 +56,66 @@ public class AudioManager : MonoBehaviour {
         RuntimeManager.PlayOneShot(sound, worldPos);
     }
 
+    public void StartMusic(EventReference reference) {
+        if (musicInstance.isValid()) {
+            musicInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+            musicInstance.release();
+        }
+        musicInstance = CreateInstance(reference);
+        musicInstance.start();
+    }
+
     public void PlayMusic() {
-        if (!musicEventInstance.isValid()) {
-            StartMusic(FMODEvents.instance.musicRevival);
-        } else {
-            musicEventInstance.start();
-        }
-    }
-    /// <summary>
-    /// Set a parameter on the active music instance. This is intended for nested track control.
-    /// </summary>
-    public void SetMusicParameter(string parameterName, float value, bool ignoreSeekSpeed = false) {
-        if (musicEventInstance.isValid()) {
-            // EventInstance provides setParameterByName
-            musicEventInstance.setParameterByName(parameterName, value, ignoreSeekSpeed);
-        } else {
-            Debug.LogWarning($"Attempted to set music parameter '{parameterName}' but no music instance is active.");
-        }
+        if (!musicInstance.isValid()) StartMusic(FMODEvents.instance.musicRevival);
+        else musicInstance.start();
     }
 
-    /// <summary>
-    /// Stop and release the current music instance.
-    /// </summary>
+    public void SetMusicParameter(string parameter, float value, bool ignoreSeekSpeed = false) {
+        if (musicInstance.isValid())
+            musicInstance.setParameterByName(parameter, value, ignoreSeekSpeed);
+    }
+
     public void StopMusic(FMOD.Studio.STOP_MODE mode = FMOD.Studio.STOP_MODE.ALLOWFADEOUT) {
-        if (musicEventInstance.isValid()) {
-            musicEventInstance.stop(mode);
-            musicEventInstance.release();
+        if (musicInstance.isValid()) {
+            musicInstance.stop(mode);
+            musicInstance.release();
         }
     }
 
-    private void CleanUp() {
-        foreach (EventInstance eventInstance in eventInstances) {
-            eventInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-            eventInstance.release();
-        }
-        foreach (StudioEventEmitter emitter in eventEmitters) {
-            emitter.Stop();
+    public void PauseGameAudio() {
+        foreach (var inst in trackedInstances) {
+            if (musicInstance.isValid() && inst.handle == musicInstance.handle) continue;
+            inst.setPaused(true);
         }
 
-        if (musicEventInstance.isValid()) {
-            musicEventInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-            musicEventInstance.release();
+        foreach (var emitter in trackedEmitters) {
+            if (emitter.EventReference.Guid == FMODEvents.instance.musicRevival.Guid) continue;
+            var inst = emitter.EventInstance;
+            if (inst.isValid()) inst.setPaused(true);
+        }
+    }
+
+    public void UnpauseGameAudio() {
+        foreach (var inst in trackedInstances) {
+            if (musicInstance.isValid() && inst.handle == musicInstance.handle) continue;
+            inst.setPaused(false);
+        }
+
+        foreach (var emitter in trackedEmitters) {
+            if (emitter.EventReference.Guid == FMODEvents.instance.musicRevival.Guid) continue;
+            var inst = emitter.EventInstance;
+            if (inst.isValid()) inst.setPaused(false);
         }
     }
 
     private void OnDestroy() {
-        CleanUp();
+        foreach (var inst in trackedInstances) {
+            inst.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+            inst.release();
+        }
+        if (musicInstance.isValid()) {
+            musicInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+            musicInstance.release();
+        }
     }
 }

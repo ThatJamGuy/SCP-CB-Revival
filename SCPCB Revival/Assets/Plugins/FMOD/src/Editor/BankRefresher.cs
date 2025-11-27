@@ -3,8 +3,10 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace FMODUnity {
-    public class BankRefresher {
+namespace FMODUnity
+{
+    public class BankRefresher
+    {
         private static string currentWatchPath;
         private static FileSystemWatcher sourceFileWatcher;
         private static bool sourceFilesChanged = false;
@@ -14,11 +16,13 @@ namespace FMODUnity {
 
         private const int FilePollPeriod = 5;
 
-        public static void DisableAutoRefresh() {
+        public static void DisableAutoRefresh()
+        {
             autoRefresh = false;
         }
 
-        public static void Startup() {
+        public static void Startup()
+        {
             sourceFileWatcher = new FileSystemWatcher();
             sourceFileWatcher.IncludeSubdirectories = true;
             sourceFileWatcher.NotifyFilter = NotifyFilters.LastWrite;
@@ -30,65 +34,80 @@ namespace FMODUnity {
             EditorApplication.update += Update;
         }
 
-        private static void OnSourceFileChanged(object source, FileSystemEventArgs e) {
+        private static void OnSourceFileChanged(object source, FileSystemEventArgs e)
+        {
             sourceFilesChanged = true;
         }
 
-        private static void Update() {
+        private static void Update()
+        {
             UpdateFileWatcherPath();
             CheckSourceFilesChanged();
             CheckCacheFileExists();
             RefreshBanksIfReady();
         }
 
-        private static void UpdateFileWatcherPath() {
+        private static void UpdateFileWatcherPath()
+        {
             string sourceBankPath = Settings.Instance.SourceBankPath;
 
             string pathToWatch;
 
-            if (Path.IsPathRooted(sourceBankPath)) {
+            if (Path.IsPathRooted(sourceBankPath))
+            {
                 pathToWatch = Path.GetFullPath(sourceBankPath);
             }
-            else {
+            else
+            {
                 pathToWatch = Path.GetFullPath(Environment.CurrentDirectory + "/" + sourceBankPath);
             }
 
-            if (currentWatchPath != pathToWatch) {
+            if (currentWatchPath != pathToWatch)
+            {
                 currentWatchPath = pathToWatch;
 
                 try {
                     sourceFileWatcher.EnableRaisingEvents = false;
                     sourceFilesChanged = false;
 
-                    if (!string.IsNullOrEmpty(sourceBankPath)) {
+                    if (!string.IsNullOrEmpty(sourceBankPath))
+                    {
                         sourceFileWatcher.Path = pathToWatch;
                         sourceFileWatcher.EnableRaisingEvents = true;
                     }
                 }
-                catch (ArgumentException e) {
+                catch (ArgumentException e)
+                {
                     RuntimeUtils.DebugLogWarningFormat("Error watching {0}: {1}", pathToWatch, e.Message);
                 }
             }
         }
 
-        private static void CheckSourceFilesChanged() {
-            if (sourceFilesChanged) {
+        private static void CheckSourceFilesChanged()
+        {
+            if (sourceFilesChanged)
+            {
                 lastSourceFileChange = Time.realtimeSinceStartup;
                 sourceFilesChanged = false;
 
-                if (!BankRefreshWindow.IsVisible) {
+                if (!BankRefreshWindow.IsVisible)
+                {
                     autoRefresh = true;
                 }
 
-                if (IsWindowEnabled()) {
+                if (IsWindowEnabled())
+                {
                     BankRefreshWindow.ShowWindow();
                 }
             }
         }
 
-        private static void CheckCacheFileExists() {
-            if (Time.realtimeSinceStartup >= nextFilePollTime) {
-                if (!File.Exists(EventManager.CacheAssetFullName)) {
+        private static void CheckCacheFileExists()
+        {
+            if (Time.realtimeSinceStartup >= nextFilePollTime)
+            {
+                if (!File.Exists(EventManager.CacheAssetFullName))
+                {
                     EventManager.RefreshBanks();
                 }
 
@@ -96,40 +115,50 @@ namespace FMODUnity {
             }
         }
 
-        private static void RefreshBanksIfReady() {
-            if (TimeUntilBankRefresh() == 0 && BankRefreshWindow.ReadyToRefreshBanks) {
+        private static void RefreshBanksIfReady()
+        {
+            if (TimeUntilBankRefresh() == 0 && BankRefreshWindow.ReadyToRefreshBanks)
+            {
                 EventManager.RefreshBanks();
             }
         }
 
-        public static void HandleBankRefresh(string result) {
+        public static void HandleBankRefresh(string result)
+        {
             lastSourceFileChange = float.MaxValue;
             BankRefreshWindow.HandleBankRefresh(result);
         }
 
-        private static bool IsWindowEnabled() {
+        private static bool IsWindowEnabled()
+        {
             Settings settings = Settings.Instance;
 
             return settings.BankRefreshCooldown == Settings.BankRefreshPrompt
                 || (settings.BankRefreshCooldown >= 0 && settings.ShowBankRefreshWindow);
         }
 
-        public static float TimeSinceSourceFileChange() {
-            if (lastSourceFileChange == float.MaxValue) {
+        public static float TimeSinceSourceFileChange()
+        {
+            if (lastSourceFileChange == float.MaxValue)
+            {
                 return float.MaxValue;
             }
-            else {
+            else
+            {
                 return Mathf.Max(0, Time.realtimeSinceStartup - lastSourceFileChange);
             }
         }
 
-        public static float TimeUntilBankRefresh() {
+        public static float TimeUntilBankRefresh()
+        {
             if (!autoRefresh
                 || lastSourceFileChange == float.MaxValue
-                || Settings.Instance.BankRefreshCooldown < 0) {
+                || Settings.Instance.BankRefreshCooldown < 0)
+            {
                 return float.MaxValue;
             }
-            else {
+            else
+            {
                 float nextRefreshTime = lastSourceFileChange + Settings.Instance.BankRefreshCooldown;
                 return Mathf.Max(0, nextRefreshTime - Time.realtimeSinceStartup);
             }

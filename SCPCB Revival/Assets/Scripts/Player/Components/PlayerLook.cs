@@ -11,6 +11,8 @@ public class PlayerLook : MonoBehaviour {
 
     #region Default Methods
     private void Start() {
+        if (!PlayerAccessor.instance.allowInput) return;
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

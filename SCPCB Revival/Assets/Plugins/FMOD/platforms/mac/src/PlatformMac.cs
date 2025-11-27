@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -22,57 +23,71 @@ namespace FMOD.Studio
 }
 #endif
 
-namespace FMODUnity {
+namespace FMODUnity
+{
 #if UNITY_EDITOR
     [InitializeOnLoad]
 #endif
-    public class PlatformMac : Platform {
-        static PlatformMac() {
+    public class PlatformMac : Platform
+    {
+        static PlatformMac()
+        {
             Settings.AddPlatformTemplate<PlatformMac>("52eb9df5db46521439908db3a29a1bbb");
         }
 
         internal override string DisplayName { get { return "macOS"; } }
-        internal override void DeclareRuntimePlatforms(Settings settings) {
+        internal override void DeclareRuntimePlatforms(Settings settings)
+        {
             settings.DeclareRuntimePlatform(RuntimePlatform.OSXPlayer, this);
         }
 
 #if UNITY_EDITOR
-        internal override IEnumerable<BuildTarget> GetBuildTargets() {
+        internal override IEnumerable<BuildTarget> GetBuildTargets()
+        {
             yield return BuildTarget.StandaloneOSX;
         }
 
         internal override Legacy.Platform LegacyIdentifier { get { return Legacy.Platform.Mac; } }
 
-        protected override BinaryAssetFolderInfo GetBinaryAssetFolder(BuildTarget buildTarget) {
+        protected override BinaryAssetFolderInfo GetBinaryAssetFolder(BuildTarget buildTarget)
+        {
             return new BinaryAssetFolderInfo("mac", "Plugins");
         }
 
-        protected override IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix) {
+        protected override IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix)
+        {
             yield return new FileRecord(string.Format("fmodstudio{0}.bundle", suffix));
         }
 
-        protected override IEnumerable<FileRecord> GetOptionalBinaryFiles(BuildTarget buildTarget, bool allVariants) {
+        protected override IEnumerable<FileRecord> GetOptionalBinaryFiles(BuildTarget buildTarget, bool allVariants)
+        {
             yield return new FileRecord("gvraudio.bundle");
             yield return new FileRecord("resonanceaudio.bundle");
         }
 
-        internal override bool SupportsAdditionalCPP(BuildTarget target) {
+        internal override bool SupportsAdditionalCPP(BuildTarget target)
+        {
             return false;
         }
 #endif
 
-        internal override string GetPluginPath(string pluginName) {
+        internal override string GetPluginPath(string pluginName)
+        {
             string pluginPath = string.Format("{0}/{1}.bundle", GetPluginBasePath(), pluginName);
-            if (System.IO.Directory.Exists((pluginPath))) {
+            if (System.IO.Directory.Exists((pluginPath)))
+            {
                 return pluginPath;
             }
-            else {
+            else
+            {
                 return string.Format("{0}/{1}.dylib", GetPluginBasePath(), pluginName);
             }
         }
 #if UNITY_EDITOR
-        internal override OutputType[] ValidOutputTypes {
-            get {
+        internal override OutputType[] ValidOutputTypes
+        {
+            get
+            {
                 return sValidOutputTypes;
             }
         }
