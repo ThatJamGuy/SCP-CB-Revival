@@ -25,6 +25,8 @@ public class IngameMenuManager : MonoBehaviour {
                 GameManager.instance.PauseGame();
             } else {
                 GameManager.instance.UnpauseGame();
+                if (PixeLadder.SimpleTooltip.TooltipManager.Instance != null)
+                    PixeLadder.SimpleTooltip.TooltipManager.Instance.HideTooltip();
             }
         }
     }

@@ -98,11 +98,10 @@ namespace PixeLadder.SimpleTooltip
         #endregion
 
         #region Coroutines & Logic
-        private IEnumerator ShowRoutine(string content, string title, Sprite icon, Color titleColor, Color iconColor, float delay)
-        {
+        private IEnumerator ShowRoutine(string content, string title, Sprite icon, Color titleColor, Color iconColor, float delay) {
             // Set alpha to 0 before waiting to prevent a one-frame flicker of old content.
             canvasGroup.alpha = 0;
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
 
             yield return ResizeTooltipRoutine(content, title, icon, titleColor, iconColor);
 
