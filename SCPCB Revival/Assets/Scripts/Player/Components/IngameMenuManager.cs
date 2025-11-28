@@ -12,7 +12,7 @@ public class IngameMenuManager : MonoBehaviour {
         }
     }
 
-    private void ToggleMenuByID(int menuID) {
+    public void ToggleMenuByID(int menuID) {
         if (menus == null || menuID < 0 || menuID >= menus.Length) return;
 
         bool isMenuActive = menus[menuID].activeSelf;

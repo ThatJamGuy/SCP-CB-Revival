@@ -1,3 +1,4 @@
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -26,6 +27,7 @@ public class SCP_173 : MonoBehaviour {
 
     [Header("Audio")]
     [SerializeField] private GameObject movementSource;
+    [SerializeField] private StudioEventEmitter tensionEmitter;
     [SerializeField] private float horrorSoundResetDelay = 3f;
 
     private Camera playerCamera;
@@ -82,7 +84,7 @@ public class SCP_173 : MonoBehaviour {
             return;
         }
 
-        if (!movementSource.activeSelf) movementSource.SetActive(true);
+        if (!movementSource.activeSelf && alreadySeenByPlayer) movementSource.SetActive(true);
 
         if (hasTarget && target != null) {
             if (ShouldAbandonTarget()) {
@@ -121,6 +123,7 @@ public class SCP_173 : MonoBehaviour {
         navMeshAgent.ResetPath();
 
         MusicManager.instance.SetMusicState(MusicState.LCZ);
+        tensionEmitter.Stop();
     }
     #endregion
 
@@ -156,7 +159,7 @@ public class SCP_173 : MonoBehaviour {
             }
         }
 
-        if (nearest && Random.value < doorOpenChance && !nearest.isOpen && !isVisibleByPlayer) {
+        if (nearest && Random.value < doorOpenChance && !nearest.isOpen && !nearest.requiresKeycard && !nearest.isLocked && !isVisibleByPlayer) {
             nearest.OpenDoor();
             AudioManager.instance.PlaySound(FMODEvents.instance.doorOpen173, nearest.transform.position);
         }
@@ -196,6 +199,7 @@ public class SCP_173 : MonoBehaviour {
             AcquireTarget(playerTransform);
 
             MusicManager.instance.SetMusicState(MusicState.scp173);
+            tensionEmitter.Play();
         }
 
         if (horrorSoundReady) {

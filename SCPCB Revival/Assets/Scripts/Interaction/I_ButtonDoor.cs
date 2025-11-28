@@ -1,10 +1,14 @@
 using UnityEngine;
 using System.Collections;
+using FMODUnity;
 
 public class I_ButtonDoor : MonoBehaviour, IInteractable {
     [Header("Button Settings")]
-    [SerializeField] private bool playButtonSound = true;
     [SerializeField] private float interactionCooldown = 0.5f;
+
+    [Header("FMOD Audio")]
+    [SerializeField] private EventReference buttonPressSound;
+    [SerializeField] private EventReference buttonPressLockedSound;
 
     [Header("References")]
     [SerializeField] private Door linkedDoor;
@@ -16,14 +20,14 @@ public class I_ButtonDoor : MonoBehaviour, IInteractable {
         if (!canInteract) return;
 
         if (linkedDoor.isLocked) {
-            if (playButtonSound) AudioManager.instance.PlaySound(FMODEvents.instance.buttonPress2, transform.position);
+            AudioManager.instance.PlaySound(buttonPressLockedSound, transform.position);
             if (buttonAnimator != null) buttonAnimator.Play("ModernButtonPress");
 
             StartCoroutine(Cooldown());
             return;
         }
 
-        if (playButtonSound) AudioManager.instance.PlaySound(FMODEvents.instance.buttonPress, transform.position);
+        AudioManager.instance.PlaySound(buttonPressSound, transform.position);
         if (buttonAnimator != null) buttonAnimator.Play("ModernButtonPress");
 
         linkedDoor.ToggleDoorState();

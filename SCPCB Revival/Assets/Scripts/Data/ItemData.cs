@@ -1,5 +1,6 @@
 using UnityEngine;
 using EditorAttributes;
+using FMODUnity;
 
 [CreateAssetMenu(fileName = "NewItem", menuName = "SCPCBR/Item Data")]
 public class ItemData : ScriptableObject {
@@ -12,6 +13,9 @@ public class ItemData : ScriptableObject {
 
     [Header("Type & Properties")]
     public Type itemType;
-    public bool isEquippable;
     public int keyLevel;
+
+    [Header("FMOD Audio")]
+    public EventReference pickupSound;
+    public EventReference equipSound;
 }

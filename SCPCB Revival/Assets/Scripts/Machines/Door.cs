@@ -9,7 +9,6 @@ public class Door : MonoBehaviour {
     [Header("Door Settings")]
     public bool isOpen;
     public bool isLocked;
-    public bool isBroken;
     public bool requiresKeycard;
     public int requiredKeyLevel;
 
@@ -48,7 +47,7 @@ public class Door : MonoBehaviour {
     }
 
     public void OpenDoor() {
-        if (isOpen || isLocked || isBroken || moveRoutine != null) return;
+        if (isOpen || isLocked || moveRoutine != null) return;
         onDoorOpening?.Invoke();
         Vector3 offset = GetOffset(openDistance);
         Vector3 door01Target = door01InitialPos + offset;

@@ -67,6 +67,7 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         Vector3 spawnPos = cam.transform.position + cam.transform.forward * 1.5f;
         Instantiate(inventoryItem.itemData.worldPrefab, spawnPos, Quaternion.identity);
 
+        InventorySystem.instance.RemoveItem(inventoryItem.itemData.itemName);
         Destroy(gameObject);
     }
 }
