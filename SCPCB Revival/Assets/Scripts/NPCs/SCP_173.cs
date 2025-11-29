@@ -49,7 +49,7 @@ public class SCP_173 : MonoBehaviour {
     private const float ROAM_INTERVAL = 3f;
     private const float ROAM_RADIUS = 10f;
     private const float DOOR_CHECK_RADIUS = 2f;
-    private const float CHASE_SPEED = 30f;
+    private const float CHASE_SPEED = 100f;
     private const float HORROR_SOUND_DISTANCE_THRESHOLD = 5f;
 
     #region Unity Callbacks
@@ -121,6 +121,9 @@ public class SCP_173 : MonoBehaviour {
         target = null;
         hasTarget = false;
         navMeshAgent.ResetPath();
+
+        if (alreadySeenByPlayer) alreadySeenByPlayer = false;
+        movementSource.SetActive(false);
 
         MusicManager.instance.SetMusicState(MusicState.LCZ);
         tensionEmitter.Stop();

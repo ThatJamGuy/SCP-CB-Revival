@@ -1,7 +1,11 @@
 using UnityEngine;
 using FMODUnity;
+using System.Collections;
 
 public class KeycardButton : MonoBehaviour, IInteractable {
+    [Header("Button Settings")]
+    [SerializeField] private float interactionCooldown = 0.5f;
+
     [Header("FMOD Audio")]
     [SerializeField] private EventReference keycardSwipeUnlock;
     [SerializeField] private EventReference keycardSwipeLocked;
@@ -10,9 +14,13 @@ public class KeycardButton : MonoBehaviour, IInteractable {
     [SerializeField] private Door linkedDoor;
 
     private int requiredKeyLevel = 0;
+    private bool canInteract = true;
 
     public void Interact(PlayerInteraction playerInteraction) {
         if (requiredKeyLevel == 0) requiredKeyLevel = linkedDoor.requiredKeyLevel;
+
+        if (!canInteract) return;
+        StartCoroutine(Cooldown());
 
         if (InventorySystem.instance.currentHeldItemData == null || InventorySystem.instance.currentHeldItemData.keyLevel == 0) {
             AudioManager.instance.PlaySound(keycardSwipeLocked, transform.position);
@@ -33,5 +41,11 @@ public class KeycardButton : MonoBehaviour, IInteractable {
                 return;
             }
         }
+    }
+
+    private IEnumerator Cooldown() {
+        canInteract = false;
+        yield return new WaitForSeconds(interactionCooldown);
+        canInteract = true;
     }
 }
