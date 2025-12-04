@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,12 +9,15 @@ using UnityEngine.Serialization;
 using UnityEditor;
 #endif
 
-namespace FMODUnity {
-    public class PlatformCallbackHandler : ScriptableObject {
+namespace FMODUnity
+{
+    public class PlatformCallbackHandler : ScriptableObject
+    {
         // A hook for custom initialization logic. RuntimeManager.Initialize calls this
         // just before calling system.Initialize.
         // Call reportResult() with the result of each FMOD call to use FMOD's error handling logic.
-        public virtual void PreInitialize(FMOD.Studio.System system, Action<FMOD.RESULT, string> reportResult) {
+        public virtual void PreInitialize(FMOD.Studio.System system, Action<FMOD.RESULT, string> reportResult)
+        {
         }
     }
 
@@ -26,7 +30,8 @@ namespace FMODUnity {
     // [InitializeOnLoad] and a static constructor to register themselves as supported platforms by
     // calling Settings.AddPlatformTemplate. The user can also create instances of the PlatformGroup
     // class and use them to group platforms that have settings in common.
-    public abstract class Platform : ScriptableObject {
+    public abstract class Platform : ScriptableObject
+    {
         internal const float DefaultPriority = 0;
 
 #if UNITY_EDITOR
@@ -82,12 +87,15 @@ namespace FMODUnity {
         public Platform Parent;
 #endif
 
-        internal string Identifier {
-            get {
+        internal string Identifier
+        {
+            get
+            {
                 return identifier;
             }
 
-            set {
+            set
+            {
                 identifier = value;
             }
         }
@@ -123,22 +131,26 @@ namespace FMODUnity {
 
         // A hook for platform-specific initialization logic. RuntimeManager.Initialize calls this
         // before calling FMOD.Studio.System.create.
-        internal virtual void PreSystemCreate(Action<FMOD.RESULT, string> reportResult) {
+        internal virtual void PreSystemCreate(Action<FMOD.RESULT, string> reportResult)
+        {
         }
 
         // A hook for platform-specific initialization logic. RuntimeManager.Initialize calls this
         // just before calling studioSystem.Initialize.
-        internal virtual void PreInitialize(FMOD.Studio.System studioSystem) {
+        internal virtual void PreInitialize(FMOD.Studio.System studioSystem)
+        {
         }
 
         // The folder in which FMOD .bank files are stored. Used when loading banks.
-        internal virtual string GetBankFolder() {
+        internal virtual string GetBankFolder()
+        {
             return Application.streamingAssetsPath;
         }
 
 #if UNITY_EDITOR
         [Flags]
-        public enum BinaryType {
+        public enum BinaryType
+        {
             Release = 1,
             Logging = 2,
             Optional = 4,
@@ -146,14 +158,18 @@ namespace FMODUnity {
             All = Release | Logging | Optional | AllVariants
         }
 
-        protected virtual IEnumerable<string> GetBinaryPaths(BuildTarget buildTarget, BinaryType binaryType, string prefix) {
-            foreach (BinaryFileInfo info in GetBinaryFileInfo(buildTarget, binaryType)) {
+        protected virtual IEnumerable<string> GetBinaryPaths(BuildTarget buildTarget, BinaryType binaryType, string prefix)
+        {
+            foreach (BinaryFileInfo info in GetBinaryFileInfo(buildTarget, binaryType))
+            {
                 yield return info.LatestLocation();
             }
         }
 
-        internal abstract class FileInfo {
-            public FileInfo(FileRecord fileRecord, BinaryType type) {
+        internal abstract class FileInfo
+        {
+            public FileInfo(FileRecord fileRecord, BinaryType type)
+            {
                 this.fileRecord = fileRecord;
                 this.type = type;
             }
@@ -162,24 +178,30 @@ namespace FMODUnity {
 
             private readonly FileRecord fileRecord;
 
-            public string LatestLocation() {
+            public string LatestLocation()
+            {
                 return GetLocation(FileLayout.Latest);
             }
 
-            public IEnumerable<string> OldLocations() {
-                foreach (FileLayout layout in OldFileLayouts) {
+            public IEnumerable<string> OldLocations()
+            {
+                foreach (FileLayout layout in OldFileLayouts)
+                {
                     string location = GetLocation(layout);
 
-                    if (location != null) {
+                    if (location != null)
+                    {
                         yield return location;
                     }
                 }
             }
 
-            private string GetLocation(FileLayout layout) {
+            private string GetLocation(FileLayout layout)
+            {
                 string basePath = GetBasePath(layout);
 
-                if (basePath == null) {
+                if (basePath == null)
+                {
                     return null;
                 }
 
@@ -187,10 +209,12 @@ namespace FMODUnity {
                 string path;
                 fileRecord.GetPath(layout, out path, out absolute);
 
-                if (absolute) {
+                if (absolute)
+                {
                     return path;
                 }
-                else {
+                else
+                {
                     return string.Format("{0}/{1}", basePath, path);
                 }
             }
@@ -198,9 +222,11 @@ namespace FMODUnity {
             protected abstract string GetBasePath(FileLayout layout);
         }
 
-        internal class BinaryFileInfo : FileInfo {
+        internal class BinaryFileInfo : FileInfo
+        {
             public BinaryFileInfo(Platform platform, FileRecord fileRecord, BuildTarget buildTarget, BinaryType type)
-                : base(fileRecord, type) {
+                : base(fileRecord, type)
+            {
                 this.platform = platform;
                 this.buildTarget = buildTarget;
             }
@@ -208,14 +234,17 @@ namespace FMODUnity {
             private readonly Platform platform;
             private readonly BuildTarget buildTarget;
 
-            protected override string GetBasePath(FileLayout layout) {
+            protected override string GetBasePath(FileLayout layout)
+            {
                 BinaryAssetFolderInfo info = platform.GetBinaryAssetFolder(buildTarget);
 
-                if (layout < info.oldestLayout) {
+                if (layout < info.oldestLayout)
+                {
                     return null;
                 }
 
-                switch (layout) {
+                switch (layout)
+                {
                     case FileLayout.Release_1_10:
                         return info.path_1_10;
                     case FileLayout.Release_2_0:
@@ -229,35 +258,44 @@ namespace FMODUnity {
             }
         }
 
-        public struct FileRecord {
-            public FileRecord(string latestPath) {
+        public struct FileRecord
+        {
+            public FileRecord(string latestPath)
+            {
                 this.latestPath = latestPath;
                 pathVersions = null;
             }
 
-            public FileRecord WithAbsoluteVersion(FileLayout layout, string path) {
+            public FileRecord WithAbsoluteVersion(FileLayout layout, string path)
+            {
                 AddVersion(layout, path, true);
                 return this;
             }
 
-            public FileRecord WithRelativeVersion(FileLayout layout, string path) {
+            public FileRecord WithRelativeVersion(FileLayout layout, string path)
+            {
                 AddVersion(layout, path, false);
                 return this;
             }
 
-            private void AddVersion(FileLayout layout, string path, bool absolute) {
-                if (pathVersions == null) {
+            private void AddVersion(FileLayout layout, string path, bool absolute)
+            {
+                if (pathVersions == null)
+                {
                     pathVersions = new Dictionary<FileLayout, PathInfo>();
                 }
 
                 pathVersions.Add(layout, new PathInfo() { path = path, absolute = absolute });
             }
 
-            public void GetPath(FileLayout layout, out string path, out bool absolute) {
-                if (pathVersions != null) {
+            public void GetPath(FileLayout layout, out string path, out bool absolute)
+            {
+                if (pathVersions != null)
+                {
                     PathInfo pathForLayout;
 
-                    if (pathVersions.TryGetValue(layout, out pathForLayout)) {
+                    if (pathVersions.TryGetValue(layout, out pathForLayout))
+                    {
                         absolute = pathForLayout.absolute;
                         path = pathForLayout.path;
                         return;
@@ -268,7 +306,8 @@ namespace FMODUnity {
                 path = latestPath;
             }
 
-            private struct PathInfo {
+            private struct PathInfo
+            {
                 public string path;
                 public bool absolute;
             }
@@ -277,44 +316,56 @@ namespace FMODUnity {
             private Dictionary<FileLayout, PathInfo> pathVersions;
         }
 
-        internal IEnumerable<BinaryFileInfo> GetBinaryFileInfo(BuildTarget buildTarget, BinaryType binaryType) {
+        internal IEnumerable<BinaryFileInfo> GetBinaryFileInfo(BuildTarget buildTarget, BinaryType binaryType)
+        {
             bool allVariants = (binaryType & BinaryType.AllVariants) == BinaryType.AllVariants;
 
-            if ((binaryType & BinaryType.Release) == BinaryType.Release) {
-                foreach (FileRecord record in GetBinaryFiles(buildTarget, allVariants, "")) {
+            if ((binaryType & BinaryType.Release) == BinaryType.Release)
+            {
+                foreach (FileRecord record in GetBinaryFiles(buildTarget, allVariants, ""))
+                {
                     yield return CreateFileInfo(record, buildTarget, BinaryType.Release);
                 }
             }
 
-            if ((binaryType & BinaryType.Logging) == BinaryType.Logging) {
-                foreach (FileRecord record in GetBinaryFiles(buildTarget, allVariants, "L")) {
+            if ((binaryType & BinaryType.Logging) == BinaryType.Logging)
+            {
+                foreach (FileRecord record in GetBinaryFiles(buildTarget, allVariants, "L"))
+                {
                     yield return CreateFileInfo(record, buildTarget, BinaryType.Logging);
                 }
             }
 
-            if ((binaryType & BinaryType.Optional) == BinaryType.Optional) {
-                foreach (FileRecord record in GetOptionalBinaryFiles(buildTarget, allVariants)) {
+            if ((binaryType & BinaryType.Optional) == BinaryType.Optional)
+            {
+                foreach (FileRecord record in GetOptionalBinaryFiles(buildTarget, allVariants))
+                {
                     yield return CreateFileInfo(record, buildTarget, BinaryType.Optional);
                 }
             }
         }
 
-        internal class SourceFileInfo : FileInfo {
+        internal class SourceFileInfo : FileInfo
+        {
             public SourceFileInfo(Platform platform, FileRecord fileRecord)
-                : base(fileRecord, BinaryType.Optional) {
+                : base(fileRecord, BinaryType.Optional)
+            {
                 this.platform = platform;
             }
 
             private readonly Platform platform;
 
-            protected override string GetBasePath(FileLayout layout) {
+            protected override string GetBasePath(FileLayout layout)
+            {
                 BinaryAssetFolderInfo info = platform.GetBinaryAssetFolder(platform.GetBuildTargets().First());
 
-                if (layout < info.oldestLayout) {
+                if (layout < info.oldestLayout)
+                {
                     return null;
                 }
 
-                switch (layout) {
+                switch (layout)
+                {
                     case FileLayout.Release_1_10:
                         return "Plugins/FMOD/Wrapper";
                     case FileLayout.Release_2_0:
@@ -328,18 +379,23 @@ namespace FMODUnity {
             }
         }
 
-        internal IEnumerable<SourceFileInfo> GetSourceFileInfo() {
-            foreach (FileRecord record in GetSourceFiles()) {
+        internal IEnumerable<SourceFileInfo> GetSourceFileInfo()
+        {
+            foreach (FileRecord record in GetSourceFiles())
+            {
                 yield return new SourceFileInfo(this, record);
             }
         }
 
-        internal BinaryFileInfo CreateFileInfo(FileRecord record, BuildTarget buildTarget, BinaryType binaryType) {
+        internal BinaryFileInfo CreateFileInfo(FileRecord record, BuildTarget buildTarget, BinaryType binaryType)
+        {
             return new BinaryFileInfo(this, record, buildTarget, binaryType);
         }
 
-        internal virtual IEnumerable<string> GetObsoleteAssetPaths() {
-            foreach (string path in GetObsoleteFiles()) {
+        internal virtual IEnumerable<string> GetObsoleteAssetPaths()
+        {
+            foreach (string path in GetObsoleteFiles())
+            {
                 yield return $"{RuntimeUtils.PluginBasePath}/{path}";
                 yield return $"{RuntimeUtils.PluginBasePathDefault}/{path}";
             }
@@ -347,7 +403,8 @@ namespace FMODUnity {
 
         // Called by Settings.CanBuildTarget to get the required binaries for the current
         // build target and logging state.
-        internal virtual IEnumerable<string> GetBinaryFilePaths(BuildTarget buildTarget, BinaryType binaryType) {
+        internal virtual IEnumerable<string> GetBinaryFilePaths(BuildTarget buildTarget, BinaryType binaryType)
+        {
             return GetBinaryPaths(buildTarget, binaryType, RuntimeUtils.PluginBasePath);
         }
 
@@ -355,11 +412,13 @@ namespace FMODUnity {
         // * The required and optional binaries for the current build target and logging state;
         //   these get enabled.
         // * All binaries; any that weren't enabled in the previous step get disabled.
-        internal virtual IEnumerable<string> GetBinaryAssetPaths(BuildTarget buildTarget, BinaryType binaryType) {
+        internal virtual IEnumerable<string> GetBinaryAssetPaths(BuildTarget buildTarget, BinaryType binaryType)
+        {
             return GetBinaryPaths(buildTarget, binaryType, RuntimeUtils.PluginBasePath);
         }
 
-        public enum FileLayout : uint {
+        public enum FileLayout : uint
+        {
             Release_1_10,
             Release_2_0,
             Release_2_1,
@@ -367,14 +426,17 @@ namespace FMODUnity {
             Latest = Release_2_2,
         }
 
-        protected class BinaryAssetFolderInfo {
-            public BinaryAssetFolderInfo(string baseName, string path_1_10) {
+        protected class BinaryAssetFolderInfo
+        {
+            public BinaryAssetFolderInfo(string baseName, string path_1_10)
+            {
                 this.baseName = baseName;
                 this.path_1_10 = path_1_10;
                 this.oldestLayout = FileLayout.Release_1_10;
             }
 
-            public BinaryAssetFolderInfo(string baseName, FileLayout oldestLayout) {
+            public BinaryAssetFolderInfo(string baseName, FileLayout oldestLayout)
+            {
                 this.baseName = baseName;
                 this.path_1_10 = null;
                 this.oldestLayout = oldestLayout;
@@ -389,51 +451,62 @@ namespace FMODUnity {
 
         protected abstract IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix);
 
-        protected virtual IEnumerable<FileRecord> GetOptionalBinaryFiles(BuildTarget buildTarget, bool allVariants) {
+        protected virtual IEnumerable<FileRecord> GetOptionalBinaryFiles(BuildTarget buildTarget, bool allVariants)
+        {
             yield break;
         }
 
-        protected virtual IEnumerable<FileRecord> GetSourceFiles() {
+        protected virtual IEnumerable<FileRecord> GetSourceFiles()
+        {
             yield break;
         }
 
-        protected virtual IEnumerable<string> GetObsoleteFiles() {
+        protected virtual IEnumerable<string> GetObsoleteFiles()
+        {
             yield break;
         }
 
         internal virtual bool IsFMODStaticallyLinked { get { return false; } }
 
-        internal virtual bool SupportsAdditionalCPP(BuildTarget target) {
+        internal virtual bool SupportsAdditionalCPP(BuildTarget target)
+        {
             return true;
         }
 #endif
 
         // The base path for FMOD plugins when in a standalone player.
-        protected virtual string GetPluginBasePath() {
+        protected virtual string GetPluginBasePath()
+        {
             return string.Format("{0}/Plugins", Application.dataPath);
         }
 
         // Returns the full path for an FMOD plugin.
-        internal virtual string GetPluginPath(string pluginName) {
+        internal virtual string GetPluginPath(string pluginName)
+        {
             throw new NotImplementedException(string.Format("Plugins are not implemented on platform {0}", Identifier));
         }
 
         // Loads static and dynamic FMOD plugins for this platform.
-        internal virtual void LoadPlugins(FMOD.System coreSystem, Action<FMOD.RESULT, string> reportResult) {
+        internal virtual void LoadPlugins(FMOD.System coreSystem, Action<FMOD.RESULT, string> reportResult)
+        {
             LoadDynamicPlugins(coreSystem, reportResult);
             LoadStaticPlugins(coreSystem, reportResult);
         }
 
         // Loads dynamic FMOD plugins for this platform.
-        internal virtual void LoadDynamicPlugins(FMOD.System coreSystem, Action<FMOD.RESULT, string> reportResult) {
+        internal virtual void LoadDynamicPlugins(FMOD.System coreSystem, Action<FMOD.RESULT, string> reportResult)
+        {
             List<string> pluginNames = Plugins;
 
-            if (pluginNames == null) {
+            if (pluginNames == null)
+            {
                 return;
             }
 
-            foreach (string pluginName in pluginNames) {
-                if (string.IsNullOrEmpty(pluginName)) {
+            foreach (string pluginName in pluginNames)
+            {
+                if (string.IsNullOrEmpty(pluginName))
+                {
                     continue;
                 }
 
@@ -442,8 +515,10 @@ namespace FMODUnity {
 
                 FMOD.RESULT result = coreSystem.loadPlugin(pluginPath, out handle);
 
-                if (result == FMOD.RESULT.ERR_FILE_BAD || result == FMOD.RESULT.ERR_FILE_NOTFOUND) {
-                    if (Environment.Is64BitProcess) {
+                if (result == FMOD.RESULT.ERR_FILE_BAD || result == FMOD.RESULT.ERR_FILE_NOTFOUND)
+                {
+                    if (Environment.Is64BitProcess)
+                    {
                         // Add a "64" suffix and try again
                         string pluginPath64 = GetPluginPath(pluginName + "64");
                         result = coreSystem.loadPlugin(pluginPath64, out handle);
@@ -455,8 +530,10 @@ namespace FMODUnity {
         }
 
         // Loads static FMOD plugins for this platform.
-        internal virtual void LoadStaticPlugins(FMOD.System coreSystem, Action<FMOD.RESULT, string> reportResult) {
-            if (StaticPlugins.Count > 0) {
+        internal virtual void LoadStaticPlugins(FMOD.System coreSystem, Action<FMOD.RESULT, string> reportResult)
+        {
+            if (StaticPlugins.Count > 0)
+            {
 #if !UNITY_EDITOR && ENABLE_IL2CPP
                 // We use reflection here to avoid compile errors if the plugin registration code doesn't exist.
                 // It should be generated by Settings.PreprocessStaticPlugins(), which is called from
@@ -496,8 +573,10 @@ namespace FMODUnity {
         }
 
         // Ensures that this platform has properties.
-        internal void AffirmProperties() {
-            if (!active) {
+        internal void AffirmProperties()
+        {
+            if (!active)
+            {
                 Properties = new PropertyStorage();
                 InitializeProperties();
                 active = true;
@@ -505,8 +584,10 @@ namespace FMODUnity {
         }
 
         // Clears this platform's properties.
-        internal void ClearProperties() {
-            if (active) {
+        internal void ClearProperties()
+        {
+            if (active)
+            {
                 Properties = new PropertyStorage();
                 active = false;
 #if UNITY_EDITOR
@@ -516,43 +597,55 @@ namespace FMODUnity {
         }
 
         // Initializes this platform's properties to their default values.
-        internal virtual void InitializeProperties() {
-            if (!IsIntrinsic) {
+        internal virtual void InitializeProperties()
+        {
+            if (!IsIntrinsic)
+            {
                 ParentIdentifier = PlatformDefault.ConstIdentifier;
             }
         }
 
         // Ensures that this platform's properties are valid after loading from file.
-        internal virtual void EnsurePropertiesAreValid() {
-            if (!IsIntrinsic && string.IsNullOrEmpty(ParentIdentifier)) {
+        internal virtual void EnsurePropertiesAreValid()
+        {
+            if (!IsIntrinsic && string.IsNullOrEmpty(ParentIdentifier))
+            {
                 ParentIdentifier = PlatformDefault.ConstIdentifier;
             }
         }
 
-        internal string ParentIdentifier {
-            get {
+        internal string ParentIdentifier
+        {
+            get
+            {
                 return parentIdentifier;
             }
 
-            set {
+            set
+            {
                 parentIdentifier = value;
             }
         }
 
 #if UNITY_EDITOR
-        internal float DisplaySortOrder {
-            get {
+        internal float DisplaySortOrder
+        {
+            get
+            {
                 return displaySortOrder;
             }
 
-            set {
+            set
+            {
                 displaySortOrder = value;
             }
         }
 #endif
 
-        internal bool IsLiveUpdateEnabled {
-            get {
+        internal bool IsLiveUpdateEnabled
+        {
+            get
+            {
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
                 return LiveUpdate != TriStateBool.Disabled;
 #else
@@ -561,8 +654,10 @@ namespace FMODUnity {
             }
         }
 
-        internal bool IsOverlayEnabled {
-            get {
+        internal bool IsOverlayEnabled
+        {
+            get
+            {
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
                 return Overlay != TriStateBool.Disabled;
 #else
@@ -572,41 +667,50 @@ namespace FMODUnity {
         }
 
         // A property value that can be inherited from the parent or overridden.
-        public class Property<T> {
+        public class Property<T>
+        {
             public T Value;
             public bool HasValue;
         }
 
         // These stub classes are needed because Unity can't serialize generic classes
         [Serializable]
-        public class PropertyBool : Property<TriStateBool> {
+        public class PropertyBool : Property<TriStateBool>
+        {
         }
 
         [Serializable]
-        public class PropertyScreenPosition : Property<ScreenPosition> {
+        public class PropertyScreenPosition : Property<ScreenPosition>
+        {
         }
 
         [Serializable]
-        public class PropertyInt : Property<int> {
+        public class PropertyInt : Property<int>
+        {
         }
 
         [Serializable]
-        public class PropertySpeakerMode : Property<FMOD.SPEAKERMODE> {
+        public class PropertySpeakerMode : Property<FMOD.SPEAKERMODE>
+        {
         }
 
         [Serializable]
-        public class PropertyString : Property<string> {
+        public class PropertyString : Property<string>
+        {
         }
 
         [Serializable]
-        public class PropertyStringList : Property<List<string>> {
+        public class PropertyStringList : Property<List<string>>
+        {
         }
 
         [Serializable]
-        public class PropertyCallbackHandler : Property<PlatformCallbackHandler> {
+        public class PropertyCallbackHandler : Property<PlatformCallbackHandler>
+        {
         }
 
-        internal interface PropertyOverrideControl {
+        internal interface PropertyOverrideControl
+        {
             bool HasValue(Platform platform);
             void Clear(Platform platform);
         }
@@ -614,35 +718,43 @@ namespace FMODUnity {
         // This class provides access to a specific property on any Platform object; the property to
         // operate on is determined by the Getter function. This allows client code to operate on
         // platform properties in a generic manner.
-        internal struct PropertyAccessor<T> : PropertyOverrideControl {
+        internal struct PropertyAccessor<T> : PropertyOverrideControl
+        {
             private readonly Func<PropertyStorage, Property<T>> Getter;
             private readonly T DefaultValue;
 
-            public PropertyAccessor(Func<PropertyStorage, Property<T>> getter, T defaultValue) {
+            public PropertyAccessor(Func<PropertyStorage, Property<T>> getter, T defaultValue)
+            {
                 Getter = getter;
                 DefaultValue = defaultValue;
             }
 
             // Determine whether the property has a value in the given platform, or is inherited
             // from the parent.
-            public bool HasValue(Platform platform) {
+            public bool HasValue(Platform platform)
+            {
                 return platform.Active && Getter(platform.Properties).HasValue;
             }
 
             // Get the (possibly inherited) value of the property for the given platform.
-            public T Get(Platform platform) {
-                for (Platform current = platform; current != null; current = current.Parent) {
-                    if (current.Active) {
+            public T Get(Platform platform)
+            {
+                for (Platform current = platform; current != null; current = current.Parent)
+                {
+                    if (current.Active)
+                    {
                         Property<T> property = Getter(current.Properties);
 
-                        if (property.HasValue) {
+                        if (property.HasValue)
+                        {
                             return property.Value;
                         }
                     }
                 }
 
 #if UNITY_EDITOR
-                if (platform is PlatformPlayInEditor) {
+                if (platform is PlatformPlayInEditor)
+                {
                     return Get(Settings.EditorSettings.CurrentEditorPlatform);
                 }
 #endif
@@ -652,7 +764,8 @@ namespace FMODUnity {
 
             // Set the value of the property in the given platform, so it is not inherited from the
             // platform's parent.
-            public void Set(Platform platform, T value) {
+            public void Set(Platform platform, T value)
+            {
                 Property<T> property = Getter(platform.Properties);
 
                 property.Value = value;
@@ -661,14 +774,16 @@ namespace FMODUnity {
 
             // Clear the value of the property in the given platform, so it is inherited from the
             // platform's parent.
-            public void Clear(Platform platform) {
+            public void Clear(Platform platform)
+            {
                 Getter(platform.Properties).HasValue = false;
             }
         }
 
         // This class stores all of the inheritable properties for a platform.
         [Serializable]
-        public class PropertyStorage {
+        public class PropertyStorage
+        {
             public PropertyBool LiveUpdate = new PropertyBool();
             public PropertyInt LiveUpdatePort = new PropertyInt();
             public PropertyBool Overlay = new PropertyBool();
@@ -691,8 +806,10 @@ namespace FMODUnity {
         internal bool Active { get { return active; } }
 
         // Whether this platform has any properties that are not inherited from the parent.
-        internal bool HasAnyOverriddenProperties {
-            get {
+        internal bool HasAnyOverriddenProperties
+        {
+            get
+            {
                 return active &&
                     (
                         Properties.LiveUpdate.HasValue
@@ -734,7 +851,8 @@ namespace FMODUnity {
         public PlatformCallbackHandler CallbackHandler { get { return PropertyAccessors.CallbackHandler.Get(this); } }
 
         // These accessors provide full access to properties.
-        internal static class PropertyAccessors {
+        internal static class PropertyAccessors
+        {
             public static readonly PropertyAccessor<TriStateBool> LiveUpdate
                     = new PropertyAccessor<TriStateBool>(properties => properties.LiveUpdate, TriStateBool.Disabled);
 
@@ -784,8 +902,10 @@ namespace FMODUnity {
 
 #if UNITY_EDITOR
         // The parent platform from which this platform inherits its property values.
-        internal Platform Parent {
-            get {
+        internal Platform Parent
+        {
+            get
+            {
                 return (ParentIdentifier != null) ? Settings.Instance.FindPlatform(ParentIdentifier) : null;
             }
         }
@@ -796,27 +916,34 @@ namespace FMODUnity {
 
         // Checks whether this platform inherits from the given platform, so we can avoid creating
         // inheritance loops.
-        internal bool InheritsFrom(Platform platform) {
-            if (platform == this) {
+        internal bool InheritsFrom(Platform platform)
+        {
+            if (platform == this)
+            {
                 return true;
             }
-            else if (Parent != null) {
+            else if (Parent != null)
+            {
                 return Parent.InheritsFrom(platform);
             }
-            else {
+            else
+            {
                 return false;
             }
         }
 
-        internal FMOD.OUTPUTTYPE GetOutputType() {
-            if (Enum.IsDefined(typeof(FMOD.OUTPUTTYPE), OutputTypeName)) {
+        internal FMOD.OUTPUTTYPE GetOutputType()
+        {
+            if (Enum.IsDefined(typeof(FMOD.OUTPUTTYPE), OutputTypeName))
+            {
                 return (FMOD.OUTPUTTYPE)Enum.Parse(typeof(FMOD.OUTPUTTYPE), OutputTypeName);
             }
             return FMOD.OUTPUTTYPE.AUTODETECT;
         }
 
 #if UNITY_EDITOR
-        public struct OutputType {
+        public struct OutputType
+        {
             public string displayName;
             public FMOD.OUTPUTTYPE outputType;
         }
@@ -829,15 +956,20 @@ namespace FMODUnity {
         internal virtual List<ThreadAffinityGroup> DefaultThreadAffinities { get { return StaticThreadAffinities; } }
 
         [Serializable]
-        public class PropertyThreadAffinityList : Property<List<ThreadAffinityGroup>> {
+        public class PropertyThreadAffinityList : Property<List<ThreadAffinityGroup>>
+        {
         }
 
-        public IEnumerable<ThreadAffinityGroup> ThreadAffinities {
-            get {
-                if (threadAffinities.HasValue) {
+        public IEnumerable<ThreadAffinityGroup> ThreadAffinities
+        {
+            get
+            {
+                if (threadAffinities.HasValue)
+                {
                     return threadAffinities.Value;
                 }
-                else {
+                else
+                {
                     return DefaultThreadAffinities;
                 }
             }
@@ -854,18 +986,23 @@ namespace FMODUnity {
         };
 
         [Serializable]
-        internal class PropertyCodecChannels : Property<List<CodecChannelCount>> {
+        internal class PropertyCodecChannels : Property<List<CodecChannelCount>>
+        {
         }
 
         [SerializeField]
         private PropertyCodecChannels codecChannels = new PropertyCodecChannels();
 
-        internal List<CodecChannelCount> CodecChannels {
-            get {
-                if (codecChannels.HasValue) {
+        internal List<CodecChannelCount> CodecChannels
+        {
+            get
+            {
+                if (codecChannels.HasValue)
+                {
                     return codecChannels.Value;
                 }
-                else {
+                else
+                {
                     return DefaultCodecChannels;
                 }
             }

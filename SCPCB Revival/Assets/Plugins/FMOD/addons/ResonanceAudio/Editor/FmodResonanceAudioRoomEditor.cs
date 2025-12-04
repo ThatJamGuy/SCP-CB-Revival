@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using UnityEditor;
 using UnityEngine;
+using UnityEditor;
+using System.Collections;
 using static FMODUnityResonance.FmodResonanceAudioRoom;
 
-namespace FMODUnityResonance {
+namespace FMODUnityResonance
+{
     /// A custom editor for properties on the FmodResonanceAudioRoom script. This appears in the
     /// Inspector window of a FmodResonanceAudioRoom object.
     [CustomEditor(typeof(FmodResonanceAudioRoom))]
     [CanEditMultipleObjects]
-    public class FmodResonanceAudioRoomEditor : Editor {
+    public class FmodResonanceAudioRoomEditor : Editor
+    {
         private SerializedProperty leftWall = null;
         private SerializedProperty rightWall = null;
         private SerializedProperty floor = null;
@@ -95,7 +98,8 @@ namespace FMODUnityResonance {
             (int)SurfaceMaterial.WoodPanel,
         };
 
-        private void OnEnable() {
+        private void OnEnable()
+        {
             surfaceMaterialsLabel = new GUIContent(L10n.Tr("Surface Materials"),
             L10n.Tr("Room surface materials to calculate the acoustic properties of the room."));
             surfaceMaterialLabel = new GUIContent(L10n.Tr("Surface Material"),
@@ -125,7 +129,8 @@ namespace FMODUnityResonance {
         }
 
         /// @cond
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             serializedObject.Update();
 
             // Add clickable script field, as would have been provided by DrawDefaultInspector()
@@ -166,7 +171,8 @@ namespace FMODUnityResonance {
         }
         /// @endcond
 
-        private void DrawSurfaceMaterial(SerializedProperty surfaceMaterial, string displayName) {
+        private void DrawSurfaceMaterial(SerializedProperty surfaceMaterial, string displayName)
+        {
             EditorGUILayout.BeginHorizontal();
 
             GUIContent labelContent = new GUIContent(displayName, surfaceMaterialLabel.tooltip);

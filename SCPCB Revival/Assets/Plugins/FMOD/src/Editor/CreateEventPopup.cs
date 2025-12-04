@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
+using UnityEditor;
 
-namespace FMODUnity {
-    public class CreateEventPopup : EditorWindow {
-        private class FolderEntry {
+namespace FMODUnity
+{
+    public class CreateEventPopup : EditorWindow
+    {
+        private class FolderEntry
+        {
             public FolderEntry parent;
             public string name;
             public string guid;
@@ -30,19 +33,23 @@ namespace FMODUnity {
         private Rect scrollRect = new Rect();
         private bool isConnected = false;
 
-        internal void SelectEvent(SerializedProperty property) {
+        internal void SelectEvent(SerializedProperty property)
+        {
             outputProperty = property;
         }
 
-        private class BankEntry {
+        private class BankEntry
+        {
             public string name;
             public string guid;
         }
 
-        public CreateEventPopup() {
+        public CreateEventPopup()
+        {
         }
 
-        private void BuildTree() {
+        private void BuildTree()
+        {
             var rootGuid = EditorUtils.GetScriptOutput("studio.project.workspace.masterEventFolder.id");
             rootFolder = new FolderEntry();
             rootFolder.guid = rootGuid;
@@ -69,7 +76,8 @@ namespace FMODUnity {
 
             string bankList = EditorUtils.GetScriptOutput(string.Format("({0})()", buildBankTreeFunc));
             string[] bankListSplit = bankList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var bank in bankListSplit) {
+            foreach (var bank in bankListSplit)
+            {
                 var entry = new BankEntry();
                 entry.guid = bank.Substring(0, 38);
                 entry.name = bank.Substring(38);
@@ -77,7 +85,8 @@ namespace FMODUnity {
             }
         }
 
-        private void BuildTreeItem(FolderEntry entry) {
+        private void BuildTreeItem(FolderEntry entry)
+        {
             // lookup the entry
             EditorUtils.GetScriptOutput(string.Format("cur = studio.project.lookup(\"{0}\");", entry.guid));
 
@@ -87,12 +96,14 @@ namespace FMODUnity {
             Int32.TryParse(itemCountString, out itemCount);
 
             // iterate children looking for folder
-            for (int item = 0; item < itemCount; item++) {
+            for (int item = 0; item < itemCount; item++)
+            {
                 EditorUtils.GetScriptOutput(String.Format("child = cur.items[{0}]", item));
 
                 // check if it's a folder
                 string isFolder = EditorUtils.GetScriptOutput("child.isOfExactType(\"EventFolder\")");
-                if (isFolder == "false") {
+                if (isFolder == "false")
+                {
                     continue;
                 }
 
@@ -107,29 +118,34 @@ namespace FMODUnity {
             }
 
             // Recurse for child entries
-            foreach (var childEntry in entry.entries) {
+            foreach(var childEntry in entry.entries)
+            {
                 BuildTreeItem(childEntry);
             }
         }
 
-        public void OnGUI() {
+        public void OnGUI()
+        {
             var borderIcon = EditorUtils.LoadImage("Border.png");
             var border = new GUIStyle(GUI.skin.box);
             border.normal.background = borderIcon;
             GUI.Box(new Rect(1, 1, position.width - 1, position.height - 1), GUIContent.none, border);
 
-            if (Event.current.type == EventType.Layout) {
+            if (Event.current.type == EventType.Layout)
+            {
                 isConnected = EditorUtils.IsConnectedToStudio();
             }
 
-            if (!isConnected) {
+            if (!isConnected)
+            {
                 this.ShowNotification(new GUIContent("FMOD Studio not running"));
                 return;
             }
 
             this.RemoveNotification();
 
-            if (rootFolder == null) {
+            if (rootFolder == null)
+            {
                 BuildTree();
                 currentFolder = rootFolder;
             }
@@ -143,32 +159,41 @@ namespace FMODUnity {
 
             // Process key strokes for the folder list
             {
-                if (Event.current.keyCode == KeyCode.UpArrow) {
-                    if (Event.current.type == EventType.KeyDown) {
+                if (Event.current.keyCode == KeyCode.UpArrow)
+                {
+                    if (Event.current.type == EventType.KeyDown)
+                    {
                         lastHover = Math.Max(lastHover - 1, 0);
-                        if (filteredEntries[lastHover].rect.y < scrollPos.y) {
+                        if (filteredEntries[lastHover].rect.y < scrollPos.y)
+                        {
                             scrollPos.y = filteredEntries[lastHover].rect.y;
                         }
                     }
                     Event.current.Use();
                 }
-                if (Event.current.keyCode == KeyCode.DownArrow) {
-                    if (Event.current.type == EventType.KeyDown) {
+                if (Event.current.keyCode == KeyCode.DownArrow)
+                {
+                    if (Event.current.type == EventType.KeyDown)
+                    {
                         lastHover = Math.Min(lastHover + 1, filteredEntries.Count - 1);
-                        if (filteredEntries[lastHover].rect.y + filteredEntries[lastHover].rect.height > scrollPos.y + scrollRect.height) {
+                        if (filteredEntries[lastHover].rect.y + filteredEntries[lastHover].rect.height > scrollPos.y + scrollRect.height)
+                        {
                             scrollPos.y = filteredEntries[lastHover].rect.y - scrollRect.height + filteredEntries[lastHover].rect.height * 2;
                         }
                     }
                     Event.current.Use();
                 }
-                if (Event.current.keyCode == KeyCode.RightArrow) {
+                if (Event.current.keyCode == KeyCode.RightArrow)
+                {
                     if (Event.current.type == EventType.KeyDown)
                         nextEntry = filteredEntries[lastHover];
                     Event.current.Use();
                 }
-                if (Event.current.keyCode == KeyCode.LeftArrow) {
+                if (Event.current.keyCode == KeyCode.LeftArrow)
+                {
                     if (Event.current.type == EventType.KeyDown)
-                        if (currentFolder.parent != null) {
+                        if (currentFolder.parent != null)
+                        {
                             nextEntry = currentFolder.parent;
                         }
                     Event.current.Use();
@@ -177,7 +202,8 @@ namespace FMODUnity {
 
             bool disabled = eventName.Length == 0;
             EditorGUI.BeginDisabledGroup(disabled);
-            if (GUILayout.Button("Create Event")) {
+            if (GUILayout.Button("Create Event"))
+            {
                 CreateEventInStudio();
                 this.Close();
             }
@@ -201,16 +227,19 @@ namespace FMODUnity {
                 EditorGUI.BeginChangeCheck();
                 EditorGUILayout.LabelField("Path");
                 eventFolder = GUILayout.TextField(eventFolder);
-                if (EditorGUI.EndChangeCheck()) {
+                if (EditorGUI.EndChangeCheck())
+                {
                     updateEventPath = true;
                 }
             }
 
-            if (resetCursor) {
+            if (resetCursor)
+            {
                 resetCursor = false;
 
                 var textEditor = (TextEditor)GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl);
-                if (textEditor != null) {
+                if (textEditor != null)
+                {
                     textEditor.MoveCursorToPosition(new Vector2(9999, 9999));
                 }
             }
@@ -222,12 +251,13 @@ namespace FMODUnity {
                 var bg = new GUIStyle(GUI.skin.box);
                 Rect bgRect = new Rect(currentRect);
                 bgRect.x = 2;
-                bgRect.width = position.width - 4;
+                bgRect.width = position.width-4;
                 GUI.Box(bgRect, GUIContent.none, bg);
 
                 Rect textureRect = currentRect;
                 textureRect.width = arrowIcon.width;
-                if (currentFolder.name != null) {
+                if (currentFolder.name != null)
+                {
                     GUI.DrawTextureWithTexCoords(textureRect, arrowIcon, new Rect(1, 1, -1, -1));
                 }
 
@@ -237,7 +267,8 @@ namespace FMODUnity {
                 GUI.Label(labelRect, currentFolder.name != null ? currentFolder.name : "Folders", EditorStyles.boldLabel);
 
                 if (Event.current.type == EventType.MouseDown && currentRect.Contains(Event.current.mousePosition) &&
-                    currentFolder.parent != null) {
+                    currentFolder.parent != null)
+                {
                     nextEntry = currentFolder.parent;
                     Event.current.Use();
                 }
@@ -250,19 +281,23 @@ namespace FMODUnity {
 
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, false);
 
-            for (int i = 0; i < filteredEntries.Count; i++) {
+            for (int i = 0; i < filteredEntries.Count; i++)
+            {
                 var entry = filteredEntries[i];
                 var content = new GUIContent(entry.name);
                 var rect = EditorGUILayout.GetControlRect();
-                if ((rect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseMove) || i == lastHover) {
+                if ((rect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseMove) || i == lastHover)
+                {
                     lastHover = i;
 
                     GUI.Label(rect, content, hover);
-                    if (rect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown) {
+                    if (rect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown)
+                    {
                         nextEntry = entry;
                     }
                 }
-                else {
+                else
+                {
                     GUI.Label(rect, content, normal);
                 }
 
@@ -271,40 +306,48 @@ namespace FMODUnity {
                 textureRect.width = arrowIcon.width;
                 GUI.DrawTexture(textureRect, arrowIcon);
 
-                if (Event.current.type == EventType.Repaint) {
+                if (Event.current.type == EventType.Repaint)
+                {
                     entry.rect = rect;
                 }
             }
             EditorGUILayout.EndScrollView();
 
-            if (Event.current.type == EventType.Repaint) {
+            if (Event.current.type == EventType.Repaint)
+            {
                 scrollRect = GUILayoutUtility.GetLastRect();
             }
 
-            if (currentFolder != nextEntry) {
+            if (currentFolder != nextEntry)
+            {
                 lastHover = 0;
                 currentFolder = nextEntry;
                 UpdateTextFromList();
                 Repaint();
             }
 
-            if (updateEventPath) {
+            if (updateEventPath)
+            {
                 UpdateListFromText();
             }
 
-            if (Event.current.type == EventType.MouseMove) {
+            if (Event.current.type == EventType.MouseMove)
+            {
                 Repaint();
             }
         }
 
-        private void CreateEventInStudio() {
+        private void CreateEventInStudio()
+        {
             string eventGuid = EditorUtils.CreateStudioEvent(eventFolder, eventName);
 
-            if (!string.IsNullOrEmpty(eventGuid)) {
+            if (!string.IsNullOrEmpty(eventGuid))
+            {
                 EditorUtils.GetScriptOutput(String.Format("studio.project.lookup(\"{0}\").relationships.banks.add(studio.project.lookup(\"{1}\"));", eventGuid, banks[selectedBank].guid));
                 EditorUtils.GetScriptOutput("studio.project.build();");
 
-                if (!eventFolder.EndsWith("/")) {
+                if (!eventFolder.EndsWith("/"))
+                {
                     eventFolder += "/";
                 }
 
@@ -315,16 +358,19 @@ namespace FMODUnity {
             }
         }
 
-        private void UpdateListFromText() {
+        private void UpdateListFromText()
+        {
             int endFolders = eventFolder.LastIndexOf("/");
             currentFilter = eventFolder.Substring(endFolders + 1);
 
             var folders = eventFolder.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             FolderEntry entry = rootFolder;
             int i;
-            for (i = 0; i < folders.Length; i++) {
+            for (i = 0; i < folders.Length; i++)
+            {
                 var newEntry = entry.entries.Find((x) => x.name.Equals(folders[i], StringComparison.CurrentCultureIgnoreCase));
-                if (newEntry == null) {
+                if (newEntry == null)
+                {
                     break;
                 }
                 entry = newEntry;
@@ -332,15 +378,18 @@ namespace FMODUnity {
             currentFolder = entry;
 
             // Treat an exact filter match as being in that folder and clear the filter
-            if (entry.name != null && entry.name.Equals(currentFilter, StringComparison.CurrentCultureIgnoreCase)) {
+            if (entry.name != null && entry.name.Equals(currentFilter, StringComparison.CurrentCultureIgnoreCase))
+            {
                 currentFilter = "";
             }
         }
 
-        private void UpdateTextFromList() {
+        private void UpdateTextFromList()
+        {
             string path = "";
             var entry = currentFolder;
-            while (entry.parent != null) {
+            while (entry.parent != null)
+            {
                 path = entry.name + "/" + path;
                 entry = entry.parent;
             }

@@ -1,8 +1,11 @@
 using System;
+using UnityEngine;
 
-namespace FMODUnity {
+namespace FMODUnity
+{
     [Serializable]
-    public struct EventReference {
+    public struct EventReference
+    {
         public FMOD.GUID Guid;
 
 #if UNITY_EDITOR
@@ -13,18 +16,23 @@ namespace FMODUnity {
 
         public static Func<string, FMOD.GUID> GuidLookupDelegate;
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return string.Format("{0} ({1})", Guid, Path);
         }
 
-        public bool IsNull {
-            get {
+        public bool IsNull
+        {
+            get
+            {
                 return string.IsNullOrEmpty(Path) && Guid.IsNull;
             }
         }
 
-        public static EventReference Find(string path) {
-            if (GuidLookupDelegate == null) {
+        public static EventReference Find(string path)
+        {
+            if (GuidLookupDelegate == null)
+            {
                 throw new InvalidOperationException("EventReference.Find called before EventManager was initialized");
             }
 

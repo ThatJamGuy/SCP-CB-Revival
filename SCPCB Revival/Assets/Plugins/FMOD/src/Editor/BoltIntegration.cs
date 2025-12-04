@@ -1,8 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+using UnityEngine;
 using UnityEditor;
 using UnityEditor.Build;
-using UnityEngine;
 
 #if (UNITY_VISUALSCRIPTING_EXIST)
 using Unity.VisualScripting;
@@ -11,10 +14,13 @@ using Ludiq;
 using Bolt;
 #endif
 
-namespace FMODUnity {
-    public class BoltIntegration : MonoBehaviour {
+namespace FMODUnity
+{
+    public class BoltIntegration : MonoBehaviour
+    {
         [MenuItem("FMOD/Generate Visual Scripting Units")]
-        public static void GenerateBoltUnitOptions() {
+        public static void GenerateBoltUnitOptions()
+        {
 #if (UNITY_BOLT_EXIST || UNITY_VISUALSCRIPTING_EXIST)
             BuildBoltUnitOptions();
 #else
@@ -24,28 +30,33 @@ namespace FMODUnity {
 
 #if !(UNITY_BOLT_EXIST || UNITY_VISUALSCRIPTING_EXIST)
         [MenuItem("FMOD/Generate Visual Scripting Units", true)]
-        private static bool IsBoltPresent() {
+        private static bool IsBoltPresent()
+        {
             Assembly ludiqCoreRuntimeAssembly = null;
             Assembly boltFlowEditorAssembly = null;
 
-            try {
+            try
+            {
                 ludiqCoreRuntimeAssembly = Assembly.Load("Ludiq.Core.Runtime");
                 boltFlowEditorAssembly = Assembly.Load("Bolt.Flow.Editor");
             }
-            catch (FileNotFoundException) {
+            catch (FileNotFoundException)
+            {
                 return false;
             }
 
             return true;
         }
 
-        private static void TriggerBuild() {
+        private static void TriggerBuild()
+        {
             BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
             BuildTargetGroup group = BuildPipeline.GetBuildTargetGroup(target);
             NamedBuildTarget namedBuildTarget = NamedBuildTarget.FromBuildTargetGroup(group);
             string previousSymbols = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget);
 
-            if (!previousSymbols.Contains("UNITY_BOLT_EXIST")) {
+            if (!previousSymbols.Contains("UNITY_BOLT_EXIST"))
+            {
                 PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, previousSymbols + ";UNITY_BOLT_EXIST");
             }
             Settings.Instance.BoltUnitOptionsBuildPending = true;
@@ -108,7 +119,8 @@ namespace FMODUnity {
         }
 #endif
 
-        public static void Startup() {
+        public static void Startup()
+        {
 #if (UNITY_BOLT_EXIST || UNITY_VISUALSCRIPTING_EXIST)
             if (Settings.Instance.BoltUnitOptionsBuildPending)
             {

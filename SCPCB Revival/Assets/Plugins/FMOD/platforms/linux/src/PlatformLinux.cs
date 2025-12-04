@@ -22,37 +22,46 @@ namespace FMOD.Studio
 }
 #endif
 
-namespace FMODUnity {
+namespace FMODUnity
+{
 #if UNITY_EDITOR
     [InitializeOnLoad]
 #endif
-    public class PlatformLinux : Platform {
-        static PlatformLinux() {
+    public class PlatformLinux : Platform
+    {
+        static PlatformLinux()
+        {
             Settings.AddPlatformTemplate<PlatformLinux>("b7716510a1f36934c87976f3a81dbf3d");
         }
 
         internal override string DisplayName { get { return "Linux"; } }
-        internal override void DeclareRuntimePlatforms(Settings settings) {
+        internal override void DeclareRuntimePlatforms(Settings settings)
+        {
             settings.DeclareRuntimePlatform(RuntimePlatform.LinuxPlayer, this);
         }
 
 #if UNITY_EDITOR
-        internal override IEnumerable<BuildTarget> GetBuildTargets() {
+        internal override IEnumerable<BuildTarget> GetBuildTargets()
+        {
             yield return BuildTarget.StandaloneLinux64;
         }
 
         internal override Legacy.Platform LegacyIdentifier { get { return Legacy.Platform.Linux; } }
 
-        protected override BinaryAssetFolderInfo GetBinaryAssetFolder(BuildTarget buildTarget) {
+        protected override BinaryAssetFolderInfo GetBinaryAssetFolder(BuildTarget buildTarget)
+        {
             return new BinaryAssetFolderInfo("linux", "Plugins");
         }
 
-        protected override IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix) {
+        protected override IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix)
+        {
             yield return new FileRecord(string.Format("x86_64/libfmodstudio{0}.so", suffix));
         }
 
-        protected override IEnumerable<FileRecord> GetOptionalBinaryFiles(BuildTarget buildTarget, bool allVariants) {
-            if (allVariants) {
+        protected override IEnumerable<FileRecord> GetOptionalBinaryFiles(BuildTarget buildTarget, bool allVariants)
+        {
+            if (allVariants)
+            {
                 yield return new FileRecord("x86_64/libfmod.so");
                 yield return new FileRecord("x86_64/libfmodL.so");
             }
@@ -61,7 +70,8 @@ namespace FMODUnity {
             yield return new FileRecord("x86_64/libresonanceaudio.so");
         }
 
-        protected override IEnumerable<string> GetObsoleteFiles() {
+        protected override IEnumerable<string> GetObsoleteFiles()
+        {
             yield return "lib/linux/x86/libfmodstudio.so";
             yield return "platforms/linux/lib/x86/libfmodstudio.so";
             yield return "lib/linux/x86/libfmodstudioL.so";
@@ -69,13 +79,16 @@ namespace FMODUnity {
         }
 #endif
 
-        internal override string GetPluginPath(string pluginName) {
+        internal override string GetPluginPath(string pluginName)
+        {
             return string.Format("{0}/lib{1}.so", GetPluginBasePath(), pluginName);
         }
 
 #if UNITY_EDITOR
-        internal override OutputType[] ValidOutputTypes {
-            get {
+        internal override OutputType[] ValidOutputTypes
+        {
+            get
+            {
                 return sValidOutputTypes;
             }
         }

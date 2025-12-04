@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+using UnityEditor;
+using System.Collections.Generic;
 
-namespace FMODUnity {
-    public class FindAndReplace : EditorWindow {
+namespace FMODUnity
+{
+    public class FindAndReplace : EditorWindow
+    {
 #if !FMOD_SERIALIZE_GUID_ONLY
         private bool levelScope = true;
         private bool prefabScope;
@@ -18,7 +20,8 @@ namespace FMODUnity {
         private bool first = true;
 
         [MenuItem("FMOD/Find and Replace", priority = 2)]
-        private static void ShowFindAndReplace() {
+        private static void ShowFindAndReplace()
+        {
             var window = CreateInstance<FindAndReplace>();
             window.titleContent = new GUIContent(L10n.Tr("FMOD Find and Replace"));
             window.OnHierarchyChange();
@@ -28,21 +31,26 @@ namespace FMODUnity {
             window.ShowUtility();
         }
 
-        private void OnHierarchyChange() {
+        private void OnHierarchyChange()
+        {
             emitters = new List<StudioEventEmitter>(Resources.FindObjectsOfTypeAll<StudioEventEmitter>());
 
-            if (!levelScope) {
+            if (!levelScope)
+            {
                 emitters.RemoveAll(x => PrefabUtility.GetPrefabAssetType(x) == PrefabAssetType.NotAPrefab);
             }
 
-            if (!prefabScope) {
+            if (!prefabScope)
+            {
                 emitters.RemoveAll(x => PrefabUtility.GetPrefabAssetType(x) != PrefabAssetType.NotAPrefab);
             }
         }
 
-        private void OnGUI() {
+        private void OnGUI()
+        {
             bool doFind = false;
-            if ((Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Return)) {
+            if ((Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Return))
+            {
                 Event.current.Use();
                 doFind = true;
             }
@@ -51,7 +59,8 @@ namespace FMODUnity {
             EditorGUILayout.PrefixLabel(L10n.Tr("Find:"));
             EditorGUI.BeginChangeCheck();
             findText = EditorGUILayout.TextField(findText);
-            if (EditorGUI.EndChangeCheck()) {
+            if (EditorGUI.EndChangeCheck())
+            {
                 lastMatch = -1;
                 message = null;
             }
@@ -62,57 +71,72 @@ namespace FMODUnity {
             EditorGUI.BeginChangeCheck();
             levelScope = EditorGUILayout.ToggleLeft(L10n.Tr("Current Level"), levelScope, GUILayout.ExpandWidth(false));
             prefabScope = EditorGUILayout.ToggleLeft(L10n.Tr("Prefabs"), prefabScope, GUILayout.ExpandWidth(false));
-            if (EditorGUI.EndChangeCheck()) {
+            if (EditorGUI.EndChangeCheck())
+            {
                 OnHierarchyChange();
             }
             EditorGUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button(L10n.Tr("Find")) || doFind) {
+            if (GUILayout.Button(L10n.Tr("Find")) || doFind)
+            {
                 message = "";
                 {
                     FindNext();
                 }
-                if (lastMatch == -1) {
+                if (lastMatch == -1)
+                {
                     message = L10n.Tr("Finished Search");
                     messageType = MessageType.Warning;
                 }
             }
-            if (GUILayout.Button(L10n.Tr("Replace"))) {
+            if (GUILayout.Button(L10n.Tr("Replace")))
+            {
                 message = "";
-                if (lastMatch == -1) {
+                if (lastMatch == -1)
+                {
                     FindNext();
                 }
-                else {
+                else
+                {
                     Replace();
                 }
-                if (lastMatch == -1) {
+                if (lastMatch == -1)
+                {
                     message = L10n.Tr("Finished Search");
                     messageType = MessageType.Warning;
                 }
             }
-            if (GUILayout.Button(L10n.Tr("Replace All"))) {
-                if (EditorUtility.DisplayDialog(L10n.Tr("Replace All"), L10n.Tr("Are you sure you wish to replace all in the current hierachy?"), L10n.Tr("yes"), L10n.Tr("no"))) {
+            if (GUILayout.Button(L10n.Tr("Replace All")))
+            {
+                if (EditorUtility.DisplayDialog(L10n.Tr("Replace All"), L10n.Tr("Are you sure you wish to replace all in the current hierachy?"), L10n.Tr("yes"), L10n.Tr("no")))
+                {
                     ReplaceAll();
                 }
             }
             GUILayout.EndHorizontal();
-            if (!string.IsNullOrEmpty(message)) {
+            if (!string.IsNullOrEmpty(message))
+            {
                 EditorGUILayout.HelpBox(message, messageType);
             }
-            else {
+            else
+            {
                 EditorGUILayout.HelpBox("\n\n", MessageType.None);
             }
 
-            if (first) {
+            if (first)
+            {
                 first = false;
                 EditorGUI.FocusTextInControl(L10n.Tr("find"));
             }
         }
 
-        private void FindNext() {
-            for (int i = lastMatch + 1; i < emitters.Count; i++) {
-                if (emitters[i].EventReference.Path.IndexOf(findText, 0, StringComparison.CurrentCultureIgnoreCase) >= 0) {
+        private void FindNext()
+        {
+            for (int i = lastMatch + 1; i < emitters.Count; i++)
+            {
+                if (emitters[i].EventReference.Path.IndexOf(findText, 0, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                {
                     lastMatch = i;
                     EditorGUIUtility.PingObject(emitters[i]);
                     Selection.activeGameObject = emitters[i].gameObject;
@@ -124,10 +148,13 @@ namespace FMODUnity {
             lastMatch = -1;
         }
 
-        private void ReplaceAll() {
+        private void ReplaceAll()
+        {
             int replaced = 0;
-            for (int i = 0; i < emitters.Count; i++) {
-                if (ReplaceText(emitters[i])) {
+            for (int i = 0; i < emitters.Count; i++)
+            {
+                if (ReplaceText(emitters[i]))
+                {
                     replaced++;
                 }
             }
@@ -136,7 +163,8 @@ namespace FMODUnity {
             messageType = MessageType.Info;
         }
 
-        private bool ReplaceText(StudioEventEmitter emitter) {
+        private bool ReplaceText(StudioEventEmitter emitter)
+        {
             int findLength = findText.Length;
             int replaceLength = replaceText.Length;
             int position = 0;
@@ -145,7 +173,8 @@ namespace FMODUnity {
             var pathProperty = eventReferenceProperty.FindPropertyRelative("Path");
             string path = pathProperty.stringValue;
             position = path.IndexOf(findText, position, StringComparison.CurrentCultureIgnoreCase);
-            while (position >= 0) {
+            while (position >= 0)
+            {
                 path = path.Remove(position, findLength).Insert(position, replaceText);
                 position += replaceLength;
                 position = path.IndexOf(findText, position, StringComparison.CurrentCultureIgnoreCase);
@@ -155,7 +184,8 @@ namespace FMODUnity {
             return serializedObject.ApplyModifiedProperties();
         }
 
-        private void Replace() {
+        private void Replace()
+        {
             ReplaceText(emitters[lastMatch]);
             FindNext();
         }
