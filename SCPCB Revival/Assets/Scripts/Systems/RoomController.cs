@@ -12,7 +12,7 @@ public class RoomController : MonoBehaviour {
     [SerializeField] private GameObject other;
 
     [Header("State Configuration")]
-    [SerializeField] private float disabledToNeutralDistance = 30f;
+    [SerializeField] private float disabledToNeutralDistance = 25f;
     [SerializeField] private float neutralToEnabledDistance = 15f;
 
     private RoomState currentState = RoomState.Disabled;
@@ -22,16 +22,13 @@ public class RoomController : MonoBehaviour {
     private float lastDistance;
 
     private void Awake() {
-        // Cache squared distances to avoid sqrt calls
         sqrDisabledThreshold = disabledToNeutralDistance * disabledToNeutralDistance;
         sqrNeutralThreshold = neutralToEnabledDistance * neutralToEnabledDistance;
 
-        // Set initial state
         SetState(RoomState.Disabled);
     }
 
     private void Start() {
-        // Find player - adjust this if your player tag is different
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) {
             playerTransform = player.transform;
@@ -43,10 +40,8 @@ public class RoomController : MonoBehaviour {
     private void Update() {
         if (playerTransform == null) return;
 
-        // Calculate squared distance (more efficient than sqrt)
         float sqrDistance = Vector3.SqrMagnitude(transform.position - playerTransform.position);
         
-        // Update state based on distance
         UpdateState(sqrDistance);
     }
 
@@ -55,32 +50,27 @@ public class RoomController : MonoBehaviour {
 
         switch (currentState) {
             case RoomState.Disabled:
-                // Transition to Neutral if player gets closer
                 if (sqrDistance < sqrDisabledThreshold) {
                     newState = RoomState.Neutral;
                 }
                 break;
 
             case RoomState.Neutral:
-                // Transition to Enabled if player gets very close
                 if (sqrDistance < sqrNeutralThreshold) {
                     newState = RoomState.Enabled;
                 }
-                // Transition back to Disabled if player gets far away
                 else if (sqrDistance > sqrDisabledThreshold) {
                     newState = RoomState.Disabled;
                 }
                 break;
 
             case RoomState.Enabled:
-                // Transition back to Neutral if player moves away
                 if (sqrDistance > sqrNeutralThreshold) {
                     newState = RoomState.Neutral;
                 }
                 break;
         }
 
-        // Only change state if it's different
         if (newState != currentState) {
             SetState(newState);
         }
@@ -91,22 +81,19 @@ public class RoomController : MonoBehaviour {
 
         switch (currentState) {
             case RoomState.Disabled:
-                // Disable all aspects
-                roomMesh.SetActive(false);
+                roomMesh.GetComponent<Renderer>().enabled = false;
                 lighting.SetActive(false);
                 other.SetActive(false);
                 break;
 
             case RoomState.Neutral:
-                // Room mesh and lighting active, other disabled
-                roomMesh.SetActive(true);
+                roomMesh.GetComponent<Renderer>().enabled = true;
                 lighting.SetActive(true);
                 other.SetActive(false);
                 break;
 
             case RoomState.Enabled:
-                // Everything active
-                roomMesh.SetActive(true);
+                roomMesh.GetComponent<Renderer>().enabled = true;
                 lighting.SetActive(true);
                 other.SetActive(true);
                 break;

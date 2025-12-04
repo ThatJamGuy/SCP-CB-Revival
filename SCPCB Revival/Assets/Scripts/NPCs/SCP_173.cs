@@ -12,8 +12,7 @@ public class SCP_173 : MonoBehaviour {
 
     [Header("Behavior")]
     [SerializeField, Range(0f, 1f)] float doorOpenChance = 0.3f;
-    [SerializeField, Range(5f, 10f)] float doorCheckInterval = 10f;
-
+    [SerializeField, Range(5f, 10f)] float doorCheckInterval = 10;
     [Header("Posing")]
     [SerializeField] private string[] poseAnimations;
 
@@ -28,7 +27,7 @@ public class SCP_173 : MonoBehaviour {
     [Header("Audio")]
     [SerializeField] private GameObject movementSource;
     [SerializeField] private StudioEventEmitter tensionEmitter;
-    [SerializeField] private float horrorSoundResetDelay = 3f;
+    [SerializeField] private float horrorSoundResetDelay = 1f;
 
     private Camera playerCamera;
     private NavMeshAgent navMeshAgent;
@@ -36,6 +35,7 @@ public class SCP_173 : MonoBehaviour {
     private Transform playerTransform;
     private Animator animator;
     private Plane[] frustumPlanes;
+    private PlayerBlink playerBlink;
 
     private Vector3 roamDestination;
     private Transform target;
@@ -44,6 +44,7 @@ public class SCP_173 : MonoBehaviour {
     private float notVisibleTimer;
     private bool horrorSoundReady = true;
     private bool wasVisibleLastFrame = false;
+    private bool hasPlayedDistanceHorrorSound = false;
 
     private const float ROAM_SPEED = 5f;
     private const float ROAM_INTERVAL = 3f;
@@ -79,20 +80,21 @@ public class SCP_173 : MonoBehaviour {
     #region Movement Control
     private void HandleMoving() {
         if (isVisibleByPlayer || isVisibleByAnyNPC) {
-            movementSource.SetActive(false);
-            StopCompletely();
-            return;
+            if (!PlayerAccessor.instance.isBlinking) {
+                movementSource.SetActive(false);
+                StopCompletely();
+                return;
+            }
         }
-
-        if (!movementSource.activeSelf && alreadySeenByPlayer) movementSource.SetActive(true);
 
         if (hasTarget && target != null) {
             if (ShouldAbandonTarget()) {
                 AbandonTarget();
                 return;
             }
-            navMeshAgent.speed = CHASE_SPEED;
-            navMeshAgent.acceleration = CHASE_SPEED;
+            float currentChaseSpeed = GetChaseSpeed();
+            navMeshAgent.speed = currentChaseSpeed;
+            navMeshAgent.acceleration = currentChaseSpeed;
             navMeshAgent.SetDestination(target.position);
         }
         else {
@@ -101,6 +103,16 @@ public class SCP_173 : MonoBehaviour {
             canRoam = true;
             Roam();
         }
+
+        movementSource.SetActive(alreadySeenByPlayer && navMeshAgent.velocity.sqrMagnitude > 0.01f);
+    }
+
+    private float GetChaseSpeed() {
+        float speed = CHASE_SPEED;
+        if (PlayerAccessor.instance.isBlinking) {
+            speed *= 2.5f;
+        }
+        return speed;
     }
 
     private void StopCompletely() {
@@ -122,8 +134,11 @@ public class SCP_173 : MonoBehaviour {
         hasTarget = false;
         navMeshAgent.ResetPath();
 
+        if (alreadySeenByPlayer) PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>().StopBlink();
         if (alreadySeenByPlayer) alreadySeenByPlayer = false;
+
         movementSource.SetActive(false);
+        hasPlayedDistanceHorrorSound = false;
 
         MusicManager.instance.SetMusicState(MusicState.LCZ);
         tensionEmitter.Stop();
@@ -174,7 +189,7 @@ public class SCP_173 : MonoBehaviour {
         bool wasVisible = isVisibleByPlayer;
         isVisibleByPlayer = false;
 
-        if (meshRenderer.isVisible) {
+        if (meshRenderer.isVisible && !PlayerAccessor.instance.isBlinking) {
             frustumPlanes = GeometryUtility.CalculateFrustumPlanes(playerCamera);
             if (GeometryUtility.TestPlanesAABB(frustumPlanes, meshRenderer.bounds)) {
                 Vector3 origin = playerCamera.transform.position;
@@ -203,6 +218,9 @@ public class SCP_173 : MonoBehaviour {
 
             MusicManager.instance.SetMusicState(MusicState.scp173);
             tensionEmitter.Play();
+
+            playerBlink = PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>();
+            playerBlink.StartBlink();
         }
 
         if (horrorSoundReady) {
@@ -245,16 +263,15 @@ public class SCP_173 : MonoBehaviour {
 
     private void PlayHorrorSound() {
         float dist = Vector3.Distance(transform.position, playerTransform.position);
-        var sound = dist < HORROR_SOUND_DISTANCE_THRESHOLD ?
-            FMODEvents.instance.statueHorrorNear : FMODEvents.instance.statueHorrorFar;
-        AudioManager.instance.PlaySound(sound, transform.position);
-    }
 
-    public void TryPlayNearSoundOnBlink() {
-        if (!isVisibleByPlayer) return;
-        float dist = Vector3.Distance(transform.position, playerTransform.position);
         if (dist < HORROR_SOUND_DISTANCE_THRESHOLD) {
             AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorNear, transform.position);
+        }
+        else {
+            if (!hasPlayedDistanceHorrorSound) {
+                AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorFar, transform.position);
+                hasPlayedDistanceHorrorSound = true;
+            }
         }
     }
     #endregion

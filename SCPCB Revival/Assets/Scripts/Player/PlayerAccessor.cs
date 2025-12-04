@@ -9,10 +9,13 @@ public class PlayerAccessor : MonoBehaviour {
     public bool isMoving;
     public bool isSprinting;
     public bool isCrouching;
+    public bool isBlinking;
 
     [Header("Player Modifiers")]
     public bool infiniteStamina = false;
+    public bool infiniteBlink = false;
     public float staminaDepletionModifier = 0f;
+    public float blinkDepletionModifier = 0f;
 
     [Header("References")]
     public Camera playerCamera;

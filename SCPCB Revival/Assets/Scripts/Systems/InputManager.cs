@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[DefaultExecutionOrder(-100)]
 public class InputManager : MonoBehaviour {
     public static InputManager Instance { get; private set; }
 
@@ -12,6 +13,7 @@ public class InputManager : MonoBehaviour {
     private InputAction crouchAction;
     public InputAction interactAction { get; private set; }
     public InputAction inventoryAction { get; private set; }
+    public InputAction blinkAction { get; private set; }
 
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);
@@ -23,6 +25,15 @@ public class InputManager : MonoBehaviour {
         crouchAction = playerInput.actions.FindAction("Crouch", false);
         interactAction = playerInput.actions["Interact"];
         inventoryAction = playerInput.actions["Inventory"];
+        blinkAction = playerInput.actions["Blink"];
+    }
+
+    private void OnEnable() {
+        blinkAction.Enable();
+    }
+
+    private void OnDisable() {
+        blinkAction.Disable();
     }
 
     public Vector2 Move => moveAction.ReadValue<Vector2>();
@@ -30,4 +41,5 @@ public class InputManager : MonoBehaviour {
     public bool IsMoving => Move.magnitude > 0;
     public bool IsSprinting => sprintAction.ReadValue<float>() > 0;
     public bool IsCrouchTriggered => crouchAction != null && crouchAction.triggered;
+    public bool IsBlinkHeld => blinkAction.IsPressed();
 }

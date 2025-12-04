@@ -13,6 +13,7 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler {
     private void HandleDoubleClick() {
         switch (itemData.itemType) {
             case ItemData.Type.Normal:
+                break;
             case ItemData.Type.Keycard:
                 InventorySystem.instance.EquipItem(itemData);
                 break;

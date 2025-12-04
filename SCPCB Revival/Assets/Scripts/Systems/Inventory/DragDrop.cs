@@ -64,7 +64,7 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         Camera cam = PlayerAccessor.instance.playerCamera;
         if (cam == null) return;
 
-        Vector3 spawnPos = cam.transform.position + cam.transform.forward * 1.5f;
+        Vector3 spawnPos = cam.transform.position + cam.transform.forward * 0.5f;
         Instantiate(inventoryItem.itemData.worldPrefab, spawnPos, Quaternion.identity);
 
         InventorySystem.instance.RemoveItem(inventoryItem.itemData.itemName);
