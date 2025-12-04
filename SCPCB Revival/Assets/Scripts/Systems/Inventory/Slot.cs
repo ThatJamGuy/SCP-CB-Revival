@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static UnityEditor.Progress;
 
 public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IDropHandler {
     [SerializeField] private GameObject outline;

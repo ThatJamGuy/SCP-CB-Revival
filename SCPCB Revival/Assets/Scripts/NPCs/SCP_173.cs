@@ -27,6 +27,7 @@ public class SCP_173 : MonoBehaviour {
     [Header("Audio")]
     [SerializeField] private GameObject movementSource;
     [SerializeField] private StudioEventEmitter tensionEmitter;
+    [SerializeField] private EventReference neckBreakSound;
     [SerializeField] private float horrorSoundResetDelay = 1f;
 
     private Camera playerCamera;
@@ -74,6 +75,9 @@ public class SCP_173 : MonoBehaviour {
         }
         HandleHorrorSoundReset();
         HandleMoving();
+
+        if (hasTarget && !PlayerAccessor.instance.isDead)
+            AttemptToKillPlayer();
     }
     #endregion
 
@@ -245,6 +249,20 @@ public class SCP_173 : MonoBehaviour {
         if (animator != null && !isVisibleByPlayer) {
             animator.Play(anim);
         }
+    }
+    #endregion
+
+    #region Target Killing
+    private void AttemptToKillPlayer() {
+        if (!hasTarget || target == null) return;
+        float dist = Vector3.Distance(transform.position, target.position);
+        if (dist <= 1.5f && !isVisibleByPlayer) {
+            AudioManager.instance.PlaySound(neckBreakSound, transform.position);
+            AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorNear, transform.position);
+            GameManager.instance.ShowDeathScreen("Subject D-9341. Cause of death: Fatal cervical fracture. Assumed to be attacked by SCP-173.");
+            Destroy(gameObject);
+        }
+
     }
     #endregion
 

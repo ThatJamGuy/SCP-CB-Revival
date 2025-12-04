@@ -20,4 +20,13 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 1f;
         AudioManager.instance.UnpauseGameAudio();
     }
+
+    public void ShowDeathScreen(string causeOfDeath) {
+        PlayerAccessor.instance.DisablePlayerInputs(true);
+        PlayerAccessor.instance.isDead = true;
+        PlayerAccessor.instance.isMoving = false;
+        AudioManager.instance.StopMusic();
+        CanvasInstance.instance.deathMenu.SetActive(true);
+        CanvasInstance.instance.deathMenuDeathCauseText.text = causeOfDeath;
+    }
 }

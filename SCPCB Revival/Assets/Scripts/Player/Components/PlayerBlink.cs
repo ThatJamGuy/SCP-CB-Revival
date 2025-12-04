@@ -85,7 +85,7 @@ public class PlayerBlink : MonoBehaviour {
     }
 
     private IEnumerator DisableBlinkCoroutine() {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(1);
         CanvasInstance.instance.blinkBar.gameObject.SetActive(false);
         isBlinkingActive = false;
     }

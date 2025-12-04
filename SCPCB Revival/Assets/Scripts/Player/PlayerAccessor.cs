@@ -10,6 +10,7 @@ public class PlayerAccessor : MonoBehaviour {
     public bool isSprinting;
     public bool isCrouching;
     public bool isBlinking;
+    public bool isDead;
 
     [Header("Player Modifiers")]
     public bool infiniteStamina = false;
