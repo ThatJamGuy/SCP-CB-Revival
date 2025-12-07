@@ -1,6 +1,4 @@
-using FMOD.Studio;
 using FMODUnity;
-using SickDev.CommandSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,9 +28,9 @@ public class AmbienceController : MonoBehaviour {
         else Destroy(gameObject);
     }
 
-    private void OnEnable() {
-        DevConsole.singleton.AddCommand(new ActionCommand(PlayCommotionEvent) { className = "Event" });
-    }
+    //private void OnEnable() {
+    //    DevConsole.singleton.AddCommand(new ActionCommand(PlayCommotionEvent) { className = "Event" });
+    //}
 
     private void Start() {
         GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");

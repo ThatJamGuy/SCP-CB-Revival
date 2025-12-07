@@ -1,5 +1,4 @@
 using PrimeTween;
-using SickDev.CommandSystem;
 using TMPro;
 using UnityEngine;
 
@@ -20,7 +19,7 @@ public class InfoTextManager : MonoBehaviour {
     }
 
     private void OnEnable() {
-        DevConsole.singleton.AddCommand(new ActionCommand<string>(NotifyPlayer) { className = "Utility" });
+        DevConsole.Instance.Add<string>("notify_player", str => NotifyPlayer(str));
     }
 
     /// <summary>

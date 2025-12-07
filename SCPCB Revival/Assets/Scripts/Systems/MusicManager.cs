@@ -1,5 +1,4 @@
 using FMODUnity;
-using SickDev.CommandSystem;
 using UnityEngine;
 
 public enum MusicState {
@@ -24,7 +23,7 @@ public class MusicManager : MonoBehaviour {
     }
 
     private void OnEnable() {
-        DevConsole.singleton.AddCommand(new ActionCommand<int>(SetMusicState) { className = "Music" });
+        DevConsole.Instance.Add<int>("set_music_state", state => SetMusicState(state));
     }
 
     private void Start() {
