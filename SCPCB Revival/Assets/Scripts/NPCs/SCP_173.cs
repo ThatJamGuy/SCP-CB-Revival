@@ -20,6 +20,7 @@ public class SCP_173 : MonoBehaviour {
     [SerializeField] private float maxTargetDistance = 50f;
 
     [Header("Detection")]
+    [SerializeField] private float maxVisibilityRange = 20f;
     [SerializeField] private LayerMask obstructionMask;
     [SerializeField] private float visibilityCheckInterval = 0.1f;
     [SerializeField] private Vector3 eyeOffset = new Vector3(0, 1.5f, 0);
@@ -200,6 +201,9 @@ public class SCP_173 : MonoBehaviour {
                 Vector3 targetPoint = transform.position + eyeOffset;
                 Vector3 dir = targetPoint - origin;
                 float dist = dir.magnitude;
+
+                if (dist > maxVisibilityRange)
+                    return;
 
                 if (!Physics.Raycast(origin, dir.normalized, out var hit, dist, obstructionMask) ||
                     hit.transform == transform || hit.transform.IsChildOf(transform)) {

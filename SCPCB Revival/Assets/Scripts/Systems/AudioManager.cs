@@ -19,7 +19,7 @@ public class AudioManager : MonoBehaviour {
     }
 
     private void Start() {
-        StartMusic(FMODEvents.instance.musicRevival);
+        StartMusic(MusicManager.instance.musicEvent);
     }
 
     private void TrackInstance(EventInstance e) {
@@ -66,11 +66,16 @@ public class AudioManager : MonoBehaviour {
     }
 
     public void PlayMusic() {
-        if (!musicInstance.isValid()) StartMusic(FMODEvents.instance.musicRevival);
+        if (!musicInstance.isValid()) StartMusic(MusicManager.instance.musicEvent);
         else musicInstance.start();
     }
 
     public void SetMusicParameter(string parameter, float value, bool ignoreSeekSpeed = false) {
+        if (musicInstance.isValid())
+            musicInstance.setParameterByName(parameter, value, ignoreSeekSpeed);
+    }
+
+    public void SetSoundtrackParameter(string parameter, float value, bool ignoreSeekSpeed = false) {
         if (musicInstance.isValid())
             musicInstance.setParameterByName(parameter, value, ignoreSeekSpeed);
     }
@@ -89,7 +94,7 @@ public class AudioManager : MonoBehaviour {
         }
 
         foreach (var emitter in trackedEmitters) {
-            if (emitter.EventReference.Guid == FMODEvents.instance.musicRevival.Guid) continue;
+            if (emitter.EventReference.Guid == MusicManager.instance.musicEvent.Guid) continue;
             var inst = emitter.EventInstance;
             if (inst.isValid()) inst.setPaused(true);
         }
@@ -102,7 +107,7 @@ public class AudioManager : MonoBehaviour {
         }
 
         foreach (var emitter in trackedEmitters) {
-            if (emitter.EventReference.Guid == FMODEvents.instance.musicRevival.Guid) continue;
+            if (emitter.EventReference.Guid == MusicManager.instance.musicEvent.Guid) continue;
             var inst = emitter.EventInstance;
             if (inst.isValid()) inst.setPaused(false);
         }

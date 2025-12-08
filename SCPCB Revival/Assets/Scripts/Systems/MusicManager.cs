@@ -2,16 +2,18 @@ using FMODUnity;
 using UnityEngine;
 
 public enum MusicState {
-    CreepyMusic03 = 0,
-    LCZ = 1,
-    scp106 = 2,
-    scp173 = 3,
+    Menu = 0,
+    CreepyMusic03 = 1,
+    LCZ = 2,
+    scp106 = 3,
+    scp173 = 4,
 }
 
 [RequireComponent(typeof(StudioEventEmitter))]
 public class MusicManager : MonoBehaviour {
     public static MusicManager instance;
 
+    public EventReference musicEvent;
     private StudioEventEmitter emitter;
 
     private void Awake() {
@@ -22,21 +24,26 @@ public class MusicManager : MonoBehaviour {
         }
     }
 
-    private void OnEnable() {
+    private void Start() {
+        emitter = AudioManager.instance.InitializeEventEmitter(musicEvent, gameObject);
+
+        if (DevConsole.Instance == null) return;
         DevConsole.Instance.Add<int>("set_music_state", state => SetMusicState(state));
+        DevConsole.Instance.Add<int>("set_soundtrack", soundtrackID => SetSoundtrack(soundtrackID));
     }
 
-    private void Start() {
-        emitter = AudioManager.instance.InitializeEventEmitter(FMODEvents.instance.musicRevival, gameObject);
-        emitter.Play();
+    public void SetSoundtrack(int soundtrackID) {
+        AudioManager.instance.SetSoundtrackParameter("SoundtrackID", soundtrackID);
+
+        if (emitter != null)
+            emitter.SetParameter("SoundtrackID", soundtrackID);
     }
 
     public void SetMusicState(int state) {
         AudioManager.instance.SetMusicParameter("MusicState", state);
 
-        if (emitter != null) {
+        if (emitter != null)
             emitter.SetParameter("MusicState", state);
-        }
     }
 
     public void SetMusicState(MusicState state) {
