@@ -4,6 +4,7 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance { get; private set; }
 
     public bool isGamePaused = false;
+    public bool scp106Active = false;
 
     public void Awake() {
         instance = this;

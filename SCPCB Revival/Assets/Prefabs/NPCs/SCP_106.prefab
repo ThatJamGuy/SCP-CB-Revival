@@ -1248,6 +1248,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4251644760914178726}
+  - component: {fileID: 952400337437601687}
+  - component: {fileID: 1630244221949807237}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -1315,6 +1317,49 @@ Transform:
   - {fileID: 171943695197855762}
   m_Father: {fileID: 8613272121219589119}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &952400337437601687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653530300041799286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -68193659
+      Data2: 1270740902
+      Data3: 459029418
+      Data4: 1657867202
+    Path: event:/SFX/SCP/106/Breathing
+  Event: 
+  EventPlayTrigger: 11
+  EventStopTrigger: 12
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 10
+--- !u!114 &1630244221949807237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653530300041799286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af24a7902a204b54191ddfe9b8f9b934, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrackThisEmitter
 --- !u!1 &1677319869791676745
 GameObject:
   m_ObjectHideFlags: 0
@@ -3425,17 +3470,19 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3204429707878225920}
+  - component: {fileID: 2249013175840561995}
+  - component: {fileID: 1020326238107506825}
   - component: {fileID: 8801471922518943614}
   - component: {fileID: 7237120973052982779}
   - component: {fileID: 1406710006180909725}
   - component: {fileID: 3697378485983028315}
   m_Layer: 0
   m_Name: SCP_106
-  m_TagString: Untagged
+  m_TagString: NPC
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3204429707878225920
 Transform:
   m_ObjectHideFlags: 0
@@ -3446,7 +3493,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5884903676874921124}
@@ -3454,7 +3501,7 @@ Transform:
   - {fileID: 7431126116658767064}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8801471922518943614
+--- !u!114 &2249013175840561995
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3462,6 +3509,63 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4179995913638945844}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daa89401b2b0e3b4a8f394cc3f71a91f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPC_106_New
+  targetPlayerOnStart: 1
+  chaseDuration: 61
+  floorEmerge2AnimTime: 2.4
+  attackAnimTime: 1
+  despawnAnimTime: 2.6
+  targetHitEvent:
+    Guid:
+      Data1: 1076846084
+      Data2: 1171937474
+      Data3: 365304989
+      Data4: -1237277168
+    Path: event:/SFX/Character/D9341/Damage2
+  chaseStartEvent:
+    Guid:
+      Data1: -649879821
+      Data2: 1322978923
+      Data3: 1766169495
+      Data4: 830156678
+    Path: event:/SFX/SCP/106/ChaseStart
+  chaseEndEvent:
+    Guid:
+      Data1: -938646294
+      Data2: 1176687656
+      Data3: -1324709187
+      Data4: -41629306
+    Path: event:/SFX/SCP/106/ChaseEnd
+--- !u!114 &1020326238107506825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4179995913638945844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dfd0d2e2b716a5478ec44785b95fd05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPC_StepSound
+  stepSoundSet:
+    Guid:
+      Data1: -298754590
+      Data2: 1082502928
+      Data3: -1675828554
+      Data4: 83580539
+    Path: event:/SFX/Step/StepsPocketDimension
+--- !u!114 &8801471922518943614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4179995913638945844}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e02cdfa48c32434984d79dce8c3f641, type: 3}
   m_Name: 
@@ -3487,6 +3591,13 @@ MonoBehaviour:
     distance: 15
     navSampleRadius: 10
     cooldownDuration: 5
+  laughSounds:
+    Guid:
+      Data1: 108057394
+      Data2: 1122483930
+      Data3: -377622869
+      Data4: -1545949665
+    Path: event:/SFX/SCP/106/ChasingLaughs
   laughMinTime: 5
   laughMaxTime: 20
 --- !u!95 &7237120973052982779
@@ -3500,7 +3611,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 761884cd1493e984b93fe80433c14d13, type: 3}
   m_Controller: {fileID: 9100000, guid: 9686ea00141761043a2a24b2ac24caf6, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -3521,18 +3632,18 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3
+  m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 360
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
+  m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 2.5
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 3
+  m_ObstacleAvoidanceType: 0
 --- !u!136 &3697378485983028315
 CapsuleCollider:
   m_ObjectHideFlags: 0

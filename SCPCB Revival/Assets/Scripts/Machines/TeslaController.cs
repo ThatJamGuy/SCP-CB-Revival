@@ -4,6 +4,7 @@ using UnityEngine;
 public class TeslaController : MonoBehaviour {
     [SerializeField] private GameObject teslaTrigger;
     [SerializeField] private GameObject teslaShockEffect;
+    [SerializeField] private BoxCollider teslaKillZoneCollider;
 
     private void Start() {
         teslaTrigger.SetActive(true);
@@ -11,8 +12,14 @@ public class TeslaController : MonoBehaviour {
     }
 
     public void TriggerTesla() {
+        if (PlayerAccessor.instance.isDead) return;
         StartCoroutine(TeslaShockCoroutine());
         StartCoroutine(TriggerTeslaCoroutine());
+    }
+
+    public void KillPlayer() {
+        GameManager.instance.ShowDeathScreen("Subject D-9341 killed by the Tesla Gate at [REDACTED].");
+        PlayerAccessor.instance.isDead = true;
     }
 
     private IEnumerator TeslaShockCoroutine() {

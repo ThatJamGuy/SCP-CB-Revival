@@ -428,7 +428,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &45080430
 Transform:
   m_ObjectHideFlags: 0
@@ -2835,42 +2835,6 @@ MonoBehaviour:
   other: {fileID: 1357211508}
   disabledToNeutralDistance: 25
   neutralToEnabledDistance: 15
---- !u!1 &316576013 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7034291063567092639, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-  m_PrefabInstance: {fileID: 749233573}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &316576016
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 316576013}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: -1860823352
-      Data2: 1124570275
-      Data3: 1267754625
-      Data4: -672493311
-    Path: event:/SFX/SCP/106/Emerge
-  Event: 
-  EventPlayTrigger: 11
-  EventStopTrigger: 12
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
 --- !u!1 &321400967
 GameObject:
   m_ObjectHideFlags: 0
@@ -3227,10 +3191,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1406710006180909725, guid: 978e362fe609b854d8ff40a6fbe6322c, type: 3}
-      propertyPath: m_Speed
-      value: 2.5
-      objectReference: {fileID: 0}
     - target: {fileID: 3204429707878225920, guid: 978e362fe609b854d8ff40a6fbe6322c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.051655754
@@ -3241,7 +3201,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3204429707878225920, guid: 978e362fe609b854d8ff40a6fbe6322c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 7.4313955
+      value: 0.031395435
       objectReference: {fileID: 0}
     - target: {fileID: 3204429707878225920, guid: 978e362fe609b854d8ff40a6fbe6322c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3274,6 +3234,10 @@ PrefabInstance:
     - target: {fileID: 4179995913638945844, guid: 978e362fe609b854d8ff40a6fbe6322c, type: 3}
       propertyPath: m_Name
       value: SCP_106
+      objectReference: {fileID: 0}
+    - target: {fileID: 4179995913638945844, guid: 978e362fe609b854d8ff40a6fbe6322c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8038,9 +8002,9 @@ MonoBehaviour:
   m_LightUnit: 0
   m_LuxAtDistance: 1
   m_Intensity: 0
-  m_InnerSpotPercent: 38.39063
-  m_ShapeWidth: 0.5
-  m_ShapeHeight: 0.5
+  m_InnerSpotPercent: -1
+  m_ShapeWidth: -1
+  m_ShapeHeight: -1
   m_AspectRatio: 1
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
@@ -8156,7 +8120,7 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
-  m_Version: 13
+  m_Version: 14
   m_ObsoleteShadowResolutionTier: 1
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
@@ -8175,7 +8139,7 @@ Light:
   m_Intensity: 139.33835
   m_Range: 5
   m_SpotAngle: 79.01234
-  m_InnerSpotAngle: 21.80208
+  m_InnerSpotAngle: 30.333332
   m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
@@ -9994,42 +9958,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3666862956173817850, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: CollisionModule.type
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3666862956173817850, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: CollisionModule.enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3666862956173817850, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: CollisionModule.m_Bounce.scalar
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3666862956173817850, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: CollisionModule.m_Dampen.scalar
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 3666862956173817850, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.atime2
-      value: 53199
-      objectReference: {fileID: 0}
-    - target: {fileID: 3666862956173817850, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.atime3
-      value: 65535
-      objectReference: {fileID: 0}
-    - target: {fileID: 3666862956173817850, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.key3.a
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3666862956173817850, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.m_ColorSpace
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3666862956173817850, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.m_NumAlphaKeys
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 6129377573258610621, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.5
@@ -10070,30 +9998,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6764115162847545665, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: InitialModule.startColor.maxColor.a
-      value: 0.14901961
-      objectReference: {fileID: 0}
-    - target: {fileID: 6764115162847545665, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.atime1
-      value: 32685
-      objectReference: {fileID: 0}
-    - target: {fileID: 6764115162847545665, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.atime2
-      value: 65535
-      objectReference: {fileID: 0}
-    - target: {fileID: 6764115162847545665, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.key1.a
-      value: 0.7254902
-      objectReference: {fileID: 0}
-    - target: {fileID: 6764115162847545665, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.key2.a
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6764115162847545665, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.m_NumAlphaKeys
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 7034291063567092639, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
       propertyPath: m_Name
       value: SCP106SpawnEffect
@@ -10102,17 +10006,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8331959523047610904, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7034291063567092639, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 316576016}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
 --- !u!1 &749803554
 GameObject:
@@ -18598,9 +18495,9 @@ MonoBehaviour:
   m_LightUnit: 0
   m_LuxAtDistance: 1
   m_Intensity: 0
-  m_InnerSpotPercent: 0
-  m_ShapeWidth: 0.5
-  m_ShapeHeight: 0.5
+  m_InnerSpotPercent: -1
+  m_ShapeWidth: -1
+  m_ShapeHeight: -1
   m_AspectRatio: 1
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
@@ -18716,7 +18613,7 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
-  m_Version: 13
+  m_Version: 14
   m_ObsoleteShadowResolutionTier: 1
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
@@ -18735,7 +18632,7 @@ Light:
   m_Intensity: 3.9788735
   m_Range: 10
   m_SpotAngle: 30
-  m_InnerSpotAngle: 21.80208
+  m_InnerSpotAngle: 0
   m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 1
@@ -18779,7 +18676,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
+  m_UseViewFrustumForShadowCasterCull: 0
   m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -21389,6 +21286,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   isGamePaused: 0
+  scp106Active: 0
 --- !u!1 &1433283066
 GameObject:
   m_ObjectHideFlags: 0
@@ -21702,6 +21600,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1449654806}
   - component: {fileID: 1449654805}
+  - component: {fileID: 1449654807}
   m_Layer: 2
   m_Name: TeslaKillZone
   m_TagString: Untagged
@@ -21745,6 +21644,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1141881232}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1449654807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1449654804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8621d512ef742543ad8c0d501c4cdf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EVNT_Trigger
+  triggerOnce: 0
+  allowNPCTrigger: 0
+  OnTriggerEnterEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1728100332}
+        m_TargetAssemblyTypeName: TeslaController, Assembly-CSharp
+        m_MethodName: KillPlayer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &1451990552
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24066,9 +23994,9 @@ MonoBehaviour:
   m_LightUnit: 0
   m_LuxAtDistance: 1
   m_Intensity: 0
-  m_InnerSpotPercent: 0
-  m_ShapeWidth: 0.5
-  m_ShapeHeight: 0.5
+  m_InnerSpotPercent: -1
+  m_ShapeWidth: -1
+  m_ShapeHeight: -1
   m_AspectRatio: 1
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
@@ -24184,7 +24112,7 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
-  m_Version: 13
+  m_Version: 14
   m_ObsoleteShadowResolutionTier: 1
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
@@ -24203,7 +24131,7 @@ Light:
   m_Intensity: 3.9788735
   m_Range: 10
   m_SpotAngle: 30
-  m_InnerSpotAngle: 21.80208
+  m_InnerSpotAngle: 0
   m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 1
@@ -24247,7 +24175,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
+  m_UseViewFrustumForShadowCasterCull: 0
   m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -26130,6 +26058,61 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ae106f2012f103941b6a5d0318656b71, type: 3}
+--- !u!1 &1691041161
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1691041162}
+  - component: {fileID: 1691041163}
+  m_Layer: 0
+  m_Name: SCP106Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1691041162
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691041161}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1691041163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691041161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eea9c6e32ef0d2045a4dcc5dc39ae159, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::scpcbr.SCP106Spawner
+  scp106Prefab: {fileID: 4179995913638945844, guid: 978e362fe609b854d8ff40a6fbe6322c, type: 3}
+  spawnEffectPrefab: {fileID: 7034291063567092639, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
+  spawnInterval: 10
+  effectDuration: 10
+  spawnRadius: 3
+  maxSpawnHeight: 1
+  forwardOffset: 1.1
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 64
+  groundCheckDistance: 50
 --- !u!1001 &1699495133
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26397,6 +26380,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeslaController
   teslaTrigger: {fileID: 53470965}
   teslaShockEffect: {fileID: 1141881231}
+  teslaKillZoneCollider: {fileID: 0}
 --- !u!1 &1729909396
 GameObject:
   m_ObjectHideFlags: 0
@@ -33378,7 +33362,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.49999917, z: -0, w: 0.8660259}
   m_LocalPosition: {x: 2.9341302, y: 0, z: -2.580295}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5417193028807929908}
@@ -37982,6 +37966,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 4237662470690956958, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
+      propertyPath: m_InnerSpotAngle
+      value: 30.333332
+      objectReference: {fileID: 0}
+    - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
+      propertyPath: m_Version
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
+      propertyPath: m_ShapeWidth
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
+      propertyPath: m_ShapeHeight
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
+      propertyPath: m_InnerSpotPercent
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 5653553398773298133, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_CullingMode
       value: 0
@@ -38618,10 +38622,6 @@ PrefabInstance:
     - target: {fileID: 538570090455416849, guid: 0ea0120f659779048820554b735d7fca, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8599024028357600888, guid: 0ea0120f659779048820554b735d7fca, type: 3}
-      propertyPath: maxVisibilityRange
-      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -39679,3 +39679,4 @@ SceneRoots:
   - {fileID: 5208471980114223673}
   - {fileID: 749233573}
   - {fileID: 330238773}
+  - {fileID: 1691041162}

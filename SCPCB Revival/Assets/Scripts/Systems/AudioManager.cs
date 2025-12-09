@@ -26,7 +26,7 @@ public class AudioManager : MonoBehaviour {
         if (e.isValid()) trackedInstances.Add(e);
     }
 
-    private void TrackEmitter(StudioEventEmitter emitter) {
+    public void TrackEmitter(StudioEventEmitter emitter) {
         if (!trackedEmitters.Contains(emitter))
             trackedEmitters.Add(emitter);
 

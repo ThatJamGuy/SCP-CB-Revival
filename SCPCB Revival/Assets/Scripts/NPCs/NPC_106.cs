@@ -1,229 +1,264 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using FMODUnity;
 
-namespace scpcbr {
-    public class NPC_106 : MonoBehaviour {
-        [System.Serializable]
-        public struct AnimationConfig {
-            public string emergeTrigger, walkTrigger, wallTraverseTrigger, catchUpEmergeTrigger, chaseEndTrigger;
-            public float emergeLength, wallTraverseLength, catchUpEmergeLength;
+public class NPC_106 : MonoBehaviour {
+    [System.Serializable]
+    public struct AnimationConfig {
+        public string emergeTrigger, walkTrigger, wallTraverseTrigger, catchUpEmergeTrigger, chaseEndTrigger;
+        public float emergeLength, wallTraverseLength, catchUpEmergeLength;
+    }
+
+    [System.Serializable]
+    public struct WallTraverseConfig {
+        public LayerMask layerMask;
+        public float maxThickness, checkDistance, cooldownDuration;
+    }
+
+    [System.Serializable]
+    public struct CatchUpConfig {
+        public float distance, navSampleRadius, cooldownDuration;
+    }
+
+    [Header("Chase Settings")]
+    [SerializeField] private float chaseDuration = 63f;
+    [SerializeField] private AnimationConfig animationConfig;
+
+    [Header("Systems")]
+    [SerializeField] private WallTraverseConfig wallConfig;
+    [SerializeField] private CatchUpConfig catchUpConfig;
+
+    [Header("Audio")]
+    [SerializeField] private EventReference laughSounds;
+    [SerializeField] private float laughMinTime = 5f, laughMaxTime = 20f;
+
+    private NavMeshAgent agent;
+    private Animator animator;
+    private Transform player;
+    private bool isChasing, isActive, isTraversing;
+    private float wallCooldown, catchUpCooldown;
+    private Coroutine chaseEndCoroutine, laughCoroutine;
+
+    private void Awake() {
+        agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+
+        if (!agent) Debug.LogError($"NavMeshAgent missing on {gameObject.name}");
+        if (!animator) Debug.LogError($"Animator missing on {gameObject.name}");
+    }
+
+    private void Start() {
+        player = GameObject.FindWithTag("Player")?.transform;
+        if (!player) Debug.LogWarning("Player not found!");
+
+        animator.enabled = true;
+        agent.enabled = false;
+        isActive = true;
+
+        animator.SetTrigger(animationConfig.emergeTrigger);
+        StartCoroutine(EmergeSequence());
+        chaseEndCoroutine = StartCoroutine(ChaseEndSequence());
+    }
+
+    private void Update() {
+        if (!isActive) return;
+
+        UpdateCooldowns();
+
+        if (!isChasing || !player || isTraversing) return;
+
+        if (ShouldCatchUp()) {
+            StartCoroutine(CatchUp());
+            return;
         }
 
-        [System.Serializable]
-        public struct WallTraverseConfig {
-            public LayerMask layerMask;
-            public float maxThickness, checkDistance, cooldownDuration;
-            //public AudioClip[] sounds;
-        }
+        if (wallCooldown <= 0f && TryWallTraverse()) return;
 
-        [System.Serializable]
-        public struct CatchUpConfig {
-            public float distance, navSampleRadius, cooldownDuration;
-            //public AudioClip[] sounds;
-        }
-
-        [Header("Chase Settings")]
-        [SerializeField] private int chaseDuration = 63;
-        //[SerializeField] private string chaseMusicTrackName;
-        //[SerializeField] private AudioClip chaseStartSound, chaseEndSound;
-        [SerializeField] private AnimationConfig animationConfig;
-
-        [Header("Systems")]
-        [SerializeField] private WallTraverseConfig wallConfig;
-        [SerializeField] private CatchUpConfig catchUpConfig;
-
-        [Header("Audio")]
-        //[SerializeField] private AudioClip[] laughClips;
-        [SerializeField] private int laughMinTime = 5, laughMaxTime = 20;
-        //[SerializeField] private AudioSource sfxSource, additionalSFX, laughSource;
-
-        private NavMeshAgent agent;
-        private Animator animator;
-        private Transform player;
-        private bool isChasing, isActive, isTraversing;
-        private float wallCooldown, catchUpCooldown;
-
-        private void Start() {
-            agent = GetComponent<NavMeshAgent>();
-            animator = GetComponent<Animator>();
-            // Enable animator and agent immediately, as NPC_106 should be active on spawn
-            animator.enabled = true;
-            agent.enabled = false; // Will be enabled after emerge
-            isActive = true;
-            player = GameObject.FindWithTag("Player")?.transform;
-            animator.SetTrigger(animationConfig.emergeTrigger); // Emerge animation is default
-            StartCoroutine(EmergeSequence());
-            StartCoroutine(ChaseEndSequence());
-        }
-
-        private void Update() {
-            UpdateCooldowns();
-            if (ShouldSkipChaseLogic()) return;
-            HandleChaseLogic();
-        }
-
-        private void UpdateCooldowns() {
-            wallCooldown = Mathf.Max(0f, wallCooldown - Time.deltaTime);
-            catchUpCooldown = Mathf.Max(0f, catchUpCooldown - Time.deltaTime);
-        }
-
-        private bool ShouldSkipChaseLogic() => !isChasing || !player || isTraversing;
-
-        private void HandleChaseLogic() {
-            if (ShouldCatchUp()) {
-                StartCoroutine(CatchUp());
-                return;
-            }
-            if (wallCooldown <= 0f && TryWallTraverse()) return;
+        if (agent.enabled && !agent.isStopped) {
             agent.SetDestination(player.position);
         }
+    }
 
-        private bool ShouldCatchUp() =>
-            catchUpCooldown <= 0f && Vector3.Distance(transform.position, player.position) > catchUpConfig.distance;
+    private void UpdateCooldowns() {
+        if (wallCooldown > 0f) wallCooldown -= Time.deltaTime;
+        if (catchUpCooldown > 0f) catchUpCooldown -= Time.deltaTime;
+    }
 
-        [ContextMenu("Start Chase")]
-        public void StartChase() {
-            if (isActive) return;
-            isActive = true;
-            animator.enabled = true;
-            animator.SetTrigger(animationConfig.emergeTrigger);
-            StartCoroutine(EmergeSequence());
-            StartCoroutine(ChaseEndSequence());
-        }
+    private bool ShouldCatchUp() =>
+        catchUpCooldown <= 0f &&
+        Vector3.Distance(transform.position, player.position) > catchUpConfig.distance;
 
-        private void EndChase() {
-            if (animator && !string.IsNullOrEmpty(animationConfig.chaseEndTrigger))
-                animator.SetTrigger(animationConfig.chaseEndTrigger);
+    [ContextMenu("Start Chase")]
+    public void StartChase() {
+        if (isActive) return;
 
-            isChasing = isActive = false;
+        isActive = true;
+        animator.enabled = true;
+        animator.SetTrigger(animationConfig.emergeTrigger);
+
+        StartCoroutine(EmergeSequence());
+        chaseEndCoroutine = StartCoroutine(ChaseEndSequence());
+    }
+
+    private void EndChase() {
+        if (animator && !string.IsNullOrEmpty(animationConfig.chaseEndTrigger))
+            animator.SetTrigger(animationConfig.chaseEndTrigger);
+
+        isChasing = false;
+        isActive = false;
+
+        if (agent.enabled) {
             agent.isStopped = true;
             agent.ResetPath();
+        }
+
+        if (laughCoroutine != null) {
+            StopCoroutine(laughCoroutine);
+            laughCoroutine = null;
+        }
+
+        if (MusicManager.instance != null)
             MusicManager.instance.SetMusicState(MusicState.LCZ);
-        }
 
-        private IEnumerator EmergeSequence() {
-            yield return new WaitForSeconds(animationConfig.emergeLength);
-            animator.SetTrigger(animationConfig.walkTrigger);
-            agent.enabled = true;
-            player = GameObject.FindWithTag("Player")?.transform;
-            isChasing = true;
+        if (GameManager.instance != null)
+            GameManager.instance.scp106Active = false;
+    }
 
-            StartCoroutine(LaughLoop());
-            //PlayAudio(additionalSFX, chaseStartSound);
+    private IEnumerator EmergeSequence() {
+        yield return new WaitForSeconds(animationConfig.emergeLength);
 
+        animator.SetTrigger(animationConfig.walkTrigger);
+        agent.enabled = true;
+
+        if (!player) player = GameObject.FindWithTag("Player")?.transform;
+
+        isChasing = true;
+        laughCoroutine = StartCoroutine(LaughLoop());
+
+        if (MusicManager.instance != null)
             MusicManager.instance.SetMusicState(MusicState.scp106);
+    }
+
+    private bool TryWallTraverse() {
+        if (!player) return false;
+
+        Vector3 direction = (player.position - transform.position).normalized;
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (distance < 2f) return false;
+
+        RaycastHit[] hits = Physics.RaycastAll(
+            transform.position,
+            direction,
+            Mathf.Min(distance, wallConfig.checkDistance),
+            wallConfig.layerMask
+        );
+
+        if (hits.Length < 2) return false;
+
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        float thickness = Vector3.Distance(hits[0].point, hits[1].point);
+        bool differentColliders = hits[0].collider != hits[1].collider;
+        float normalDot = Vector3.Dot(hits[0].normal, hits[1].normal);
+
+        if (thickness <= wallConfig.maxThickness && (normalDot < -0.7f || differentColliders)) {
+            StartCoroutine(TraverseWall(hits[0], hits[1]));
+            return true;
         }
 
-        private bool TryWallTraverse() {
-            Vector3 direction = (player.position - transform.position).normalized;
-            float distance = Vector3.Distance(transform.position, player.position);
+        return false;
+    }
 
-            if (distance < 2f) return false;
+    private IEnumerator TraverseWall(RaycastHit entry, RaycastHit exit) {
+        SetTraversing(true);
+        animator.SetTrigger(animationConfig.wallTraverseTrigger);
 
-            var hits = Physics.RaycastAll(transform.position, direction,
-                Mathf.Min(distance, wallConfig.checkDistance), wallConfig.layerMask);
+        Vector3 exitPosition = exit.point + (exit.point - entry.point).normalized * 0.15f;
+        TeleportAgent(exitPosition, -exit.normal);
 
-            if (hits.Length < 2) return false;
+        animator.SetTrigger(animationConfig.emergeTrigger);
+        yield return new WaitForSeconds(animationConfig.emergeLength);
 
-            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-            return ProcessWallHits(hits[0], hits[1]);
+        SetTraversing(false);
+        wallCooldown = wallConfig.cooldownDuration;
+    }
+
+    private IEnumerator CatchUp() {
+        if (!player) yield break;
+
+        catchUpCooldown = catchUpConfig.cooldownDuration;
+        SetTraversing(true);
+
+        Vector3 targetPosition = player.position - player.forward * 2f;
+
+        if (FindValidNavMeshPosition(targetPosition, out Vector3 validPosition)) {
+            TeleportAgent(validPosition, (player.position - validPosition).normalized);
+            animator.SetTrigger(animationConfig.catchUpEmergeTrigger);
+            yield return new WaitForSeconds(animationConfig.catchUpEmergeLength);
         }
 
-        private bool ProcessWallHits(RaycastHit entry, RaycastHit exit) {
-            float thickness = Vector3.Distance(entry.point, exit.point);
-            bool differentColliders = entry.collider != exit.collider;
-            float normalDot = Vector3.Dot(entry.normal, exit.normal);
+        SetTraversing(false);
+    }
 
-            if (thickness <= wallConfig.maxThickness && (normalDot < -0.7f || differentColliders)) {
-                StartCoroutine(TraverseWall(entry, exit));
-                return true;
-            }
-            return false;
+    private bool FindValidNavMeshPosition(Vector3 target, out Vector3 validPosition) {
+        if (NavMesh.SamplePosition(target, out NavMeshHit hit, catchUpConfig.navSampleRadius, NavMesh.AllAreas)) {
+            validPosition = hit.position;
+            return true;
         }
 
-        private IEnumerator TraverseWall(RaycastHit entry, RaycastHit exit) {
-            SetTraversing(true);
-            animator.SetTrigger(animationConfig.wallTraverseTrigger);
-            //PlayRandomSound(wallConfig.sounds);
-
-            Vector3 exitPosition = exit.point + (exit.point - entry.point).normalized * 0.15f;
-            TeleportAgent(exitPosition, -exit.normal);
-
-            animator.SetTrigger(animationConfig.emergeTrigger);
-            yield return new WaitForSeconds(1f);
-
-            SetTraversing(false);
-            wallCooldown = wallConfig.cooldownDuration;
+        if (player && NavMesh.SamplePosition(player.position, out hit, catchUpConfig.navSampleRadius, NavMesh.AllAreas)) {
+            validPosition = hit.position;
+            return true;
         }
 
-        private IEnumerator CatchUp() {
-            catchUpCooldown = catchUpConfig.cooldownDuration;
-            SetTraversing(true);
+        validPosition = Vector3.zero;
+        return false;
+    }
 
-            Vector3 targetPosition = player.position - player.forward * 2f;
-            if (FindValidNavMeshPosition(targetPosition, out Vector3 validPosition)) {
-                TeleportAgent(validPosition, (player.position - validPosition).normalized);
-                //PlayRandomSound(catchUpConfig.sounds);
-                animator.SetTrigger(animationConfig.catchUpEmergeTrigger);
+    private void SetTraversing(bool traversing) {
+        isTraversing = traversing;
 
-                yield return new WaitForSeconds(animationConfig.catchUpEmergeLength);
-            }
-
-            SetTraversing(false);
-        }
-
-        private bool FindValidNavMeshPosition(Vector3 target, out Vector3 validPosition) {
-            return NavMesh.SamplePosition(target, out NavMeshHit hit, catchUpConfig.navSampleRadius, NavMesh.AllAreas) ||
-                   NavMesh.SamplePosition(player.position, out hit, catchUpConfig.navSampleRadius, NavMesh.AllAreas)
-                   ? (validPosition = hit.position) != Vector3.zero : (validPosition = Vector3.zero) == Vector3.zero;
-        }
-
-        private void SetTraversing(bool traversing) {
-            isTraversing = traversing;
+        if (agent.enabled) {
             agent.isStopped = traversing;
-            if (traversing) agent.ResetPath();
-            else if (player) agent.SetDestination(player.position);
-        }
-
-        private void TeleportAgent(Vector3 position, Vector3 forward) {
-            agent.enabled = false;
-            transform.position = position;
-            transform.forward = forward;
-            agent.enabled = true;
-            agent.Warp(position);
-        }
-
-        private IEnumerator LaughLoop() {
-            while (isChasing) {
-                yield return new WaitForSeconds(Random.Range(laughMinTime, laughMaxTime));
-                //PlayRandomSound(laughClips, laughSource);
+            if (traversing) {
+                agent.ResetPath();
+            }
+            else if (player) {
+                agent.SetDestination(player.position);
             }
         }
+    }
 
-        private IEnumerator ChaseEndSequence() {
-            yield return new WaitForSeconds(chaseDuration);
-            //PlayAudio(additionalSFX, chaseEndSound);
-            yield return new WaitForSeconds(1f);
-            EndChase();
-            yield return new WaitForSeconds(10f);
-            Destroy(gameObject);
-        }
+    private void TeleportAgent(Vector3 position, Vector3 forward) {
+        agent.enabled = false;
+        transform.position = position;
+        transform.forward = forward;
+        agent.enabled = true;
+        agent.Warp(position);
+    }
 
-        /*private void PlayAudio(AudioSource source, AudioClip clip) {
-            if (source && clip) {
-                source.clip = clip;
-                source.Play();
+    private IEnumerator LaughLoop() {
+        while (isChasing && isActive) {
+            yield return new WaitForSeconds(Random.Range(laughMinTime, laughMaxTime));
+
+            if (AudioManager.instance != null && isChasing) {
+                AudioManager.instance.PlaySound(laughSounds, transform.position);
             }
         }
+    }
 
-        private void PlayRandomSound(AudioClip[] clips, AudioSource source = null) {
-            if (clips.Length == 0) return;
-            var audioSource = source ?? sfxSource;
-            if (!audioSource) return;
+    private IEnumerator ChaseEndSequence() {
+        yield return new WaitForSeconds(chaseDuration);
+        yield return new WaitForSeconds(1f);
+        EndChase();
+        yield return new WaitForSeconds(10f);
+        Destroy(gameObject);
+    }
 
-            audioSource.transform.position = transform.position;
-            audioSource.PlayOneShot(clips[Random.Range(0, clips.Length)]);
-        }*/
+    private void OnDestroy() {
+        if (laughCoroutine != null) StopCoroutine(laughCoroutine);
+        if (chaseEndCoroutine != null) StopCoroutine(chaseEndCoroutine);
     }
 }

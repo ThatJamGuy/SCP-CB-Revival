@@ -145,7 +145,9 @@ public class SCP_173 : MonoBehaviour {
         movementSource.SetActive(false);
         hasPlayedDistanceHorrorSound = false;
 
-        MusicManager.instance.SetMusicState(MusicState.LCZ);
+        if (!GameManager.instance.scp106Active)
+            MusicManager.instance.SetMusicState(MusicState.LCZ);
+
         tensionEmitter.Stop();
     }
     #endregion
@@ -224,7 +226,9 @@ public class SCP_173 : MonoBehaviour {
             alreadySeenByPlayer = true;
             AcquireTarget(playerTransform);
 
-            MusicManager.instance.SetMusicState(MusicState.scp173);
+            if (!GameManager.instance.scp106Active)
+                MusicManager.instance.SetMusicState(MusicState.scp173);
+
             tensionEmitter.Play();
 
             playerBlink = PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>();
