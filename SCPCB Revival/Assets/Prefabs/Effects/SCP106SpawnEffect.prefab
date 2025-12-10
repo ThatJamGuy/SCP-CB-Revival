@@ -24590,6 +24590,7 @@ GameObject:
   - component: {fileID: 7979306935409495639}
   - component: {fileID: 7654569631656421634}
   - component: {fileID: 6137712455970283742}
+  - component: {fileID: -9066176441671499650}
   m_Layer: 0
   m_Name: SCP106SpawnEffect
   m_TagString: Untagged
@@ -24681,6 +24682,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af24a7902a204b54191ddfe9b8f9b934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrackThisEmitter
+--- !u!114 &-9066176441671499650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7034291063567092639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8f59ff3b24e47046b701f7a1fd9718b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DestroyAfterTime
+  timeUntilDestroy: 120
 --- !u!1 &8331959523047610904
 GameObject:
   m_ObjectHideFlags: 0

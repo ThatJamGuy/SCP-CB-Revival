@@ -13,11 +13,17 @@ public class SCP_106_New : MonoBehaviour {
     [SerializeField] private float floorEmerge2AnimTime = 2.5f;
     [SerializeField] private float attackAnimTime = 2f;
     [SerializeField] private float despawnAnimTime = 2.6f;
+    [SerializeField] private float TeslaShockAnimTime = 5f;
 
     [Header("FMOD Audio")]
     [SerializeField] private EventReference targetHitEvent;
     [SerializeField] private EventReference chaseStartEvent;
     [SerializeField] private EventReference chaseEndEvent;
+    [SerializeField] private EventReference randomLaughEvent;
+    [SerializeField] private EventReference teslaRetreatSound;
+
+    [Header("References")]
+    [SerializeField] private GameObject despawnGoodPrefab;
 
     private NavMeshAgent agent;
     private Animator animator;
@@ -26,6 +32,8 @@ public class SCP_106_New : MonoBehaviour {
     private bool canWalk = false;
     private bool isAttacking = false;
     private bool currentTargetCaptured = false;
+    private bool currentTargetIsPlayer = false;
+    private bool isDespawning = false;
     private float distanceToTarget;
 
     #region Unity Callbacks
@@ -37,6 +45,7 @@ public class SCP_106_New : MonoBehaviour {
     private void Start() {
         // If that one little checkbox is ticked about, then SCP-106 will immediately target the player and start chasing them. This is true in most cases.
         if (targetPlayerOnStart) {
+            currentTargetIsPlayer = true;
             SetTarget(PlayerAccessor.instance.transform);
             ChaseTarget();
         }
@@ -94,7 +103,7 @@ public class SCP_106_New : MonoBehaviour {
     public void AttackTargetCheck() {
         if (activeTarget == null) return;
         if (distanceToTarget <= 2 && isAttacking) {
-            if (activeTarget.GetComponent<PlayerAccessor>() != null) {
+            if (currentTargetIsPlayer) {
                 if (PlayerAccessor.instance.isDead) {
                     currentTargetCaptured = true;
                     return;
@@ -114,13 +123,28 @@ public class SCP_106_New : MonoBehaviour {
     /// Depsawns SCP-106 the normal way, via simply getting bored and walking into the floor.
     /// </summary>
     public void Despawn() {
-        if (activeTarget.GetComponent<PlayerAccessor>()) {
+        if (isDespawning) return;
+
+        if (currentTargetIsPlayer) {
             AudioManager.instance.PlaySound(chaseEndEvent, transform.position);
             MusicManager.instance.SetMusicState(MusicState.LCZ);
         }
 
         if (activeTarget != null) activeTarget = null;
         StartCoroutine(DespawnCoroutine());
+    }
+
+    public void DespawnTesla() {
+        if (isDespawning) return;
+
+        AudioManager.instance.PlaySound(teslaRetreatSound, transform.position);
+        if (currentTargetIsPlayer) {
+            AudioManager.instance.PlaySound(chaseEndEvent, transform.position);
+            MusicManager.instance.SetMusicState(MusicState.LCZ);
+        }
+
+        if (activeTarget != null) activeTarget = null;
+        StartCoroutine(DespawnTeslaCoroutine());
     }
     #endregion
 
@@ -131,9 +155,11 @@ public class SCP_106_New : MonoBehaviour {
         animator.SetTrigger("Walk");
         CanWalk();
 
-        if (activeTarget.GetComponent<PlayerAccessor>()) {
+        if (currentTargetIsPlayer) {
             AudioManager.instance.PlaySound(chaseStartEvent, transform.position);
             MusicManager.instance.SetMusicState(MusicState.scp106);
+
+            StartCoroutine(LaughCoroutine());
         }
 
         StartCoroutine(WaitForChaseDurationCoroutine());
@@ -157,9 +183,29 @@ public class SCP_106_New : MonoBehaviour {
 
     // Despawn SCP-106 the regular way
     private IEnumerator DespawnCoroutine() {
+        Instantiate(despawnGoodPrefab, transform.position, Quaternion.Euler(90, 0, 0));
+        isDespawning = true;
         CantWalk();
         animator.SetTrigger("Despawn1");
         yield return new WaitForSeconds(despawnAnimTime);
+        GameManager.instance.scp106Active = false;
+        Destroy(gameObject);
+    }
+
+    // Make this man do some hefty laughing from time to time HAHAHAHAHAHAHA
+    private IEnumerator LaughCoroutine() {
+        while (currentTargetIsPlayer && !currentTargetCaptured) {
+            AudioManager.instance.PlaySound(randomLaughEvent, transform.position);
+            yield return new WaitForSeconds(Random.Range(5, 20));
+        }
+    }
+
+    private IEnumerator DespawnTeslaCoroutine() {
+        Instantiate(despawnGoodPrefab, transform.position, Quaternion.Euler(90, 0, 0));
+        isDespawning = true;
+        CantWalk();
+        animator.SetTrigger("Shock");
+        yield return new WaitForSeconds(TeslaShockAnimTime);
         GameManager.instance.scp106Active = false;
         Destroy(gameObject);
     }

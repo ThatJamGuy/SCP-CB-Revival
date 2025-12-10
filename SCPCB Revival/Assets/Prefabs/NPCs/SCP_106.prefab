@@ -3476,6 +3476,7 @@ GameObject:
   - component: {fileID: 7237120973052982779}
   - component: {fileID: 1406710006180909725}
   - component: {fileID: 3697378485983028315}
+  - component: {fileID: 3989800584723534382}
   m_Layer: 0
   m_Name: SCP_106
   m_TagString: NPC
@@ -3518,6 +3519,7 @@ MonoBehaviour:
   floorEmerge2AnimTime: 2.4
   attackAnimTime: 1
   despawnAnimTime: 2.6
+  TeslaShockAnimTime: 5
   targetHitEvent:
     Guid:
       Data1: 1076846084
@@ -3539,6 +3541,21 @@ MonoBehaviour:
       Data3: -1324709187
       Data4: -41629306
     Path: event:/SFX/SCP/106/ChaseEnd
+  randomLaughEvent:
+    Guid:
+      Data1: 1674383387
+      Data2: 1273298255
+      Data3: 673550731
+      Data4: -1672530284
+    Path: event:/SFX/SCP/106/RandomLaugh
+  teslaRetreatSound:
+    Guid:
+      Data1: -1209830070
+      Data2: 1114730426
+      Data3: 1751244463
+      Data4: -752901963
+    Path: event:/SFX/SCP/106/106TeslaRetreat
+  despawnGoodPrefab: {fileID: 6306790722705746932, guid: fed38209cac7888408194dd9299af1ae, type: 3}
 --- !u!114 &1020326238107506825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3667,6 +3684,33 @@ CapsuleCollider:
   m_Height: 3
   m_Direction: 1
   m_Center: {x: 0, y: 1.5, z: 0}
+--- !u!54 &3989800584723534382
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4179995913638945844}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &4208206261457544853
 GameObject:
   m_ObjectHideFlags: 0

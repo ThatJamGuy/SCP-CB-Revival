@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour {
         instance = this;
     }
 
+    private void Start() {
+        
+    }
+
     public void PauseGame() {
         isGamePaused = true;
         Time.timeScale = 0f;
