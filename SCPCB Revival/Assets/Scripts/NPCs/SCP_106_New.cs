@@ -1,19 +1,22 @@
+using FMODUnity;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
-using FMODUnity;
+using static NPC_106;
 
 public class SCP_106_New : MonoBehaviour {
 
     [Header("Behavior")]
     [SerializeField] private bool targetPlayerOnStart = true;
     [SerializeField] private float chaseDuration = 63f;
+    [SerializeField] private float catchUpDistance = 15f;
 
     [Header("Animation Timing")]
     [SerializeField] private float floorEmerge2AnimTime = 2.5f;
     [SerializeField] private float attackAnimTime = 2f;
     [SerializeField] private float despawnAnimTime = 2.6f;
     [SerializeField] private float TeslaShockAnimTime = 5f;
+    [SerializeField] private float CatchUpAnimTime = 1.25f;
 
     [Header("FMOD Audio")]
     [SerializeField] private EventReference targetHitEvent;
@@ -21,6 +24,7 @@ public class SCP_106_New : MonoBehaviour {
     [SerializeField] private EventReference chaseEndEvent;
     [SerializeField] private EventReference randomLaughEvent;
     [SerializeField] private EventReference teslaRetreatSound;
+    [SerializeField] private EventReference CatchUpEvent;
 
     [Header("References")]
     [SerializeField] private GameObject despawnGoodPrefab;
@@ -55,6 +59,11 @@ public class SCP_106_New : MonoBehaviour {
         if (activeTarget == null || !canWalk) return;
         agent.SetDestination(activeTarget.position);
         distanceToTarget = Vector3.Distance(transform.position, activeTarget.position);
+
+        if (distanceToTarget > catchUpDistance) {
+            StartCoroutine(CatchUpRoutine());
+            return;
+        }
 
         if (distanceToTarget <= 2 && !isAttacking && !currentTargetCaptured) {
             StartCoroutine(AttackCoroutine());
@@ -148,6 +157,16 @@ public class SCP_106_New : MonoBehaviour {
     }
     #endregion
 
+    #region Private Methods
+    private void TeleportAgent(Vector3 position, Vector3 forward) {
+        agent.enabled = false;
+        transform.position = position;
+        transform.forward = forward;
+        agent.enabled = true;
+        agent.Warp(position);
+    }
+    #endregion
+
     #region Coroutines
     // Start all the necessary stuff for chasing a target, mostly animation and setting some values.
     private IEnumerator BeginChaseRoutine() {
@@ -196,7 +215,7 @@ public class SCP_106_New : MonoBehaviour {
     private IEnumerator LaughCoroutine() {
         while (currentTargetIsPlayer && !currentTargetCaptured) {
             AudioManager.instance.PlaySound(randomLaughEvent, transform.position);
-            yield return new WaitForSeconds(Random.Range(5, 20));
+            yield return new WaitForSeconds(Random.Range(10, 20));
         }
     }
 
@@ -208,6 +227,37 @@ public class SCP_106_New : MonoBehaviour {
         yield return new WaitForSeconds(TeslaShockAnimTime);
         GameManager.instance.scp106Active = false;
         Destroy(gameObject);
+    }
+
+    private IEnumerator CatchUpRoutine() {
+        CantWalk();
+        Vector3 targetPosition = activeTarget.position - activeTarget.forward * 2f;
+
+        if (FindValidNavMeshPosition(targetPosition, out Vector3 validPosition)) {
+            TeleportAgent(validPosition, (activeTarget.position - validPosition).normalized);
+            animator.SetTrigger("CatchUp");
+            yield return new WaitForSeconds(CatchUpAnimTime);
+            AudioManager.instance.PlaySound(CatchUpEvent, targetPosition);       
+        }
+
+        CanWalk();
+    }
+    #endregion
+
+    #region Complex Variables
+    private bool FindValidNavMeshPosition(Vector3 target, out Vector3 validPosition) {
+        if (NavMesh.SamplePosition(target, out NavMeshHit hit, 15, NavMesh.AllAreas)) {
+            validPosition = hit.position;
+            return true;
+        }
+
+        if (activeTarget && NavMesh.SamplePosition(activeTarget.position, out hit, 15, NavMesh.AllAreas)) {
+            validPosition = hit.position;
+            return true;
+        }
+
+        validPosition = Vector3.zero;
+        return false;
     }
     #endregion
 }

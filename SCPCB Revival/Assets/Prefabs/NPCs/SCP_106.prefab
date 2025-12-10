@@ -3516,10 +3516,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPC_106_New
   targetPlayerOnStart: 1
   chaseDuration: 61
+  catchUpDistance: 15
   floorEmerge2AnimTime: 2.4
   attackAnimTime: 1
   despawnAnimTime: 2.6
   TeslaShockAnimTime: 5
+  CatchUpAnimTime: 1.25
   targetHitEvent:
     Guid:
       Data1: 1076846084
@@ -3555,6 +3557,13 @@ MonoBehaviour:
       Data3: 1751244463
       Data4: -752901963
     Path: event:/SFX/SCP/106/106TeslaRetreat
+  CatchUpEvent:
+    Guid:
+      Data1: -227237232
+      Data2: 1317562508
+      Data3: -915725894
+      Data4: -1903365245
+    Path: event:/SFX/SCP/106/CatchUp
   despawnGoodPrefab: {fileID: 6306790722705746932, guid: fed38209cac7888408194dd9299af1ae, type: 3}
 --- !u!114 &1020326238107506825
 MonoBehaviour:
