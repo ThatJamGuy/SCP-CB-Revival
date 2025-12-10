@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace scpcbr {
     public class SCP106Spawner : MonoBehaviour {
@@ -9,10 +10,11 @@ namespace scpcbr {
 
         [Header("Spawn Settings")]
         public float spawnInterval = 120f;
-        public float effectDuration = 5f;
-        public float spawnRadius = 10f;
-        public float maxSpawnHeight = 20f;
+        public float effectDuration = 10f;
+        public float spawnRadius = 3f;
+        public float maxSpawnHeight = 1f;
         public float forwardOffset = 1.1f;
+        public float navMeshCheckRadius = 5f;
 
         [Header("Ground Detection")]
         public LayerMask groundMask;
@@ -69,12 +71,30 @@ namespace scpcbr {
                 Vector3 rayStart = candidate + Vector3.up * maxSpawnHeight;
 
                 if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, maxSpawnHeight + groundCheckDistance, groundMask)) {
-                    groundPos = hit.point;
-                    return true;
+                    if (IsNavMeshRadiusValid(hit.point, navMeshCheckRadius)) {
+                        groundPos = hit.point;
+                        return true;
+                    }
                 }
             }
 
             return false;
+        }
+
+        private bool IsNavMeshRadiusValid(Vector3 position, float radius) {
+            int samples = 8;
+            float angleStep = 360f / samples;
+
+            for (int i = 0; i < samples; i++) {
+                float angle = i * angleStep * Mathf.Deg2Rad;
+                Vector3 checkPos = position + new Vector3(Mathf.Cos(angle) * radius, 0, Mathf.Sin(angle) * radius);
+
+                if (!NavMesh.SamplePosition(checkPos, out NavMeshHit hit, 0.5f, NavMesh.AllAreas)) {
+                    return false;
+                }
+            }
+
+            return NavMesh.SamplePosition(position, out NavMeshHit centerHit, 0.5f, NavMesh.AllAreas);
         }
 
         private void OnDestroy() {

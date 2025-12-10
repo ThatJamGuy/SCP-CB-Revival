@@ -323,6 +323,112 @@ Transform:
   - {fileID: 8868629303163567322}
   m_Father: {fileID: 2785847893189801940}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &304461576956101076
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4628965588126726197}
+  - component: {fileID: 2048487566910321966}
+  - component: {fileID: 1402107705871173260}
+  - component: {fileID: 5787964668052906770}
+  m_Layer: 0
+  m_Name: ChristmasHat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4628965588126726197
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304461576956101076}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.18859963, y: -0.36514217, z: -0.023101147, w: 0.9113549}
+  m_LocalPosition: {x: 0.00002, y: 0.00158, z: 0.0001}
+  m_LocalScale: {x: 0.0081437975, y: 0.008143799, z: 0.0081437975}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4251644760914178726}
+  m_LocalEulerAnglesHint: {x: -21.139, y: -44.767, z: 5.885}
+--- !u!33 &2048487566910321966
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304461576956101076}
+  m_Mesh: {fileID: 5402264371549399530, guid: a10ea96b43de5dc4d9791880be2be5fc, type: 3}
+--- !u!23 &1402107705871173260
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304461576956101076}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: ff9340d9c4e5249409af8e917d40b070, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5787964668052906770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304461576956101076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fad4f5aa0e666f140b029f5bc799d8c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToggleOnDate
+  year: -1
+  month: 12
+  day: -1
 --- !u!1 &366278897009299890
 GameObject:
   m_ObjectHideFlags: 0
@@ -1315,6 +1421,7 @@ Transform:
   - {fileID: 5049703259122543401}
   - {fileID: 7526323934130688359}
   - {fileID: 171943695197855762}
+  - {fileID: 4628965588126726197}
   m_Father: {fileID: 8613272121219589119}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &952400337437601687
@@ -3472,7 +3579,6 @@ GameObject:
   - component: {fileID: 3204429707878225920}
   - component: {fileID: 2249013175840561995}
   - component: {fileID: 1020326238107506825}
-  - component: {fileID: 8801471922518943614}
   - component: {fileID: 7237120973052982779}
   - component: {fileID: 1406710006180909725}
   - component: {fileID: 3697378485983028315}
@@ -3517,11 +3623,19 @@ MonoBehaviour:
   targetPlayerOnStart: 1
   chaseDuration: 61
   catchUpDistance: 15
+  wallLayerMask:
+    serializedVersion: 2
+    m_Bits: 192
+  wallCheckDistance: 2
+  maxWallThickness: 2.5
+  wallTraverseCooldown: 5
+  minDistanceForTraverse: 1
   floorEmerge2AnimTime: 2.4
   attackAnimTime: 1
   despawnAnimTime: 2.6
   TeslaShockAnimTime: 5
   CatchUpAnimTime: 1.25
+  wallTraverseAnimTime: 1
   targetHitEvent:
     Guid:
       Data1: 1076846084
@@ -3564,6 +3678,13 @@ MonoBehaviour:
       Data3: -915725894
       Data4: -1903365245
     Path: event:/SFX/SCP/106/CatchUp
+  WallTraverseEvent:
+    Guid:
+      Data1: 1396851636
+      Data2: 1205609762
+      Data3: -316319579
+      Data4: 264609373
+    Path: event:/SFX/SCP/106/WallTraverse
   despawnGoodPrefab: {fileID: 6306790722705746932, guid: fed38209cac7888408194dd9299af1ae, type: 3}
 --- !u!114 &1020326238107506825
 MonoBehaviour:
@@ -3584,48 +3705,6 @@ MonoBehaviour:
       Data3: -1675828554
       Data4: 83580539
     Path: event:/SFX/Step/StepsPocketDimension
---- !u!114 &8801471922518943614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4179995913638945844}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e02cdfa48c32434984d79dce8c3f641, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::scpcbr.NPC_106
-  chaseDuration: 63
-  animationConfig:
-    emergeTrigger: Emerge
-    walkTrigger: Walk
-    wallTraverseTrigger: WallTraverse
-    catchUpEmergeTrigger: CatchUpEmerge
-    chaseEndTrigger: ChaseEnd
-    emergeLength: 2.5
-    wallTraverseLength: 1
-    catchUpEmergeLength: 1.25
-  wallConfig:
-    layerMask:
-      serializedVersion: 2
-      m_Bits: 192
-    maxThickness: 2
-    checkDistance: 3
-    cooldownDuration: 1
-  catchUpConfig:
-    distance: 15
-    navSampleRadius: 10
-    cooldownDuration: 5
-  laughSounds:
-    Guid:
-      Data1: 108057394
-      Data2: 1122483930
-      Data3: -377622869
-      Data4: -1545949665
-    Path: event:/SFX/SCP/106/ChasingLaughs
-  laughMinTime: 5
-  laughMaxTime: 20
 --- !u!95 &7237120973052982779
 Animator:
   serializedVersion: 7
@@ -3669,7 +3748,7 @@ NavMeshAgent:
   m_Height: 2.5
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 0
+  m_ObstacleAvoidanceType: 3
 --- !u!136 &3697378485983028315
 CapsuleCollider:
   m_ObjectHideFlags: 0

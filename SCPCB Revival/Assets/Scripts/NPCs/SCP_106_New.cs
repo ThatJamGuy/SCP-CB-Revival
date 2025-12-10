@@ -2,7 +2,6 @@ using FMODUnity;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-using static NPC_106;
 
 public class SCP_106_New : MonoBehaviour {
 
@@ -11,12 +10,20 @@ public class SCP_106_New : MonoBehaviour {
     [SerializeField] private float chaseDuration = 63f;
     [SerializeField] private float catchUpDistance = 15f;
 
+    [Header("Wall Traverse")]
+    [SerializeField] private LayerMask wallLayerMask;
+    [SerializeField] private float wallCheckDistance = 5f;
+    [SerializeField] private float maxWallThickness = 2.5f;
+    [SerializeField] private float wallTraverseCooldown = 5f;
+    [SerializeField] private float minDistanceForTraverse = 1f;
+
     [Header("Animation Timing")]
     [SerializeField] private float floorEmerge2AnimTime = 2.5f;
     [SerializeField] private float attackAnimTime = 2f;
     [SerializeField] private float despawnAnimTime = 2.6f;
     [SerializeField] private float TeslaShockAnimTime = 5f;
     [SerializeField] private float CatchUpAnimTime = 1.25f;
+    [SerializeField] private float wallTraverseAnimTime = 1f;
 
     [Header("FMOD Audio")]
     [SerializeField] private EventReference targetHitEvent;
@@ -25,6 +32,7 @@ public class SCP_106_New : MonoBehaviour {
     [SerializeField] private EventReference randomLaughEvent;
     [SerializeField] private EventReference teslaRetreatSound;
     [SerializeField] private EventReference CatchUpEvent;
+    [SerializeField] private EventReference WallTraverseEvent;
 
     [Header("References")]
     [SerializeField] private GameObject despawnGoodPrefab;
@@ -38,7 +46,9 @@ public class SCP_106_New : MonoBehaviour {
     private bool currentTargetCaptured = false;
     private bool currentTargetIsPlayer = false;
     private bool isDespawning = false;
+    private bool isTraversing = false;
     private float distanceToTarget;
+    private float wallTraverseTimer = 0f;
 
     #region Unity Callbacks
     private void Awake() {
@@ -59,6 +69,10 @@ public class SCP_106_New : MonoBehaviour {
         if (activeTarget == null || !canWalk) return;
         agent.SetDestination(activeTarget.position);
         distanceToTarget = Vector3.Distance(transform.position, activeTarget.position);
+
+        if (wallTraverseTimer > 0f) wallTraverseTimer -= Time.deltaTime;
+
+        if (wallTraverseTimer <= 0f && TryWallTraverse()) return;
 
         if (distanceToTarget > catchUpDistance) {
             StartCoroutine(CatchUpRoutine());
@@ -159,11 +173,20 @@ public class SCP_106_New : MonoBehaviour {
 
     #region Private Methods
     private void TeleportAgent(Vector3 position, Vector3 forward) {
+        agent.ResetPath();
+        agent.velocity = Vector3.zero;
         agent.enabled = false;
+
         transform.position = position;
-        transform.forward = forward;
+        transform.rotation = Quaternion.LookRotation(forward);
+
         agent.enabled = true;
         agent.Warp(position);
+        agent.velocity = Vector3.zero;
+
+        if (activeTarget != null) {
+            agent.SetDestination(activeTarget.position);
+        }
     }
     #endregion
 
@@ -258,6 +281,60 @@ public class SCP_106_New : MonoBehaviour {
 
         validPosition = Vector3.zero;
         return false;
+    }
+    #endregion
+
+    #region Wall Traverse
+    private bool TryWallTraverse() {
+        if (activeTarget == null || distanceToTarget < minDistanceForTraverse) return false;
+
+        Vector3 directionToTarget = (activeTarget.position - transform.position).normalized;
+        Vector3 checkOrigin = transform.position + Vector3.up * 0.5f;
+
+        RaycastHit[] hits = Physics.RaycastAll(checkOrigin, directionToTarget,
+            Mathf.Min(distanceToTarget, wallCheckDistance), wallLayerMask);
+
+        if (hits.Length < 2) return false;
+
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        RaycastHit entryHit = hits[0];
+        RaycastHit exitHit = hits[1];
+
+        float wallThickness = Vector3.Distance(entryHit.point, exitHit.point);
+        if (wallThickness > maxWallThickness) return false;
+
+        bool oppositeSides = Vector3.Dot(entryHit.normal, exitHit.normal) < -0.5f;
+        bool differentColliders = entryHit.collider != exitHit.collider;
+
+        if (oppositeSides || differentColliders) {
+            StartCoroutine(TraverseWallRoutine(entryHit, exitHit));
+            return true;
+        }
+
+        return false;
+    }
+
+    private IEnumerator TraverseWallRoutine(RaycastHit entry, RaycastHit exit) {
+        isTraversing = true;
+        CantWalk();
+
+        Vector3 exitPosition = exit.point + (exit.point - entry.point).normalized * 0.5f;
+
+        if (NavMesh.SamplePosition(exitPosition, out NavMeshHit navHit, 2f, NavMesh.AllAreas)) {
+            exitPosition = navHit.position;
+        }
+
+        TeleportAgent(exitPosition, -exit.normal);
+        AudioManager.instance.PlaySound(WallTraverseEvent, transform.position);
+
+        animator.SetTrigger("WallTraverse");
+        yield return new WaitForSeconds(wallTraverseAnimTime);
+
+        animator.SetTrigger("Walk");
+        wallTraverseTimer = wallTraverseCooldown;
+        isTraversing = false;
+        CanWalk();
     }
     #endregion
 }

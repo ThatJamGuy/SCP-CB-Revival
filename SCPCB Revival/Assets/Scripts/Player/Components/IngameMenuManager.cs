@@ -1,19 +1,31 @@
 using UnityEngine;
 
 public class IngameMenuManager : MonoBehaviour {
+    public static IngameMenuManager instance;
+
     [SerializeField] private bool menusPauseGame = true;
     [SerializeField] private GameObject[] menus;
 
     private bool anyMenuAlreadyOpen = false;
     private int openMenuID = -1;
 
+    private void Awake() {
+        if (instance == null)
+            instance = this;
+    }
+
     private void Update() {
+        if (!PlayerAccessor.instance.allowInput) return;
+
         if (InputManager.Instance != null && InputManager.Instance.inventoryAction.triggered) {
             ToggleMenuByID(0);
         }
         if (InputManager.Instance != null && InputManager.Instance.consoleAction.triggered) {
             ToggleMenuByID(1);
             DevConsole.Instance.SelectInputField();
+        }
+        if (InputManager.Instance != null && InputManager.Instance.escapeAction.triggered) {
+            ToggleMenuByID(2);
         }
     }
 
