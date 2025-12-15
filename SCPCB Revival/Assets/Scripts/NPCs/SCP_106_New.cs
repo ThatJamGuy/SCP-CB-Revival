@@ -46,7 +46,7 @@ public class SCP_106_New : MonoBehaviour {
     private bool currentTargetCaptured = false;
     private bool currentTargetIsPlayer = false;
     private bool isDespawning = false;
-    private bool isTraversing = false;
+    //private bool isTraversing = false;
     private float distanceToTarget;
     private float wallTraverseTimer = 0f;
 
@@ -173,7 +173,7 @@ public class SCP_106_New : MonoBehaviour {
 
     #region Private Methods
     private void TeleportAgent(Vector3 position, Vector3 forward) {
-        agent.ResetPath();
+        //agent.ResetPath();
         agent.velocity = Vector3.zero;
         agent.enabled = false;
 
@@ -316,7 +316,7 @@ public class SCP_106_New : MonoBehaviour {
     }
 
     private IEnumerator TraverseWallRoutine(RaycastHit entry, RaycastHit exit) {
-        isTraversing = true;
+        //isTraversing = true;
         CantWalk();
 
         Vector3 exitPosition = exit.point + (exit.point - entry.point).normalized * 0.5f;
@@ -333,7 +333,7 @@ public class SCP_106_New : MonoBehaviour {
 
         animator.SetTrigger("Walk");
         wallTraverseTimer = wallTraverseCooldown;
-        isTraversing = false;
+        //isTraversing = false;
         CanWalk();
     }
     #endregion

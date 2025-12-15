@@ -9,12 +9,10 @@ public enum MusicState {
     scp173 = 4,
 }
 
-[RequireComponent(typeof(StudioEventEmitter))]
 public class MusicManager : MonoBehaviour {
     public static MusicManager instance;
 
     public EventReference musicEvent;
-    private StudioEventEmitter emitter;
 
     private void Awake() {
         if (instance == null) {
@@ -25,8 +23,6 @@ public class MusicManager : MonoBehaviour {
     }
 
     private void Start() {
-        emitter = AudioManager.instance.InitializeEventEmitter(musicEvent, gameObject);
-
         if (DevConsole.Instance == null) return;
         DevConsole.Instance.Add<int>("set_music_state", state => SetMusicState(state));
         DevConsole.Instance.Add<int>("set_soundtrack", soundtrackID => SetSoundtrack(soundtrackID));
@@ -34,19 +30,13 @@ public class MusicManager : MonoBehaviour {
 
     public void SetSoundtrack(int soundtrackID) {
         AudioManager.instance.SetSoundtrackParameter("SoundtrackID", soundtrackID);
-
-        if (emitter != null)
-            emitter.SetParameter("SoundtrackID", soundtrackID);
     }
 
     public void SetMusicState(int state) {
         AudioManager.instance.SetMusicParameter("MusicState", state);
-
-        if (emitter != null)
-            emitter.SetParameter("MusicState", state);
     }
 
     public void SetMusicState(MusicState state) {
-        SetMusicState((int)state);
+        AudioManager.instance.SetMusicParameter("MusicState", (int)state);
     }
 }

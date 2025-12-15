@@ -15,12 +15,12 @@ public class IngameMenuManager : MonoBehaviour {
     }
 
     private void Update() {
-        if (!PlayerAccessor.instance.allowInput) return;
+        if (PlayerAccessor.instance.isDead) return;
 
         if (InputManager.Instance != null && InputManager.Instance.inventoryAction.triggered) {
             ToggleMenuByID(0);
         }
-        if (InputManager.Instance != null && InputManager.Instance.consoleAction.triggered) {
+        if (InputManager.Instance != null && InputManager.Instance.consoleAction.triggered && PlayerPrefs.GetInt("opt_console") == 1) {
             ToggleMenuByID(1);
             DevConsole.Instance.SelectInputField();
         }

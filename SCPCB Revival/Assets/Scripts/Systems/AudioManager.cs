@@ -1,9 +1,21 @@
 using FMOD.Studio;
 using FMODUnity;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour {
+    [Header("Volume")]
+    [Range(0, 1)] public float masterVolume = 1.0f;
+    [Range(0, 1)] public float musicVolume = 1.0f;
+    [Range(0, 1)] public float SFXVolume = 1.0f;
+    [Range(0, 1)] public float voiceVolume = 1.0f;
+
+    private Bus masterBus;
+    private Bus musicBus;
+    private Bus sfxBus;
+    private Bus voiceBus;
+
     private readonly HashSet<EventInstance> trackedInstances = new HashSet<EventInstance>();
     private readonly List<StudioEventEmitter> trackedEmitters = new List<StudioEventEmitter>();
     private EventInstance musicInstance;
@@ -16,10 +28,34 @@ public class AudioManager : MonoBehaviour {
 
         foreach (var emitter in FindObjectsByType<StudioEventEmitter>(0))
             TrackEmitter(emitter);
+
+        masterBus = RuntimeManager.GetBus("bus:/");
+        musicBus = RuntimeManager.GetBus("bus:/Music");
+        sfxBus = RuntimeManager.GetBus("bus:/SFX");
+        voiceBus = RuntimeManager.GetBus("bus:/Voice");
     }
 
     private void Start() {
         StartMusic(MusicManager.instance.musicEvent);
+
+        // Since it doesn't like to behave in the menu controllers start method, I decided to put this initial stuff here.
+        // Doesn't need to be anywhere else either because the average player will start in the menu,
+        // while the gigachad dev (Me) has to change it everywhere else by default unless loading in from the main menu.
+        if (SceneManager.GetSceneByName("Menu").isLoaded) {
+            SetMusicParameter("MusicState", (int)MusicState.Menu);
+            MusicManager.instance.SetSoundtrack(PlayerPrefs.GetInt("opt_soundtrack"));
+            masterVolume = PlayerPrefs.GetFloat("opt_volume_master");
+            musicVolume = PlayerPrefs.GetFloat("opt_volume_music");
+            SFXVolume = PlayerPrefs.GetFloat("opt_volume_sfx");
+            voiceVolume = PlayerPrefs.GetFloat("opt_volume_voice");
+        }
+    }
+
+    private void Update() {
+        masterBus.setVolume(masterVolume);
+        musicBus.setVolume(musicVolume);
+        sfxBus.setVolume(SFXVolume);
+        voiceBus.setVolume(voiceVolume);
     }
 
     private void TrackInstance(EventInstance e) {

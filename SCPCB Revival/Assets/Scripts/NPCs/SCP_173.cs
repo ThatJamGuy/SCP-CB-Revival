@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 public class SCP_173 : MonoBehaviour {
     [Header("Status")]
-    [SerializeField] private bool canRoam = true;
+    //[SerializeField] private bool canRoam = true;
     [SerializeField] private bool isVisibleByPlayer = false;
     [SerializeField] private bool isVisibleByAnyNPC = false;
     [SerializeField] private bool alreadySeenByPlayer = false;
@@ -105,7 +105,7 @@ public class SCP_173 : MonoBehaviour {
         else {
             navMeshAgent.speed = ROAM_SPEED;
             navMeshAgent.acceleration = ROAM_SPEED;
-            canRoam = true;
+            //canRoam = true;
             Roam();
         }
 
@@ -121,7 +121,7 @@ public class SCP_173 : MonoBehaviour {
     }
 
     private void StopCompletely() {
-        canRoam = false;
+        //canRoam = false;
         if (!navMeshAgent.hasPath) return;
         navMeshAgent.ResetPath();
         navMeshAgent.velocity = Vector3.zero;

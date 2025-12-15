@@ -99,7 +99,7 @@ public class RoomController : MonoBehaviour {
                 break;
         }
 
-        Debug.Log($"[RoomController] Room at {transform.position} changed to {currentState} state");
+        //Debug.Log($"[RoomController] Room at {transform.position} changed to {currentState} state");
     }
 
     #region Public API

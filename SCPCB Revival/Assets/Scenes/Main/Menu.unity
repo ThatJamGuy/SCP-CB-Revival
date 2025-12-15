@@ -354,6 +354,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2511795707771813733, guid: 44f4d950dd2cd224680db7a50915fd9f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4123013798509009504, guid: 44f4d950dd2cd224680db7a50915fd9f, type: 3}
       propertyPath: m_Name
       value: _AudioManager
@@ -1826,7 +1830,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50072b153994e4b43aef1a72943dfb4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
-  menuMusicID: 0
   versionText: {fileID: 47165548}
 --- !u!1 &622429100
 GameObject:
@@ -7288,6 +7291,18 @@ MonoBehaviour:
       - m_Target: {fileID: 224901095}
         m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
         m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 612142159}
+        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+        m_MethodName: OpenOptionsScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -13109,7 +13124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6d3f79daf7efe744a018c5aa94c1795, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SCP_173
-  canRoam: 1
   isVisibleByPlayer: 0
   isVisibleByAnyNPC: 0
   alreadySeenByPlayer: 0

@@ -16,7 +16,7 @@ public class RichPresence : MonoBehaviour {
 
     private void Start() {
         discord = new Discord.Discord(1357936248869748845, (ulong)Discord.CreateFlags.NoRequireDiscord);
-        ChangeActivity("Doing something");
+        //ChangeActivity("Doing something");
     }
 
     private void OnDisable() {
