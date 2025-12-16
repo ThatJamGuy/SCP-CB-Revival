@@ -46,6 +46,10 @@ public class OptionsMenu : MonoBehaviour {
         LoadSettings();
     }
 
+    private void Start() {
+        RichPresence.instance.ChangeActivity("Configuring the Settings");
+    }
+
     private void LoadSettings() {
         int savedW = PlayerPrefs.GetInt(ResolutionWidthKey, Screen.width);
         int savedH = PlayerPrefs.GetInt(ResolutionHeightKey, Screen.height);
@@ -219,6 +223,8 @@ public class OptionsMenu : MonoBehaviour {
     }
 
     public void CloseOptionsScene() {
+        RichPresence.instance.ChangeActivity("In the main menu");
+
         if (SceneManager.GetSceneByName(optionsSceneName).isLoaded)
             SceneManager.UnloadSceneAsync(optionsSceneName);
     }

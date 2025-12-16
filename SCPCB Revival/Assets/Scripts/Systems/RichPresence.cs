@@ -15,25 +15,30 @@ public class RichPresence : MonoBehaviour {
     }
 
     private void Start() {
-        discord = new Discord.Discord(1357936248869748845, (ulong)Discord.CreateFlags.NoRequireDiscord);
-        //ChangeActivity("Doing something");
+        try {
+            discord = new Discord.Discord(1450277986178830448, (ulong)Discord.CreateFlags.NoRequireDiscord);
+            ChangeActivity("In the main menu");
+        }
+        catch (System.Exception e) {
+            Debug.LogError($"Discord initialization failed: {e.Message}");
+        }
     }
 
     private void OnDisable() {
         discord.Dispose();
     }
 
-    private void Update() {
-        discord.RunCallbacks();
-    }
-
-    public void ChangeActivity(string details) {
+    public void ChangeActivity(string state) { 
         var activityManager = discord.GetActivityManager();
         var activity = new Discord.Activity {
-            Details = details
+            State = state
         };
         activityManager.UpdateActivity(activity, (res) => {
-            Debug.Log("Activity updated");
+            Debug.Log("Activity updated!");
         });
+    }
+
+    private void Update() {
+        discord.RunCallbacks();
     }
 }
