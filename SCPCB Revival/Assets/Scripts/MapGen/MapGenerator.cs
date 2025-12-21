@@ -28,6 +28,7 @@ public class MapGenerator : MonoBehaviour {
     [SerializeField] private RoomSet roomSet;
     [SerializeField] private MapTemplate[] availableMapTemplates;
     [SerializeField] private Transform generatedMapParent;
+    [SerializeField] private Transform generatedDoorParent;
 
     [Header("Grid Settings")]
     [SerializeField] private float cellSize = 20.5f;
@@ -75,6 +76,7 @@ public class MapGenerator : MonoBehaviour {
         BuildGridData();
         PlaceMandatoryRooms();
         SpawnPlacedRooms();
+        SpawnDoors();
     }
 
     private void Cleanup() {
@@ -172,6 +174,70 @@ public class MapGenerator : MonoBehaviour {
     }
     #endregion
 
+    #region PHASE 4: Spawn the doors
+    private static readonly Dictionary<RoomData.RoomShape, int[]> BaseExits = new() {
+        { RoomData.RoomShape.TwoWay, new[] { 0, 180 } },
+        { RoomData.RoomShape.ThreeWay, new[] { 270, 180, 90 } },
+        { RoomData.RoomShape.Corner, new[] { 180, 90 } },
+        { RoomData.RoomShape.DeadEnd, new[] { 180 } },
+        { RoomData.RoomShape.FourWay, new[] { 0, 90, 180, 270 } },
+        { RoomData.RoomShape.Checkpoint, new[] { 0, 180 } }
+    };
+
+    private void SpawnDoors() {
+        HashSet<string> processedEdges = new();
+
+        foreach (var placement in selectedMapTemplate.roomPlacements) {
+            Vector2Int currentPos = placement.gridPosition;
+            List<int> currentExits = GetWorldExits(placement.requiredShape, placement.rotation);
+
+            foreach (int localAngle in currentExits) {
+                Vector2Int neighborPos = currentPos + AngleToDirection(localAngle);
+
+                string edgeKey = GetEdgeKey(currentPos, neighborPos);
+                if (processedEdges.Contains(edgeKey)) continue;
+
+                // Check if neighbor exists and has a matching exit
+                var neighborPlacement = GetPlacementAt(neighborPos);
+                if (neighborPlacement != null) {
+                    List<int> neighborExits = GetWorldExits(neighborPlacement.requiredShape, neighborPlacement.rotation);
+                    int oppositeAngle = (localAngle + 180) % 360;
+
+                    if (neighborExits.Contains(oppositeAngle)) {
+                        SpawnDoorBetween(currentPos, neighborPos, localAngle);
+                        processedEdges.Add(edgeKey);
+                    }
+                }
+            }
+        }
+    }
+
+    private void SpawnDoorBetween(Vector2Int posA, Vector2Int posB, int angleFromA) {
+        RoomData.Zone zone = GetZoneAtPosition(posA);
+        AssetReferenceGameObject doorPrefab = null;
+
+        // Find the door prefab for this zone from the template
+        foreach (var zT in selectedMapTemplate.zones) {
+            if (zT.zoneType == zone) {
+                doorPrefab = zT.zoneDoor;
+                break;
+            }
+        }
+
+        if (doorPrefab == null || !doorPrefab.RuntimeKeyIsValid()) return;
+
+        // Calculate Midpoint
+        Vector3 worldPosA = GridToWorld(posA);
+        Vector3 worldPosB = GridToWorld(posB);
+        Vector3 doorPosition = (worldPosA + worldPosB) / 2f;
+
+        // Rotation: Point the door along the axis of the exit
+        Quaternion doorRotation = Quaternion.Euler(0, angleFromA, 0);
+
+        doorPrefab.InstantiateAsync(doorPosition, doorRotation, generatedDoorParent);
+    }
+    #endregion
+
     #region Helpers :)
     private RoomData GetRandomValidRoom(RoomData.RoomShape shape, RoomData.Zone zone) {
         if (shape == RoomData.RoomShape.Checkpoint) {
@@ -248,6 +314,41 @@ public class MapGenerator : MonoBehaviour {
         foreach (var kvp in placedMandatoryRooms) {
             Gizmos.DrawCube(GridToWorld(kvp.Key), new Vector3(cellSize * 0.5f, 0.5f, cellSize * 0.5f));
         }
+    }
+    #endregion
+
+    #region Door Helpers :)
+    private List<int> GetWorldExits(RoomData.RoomShape shape, int rotation) {
+        List<int> worldExits = new();
+        if (BaseExits.TryGetValue(shape, out int[] angles)) {
+            foreach (int angle in angles) {
+                // (Base + Object Rotation) % 360 gives world-space exit direction
+                worldExits.Add((angle + rotation) % 360);
+            }
+        }
+        return worldExits;
+    }
+
+    private Vector2Int AngleToDirection(int angle) {
+        return angle switch {
+            0 => new Vector2Int(0, 1),    // North
+            90 => new Vector2Int(1, 0),   // East
+            180 => new Vector2Int(0, -1), // South
+            270 => new Vector2Int(-1, 0), // West
+            _ => Vector2Int.zero
+        };
+    }
+
+    private RoomPlacement GetPlacementAt(Vector2Int pos) {
+        foreach (var p in selectedMapTemplate.roomPlacements) {
+            if (p.gridPosition == pos) return p;
+        }
+        return null;
+    }
+
+    private string GetEdgeKey(Vector2Int a, Vector2Int b) {
+        if (a.x < b.x || (a.x == b.x && a.y < b.y)) return $"{a}:{b}";
+        return $"{b}:{a}";
     }
     #endregion
 }

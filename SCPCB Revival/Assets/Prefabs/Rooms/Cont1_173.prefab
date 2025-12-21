@@ -249,6 +249,8 @@ GameObject:
   - component: {fileID: 2591150922799583158}
   - component: {fileID: 2620558401596994145}
   - component: {fileID: 8057060361536821062}
+  - component: {fileID: 194915390895664683}
+  - component: {fileID: 9223211502327226503}
   m_Layer: 0
   m_Name: RTL_Light01 (1)
   m_TagString: Untagged
@@ -360,7 +362,7 @@ MonoBehaviour:
   m_ShapeHeight: -1
   m_AspectRatio: -1
   m_SpotIESCutoffPercent: 100
-  m_LightDimmer: 1
+  m_LightDimmer: 0.5
   m_VolumetricDimmer: 10
   m_FadeDistance: 20
   m_VolumetricFadeDistance: 20
@@ -478,6 +480,59 @@ MonoBehaviour:
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
   m_ObsoleteContactShadows: 0
+--- !u!95 &194915390895664683
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089997533248184816}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: b8a1ef3e0ce8bf94692b7e21e4b3849e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &9223211502327226503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089997533248184816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1917939778
+      Data2: 1245488726
+      Data3: 1461524117
+      Data4: -570511720
+    Path: event:/SFX/General/LightFlickerLoop
+  Event: 
+  EventPlayTrigger: 11
+  EventStopTrigger: 12
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 5
 --- !u!1 &1565355599692864856
 GameObject:
   m_ObjectHideFlags: 0
@@ -2326,7 +2381,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 305266573471719397, guid: ba082c0510c110b42ad6c62bba6076ed, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.7
       objectReference: {fileID: 0}
     - target: {fileID: 305266573471719397, guid: ba082c0510c110b42ad6c62bba6076ed, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2364,6 +2419,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1801056752648973663, guid: ba082c0510c110b42ad6c62bba6076ed, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e27a3e2f84809914fa5bf3a7ac14ce9f, type: 2}
     - target: {fileID: 5003395453834639619, guid: ba082c0510c110b42ad6c62bba6076ed, type: 3}
       propertyPath: m_Name
       value: RoomSizeDustParticles
@@ -2375,6 +2434,14 @@ PrefabInstance:
     - target: {fileID: 5003395453834639619, guid: ba082c0510c110b42ad6c62bba6076ed, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 123
+      objectReference: {fileID: 0}
+    - target: {fileID: 8201052627804394738, guid: ba082c0510c110b42ad6c62bba6076ed, type: 3}
+      propertyPath: ShapeModule.m_Scale.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8201052627804394738, guid: ba082c0510c110b42ad6c62bba6076ed, type: 3}
+      propertyPath: ShapeModule.m_Scale.z
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
