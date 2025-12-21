@@ -1,9 +1,11 @@
+using AOT;
+using FMOD.Studio;
 using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class EVNT_PostBreach : MonoBehaviour {
-    FMOD.Studio.EventInstance eventInstance;
+    EventInstance eventInstance;
     GCHandle callbackHandle;
 
     readonly System.Collections.Generic.Queue<string> markerQueue = new System.Collections.Generic.Queue<string>();
@@ -14,7 +16,7 @@ public class EVNT_PostBreach : MonoBehaviour {
 
     private void OnDisable() {
         if (eventInstance.isValid()) {
-            eventInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+            eventInstance.stop(STOP_MODE.ALLOWFADEOUT);
             eventInstance.release();
         }
 
@@ -46,7 +48,7 @@ public class EVNT_PostBreach : MonoBehaviour {
 
         callbackHandle = GCHandle.Alloc(this);
         eventInstance.setUserData(GCHandle.ToIntPtr(callbackHandle));
-        eventInstance.setCallback(EventCallback, FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
+        eventInstance.setCallback(EventCallback, EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
 
         eventInstance.start();
 
@@ -57,7 +59,7 @@ public class EVNT_PostBreach : MonoBehaviour {
         GlobalCameraShake.instance.ShakeCamera(0.2f, 0f, 5f);
     }
 
-    public void ShaekCameraSmall() {
+    public void ShakeCameraSmall() {
         GlobalCameraShake.instance.ShakeCamera(0.03f, 0f, 2f);
     }
 
@@ -71,7 +73,7 @@ public class EVNT_PostBreach : MonoBehaviour {
                 ShakeCameraLarge();
                 break;
             case "Shake_Small":
-                ShaekCameraSmall();
+                ShakeCameraSmall();
                 break;
              case "Music_LCZ":
                 ChangeMusicToLCZ();
@@ -79,22 +81,21 @@ public class EVNT_PostBreach : MonoBehaviour {
         }
     }
 
-
+    [MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
     static FMOD.RESULT EventCallback(
-    FMOD.Studio.EVENT_CALLBACK_TYPE type,
+    EVENT_CALLBACK_TYPE type,
     IntPtr instancePtr,
     IntPtr parameterPtr) {
-        if (type != FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_MARKER)
+        if (type != EVENT_CALLBACK_TYPE.TIMELINE_MARKER)
             return FMOD.RESULT.OK;
 
-        var marker = (FMOD.Studio.TIMELINE_MARKER_PROPERTIES)
+        var marker = (TIMELINE_MARKER_PROPERTIES)
             Marshal.PtrToStructure(parameterPtr,
-            typeof(FMOD.Studio.TIMELINE_MARKER_PROPERTIES));
+            typeof(TIMELINE_MARKER_PROPERTIES));
 
         string markerName = marker.name;
 
-        FMOD.Studio.EventInstance instance =
-            new FMOD.Studio.EventInstance(instancePtr);
+        EventInstance instance = new EventInstance(instancePtr);
 
         instance.getUserData(out IntPtr userData);
 

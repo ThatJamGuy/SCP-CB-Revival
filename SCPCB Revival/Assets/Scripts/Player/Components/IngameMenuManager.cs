@@ -26,7 +26,7 @@ public class IngameMenuManager : MonoBehaviour {
             DevConsole.Instance.SelectInputField();
         }
         if (InputManager.Instance != null && InputManager.Instance.escapeAction.triggered) {
-            if (SceneManager.GetSceneByName("Options").isLoaded) return;
+            if (SceneManager.GetSceneByName("Settings").isLoaded) return;
             ToggleMenuByID(2);
         }
     }

@@ -33,7 +33,7 @@ public class PlayerFootsteps : MonoBehaviour {
         if (!isMoving) return;
 
         if (isCrouching)
-            footstepVCA.setVolume(0.1f);
+            footstepVCA.setVolume(0.3f);
         else
             footstepVCA.setVolume(1.0f);
     }
@@ -55,12 +55,20 @@ public class PlayerFootsteps : MonoBehaviour {
     #region Private Methods
     private Texture GetCurrentTextureUnderPlayer() {
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, characterController.height + 1.0f)) {
+            if (hit.triangleIndex == -1) return null;
+
             MeshCollider meshCollider = hit.collider as MeshCollider;
             if (meshCollider != null && meshCollider.sharedMesh != null) {
                 int submeshIndex = GetSubmeshIndex(meshCollider.sharedMesh, hit.triangleIndex);
+
                 if (submeshIndex != -1) {
-                    Material material = meshCollider.GetComponent<Renderer>()?.materials[submeshIndex];
-                    return material?.mainTexture;
+                    Renderer renderer = meshCollider.GetComponent<Renderer>();
+                    if (renderer != null) {
+                        Material[] materials = renderer.sharedMaterials;
+                        if (submeshIndex < materials.Length) {
+                            return materials[submeshIndex]?.mainTexture;
+                        }
+                    }
                 }
             }
         }
