@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.AI;   
 using UnityEngine.ResourceManagement.AsyncOperations;
+using System.Collections;
+using Unity.AI.Navigation;
 
 [System.Serializable]
 public class RoomSet {
@@ -29,6 +32,7 @@ public class MapGenerator : MonoBehaviour {
     [SerializeField] private MapTemplate[] availableMapTemplates;
     [SerializeField] private Transform generatedMapParent;
     [SerializeField] private Transform generatedDoorParent;
+    [SerializeField] private NavMeshSurface navMeshSurface;
 
     [Header("Grid Settings")]
     [SerializeField] private float cellSize = 20.5f;
@@ -38,6 +42,9 @@ public class MapGenerator : MonoBehaviour {
     [SerializeField] private string seed = "DefaultSeed";
     [SerializeField] private bool useRandomSeed = true;
     [SerializeField] private int currentSeed;
+
+    [Header("Status")]
+    public bool IsGenerationComplete = false;
 
     // Internal State
     private MapTemplate selectedMapTemplate;
@@ -50,7 +57,69 @@ public class MapGenerator : MonoBehaviour {
     private readonly List<(Vector2Int pos, Color color)> gizmoCells = new();
 
     private void Start() {
-        GenerateMap();
+        StartCoroutine(GenerateMapSequence());
+    }
+
+    public IEnumerator GenerateMapSequence() {
+        IsGenerationComplete = false;
+        Cleanup();
+
+        // 1. Setup Seed
+        if (useRandomSeed) currentSeed = Random.Range(0, 99999);
+        else currentSeed = seed.GetHashCode();
+        Random.InitState(currentSeed);
+
+        selectedMapTemplate = availableMapTemplates[Random.Range(0, availableMapTemplates.Length)];
+
+        // 2. Build Data
+        BuildGridData();
+        PlaceMandatoryRooms();
+
+        // 3. Spawn Rooms and Wait
+        yield return StartCoroutine(SpawnPlacedRoomsRoutine());
+
+        // 4. Bake NavMesh
+        if (navMeshSurface != null) {
+            Debug.Log("Baking NavMesh...");
+            navMeshSurface.BuildNavMesh();
+            yield return null;
+        }
+
+        // 5. Spawn Doors
+        SpawnDoors();
+
+        IsGenerationComplete = true;
+        Debug.Log("<color=green>Map Generation Sequence Finished!</color>");
+    }
+
+    private IEnumerator SpawnPlacedRoomsRoutine() {
+        List<AsyncOperationHandle<GameObject>> handles = new();
+
+        foreach (var placement in selectedMapTemplate.roomPlacements) {
+            RoomData roomToSpawn = placedMandatoryRooms.TryGetValue(placement.gridPosition, out RoomData mandatory)
+                ? mandatory
+                : GetRandomValidRoom(placement.requiredShape, GetZoneAtPosition(placement.gridPosition));
+
+            if (roomToSpawn == null || !roomToSpawn.roomPrefab.RuntimeKeyIsValid()) continue;
+
+            Vector3 worldPos = GridToWorld(placement.gridPosition);
+            Quaternion rotation = Quaternion.Euler(0f, placement.rotation, 0f);
+
+            var handle = roomToSpawn.roomPrefab.InstantiateAsync(worldPos, rotation, generatedMapParent);
+            handles.Add(handle);
+
+            handle.Completed += (op) => {
+                if (op.Status == AsyncOperationStatus.Succeeded) spawnedRooms.Add(op.Result);
+            };
+        }
+
+        // Wait until ALL room addressables are finished loading
+        while (handles.Count > 0) {
+            for (int i = handles.Count - 1; i >= 0; i--) {
+                if (handles[i].IsDone) handles.RemoveAt(i);
+            }
+            yield return null;
+        }
     }
 
     public void GenerateMap() {

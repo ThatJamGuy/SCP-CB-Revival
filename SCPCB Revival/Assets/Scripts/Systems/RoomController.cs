@@ -34,6 +34,7 @@ public class RoomController : MonoBehaviour {
             playerTransform = player.transform;
         } else {
             Debug.LogWarning($"[RoomController] Player not found for room at {transform.position}");
+            roomMesh.GetComponent<Renderer>().enabled = true;
         }
     }
 
