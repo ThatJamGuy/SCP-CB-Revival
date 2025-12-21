@@ -5,6 +5,8 @@ public class GameManager : MonoBehaviour {
 
     public bool isGamePaused = false;
     public bool scp106Active = false;
+    public bool scp173ChasingPlayer = false;
+    public bool scp173currentVisibleToPlayer = false;
 
     public void Awake() {
         instance = this;

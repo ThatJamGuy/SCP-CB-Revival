@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class IngameMenuManager : MonoBehaviour {
     public static IngameMenuManager instance;
@@ -25,6 +26,7 @@ public class IngameMenuManager : MonoBehaviour {
             DevConsole.Instance.SelectInputField();
         }
         if (InputManager.Instance != null && InputManager.Instance.escapeAction.triggered) {
+            if (SceneManager.GetSceneByName("Options").isLoaded) return;
             ToggleMenuByID(2);
         }
     }

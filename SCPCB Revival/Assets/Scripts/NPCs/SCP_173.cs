@@ -5,7 +5,7 @@ using UnityEngine.AI;
 public class SCP_173 : MonoBehaviour {
     [Header("Status")]
     //[SerializeField] private bool canRoam = true;
-    [SerializeField] private bool isVisibleByPlayer = false;
+    public bool isVisibleByPlayer = false;
     [SerializeField] private bool isVisibleByAnyNPC = false;
     [SerializeField] private bool alreadySeenByPlayer = false;
     [SerializeField] private bool hasTarget = false;
@@ -141,6 +141,7 @@ public class SCP_173 : MonoBehaviour {
 
         if (alreadySeenByPlayer) PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>().StopBlink();
         if (alreadySeenByPlayer) alreadySeenByPlayer = false;
+        if (alreadySeenByPlayer) GameManager.instance.scp173ChasingPlayer = false;
 
         movementSource.SetActive(false);
         hasPlayedDistanceHorrorSound = false;
@@ -224,6 +225,7 @@ public class SCP_173 : MonoBehaviour {
     private void OnBecameVisibleToPlayer() {
         if (!alreadySeenByPlayer) {
             alreadySeenByPlayer = true;
+            GameManager.instance.scp173ChasingPlayer = true;
             AcquireTarget(playerTransform);
 
             if (!GameManager.instance.scp106Active)

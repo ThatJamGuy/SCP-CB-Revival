@@ -13,6 +13,7 @@ public class CanvasInstance : MonoBehaviour {
     public GameObject blinkOverlay;
     public GameObject deathMenu;
     public TextMeshProUGUI deathMenuDeathCauseText;
+    public GameObject introScreenStuff;
 
     private void Awake() {
         if (instance == null) {

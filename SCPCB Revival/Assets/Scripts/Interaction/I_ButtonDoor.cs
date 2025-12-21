@@ -22,6 +22,7 @@ public class I_ButtonDoor : MonoBehaviour, IInteractable {
         if (linkedDoor.isLocked) {
             AudioManager.instance.PlaySound(buttonPressLockedSound, transform.position);
             if (buttonAnimator != null) buttonAnimator.Play("ModernButtonPress");
+            InfoTextManager.Instance.NotifyPlayer("The door appears to be locked.");
 
             StartCoroutine(Cooldown());
             return;

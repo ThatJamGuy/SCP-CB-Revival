@@ -2,8 +2,11 @@ using UnityEngine;
 using PrimeTween;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System;
 
 public class PlayerBlink : MonoBehaviour {
+    public static Action OnPlayerBlink;
+
     [SerializeField] private float blinkDrainRate = 0.07f;
     [SerializeField] private float blinkOverlayDuration = 0.2f;
 
@@ -41,6 +44,7 @@ public class PlayerBlink : MonoBehaviour {
         Tween.Alpha(CanvasInstance.instance.blinkBarFill, 0f, 1f, 5f);
         Tween.Alpha(CanvasInstance.instance.blinkBarBackground, 0f, 1f, 5f);
         isBlinkingActive = true;
+        OnPlayerBlink?.Invoke();
     }
 
     private void OnBlinkStarted(InputAction.CallbackContext context) {
@@ -62,6 +66,7 @@ public class PlayerBlink : MonoBehaviour {
         isBlinking = true;
         PlayerAccessor.instance.isBlinking = true;
         CanvasInstance.instance.blinkOverlay.SetActive(true);
+        OnPlayerBlink?.Invoke();
 
         if (!InputManager.Instance.IsBlinkHeld) {
             Invoke(nameof(EndBlink), blinkOverlayDuration);

@@ -223,7 +223,10 @@ public class OptionsMenu : MonoBehaviour {
     }
 
     public void CloseOptionsScene() {
-        RichPresence.instance.ChangeActivity("In the main menu");
+        if (SceneManager.GetSceneByName("Menu").isLoaded)
+            RichPresence.instance.ChangeActivity("In the main menu");
+        else
+            RichPresence.instance.ChangeActivity("In a game");
 
         if (SceneManager.GetSceneByName(optionsSceneName).isLoaded)
             SceneManager.UnloadSceneAsync(optionsSceneName);
