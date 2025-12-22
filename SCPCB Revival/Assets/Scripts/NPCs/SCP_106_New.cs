@@ -68,6 +68,9 @@ public class SCP_106_New : MonoBehaviour {
     private void Update() {
         if (activeTarget == null || !canWalk) return;
         agent.SetDestination(activeTarget.position);
+        if (agent.pathStatus == NavMeshPathStatus.PathPartial) {
+            agent.SetDestination(agent.pathEndPosition);
+        }
         distanceToTarget = Vector3.Distance(transform.position, activeTarget.position);
 
         if (wallTraverseTimer > 0f) wallTraverseTimer -= Time.deltaTime;
@@ -173,20 +176,11 @@ public class SCP_106_New : MonoBehaviour {
 
     #region Private Methods
     private void TeleportAgent(Vector3 position, Vector3 forward) {
-        //agent.ResetPath();
+        agent.ResetPath();
         agent.velocity = Vector3.zero;
-        agent.enabled = false;
-
-        transform.position = position;
-        transform.rotation = Quaternion.LookRotation(forward);
-
-        agent.enabled = true;
         agent.Warp(position);
-        agent.velocity = Vector3.zero;
-
-        if (activeTarget != null) {
-            agent.SetDestination(activeTarget.position);
-        }
+        transform.rotation = Quaternion.LookRotation(forward);
+        agent.isStopped = true;
     }
     #endregion
 
