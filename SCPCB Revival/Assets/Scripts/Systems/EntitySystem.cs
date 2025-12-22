@@ -14,7 +14,7 @@ public class EntitySystem : MonoBehaviour {
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private float groundCheckDistance = 50f;
 
-    private bool scp173Active = false;
+    //private bool scp173Active = false;
 
     #region Unity Callbacks
     private void Awake() {
@@ -65,7 +65,7 @@ public class EntitySystem : MonoBehaviour {
 
                     if (existing173 == null) {
                         Instantiate(scp173Prefab, spawnPos, Quaternion.identity);
-                        scp173Active = true;
+                        //scp173Active = true;
                     }
                     else {
                         existing173.transform.position = spawnPos;
