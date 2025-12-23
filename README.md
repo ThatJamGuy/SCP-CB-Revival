@@ -1,23 +1,21 @@
-# THE SCP:CB REVIVAL PROJECT
-SCP: Containment Breach Revival is a remake of SCP:CB with a few creative liberties taken in the new Unity 6 Engine utilizing HDRP technology for HD lighting. The game is based on the works of the [SCP Foundation community](http://www.scp-wiki.net/)
+# SCP - Containment Breach Revival
+SCP - Containment Breach Revival is an In-Development remake of [SCP - Containment Breach](https://github.com/Regalis11/scpcb) built on the [Unity 6.3 Engine](https://unity.com/).
 
-This game and the source code are licensed under [Creative Commons Attribution-ShareAlike 3.0 License](http://creativecommons.org/licenses/by-sa/3.0/)
+SCP:CBR Discord Server: https://discord.gg/rarnCP68Dk
 
-Discord: https://discord.gg/rarnCP68Dk
+## Contributing
+For a basic form of contributing, you can [open an issue](https://github.com/ThatJamGuy/SCP-CB-Revival/issues).
+If you'd like to more directly contribute, feel free to fork the repository and make your changes there. Once finished you can open a pull request and if approved it will be merged.
+For any further questions or details you wish to provide (Or if you just want to hang out), you can find me on my Discord server which is linked above.
 
->"Solving this games bad performance will be like solving world hunger, only difference is that people will still be starving after."
+**What to Contribute**
+- Code / system refactors
+- Additional content from the base game not already present
+- Additional content not from the base game that would improve the game
+- Changes to existing content / systems that would improve developer or player experience
+- Anything I haven't already mentioned that would speed up development and help make a better game
 
->[!WARNING]
->Beware - the source code is perhaps more horrifying than the game itself!
+For code refactors/additions it's preferable that you can write code better than I can (Which probably isn't very hard), but anything helps as long as it won't be a headache to debug it later.
 
-# "This repo looks outdated"
-Check the UNSTABLE branch. All my recent changes are being pushed there and will be merged with the main branch when a version release is ready.
-
-# Contributing
-Feel free to make a pull request for any of the following reasons:
-- Feature Addition (Adding a feature from the main game that's not there yet)
-- Bug fix
-- Code refactors/optimizations
-- Other (If there's another way you would like to contribute, ask in the Discord, or just open a PR or an issue.)
-
-![2025-03-20_00-32-04](https://github.com/user-attachments/assets/d8b6afc1-75c5-42d8-8edb-279f6d4d4c54)
+## Liscensing
+SCP - Containment Breach Revival and it's source code are licensed under [Creative Commons Attribution-ShareAlike 4.0 License](https://creativecommons.org/licenses/by-sa/4.0/).
