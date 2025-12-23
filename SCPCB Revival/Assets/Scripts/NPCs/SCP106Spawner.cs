@@ -13,7 +13,6 @@ namespace scpcbr {
         public float effectDuration = 10f;
         public float spawnRadius = 3f;
         public float maxSpawnHeight = 1f;
-        public float forwardOffset = 1.1f;
         public float navMeshCheckRadius = 5f;
 
         [Header("Ground Detection")]
@@ -56,8 +55,8 @@ namespace scpcbr {
             currentEffect = Instantiate(spawnEffectPrefab, spawnPos, Quaternion.identity);
             yield return new WaitForSeconds(effectDuration);
 
-            Vector3 scp106Pos = spawnPos + (Vector3.forward * forwardOffset);
-            Instantiate(scp106Prefab, scp106Pos, Quaternion.identity);
+            Vector3 scp106Pos = spawnPos;
+            Instantiate(scp106Prefab, scp106Pos, PlayerAccessor.instance.transform.rotation);
 
             GameManager.instance.scp106Active = true;
         }

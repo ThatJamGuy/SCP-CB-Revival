@@ -27,6 +27,8 @@ public class RoomSet {
 }
 
 public class MapGenerator : MonoBehaviour {
+    public static MapGenerator instance;
+
     [Header("References")]
     [SerializeField] private RoomSet roomSet;
     [SerializeField] private MapTemplate[] availableMapTemplates;
@@ -39,9 +41,9 @@ public class MapGenerator : MonoBehaviour {
     [SerializeField] private float gridOffsetX = 0f;
 
     [Header("Seed Settings")]
-    [SerializeField] private string seed = "DefaultSeed";
-    [SerializeField] private bool useRandomSeed = true;
-    [SerializeField] private int currentSeed;
+    public string seed = "DefaultSeed";
+    public bool useRandomSeed = true;
+    public int currentSeed;
 
     [Header("Status")]
     public bool IsGenerationComplete = false;
@@ -55,6 +57,11 @@ public class MapGenerator : MonoBehaviour {
 
     // Debug Data
     private readonly List<(Vector2Int pos, Color color)> gizmoCells = new();
+
+    private void Awake() {
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
+    }
 
     private void Start() {
         StartCoroutine(GenerateMapSequence());
