@@ -8,8 +8,6 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
 
     private RectTransform rectTransform;
 
-    private bool isHovered;
-
     private void Awake() {
         if (rectTransform == null)
             rectTransform = GetComponent<RectTransform>();
@@ -20,12 +18,10 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        isHovered = true;
         SetOutlineActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        isHovered = false;
         SetOutlineActive(false);
     }
 

@@ -7,6 +7,7 @@ public class Door : MonoBehaviour {
     public enum Axis { X, Y, Z }
 
     [Header("Door Settings")]
+    public bool startOpen;
     public bool isOpen;
     public bool isLocked;
     public bool requiresKeycard;
@@ -37,6 +38,8 @@ public class Door : MonoBehaviour {
     void Start() {
         door01InitialPos = doorPart01.transform.position;
         door02InitialPos = doorPart02.transform.position;
+
+        if (startOpen) ToggleDoorState();
     }
 
     public void ToggleLockState() => isLocked = !isLocked;

@@ -2,10 +2,15 @@ using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
 
+/// <summary>
+/// System I made for handling player footsteps. (Now with code comments!)
+/// Used to be material based, but now tag based since the build had issues with rooms spawned in at runtime.
+/// </summary>
 public class PlayerFootsteps : MonoBehaviour {
     [SerializeField] private FootstepData[] footstepData;
     [SerializeField] private PlayerAccessor playerAccessor;
     [SerializeField] private CharacterController characterController;
+    [SerializeField] private LayerMask groundLayer = -1;
 
     private VCA footstepVCA;
     private PlayerMovement playerMovement;
@@ -14,35 +19,28 @@ public class PlayerFootsteps : MonoBehaviour {
     private bool isCrouching;
     private bool isMoving;
 
-    #region Unity Methods
+    #region Unity Callbacks
+    // Immediately set some stuff needed for the script
     private void Awake() {
         footstepVCA = RuntimeManager.GetVCA("vca:/FootstepVCA");
         playerMovement = GetComponentInParent<PlayerMovement>();
     }
 
+    // Just calls UpdateFoosteps() every frame so the script knows what movement state the player is in
     private void Update() {
         UpdateFootsteps();
     }
     #endregion
 
     #region Public Methods
-    public void UpdateFootsteps() {
-        isMoving = playerAccessor.isMoving;
-        isSprinting = playerMovement != null ? playerMovement.IsActuallySprinting : false;
-        isCrouching = playerAccessor.isCrouching;
-        if (!isMoving) return;
-
-        if (isCrouching)
-            footstepVCA.setVolume(0.1f);
-        else
-            footstepVCA.setVolume(1.0f);
-    }
-
+    /// <summary>
+    /// Play a footstep sound based on various factors such as the surface tag under the player and their movement state
+    /// </summary>
     public void PlayFootstepAudio() {
-        Texture currentTexture = GetCurrentTextureUnderPlayer();
-        if (currentTexture == null) return;
+        string surfaceTag = GetSurfaceTagUnderPlayer();
+        if (string.IsNullOrEmpty(surfaceTag)) return;
 
-        FootstepData footstep = GetFootstepDataForTexture(currentTexture);
+        FootstepData footstep = GetFootstepDataForTag(surfaceTag);
         if (footstep == null) return;
 
         EventReference eventRef = isSprinting ? footstep.assocatedRunEvent : footstep.assocatedWalkEvent;
@@ -53,37 +51,32 @@ public class PlayerFootsteps : MonoBehaviour {
     #endregion
 
     #region Private Methods
-    private Texture GetCurrentTextureUnderPlayer() {
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, characterController.height + 1.0f)) {
-            MeshCollider meshCollider = hit.collider as MeshCollider;
-            if (meshCollider != null && meshCollider.sharedMesh != null) {
-                int submeshIndex = GetSubmeshIndex(meshCollider.sharedMesh, hit.triangleIndex);
-                if (submeshIndex != -1) {
-                    Material material = meshCollider.GetComponent<Renderer>()?.materials[submeshIndex];
-                    return material?.mainTexture;
-                }
-            }
+    // Update what kind of footstep to use based on the players movement state (Walking, Sprinting, Crouching)
+    private void UpdateFootsteps() {
+        isMoving = playerAccessor.isMoving;
+        isSprinting = playerMovement != null ? playerMovement.IsActuallySprinting : false;
+        isCrouching = playerAccessor.isCrouching;
+        if (!isMoving) return;
+
+        footstepVCA.setVolume(isCrouching ? 0.3f : 1.0f); // If crouching, set volume to 0.3, otherwise 1 (Full Volume)
+    }
+    #endregion
+
+    #region Helpers :)
+    // Shoots a raycast downwards to find the surface tag under the player, assuming they are grounded on something with a collider
+    private string GetSurfaceTagUnderPlayer() {
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, characterController.height, groundLayer)) {
+            return hit.collider.tag; // Returns the tag of the collider the raycast hit
         }
-        return null;
+        return null; // Otherwise return nothing
     }
 
-    private int GetSubmeshIndex(Mesh mesh, int triangleIndex) {
-        int triangleCount = 0;
-        for (int i = 0; i < mesh.subMeshCount; i++) {
-            int subMeshTriangleCount = mesh.GetTriangles(i).Length / 3;
-            if (triangleIndex < triangleCount + subMeshTriangleCount) return i;
-            triangleCount += subMeshTriangleCount;
-        }
-        return -1;
-    }
-
-    private FootstepData GetFootstepDataForTexture(Texture texture) {
+    // Returns the FootstepData associated with the given surface tag found in the previous method GetSurfaceTagUnderPlayer()
+    private FootstepData GetFootstepDataForTag(string tag) {
         foreach (FootstepData data in footstepData) {
-            foreach (Texture tex in data.textures) {
-                if (tex == texture) return data;
-            }
+            if (data.surfaceTag == tag) return data; // Returns data that matches the tag the fella is on
         }
-        return null;
+        return null; // Otherwise return nothing
     }
     #endregion
 }

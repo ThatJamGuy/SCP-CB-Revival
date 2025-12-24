@@ -4,8 +4,8 @@ using UnityEngine.AI;
 
 public class SCP_173 : MonoBehaviour {
     [Header("Status")]
-    [SerializeField] private bool canRoam = true;
-    [SerializeField] private bool isVisibleByPlayer = false;
+    //[SerializeField] private bool canRoam = true;
+    public bool isVisibleByPlayer = false;
     [SerializeField] private bool isVisibleByAnyNPC = false;
     [SerializeField] private bool alreadySeenByPlayer = false;
     [SerializeField] private bool hasTarget = false;
@@ -20,6 +20,7 @@ public class SCP_173 : MonoBehaviour {
     [SerializeField] private float maxTargetDistance = 50f;
 
     [Header("Detection")]
+    [SerializeField] private float maxVisibilityRange = 20f;
     [SerializeField] private LayerMask obstructionMask;
     [SerializeField] private float visibilityCheckInterval = 0.1f;
     [SerializeField] private Vector3 eyeOffset = new Vector3(0, 1.5f, 0);
@@ -104,7 +105,7 @@ public class SCP_173 : MonoBehaviour {
         else {
             navMeshAgent.speed = ROAM_SPEED;
             navMeshAgent.acceleration = ROAM_SPEED;
-            canRoam = true;
+            //canRoam = true;
             Roam();
         }
 
@@ -120,7 +121,7 @@ public class SCP_173 : MonoBehaviour {
     }
 
     private void StopCompletely() {
-        canRoam = false;
+        //canRoam = false;
         if (!navMeshAgent.hasPath) return;
         navMeshAgent.ResetPath();
         navMeshAgent.velocity = Vector3.zero;
@@ -140,11 +141,14 @@ public class SCP_173 : MonoBehaviour {
 
         if (alreadySeenByPlayer) PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>().StopBlink();
         if (alreadySeenByPlayer) alreadySeenByPlayer = false;
+        if (alreadySeenByPlayer) GameManager.instance.scp173ChasingPlayer = false;
 
         movementSource.SetActive(false);
         hasPlayedDistanceHorrorSound = false;
 
-        MusicManager.instance.SetMusicState(MusicState.LCZ);
+        if (!GameManager.instance.scp106Active)
+            MusicManager.instance.SetMusicState(MusicState.LCZ);
+
         tensionEmitter.Stop();
     }
     #endregion
@@ -201,6 +205,9 @@ public class SCP_173 : MonoBehaviour {
                 Vector3 dir = targetPoint - origin;
                 float dist = dir.magnitude;
 
+                if (dist > maxVisibilityRange)
+                    return;
+
                 if (!Physics.Raycast(origin, dir.normalized, out var hit, dist, obstructionMask) ||
                     hit.transform == transform || hit.transform.IsChildOf(transform)) {
                     isVisibleByPlayer = true;
@@ -218,9 +225,12 @@ public class SCP_173 : MonoBehaviour {
     private void OnBecameVisibleToPlayer() {
         if (!alreadySeenByPlayer) {
             alreadySeenByPlayer = true;
+            GameManager.instance.scp173ChasingPlayer = true;
             AcquireTarget(playerTransform);
 
-            MusicManager.instance.SetMusicState(MusicState.scp173);
+            if (!GameManager.instance.scp106Active)
+                MusicManager.instance.SetMusicState(MusicState.scp173);
+
             tensionEmitter.Play();
 
             playerBlink = PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>();

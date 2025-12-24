@@ -13,7 +13,9 @@ public class InputManager : MonoBehaviour {
     private InputAction crouchAction;
     public InputAction interactAction { get; private set; }
     public InputAction inventoryAction { get; private set; }
+    public InputAction consoleAction { get; private set; }
     public InputAction blinkAction { get; private set; }
+    public InputAction escapeAction { get; private set; }
 
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);
@@ -25,7 +27,9 @@ public class InputManager : MonoBehaviour {
         crouchAction = playerInput.actions.FindAction("Crouch", false);
         interactAction = playerInput.actions["Interact"];
         inventoryAction = playerInput.actions["Inventory"];
+        consoleAction = playerInput.actions["Console"];
         blinkAction = playerInput.actions["Blink"];
+        escapeAction = playerInput.actions["Escape"];
     }
 
     private void OnEnable() {

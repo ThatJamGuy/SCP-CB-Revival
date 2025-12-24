@@ -1,5 +1,4 @@
 using PrimeTween;
-using SickDev.CommandSystem;
 using TMPro;
 using UnityEngine;
 
@@ -19,9 +18,9 @@ public class InfoTextManager : MonoBehaviour {
             Instance = this;
     }
 
-    private void OnEnable() {
-        DevConsole.singleton.AddCommand(new ActionCommand<string>(NotifyPlayer) { className = "Utility" });
-    }
+    //private void OnEnable() {
+    //    DevConsole.Instance.Add<string>("notify_player", str => NotifyPlayer(str));
+    //}
 
     /// <summary>
     /// Displays a heads up bit of text to the player similar to how Containment Breach did it.

@@ -2,9 +2,6 @@ using FMODUnity;
 using UnityEngine;
 
 public class FMODEvents : MonoBehaviour {
-    [field: Header("Music")]
-    [field: SerializeField] public EventReference musicRevival { get; private set; }
-
     [field: Header("Step Sounds")]
     [field: SerializeField] public EventReference stepConcreteWalk { get; private set; }
 

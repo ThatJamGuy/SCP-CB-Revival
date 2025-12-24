@@ -1,12 +1,14 @@
-using FMOD.Studio;
 using FMODUnity;
-using SickDev.CommandSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class AmbienceController : MonoBehaviour {
     public static AmbienceController Instance { get; private set; }
+
+    [Header("General")]
+    [SerializeField] private float generalAmbientInterval = 16f;
+    [SerializeField] EventReference generalAmbientSounds;
 
     [Header("Zone")]
     public int currentZone;
@@ -21,6 +23,7 @@ public class AmbienceController : MonoBehaviour {
 
     private Dictionary<int, EventReference> zoneAmbienceMap;
     private Coroutine ambienceCoroutine;
+    private Coroutine generalAmbienceCoroutine;
     private Transform[] player;
 
     private int currentCommotionIndex = 0;
@@ -28,10 +31,6 @@ public class AmbienceController : MonoBehaviour {
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-    }
-
-    private void OnEnable() {
-        DevConsole.singleton.AddCommand(new ActionCommand(PlayCommotionEvent) { className = "Event" });
     }
 
     private void Start() {
@@ -53,6 +52,7 @@ public class AmbienceController : MonoBehaviour {
 
         InitializeZoneAmbienceMap();
         StartAmbience();
+        StartGeneralAmbience();
     }
 
     private void InitializeZoneAmbienceMap() {
@@ -68,6 +68,32 @@ public class AmbienceController : MonoBehaviour {
     private void StartAmbience() {
         if (ambienceCoroutine != null) StopCoroutine(ambienceCoroutine);
         ambienceCoroutine = StartCoroutine(AmbienceWatcher());
+    }
+
+    private void StartGeneralAmbience() {
+        if (generalAmbienceCoroutine != null) StopCoroutine(generalAmbienceCoroutine);
+        generalAmbienceCoroutine = StartCoroutine(GeneralAmbienceWatcher());
+    }
+
+    private IEnumerator GeneralAmbienceWatcher() {
+        while (true) {
+            if (generalAmbientSounds.IsNull) {
+                yield return new WaitForSeconds(1f);
+                continue;
+            }
+
+            try {
+                var instance = RuntimeManager.CreateInstance(generalAmbientSounds);
+                instance.set3DAttributes(RuntimeUtils.To3DAttributes(RandomPositionAroundPlayer()));
+                instance.start();
+                instance.release();
+            }
+            catch (System.Exception ex) {
+                Debug.LogWarning($"Failed to play general ambient event: {ex.Message}");
+            }
+
+            yield return new WaitForSeconds(Mathf.Max(0.01f, generalAmbientInterval));
+        }
     }
 
     private IEnumerator AmbienceWatcher() {

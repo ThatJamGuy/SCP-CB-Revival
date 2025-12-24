@@ -1,5 +1,4 @@
 using PrimeTween;
-using SickDev.CommandSystem;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,7 +44,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void OnEnable() {
-        DevConsole.singleton.AddCommand(new ActionCommand(ToggleNoclip) { className = "Player" });
+        DevConsole.Instance.Add("noclip", () => ToggleNoclip());
     }
 
     private void Update() {

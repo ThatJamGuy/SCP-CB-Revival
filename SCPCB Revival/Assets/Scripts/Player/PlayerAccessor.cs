@@ -1,3 +1,4 @@
+using scpcbr;
 using UnityEngine;
 
 public class PlayerAccessor : MonoBehaviour {
@@ -20,12 +21,19 @@ public class PlayerAccessor : MonoBehaviour {
 
     [Header("References")]
     public Camera playerCamera;
+    public Transform playerCameraRoot;
 
     private void Awake() {
         if (instance == null) {
             instance = this;
         } else {
             Destroy(gameObject);
+        }
+    }
+
+    private void Start() {
+        if (GlobalCameraShake.instance != null && playerCamera != null) {
+            GlobalCameraShake.instance.RegisterCamera(playerCameraRoot);
         }
     }
 
