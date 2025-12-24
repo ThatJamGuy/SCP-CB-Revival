@@ -3,6 +3,7 @@ using FMOD.Studio;
 using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using System.Collections;
 
 public class EVNT_PostBreach : MonoBehaviour {
     EventInstance eventInstance;
@@ -39,6 +40,9 @@ public class EVNT_PostBreach : MonoBehaviour {
 
     public void TriggerPostBreachEvent() {
         Debug.Log("Post-breach event triggered.");
+
+        PlayerAccessor.instance.allowInput = false;
+        StartCoroutine(PlayerInputRoutine());
 
         CanvasInstance.instance.introScreenStuff.SetActive(true);
 
@@ -106,5 +110,10 @@ public class EVNT_PostBreach : MonoBehaviour {
         }
 
         return FMOD.RESULT.OK;
+    }
+
+    private IEnumerator PlayerInputRoutine() {
+        yield return new WaitForSeconds(5f);
+        PlayerAccessor.instance.allowInput = true;
     }
 }
