@@ -11,20 +11,19 @@ public class EVNT_PostBreach : MonoBehaviour {
 
     readonly System.Collections.Generic.Queue<string> markerQueue = new System.Collections.Generic.Queue<string>();
 
-    private void OnEnable() {
-        DevConsole.Instance.Add("startevent_postbreach", () => TriggerPostBreachEvent());
-    }
-
     private void OnDisable() {
         if (eventInstance.isValid()) {
-            eventInstance.stop(STOP_MODE.ALLOWFADEOUT);
+            eventInstance.setUserData(IntPtr.Zero);
+            eventInstance.setCallback(null);
+
+            eventInstance.stop(STOP_MODE.IMMEDIATE);
             eventInstance.release();
+            eventInstance.clearHandle();
         }
 
         if (callbackHandle.IsAllocated)
             callbackHandle.Free();
     }
-
 
     private void Update() {
         lock (markerQueue) {

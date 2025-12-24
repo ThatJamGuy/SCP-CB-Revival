@@ -64,6 +64,16 @@ public class MapGenerator : MonoBehaviour {
     }
 
     private void Start() {
+        if (SaveSystem.SaveFileExists("savefile.json")) {
+            var saveData = SaveSystem.Load<SaveData>("savefile.json");
+            seed = saveData.currentMapSeed;
+
+            if (string.IsNullOrEmpty(seed))
+                useRandomSeed = true;
+            else
+                useRandomSeed = false;
+        }
+
         StartCoroutine(GenerateMapSequence());
     }
 

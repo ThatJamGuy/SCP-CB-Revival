@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
@@ -9,6 +10,8 @@ public class GameManager : MonoBehaviour {
     public bool scp106Active = false;
     public bool scp173ChasingPlayer = false;
     public bool scp173currentVisibleToPlayer = false;
+
+
 
     public void Awake() {
         instance = this;
@@ -42,7 +45,8 @@ public class GameManager : MonoBehaviour {
         PlayerAccessor.instance.DisablePlayerInputs(true);
         PlayerAccessor.instance.isDead = true;
         PlayerAccessor.instance.isMoving = false;
-        AudioManager.instance.StopMusic();
+        //AudioManager.instance.StopMusic();
+        MusicManager.instance.SetMusicState(MusicState.LCZ);
         CanvasInstance.instance.deathMenu.SetActive(true);
         CanvasInstance.instance.deathMenuDeathCauseText.text = causeOfDeath;
     }

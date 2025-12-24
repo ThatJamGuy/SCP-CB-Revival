@@ -43,7 +43,7 @@ public class PlayerMovement : MonoBehaviour {
         controller = GetComponent<CharacterController>();
     }
 
-    private void OnEnable() {
+    private void Start() {
         DevConsole.Instance.Add("noclip", () => ToggleNoclip());
     }
 
