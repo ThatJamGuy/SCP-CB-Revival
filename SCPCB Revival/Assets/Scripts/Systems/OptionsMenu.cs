@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -5,12 +6,15 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class OptionsMenu : MonoBehaviour {
+    public static OptionsMenu instance;
+
     [Header("References")]
     [SerializeField] private TMP_Dropdown resolutionDropdown;
     [SerializeField] private TMP_Dropdown windowModeDropdown;
     [SerializeField] private TMP_Dropdown qualityDropdown;
     [SerializeField] private TMP_Dropdown soundtrackDropdown;
     [SerializeField] private Toggle vSyncToggle;
+    [SerializeField] private Toggle fpsCounterToggle;
     [SerializeField] private Toggle consoleToggle;
     [SerializeField] private GameObject frameLimitOption;
     [SerializeField] private TMP_InputField frameLimitInput;
@@ -19,6 +23,8 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private Slider sfxVolumeSlider;
     [SerializeField] private Slider voiceVolumeSlider;
 
+    public event Action<bool> OnSettingsChanged;
+
     private const string ResolutionWidthKey = "opt_res_w";
     private const string ResolutionHeightKey = "opt_res_h";
     private const string WindowModeKey = "opt_windowmode";
@@ -26,6 +32,7 @@ public class OptionsMenu : MonoBehaviour {
     private const string VSyncKey = "opt_vsync";
     private const string ConsoleKey = "opt_console";
     private const string FrameLimitKey = "opt_framelimit";
+    private const string fpsCounterKey = "opt_fps_counter";
     private const string ChosenSoundtrackKey = "opt_soundtrack";
     private const string MasterVolumeKey = "opt_volume_master";
     private const string MusicVolumeKey = "opt_volume_music";
@@ -44,6 +51,9 @@ public class OptionsMenu : MonoBehaviour {
         PopulateWindowModes();
         PopulateQualityLevels();
         LoadSettings();
+
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
     }
 
     private void Start() {
@@ -63,6 +73,7 @@ public class OptionsMenu : MonoBehaviour {
         int frameLimit = PlayerPrefs.GetInt(FrameLimitKey, UnlimitedFrameRate);
         int soundtrack = PlayerPrefs.GetInt(ChosenSoundtrackKey, soundtrackDropdown.value);
         bool console = PlayerPrefs.GetInt(ConsoleKey, 0) == 1;
+        bool fpsCounter = PlayerPrefs.GetInt(fpsCounterKey, 0) == 1;
         float masterVol = PlayerPrefs.GetFloat(MasterVolumeKey, 1f);
         float musicVol = PlayerPrefs.GetFloat(MusicVolumeKey, 1f);
         float sfxVol = PlayerPrefs.GetFloat(SfxVolumeKey, 1f);
@@ -74,6 +85,7 @@ public class OptionsMenu : MonoBehaviour {
         vSyncToggle.SetIsOnWithoutNotify(vsync);
         soundtrackDropdown.SetValueWithoutNotify(soundtrack);
         consoleToggle.SetIsOnWithoutNotify(console);
+        fpsCounterToggle.SetIsOnWithoutNotify(fpsCounter);
         masterVolumeSlider.SetValueWithoutNotify(masterVol);
         musicVolumeSlider.SetValueWithoutNotify(musicVol);
         sfxVolumeSlider.SetValueWithoutNotify(sfxVol);
@@ -85,6 +97,7 @@ public class OptionsMenu : MonoBehaviour {
         SetVSync(vsync);
         SetSoundtrack(soundtrack);
         SetConsoleState(console);
+        SetFpsCounter(fpsCounter);
         SetMasterVolume(masterVol);
         SetMusicVolume(musicVol);
         SetSfxVolume(sfxVol);
@@ -194,6 +207,12 @@ public class OptionsMenu : MonoBehaviour {
         PlayerPrefs.SetInt(ConsoleKey, enabled ? 1 : 0);
     }
 
+    public void SetFpsCounter(bool enabled) {
+        PlayerPrefs.SetInt(fpsCounterKey, enabled ? 1 : 0);
+
+        OnSettingsChanged?.Invoke(enabled);
+    }
+
     public void SetMasterVolume(float value) {
         if (AudioManager.instance != null) {
             AudioManager.instance.masterVolume = value;
@@ -226,7 +245,7 @@ public class OptionsMenu : MonoBehaviour {
         if (SceneManager.GetSceneByName("Menu").isLoaded)
             RichPresence.instance.ChangeActivity("In the main menu");
         else
-            RichPresence.instance.ChangeActivity("In a game");
+            RichPresence.instance.ChangeActivity("Wandering the facility");
 
         if (SceneManager.GetSceneByName(optionsSceneName).isLoaded)
             SceneManager.UnloadSceneAsync(optionsSceneName);

@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour {
             }
             SpawnItem(item);
         });
+
+        RichPresence.instance.ChangeActivity("Wandering the facility");
     }
 
     public void PauseGame() {
