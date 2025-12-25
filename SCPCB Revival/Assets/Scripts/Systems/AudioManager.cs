@@ -41,6 +41,15 @@ public class AudioManager : MonoBehaviour {
         // Since it doesn't like to behave in the menu controllers start method, I decided to put this initial stuff here.
         // Doesn't need to be anywhere else either because the average player will start in the menu,
         // while the gigachad dev (Me) has to change it everywhere else by default unless loading in from the main menu.
+        if (SceneManager.GetSceneByName("Core").isLoaded) {
+            SetMusicParameter("MusicState", (int)MusicState.Menu);
+            MusicManager.instance.SetSoundtrack(PlayerPrefs.GetInt("opt_soundtrack"));
+            masterVolume = PlayerPrefs.GetFloat("opt_volume_master");
+            musicVolume = PlayerPrefs.GetFloat("opt_volume_music");
+            SFXVolume = PlayerPrefs.GetFloat("opt_volume_sfx");
+            voiceVolume = PlayerPrefs.GetFloat("opt_volume_voice");
+        }
+
         if (SceneManager.GetSceneByName("Menu").isLoaded) {
             SetMusicParameter("MusicState", (int)MusicState.Menu);
             MusicManager.instance.SetSoundtrack(PlayerPrefs.GetInt("opt_soundtrack"));

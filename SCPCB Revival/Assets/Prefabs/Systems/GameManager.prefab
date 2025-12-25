@@ -1,0 +1,109 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3316988252148387290
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6783192009410483575}
+  - component: {fileID: 8661496756510707625}
+  - component: {fileID: 1730556320519880727}
+  - component: {fileID: 1926193062031645467}
+  - component: {fileID: 871372182388651735}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 2800000, guid: e68fca0a0f755d14982934c5a1e1138a, type: 3}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &6783192009410483575
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3316988252148387290}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8661496756510707625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3316988252148387290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f38640ed131e23b49a685ef2e8179ecf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  itemDatabase: {fileID: 11400000, guid: 8067239662b146947ad0bfc6ec9cb6b0, type: 2}
+  isGamePaused: 0
+  scp106Active: 0
+  scp173ChasingPlayer: 0
+  scp173currentVisibleToPlayer: 0
+--- !u!114 &1730556320519880727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3316988252148387290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43cd83e6caef092478f8f59cf38dbddd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GlobalCameraShake
+--- !u!114 &1926193062031645467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3316988252148387290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea27803b61b203f4d99575ddada70715, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EntitySystem
+  scp173Prefab: {fileID: 538570090455416849, guid: 0ea0120f659779048820554b735d7fca, type: 3}
+  scp173RelocateDelay: 7
+  scp173MinSpawnDistance: 20
+  scp173NavRadius: 1
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 64
+  groundCheckDistance: 50
+--- !u!114 &871372182388651735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3316988252148387290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eea9c6e32ef0d2045a4dcc5dc39ae159, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::scpcbr.SCP106Spawner
+  scp106Prefab: {fileID: 4179995913638945844, guid: 978e362fe609b854d8ff40a6fbe6322c, type: 3}
+  spawnEffectPrefab: {fileID: 7034291063567092639, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
+  spawnInterval: 250
+  effectDuration: 9
+  spawnRadius: 2
+  maxSpawnHeight: 1
+  navMeshCheckRadius: 2
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 64
+  groundCheckDistance: 50
