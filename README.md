@@ -17,5 +17,8 @@ For any further questions or details you wish to provide (Or if you just want to
 
 For code refactors/additions it's preferable that you can write code better than I can (Which probably isn't very hard), but anything helps as long as it won't be a headache to debug it later.
 
+## FMOD (IMPORTANT!!!)
+The project uses FMOD to handle audio. You will likely need to open up the FMOD Studio project yourself (Which you can find [HERE](https://github.com/ThatJamGuy/SCP-CBR-FMOD)) and compile the banks. This is still being looked at on the contributor end (Not many have tried) so I can't say for sure if this method will work.
+
 ## Liscensing
 SCP - Containment Breach Revival and it's source code are licensed under [Creative Commons Attribution-ShareAlike 4.0 License](https://creativecommons.org/licenses/by-sa/4.0/).
