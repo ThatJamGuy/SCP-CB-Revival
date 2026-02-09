@@ -14,8 +14,6 @@ public class EntitySystem : MonoBehaviour {
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private float groundCheckDistance = 50f;
 
-    //private bool scp173Active = false;
-
     #region Unity Callbacks
     private void Awake() {
         if (instance == null) { 
@@ -76,7 +74,7 @@ public class EntitySystem : MonoBehaviour {
                     }
                 }
                 else {
-                    Debug.LogWarning("EntitySystem: No valid spawn position found for SCP-173");
+                    Debug.Log("<color=yellow>[EntitySystem]:</color> No valid On-Nav position found for SCP-173 during routine spawn check.");
                 }
             }
         }

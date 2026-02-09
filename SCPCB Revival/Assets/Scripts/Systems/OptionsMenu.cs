@@ -57,7 +57,8 @@ public class OptionsMenu : MonoBehaviour {
     }
 
     private void Start() {
-        RichPresence.instance.ChangeActivity("Configuring the Settings");
+        if (RichPresence.instance != null)
+            RichPresence.instance.ChangeActivity("Configuring the Settings");
     }
 
     private void LoadSettings() {
@@ -242,10 +243,12 @@ public class OptionsMenu : MonoBehaviour {
     }
 
     public void CloseOptionsScene() {
-        if (SceneManager.GetSceneByName("Menu").isLoaded)
-            RichPresence.instance.ChangeActivity("In the main menu");
-        else
-            RichPresence.instance.ChangeActivity("Wandering the facility");
+        if (RichPresence.instance != null) {
+                if (SceneManager.GetSceneByName("Menu").isLoaded)
+                    RichPresence.instance.ChangeActivity("In the main menu");
+                else
+                    RichPresence.instance.ChangeActivity("Wandering the facility");
+        }
 
         if (SceneManager.GetSceneByName(optionsSceneName).isLoaded)
             SceneManager.UnloadSceneAsync(optionsSceneName);

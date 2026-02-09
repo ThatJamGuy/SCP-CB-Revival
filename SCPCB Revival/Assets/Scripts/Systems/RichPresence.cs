@@ -27,7 +27,7 @@ public class RichPresence : MonoBehaviour {
         discord.Dispose();
     }
 
-    public void ChangeActivity(string state) { 
+    public void ChangeActivity(string state) {
         var activityManager = discord.GetActivityManager();
         var activity = new Discord.Activity {
             State = state
