@@ -134,7 +134,7 @@ public class SCP_173 : MonoBehaviour {
         return Vector3.Distance(transform.position, target.position) > maxTargetDistance;
     }
 
-    private void AbandonTarget() {
+    public void AbandonTarget() {
         target = null;
         hasTarget = false;
         navMeshAgent.ResetPath();

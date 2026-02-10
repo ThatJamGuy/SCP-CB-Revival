@@ -14,6 +14,8 @@ public class EntitySystem : MonoBehaviour {
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private float groundCheckDistance = 50f;
 
+    private bool disable173 = false;
+
     #region Unity Callbacks
     private void Awake() {
         if (instance == null) { 
@@ -24,6 +26,8 @@ public class EntitySystem : MonoBehaviour {
     }
 
     private void Start() {
+        DevConsole.Instance.Add("disable173", () => Toggle173Active());
+
         StartCoroutine(SCP173SpawnRoutine());
     }
     #endregion
@@ -53,17 +57,39 @@ public class EntitySystem : MonoBehaviour {
     }
     #endregion
 
+    #region Private Methods
+    /// <summary>
+    /// A method executed via the console to toggle SCP-173
+    /// </summary>
+    private void Toggle173Active() {
+        // Set the disabled state to the opposite of what it already is
+        disable173 = !disable173;
+
+        // Find the current SCP-173 instance and if it exists force him to abondon the current target and despawn
+        SCP_173 existing173 = FindFirstObjectByType<SCP_173>();
+        if (existing173 != null) {
+            existing173.GetComponent<SCP_173>().AbandonTarget();
+            Destroy(existing173.gameObject);
+        }
+
+        // Ensure that the chasing player variable that GameManager has is set to false after toggling the command to aloow SCP-173 to spawn after re-enabling him
+        if (GameManager.instance != null)
+            GameManager.instance.scp173ChasingPlayer = false;
+
+        Debug.Log("<color=yellow>[EntitySystem]:</color> SCP-173 disabled state is now: " + disable173);
+    }
+    #endregion
+
     #region Coroutines
     private IEnumerator SCP173SpawnRoutine() {
         while (true) {
             yield return new WaitForSeconds(scp173RelocateDelay);
-            if (PlayerAccessor.instance != null && !PlayerAccessor.instance.isDead && !GameManager.instance.scp173ChasingPlayer) {
+            if (PlayerAccessor.instance != null && !PlayerAccessor.instance.isDead && !GameManager.instance.scp173ChasingPlayer && !disable173) {
                 if (TryGetValidSpawnPosition(out Vector3 spawnPos)) {
                     SCP_173 existing173 = FindFirstObjectByType<SCP_173>();
 
                     if (existing173 == null) {
                         Instantiate(scp173Prefab, spawnPos, Quaternion.identity);
-                        //scp173Active = true;
                     }
                     else {
                         existing173.transform.position = spawnPos;
