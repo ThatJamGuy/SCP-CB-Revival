@@ -13,11 +13,6 @@ public class GameManager : MonoBehaviour {
         instance = this;
     }
 
-    private void Start() {
-        if (RichPresence.instance != null)
-            RichPresence.instance.ChangeActivity("Wandering the facility");
-    }
-
     public void PauseGame() {
         isGamePaused = true;
         Time.timeScale = 0f;

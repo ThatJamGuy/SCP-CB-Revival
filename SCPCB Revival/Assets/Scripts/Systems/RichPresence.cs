@@ -16,7 +16,7 @@ public class RichPresence : MonoBehaviour {
     private void Start() {
         try {
             discord = new Discord.Discord(1450277986178830448, (ulong)Discord.CreateFlags.NoRequireDiscord);
-            ChangeActivity("In the main menu");
+            //ChangeActivity("In the main menu");
         }
         catch (System.Exception e) {
             Debug.LogError($"Discord initialization failed: {e.Message}");

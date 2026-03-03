@@ -23,115 +23,74 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private Slider sfxVolumeSlider;
     [SerializeField] private Slider voiceVolumeSlider;
 
-    public event Action<bool> OnSettingsChanged;
+    public static event Action<bool> OnSettingsChanged;
 
-    private const string ResolutionWidthKey = "opt_res_w";
-    private const string ResolutionHeightKey = "opt_res_h";
-    private const string WindowModeKey = "opt_windowmode";
-    private const string QualityKey = "opt_quality";
-    private const string VSyncKey = "opt_vsync";
-    private const string ConsoleKey = "opt_console";
-    private const string FrameLimitKey = "opt_framelimit";
-    private const string fpsCounterKey = "opt_fps_counter";
-    private const string ChosenSoundtrackKey = "opt_soundtrack";
-    private const string MasterVolumeKey = "opt_volume_master";
-    private const string MusicVolumeKey = "opt_volume_music";
-    private const string SfxVolumeKey = "opt_volume_sfx";
-    private const string VoiceVolumeKey = "opt_volume_voice";
+    private const string SaveFileName = "settings.json";
+    private const int UnlimitedFrameRate = -1;
+    private const string OptionsSceneName = "Settings";
 
     private Vector2Int[] resolutions;
     private FullScreenMode[] windowModes;
     private string[] qualityLevels;
-
-    private const int UnlimitedFrameRate = -1;
-    private const string optionsSceneName = "Settings";
+    private SettingsData settings;
 
     private void Awake() {
+        if (instance == null) instance = this;
+        else { Destroy(gameObject); return; }
+
+        settings = SaveSystem.Load<SettingsData>(SaveFileName);
         PopulateResolutions();
         PopulateWindowModes();
         PopulateQualityLevels();
-        LoadSettings();
-
-        if (instance == null) instance = this;
-        else Destroy(gameObject);
+        ApplySettings();
     }
 
-    private void Start() {
-        if (RichPresence.instance != null)
-            RichPresence.instance.ChangeActivity("Configuring the Settings");
-    }
+    private void Save() => SaveSystem.Save(settings, SaveFileName);
 
-    private void LoadSettings() {
-        int savedW = PlayerPrefs.GetInt(ResolutionWidthKey, Screen.width);
-        int savedH = PlayerPrefs.GetInt(ResolutionHeightKey, Screen.height);
-
-        int resIndex = System.Array.FindIndex(resolutions, r => r.x == savedW && r.y == savedH);
+    private void ApplySettings() {
+        int resIndex = Array.FindIndex(resolutions, r => r.x == settings.resolutionWidth && r.y == settings.resolutionHeight);
         if (resIndex < 0) resIndex = 0;
 
-        int winIndex = Mathf.Clamp(PlayerPrefs.GetInt(WindowModeKey, windowModeDropdown.value), 0, windowModes.Length - 1);
-        int qualIndex = Mathf.Clamp(PlayerPrefs.GetInt(QualityKey, qualityDropdown.value), 0, qualityLevels.Length - 1);
-        bool vsync = PlayerPrefs.GetInt(VSyncKey, QualitySettings.vSyncCount > 0 ? 1 : 0) == 1;
-        int frameLimit = PlayerPrefs.GetInt(FrameLimitKey, UnlimitedFrameRate);
-        int soundtrack = PlayerPrefs.GetInt(ChosenSoundtrackKey, soundtrackDropdown.value);
-        bool console = PlayerPrefs.GetInt(ConsoleKey, 0) == 1;
-        bool fpsCounter = PlayerPrefs.GetInt(fpsCounterKey, 0) == 1;
-        float masterVol = PlayerPrefs.GetFloat(MasterVolumeKey, 1f);
-        float musicVol = PlayerPrefs.GetFloat(MusicVolumeKey, 1f);
-        float sfxVol = PlayerPrefs.GetFloat(SfxVolumeKey, 1f);
-        float voiceVol = PlayerPrefs.GetFloat(VoiceVolumeKey, 1f);
+        int winIndex = Mathf.Clamp(settings.windowMode, 0, windowModes.Length - 1);
+        int qualIndex = Mathf.Clamp(settings.qualityLevel, 0, qualityLevels.Length - 1);
 
         resolutionDropdown.SetValueWithoutNotify(resIndex);
         windowModeDropdown.SetValueWithoutNotify(winIndex);
         qualityDropdown.SetValueWithoutNotify(qualIndex);
-        vSyncToggle.SetIsOnWithoutNotify(vsync);
-        soundtrackDropdown.SetValueWithoutNotify(soundtrack);
-        consoleToggle.SetIsOnWithoutNotify(console);
-        fpsCounterToggle.SetIsOnWithoutNotify(fpsCounter);
-        masterVolumeSlider.SetValueWithoutNotify(masterVol);
-        musicVolumeSlider.SetValueWithoutNotify(musicVol);
-        sfxVolumeSlider.SetValueWithoutNotify(sfxVol);
-        voiceVolumeSlider.SetValueWithoutNotify(voiceVol);
+        vSyncToggle.SetIsOnWithoutNotify(settings.vSync);
+        soundtrackDropdown.SetValueWithoutNotify(settings.soundtrack);
+        consoleToggle.SetIsOnWithoutNotify(settings.console);
+        fpsCounterToggle.SetIsOnWithoutNotify(settings.fpsCounter);
+        masterVolumeSlider.SetValueWithoutNotify(settings.masterVolume);
+        musicVolumeSlider.SetValueWithoutNotify(settings.musicVolume);
+        sfxVolumeSlider.SetValueWithoutNotify(settings.sfxVolume);
+        voiceVolumeSlider.SetValueWithoutNotify(settings.voiceVolume);
+        frameLimitInput.SetTextWithoutNotify(settings.frameLimit > 0 ? settings.frameLimit.ToString() : string.Empty);
 
-        SetWindowMode(winIndex);
         SetResolution(resIndex);
+        SetWindowMode(winIndex);
         SetQualityLevel(qualIndex);
-        SetVSync(vsync);
-        SetSoundtrack(soundtrack);
-        SetConsoleState(console);
-        SetFpsCounter(fpsCounter);
-        SetMasterVolume(masterVol);
-        SetMusicVolume(musicVol);
-        SetSfxVolume(sfxVol);
-        SetVoiceVolume(voiceVol);
+        SetVSync(settings.vSync);
+        SetSoundtrack(settings.soundtrack);
+        SetConsoleState(settings.console);
+        SetFpsCounter(settings.fpsCounter);
+        SetMasterVolume(settings.masterVolume);
+        SetMusicVolume(settings.musicVolume);
+        SetSfxVolume(settings.sfxVolume);
+        SetVoiceVolume(settings.voiceVolume);
 
-        if (frameLimit > 0)
-            frameLimitInput.SetTextWithoutNotify(frameLimit.ToString());
-        else
-            frameLimitInput.SetTextWithoutNotify(string.Empty);
-
-        Application.targetFrameRate = vsync || frameLimit <= 0
+        Application.targetFrameRate = settings.vSync || settings.frameLimit <= 0
             ? UnlimitedFrameRate
-            : frameLimit;
+            : settings.frameLimit;
     }
 
     private void PopulateResolutions() {
         resolutions = Screen.resolutions
             .Select(r => new Vector2Int(r.width, r.height))
-            .Distinct()
-            .OrderBy(r => r.x)
-            .ThenBy(r => r.y)
-            .ToArray();
+            .Distinct().OrderBy(r => r.x).ThenBy(r => r.y).ToArray();
 
         resolutionDropdown.ClearOptions();
         resolutionDropdown.AddOptions(resolutions.Select(r => $"{r.x} x {r.y}").ToList());
-    }
-
-    public void SetResolution(int index) {
-        if ((uint)index >= resolutions.Length) return;
-        var r = resolutions[index];
-        Screen.SetResolution(r.x, r.y, Screen.fullScreenMode);
-        PlayerPrefs.SetInt(ResolutionWidthKey, r.x);
-        PlayerPrefs.SetInt(ResolutionHeightKey, r.y);
     }
 
     private void PopulateWindowModes() {
@@ -148,109 +107,104 @@ public class OptionsMenu : MonoBehaviour {
             FullScreenMode.Windowed => "Windowed",
             _ => m.ToString()
         }).ToList());
-
-        int current = System.Array.IndexOf(windowModes, Screen.fullScreenMode);
-        windowModeDropdown.value = current < 0 ? 0 : current;
-        windowModeDropdown.RefreshShownValue();
     }
 
     private void PopulateQualityLevels() {
         qualityLevels = QualitySettings.names;
         qualityDropdown.ClearOptions();
         qualityDropdown.AddOptions(qualityLevels.ToList());
-
-        int current = QualitySettings.GetQualityLevel();
-        qualityDropdown.value = current < 0 ? 0 : current;
-        qualityDropdown.RefreshShownValue();
     }
 
-    public void SetQualityLevel(int index) {
-        if ((uint)index >= qualityLevels.Length) return;
-        QualitySettings.SetQualityLevel(index, true);
-        PlayerPrefs.SetInt(QualityKey, index);
+    public void SetResolution(int index) {
+        if ((uint)index >= resolutions.Length) return;
+        var r = resolutions[index];
+        Screen.SetResolution(r.x, r.y, Screen.fullScreenMode);
+        settings.resolutionWidth = r.x;
+        settings.resolutionHeight = r.y;
+        Save();
     }
 
     public void SetWindowMode(int index) {
         if ((uint)index >= windowModes.Length) return;
         Screen.fullScreenMode = windowModes[index];
-        PlayerPrefs.SetInt(WindowModeKey, index);
+        settings.windowMode = index;
+        Save();
+    }
+
+    public void SetQualityLevel(int index) {
+        if ((uint)index >= qualityLevels.Length) return;
+        QualitySettings.SetQualityLevel(index, true);
+        settings.qualityLevel = index;
+        Save();
     }
 
     public void SetVSync(bool enabled) {
         QualitySettings.vSyncCount = enabled ? 1 : 0;
         frameLimitOption.SetActive(!enabled);
-        PlayerPrefs.SetInt(VSyncKey, enabled ? 1 : 0);
+        settings.vSync = enabled;
+        Save();
 
-        int frameLimit = PlayerPrefs.GetInt(FrameLimitKey, UnlimitedFrameRate);
-        Application.targetFrameRate = enabled || frameLimit <= 0
+        Application.targetFrameRate = enabled || settings.frameLimit <= 0
             ? UnlimitedFrameRate
-            : frameLimit;
+            : settings.frameLimit;
     }
 
     public void SetFrameLimit(string value) {
         if (!int.TryParse(value, out var limit) || limit <= 0) {
             Application.targetFrameRate = UnlimitedFrameRate;
-            PlayerPrefs.SetInt(FrameLimitKey, UnlimitedFrameRate);
-            return;
+            settings.frameLimit = UnlimitedFrameRate;
         }
-
-        Application.targetFrameRate = limit;
-        PlayerPrefs.SetInt(FrameLimitKey, limit);
+        else {
+            Application.targetFrameRate = limit;
+            settings.frameLimit = limit;
+        }
+        Save();
     }
 
     public void SetSoundtrack(int soundtrackID) {
         if (MusicManager.instance == null) return;
         MusicManager.instance.SetSoundtrack(soundtrackID);
-        PlayerPrefs.SetInt(ChosenSoundtrackKey, soundtrackID);
+        settings.soundtrack = soundtrackID;
+        Save();
     }
 
     public void SetConsoleState(bool enabled) {
-        PlayerPrefs.SetInt(ConsoleKey, enabled ? 1 : 0);
+        settings.console = enabled;
+        Save();
     }
 
     public void SetFpsCounter(bool enabled) {
-        PlayerPrefs.SetInt(fpsCounterKey, enabled ? 1 : 0);
-
+        settings.fpsCounter = enabled;
+        Save();
         OnSettingsChanged?.Invoke(enabled);
     }
 
     public void SetMasterVolume(float value) {
-        if (AudioManager.instance != null) {
-            AudioManager.instance.masterVolume = value;
-        }
-        PlayerPrefs.SetFloat(MasterVolumeKey, value);
+        if (AudioManager.instance != null) AudioManager.instance.masterVolume = value;
+        settings.masterVolume = value;
+        Save();
     }
 
     public void SetMusicVolume(float value) {
-        if (AudioManager.instance != null) {
-            AudioManager.instance.musicVolume = value;
-        }
-        PlayerPrefs.SetFloat(MusicVolumeKey, value);
+        if (AudioManager.instance != null) AudioManager.instance.musicVolume = value;
+        settings.musicVolume = value;
+        Save();
     }
 
     public void SetSfxVolume(float value) {
-        if (AudioManager.instance != null) {
-            AudioManager.instance.SFXVolume = value;
-        }
-        PlayerPrefs.SetFloat(SfxVolumeKey, value);
+        if (AudioManager.instance != null) AudioManager.instance.SFXVolume = value;
+        settings.sfxVolume = value;
+        Save();
     }
 
     public void SetVoiceVolume(float value) {
-        if (AudioManager.instance != null) {
-            AudioManager.instance.voiceVolume = value;
-        }
-        PlayerPrefs.SetFloat(VoiceVolumeKey, value);
+        if (AudioManager.instance != null) AudioManager.instance.voiceVolume = value;
+        settings.voiceVolume = value;
+        Save();
     }
 
     public void CloseOptionsScene() {
-        if (RichPresence.instance != null) {
-                if (SceneManager.GetSceneByName("Menu").isLoaded)
-                    RichPresence.instance.ChangeActivity("In the main menu");
-                else
-                    RichPresence.instance.ChangeActivity("Wandering the facility");
-        }
-
-        if (SceneManager.GetSceneByName(optionsSceneName).isLoaded)
-            SceneManager.UnloadSceneAsync(optionsSceneName);
+        if (SceneManager.GetSceneByName(OptionsSceneName).isLoaded)
+            SceneManager.UnloadSceneAsync(OptionsSceneName);
     }
 }
