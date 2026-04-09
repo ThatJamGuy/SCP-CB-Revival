@@ -20,13 +20,16 @@ public class AudioManager : MonoBehaviour {
     private readonly List<StudioEventEmitter> trackedEmitters = new List<StudioEventEmitter>();
     private EventInstance musicInstance;
 
+    private const string SaveFileName = "settings.json";
+    private SettingsData settings;
+
     public static AudioManager instance { get; private set; }
 
     private void Awake() {
         if (instance != null) Debug.LogError("Multiple AudioManager instances.");
         instance = this;
 
-        foreach (var emitter in FindObjectsByType<StudioEventEmitter>(0))
+        foreach (var emitter in FindObjectsByType<StudioEventEmitter>(FindObjectsInactive.Include))
             TrackEmitter(emitter);
 
         masterBus = RuntimeManager.GetBus("bus:/");
@@ -36,27 +39,25 @@ public class AudioManager : MonoBehaviour {
     }
 
     private void Start() {
-        StartMusic(MusicManager.instance.musicEvent);
+        // Start music if MusicManager is available
+        if (MusicManager.instance != null)
+            StartMusic(MusicManager.instance.musicEvent);
 
-        // Since it doesn't like to behave in the menu controllers start method, I decided to put this initial stuff here.
-        // Doesn't need to be anywhere else either because the average player will start in the menu,
-        // while the gigachad dev (Me) has to change it everywhere else by default unless loading in from the main menu.
-        if (SceneManager.GetSceneByName("Core").isLoaded) {
-            SetMusicParameter("MusicState", (int)MusicState.Menu);
-            MusicManager.instance.SetSoundtrack(PlayerPrefs.GetInt("opt_soundtrack"));
-            masterVolume = PlayerPrefs.GetFloat("opt_volume_master");
-            musicVolume = PlayerPrefs.GetFloat("opt_volume_music");
-            SFXVolume = PlayerPrefs.GetFloat("opt_volume_sfx");
-            voiceVolume = PlayerPrefs.GetFloat("opt_volume_voice");
+        // Load settings from JSON save and apply volumes/soundtrack
+        settings = SaveSystem.Load<SettingsData>(SaveFileName);
+        if (settings != null) {
+            masterVolume = settings.masterVolume;
+            musicVolume = settings.musicVolume;
+            SFXVolume = settings.sfxVolume;
+            voiceVolume = settings.voiceVolume;
+
+            if (MusicManager.instance != null)
+                MusicManager.instance.SetSoundtrack(settings.soundtrack);
         }
 
-        if (SceneManager.GetSceneByName("Menu").isLoaded) {
+        // Initial music state for menu/core scenes
+        if (SceneManager.GetSceneByName("Core").isLoaded || SceneManager.GetSceneByName("Menu").isLoaded) {
             SetMusicParameter("MusicState", (int)MusicState.Menu);
-            MusicManager.instance.SetSoundtrack(PlayerPrefs.GetInt("opt_soundtrack"));
-            masterVolume = PlayerPrefs.GetFloat("opt_volume_master");
-            musicVolume = PlayerPrefs.GetFloat("opt_volume_music");
-            SFXVolume = PlayerPrefs.GetFloat("opt_volume_sfx");
-            voiceVolume = PlayerPrefs.GetFloat("opt_volume_voice");
         }
     }
 
@@ -111,7 +112,10 @@ public class AudioManager : MonoBehaviour {
     }
 
     public void PlayMusic() {
-        if (!musicInstance.isValid()) StartMusic(MusicManager.instance.musicEvent);
+        if (!musicInstance.isValid()) {
+            if (MusicManager.instance != null)
+                StartMusic(MusicManager.instance.musicEvent);
+        }
         else musicInstance.start();
     }
 
@@ -139,7 +143,7 @@ public class AudioManager : MonoBehaviour {
         }
 
         foreach (var emitter in trackedEmitters) {
-            if (emitter.EventReference.Guid == MusicManager.instance.musicEvent.Guid) continue;
+            if (MusicManager.instance != null && emitter.EventReference.Guid == MusicManager.instance.musicEvent.Guid) continue;
             var inst = emitter.EventInstance;
             if (inst.isValid()) inst.setPaused(true);
         }
@@ -152,7 +156,7 @@ public class AudioManager : MonoBehaviour {
         }
 
         foreach (var emitter in trackedEmitters) {
-            if (emitter.EventReference.Guid == MusicManager.instance.musicEvent.Guid) continue;
+            if (MusicManager.instance != null && emitter.EventReference.Guid == MusicManager.instance.musicEvent.Guid) continue;
             var inst = emitter.EventInstance;
             if (inst.isValid()) inst.setPaused(false);
         }

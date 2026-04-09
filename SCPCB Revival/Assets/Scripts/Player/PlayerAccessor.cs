@@ -75,4 +75,8 @@ public class PlayerAccessor : MonoBehaviour {
     public Camera GetPlayerCamera() {
         return playerCamera;
     }
+
+    public Vector3 GetPlayerPos() {
+        return transform.position;
+    }
 }
