@@ -29,7 +29,7 @@ public class AudioManager : MonoBehaviour {
         if (instance != null) Debug.LogError("Multiple AudioManager instances.");
         instance = this;
 
-        foreach (var emitter in FindObjectsByType<StudioEventEmitter>(FindObjectsInactive.Include))
+        foreach (var emitter in FindObjectsByType<StudioEventEmitter>((FindObjectsSortMode)FindObjectsInactive.Include))
             TrackEmitter(emitter);
 
         masterBus = RuntimeManager.GetBus("bus:/");

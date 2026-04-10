@@ -607,10 +607,10 @@ MonoBehaviour:
   m_Name: FMODStudioSettings
   m_EditorClassIdentifier: FMODUnity::FMODUnity.Settings
   switchSettingsMigration: 1
-  HasSourceProject: 1
-  HasPlatforms: 1
-  sourceProjectPath: ../../../FMOD/SCP-CBR-FMOD/SCPCBR.fspro
-  sourceBankPath: ../../../FMOD/SCP-CBR-FMOD/Build
+  HasSourceProject: 0
+  HasPlatforms: 0
+  sourceProjectPath: ../../FMOD/SCP-CBR-FMOD/SCPCBR.fspro
+  sourceBankPath: ../../FMOD/SCP-CBR-FMOD/Build/Desktop
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 5
   ShowBankRefreshWindow: 0
@@ -620,7 +620,7 @@ MonoBehaviour:
   EncryptionKey: 
   ImportType: 0
   TargetAssetPath: FMODBanks
-  TargetBankFolder: Desktop
+  TargetBankFolder: 
   EventLinkage: 0
   SerializeGUIDsOnly: 0
   LoggingLevel: 2
@@ -632,8 +632,11 @@ MonoBehaviour:
   VirtualChannelSettings: []
   RealChannelSettings: []
   Plugins: []
-  MasterBanks: []
-  Banks: []
+  MasterBanks:
+  - Master
+  Banks:
+  - Music
+  - SFX
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0
@@ -831,7 +834,7 @@ MonoBehaviour:
       Value: 0
       HasValue: 0
     Overlay:
-      Value: 0
+      Value: 1
       HasValue: 1
     OverlayPosition:
       Value: 0
