@@ -10,9 +10,10 @@ public class Player : MonoBehaviour {
     public float walkSpeed = 3f;
     public float sprintSpeed = 7f;
     public float crouchSpeed = 1f;
-    
+
     [Header("Player States")] 
     public bool disableInput;
+    public bool isDead;
     
     [Header("Player Status")]
     [Range(0, 1)] public float stamina = 1f;

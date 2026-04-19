@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour {
 
     [Header("References")] 
     [SerializeField] private CharacterController characterController;
-    //[SerializeField] private Transform playerCameraRoot;
+    [SerializeField] private Transform playerCameraRoot;
 
     private static Player player => Player.Instance;
     private static InputManager inputManager => InputManager.Instance;
@@ -26,11 +26,11 @@ public class PlayerMovement : MonoBehaviour {
     private InputAction moveAction;
     private InputAction sprintAction;
     private InputAction crouchAction;
+    
     private Vector2 moveDirection;
     private Vector3 velocity;
 
-    private bool grounded;
-    private bool sprintLocked;
+    private bool cantFunction;
 
     private float walkingSpeed;
     private float sprintSpeed;
@@ -41,58 +41,48 @@ public class PlayerMovement : MonoBehaviour {
     private const float CROUCHING_HEIGHT = 0.5f;
 
     private void Start() {
+        // If there is no InputManager available at the start, disallow functionality and print a warning in console
+        if (inputManager == null) {
+            cantFunction = true;
+            Debug.Log("<color=red>[PlayerMovement]</color> InputManager was not found, moving will not work!");
+
+            return;
+        }
+        
+        // Retrieve the different input actions from InputManager so they can be cached
         moveAction = inputManager.GetAction("Player", "Move");
         sprintAction = inputManager.GetAction("Player", "Sprint");
         crouchAction = inputManager.GetAction("Player", "Crouch");
         
+        // Set the different speeds to their values from settings.json, which are stored on the player instance
         walkingSpeed = player.walkSpeed;
         sprintSpeed = player.sprintSpeed;
         crouchSpeed = player.crouchSpeed;
     }
 
     private void Update() {
-        if (player.disableInput) return;
+        // If input is manually disabled or functionality is broken then don't do anything
+        if (player.disableInput || cantFunction) return;
         
         HandleMovement();
-        
-        //if (im != null && im.IsCrouchTriggered) AttemptToggleCrouch();
     }
     
     private void HandleMovement() {
-        grounded = characterController.isGrounded; 
-        if (grounded && velocity.y < 0f) velocity.y = -2f;
+        var input = moveAction.ReadValue<Vector2>();
+        var move = transform.right * input.x + transform.forward * input.y;
+        var currentSpeed = walkingSpeed; // Temporary until sprinting and crouching checks are in
+
+        // Move the character controller in the proper Vector3 direction at the currentSpeed
+        characterController.Move(move * (currentSpeed * Time.deltaTime));
         
-        //HandleStamina();
-
-        //float currentSpeed = playerAccessor.isCrouching ? crouchSpeed : walkSpeed;
-        //bool wantsToSprint = playerAccessor.isSprinting;
-        //bool canSprint = !playerAccessor.isCrouching && (playerAccessor.infiniteStamina || stamina > 0f) && playerAccessor.isMoving && !sprintLocked;
-
-        //if (wantsToSprint && canSprint) currentSpeed = sprintSpeed;
+        // If the player is not on the ground, set the up-down velocity to -2 so they go down
+        if (characterController.isGrounded && velocity.y < 0f) velocity.y = -2f;
         
-        //IsActuallySprinting = wantsToSprint && canSprint;
-
-        //Vector3 move = GetMoveDirection(true) * currentSpeed;
+        // Set the velocity to the gravity value
+        // Then move the character controller by the velocity alongside the previous Vector3 movement
         velocity.y += GRAVITY * Time.deltaTime;
-        //characterController.Move((move + velocity) * Time.deltaTime);
+        characterController.Move(velocity * Time.deltaTime);
     }
-
-    /*private Vector3 GetMoveDirection(bool flattenY) {
-        var im = InputManager.Instance;
-        //Vector2 input = im != null ? im.Move : Vector2.zero;
-
-        Vector3 forward = playerCameraRoot.forward;
-        Vector3 right = playerCameraRoot.right;
-
-        if (flattenY) {
-            forward.y = 0f;
-            right.y = 0f;
-        }
-
-        Vector3 move = forward.normalized * input.y + right.normalized * input.x;
-        if (move.sqrMagnitude > 1f) move.Normalize();
-        return move;
-    }*/
 
     /*#region Stamina
     private void HandleStamina() {

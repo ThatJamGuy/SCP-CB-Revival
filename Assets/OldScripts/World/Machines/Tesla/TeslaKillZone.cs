@@ -9,10 +9,11 @@ public class TeslaKillZone : MonoBehaviour {
                 teslaController.KillPlayer();
             }
         }
-        if (other.CompareTag("NPC")) {
-            if (other.GetComponent<SCP_106_New>()) {
-                other.GetComponent<SCP_106_New>().DespawnTesla();
-            }
+
+        if (!other.CompareTag("NPC")) return;
+        
+        if (other.GetComponent<SCP_106_New>()) {
+            other.GetComponent<SCP_106_New>().DespawnTesla();
         }
     }
 }
