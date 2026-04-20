@@ -135,7 +135,7 @@ public class SCP_106_New : MonoBehaviour {
                     return;
                 }
 
-                AudioManager.instance.PlaySound(targetHitEvent, transform.position);
+                //AudioManager.instance.PlaySound(targetHitEvent, transform.position);
                 GameManager.instance.ShowDeathScreen("Subject D-9341. Body partially decomposed by what is assumed to be SCP-106's \"corrosion\" effect. Body disposed of via incineration.");
                 PlayerAccessor.instance.isDead = true;
             }
@@ -152,7 +152,7 @@ public class SCP_106_New : MonoBehaviour {
         if (isDespawning) return;
 
         if (currentTargetIsPlayer) {
-            AudioManager.instance.PlaySound(chaseEndEvent, transform.position);
+            //AudioManager.instance.PlaySound(chaseEndEvent, transform.position);
             MusicManager.instance.SetMusicState(MusicState.LCZ);
         }
 
@@ -163,9 +163,9 @@ public class SCP_106_New : MonoBehaviour {
     public void DespawnTesla() {
         if (isDespawning) return;
 
-        AudioManager.instance.PlaySound(teslaRetreatSound, transform.position);
+        //AudioManager.instance.PlaySound(teslaRetreatSound, transform.position);
         if (currentTargetIsPlayer) {
-            AudioManager.instance.PlaySound(chaseEndEvent, transform.position);
+            //AudioManager.instance.PlaySound(chaseEndEvent, transform.position);
             MusicManager.instance.SetMusicState(MusicState.LCZ);
         }
 
@@ -192,7 +192,7 @@ public class SCP_106_New : MonoBehaviour {
         CanWalk();
 
         if (currentTargetIsPlayer) {
-            AudioManager.instance.PlaySound(chaseStartEvent, transform.position);
+            //AudioManager.instance.PlaySound(chaseStartEvent, transform.position);
             MusicManager.instance.SetMusicState(MusicState.scp106);
 
             StartCoroutine(LaughCoroutine());
@@ -231,7 +231,7 @@ public class SCP_106_New : MonoBehaviour {
     // Make this man do some hefty laughing from time to time HAHAHAHAHAHAHA
     private IEnumerator LaughCoroutine() {
         while (currentTargetIsPlayer && !currentTargetCaptured) {
-            AudioManager.instance.PlaySound(randomLaughEvent, transform.position);
+            //AudioManager.instance.PlaySound(randomLaughEvent, transform.position);
             yield return new WaitForSeconds(Random.Range(10, 20));
         }
     }
@@ -254,7 +254,7 @@ public class SCP_106_New : MonoBehaviour {
             TeleportAgent(validPosition, (activeTarget.position - validPosition).normalized);
             animator.SetTrigger("CatchUp");
             yield return new WaitForSeconds(CatchUpAnimTime);
-            AudioManager.instance.PlaySound(CatchUpEvent, targetPosition);       
+            //AudioManager.instance.PlaySound(CatchUpEvent, targetPosition);       
         }
 
         CanWalk();
@@ -320,7 +320,7 @@ public class SCP_106_New : MonoBehaviour {
         }
 
         TeleportAgent(exitPosition, -exit.normal);
-        AudioManager.instance.PlaySound(WallTraverseEvent, transform.position);
+        //AudioManager.instance.PlaySound(WallTraverseEvent, transform.position);
 
         animator.SetTrigger("WallTraverse");
         yield return new WaitForSeconds(wallTraverseAnimTime);

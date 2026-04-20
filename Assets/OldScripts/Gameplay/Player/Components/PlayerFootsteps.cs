@@ -46,7 +46,7 @@ public class PlayerFootsteps : MonoBehaviour {
         EventReference eventRef = isSprinting ? footstep.assocatedRunEvent : footstep.assocatedWalkEvent;
         if (eventRef.IsNull) return;
 
-        AudioManager.instance.PlaySound(eventRef, transform.position);
+        //AudioManager.instance.PlaySound(eventRef, transform.position);
     }
     #endregion
 

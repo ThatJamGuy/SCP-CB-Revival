@@ -180,25 +180,25 @@ public class OptionsMenu : MonoBehaviour {
     }
 
     public void SetMasterVolume(float value) {
-        if (AudioManager.instance != null) AudioManager.instance.masterVolume = value;
+        //if (AudioManager.instance != null) AudioManager.instance.masterVolume = value;
         settings.masterVolume = value;
         //Save();
     }
 
     public void SetMusicVolume(float value) {
-        if (AudioManager.instance != null) AudioManager.instance.musicVolume = value;
+        //if (AudioManager.instance != null) AudioManager.instance.musicVolume = value;
         settings.musicVolume = value;
         //Save();
     }
 
     public void SetSfxVolume(float value) {
-        if (AudioManager.instance != null) AudioManager.instance.SFXVolume = value;
+        //if (AudioManager.instance != null) AudioManager.instance.SFXVolume = value;
         settings.sfxVolume = value;
         //Save();
     }
 
     public void SetVoiceVolume(float value) {
-        if (AudioManager.instance != null) AudioManager.instance.voiceVolume = value;
+        //if (AudioManager.instance != null) AudioManager.instance.voiceVolume = value;
         settings.voiceVolume = value;
         //Save();
     }

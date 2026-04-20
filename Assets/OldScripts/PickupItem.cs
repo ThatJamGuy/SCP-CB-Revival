@@ -10,7 +10,7 @@ public class PickupItem : MonoBehaviour, IInteractable {
             return;
         }
         InventorySystem.instance.AddToInventory(itemData.itemName);
-        AudioManager.instance.PlaySound(itemData.pickupSound, transform.position);
+        //AudioManager.instance.PlaySound(itemData.pickupSound, transform.position);
         Destroy(gameObject);
     }
 }

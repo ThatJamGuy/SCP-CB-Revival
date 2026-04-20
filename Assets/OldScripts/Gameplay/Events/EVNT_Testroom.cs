@@ -39,7 +39,7 @@ public class EVNT_Testroom : MonoBehaviour {
         glassEventTriggered = true;
         shatterEventReady = false;
         glassObject.SetActive(false);
-        AudioManager.instance.PlaySound(glassShatterEvent, glassShatterOrigin.position);
+        //AudioManager.instance.PlaySound(glassShatterEvent, glassShatterOrigin.position);
         //EntitySystem.instance.MoveEntity(EntitySystem.EntityType.SCP173, postGlassShatter173Pos);
 
         Debug.Log("Shatter! SCP-173 should now be in the room with the player.");

@@ -33,16 +33,16 @@ public class PlayerBlink : MonoBehaviour {
 
         float drain = blinkDrainRate * (1 + PlayerAccessor.instance.blinkDepletionModifier);
         blinkTimer = Mathf.MoveTowards(blinkTimer, 0f, drain * Time.deltaTime);
-        CanvasInstance.instance.blinkBar.value = blinkTimer;
+        //CanvasInstance.instance.blinkBar.value = blinkTimer;
 
         if (blinkTimer <= 0f) TriggerBlink();
     }
 
     public void StartBlink() {
         if (isBlinkingActive) return;
-        CanvasInstance.instance.blinkBar.gameObject.SetActive(true);
-        Tween.Alpha(CanvasInstance.instance.blinkBarFill, 0f, 1f, 5f);
-        Tween.Alpha(CanvasInstance.instance.blinkBarBackground, 0f, 1f, 5f);
+        //CanvasInstance.instance.blinkBar.gameObject.SetActive(true);
+        //Tween.Alpha(CanvasInstance.instance.blinkBarFill, 0f, 1f, 5f);
+        //Tween.Alpha(CanvasInstance.instance.blinkBarBackground, 0f, 1f, 5f);
         isBlinkingActive = true;
         OnPlayerBlink?.Invoke();
     }
@@ -62,10 +62,10 @@ public class PlayerBlink : MonoBehaviour {
         if (!isBlinkingActive || isBlinking) return;
 
         blinkTimer = 1f;
-        CanvasInstance.instance.blinkBar.value = 0f;
+        //CanvasInstance.instance.blinkBar.value = 0f;
         isBlinking = true;
-        PlayerAccessor.instance.isBlinking = true;
-        CanvasInstance.instance.blinkOverlay.SetActive(true);
+        //PlayerAccessor.instance.isBlinking = true;
+        //CanvasInstance.instance.blinkOverlay.SetActive(true);
         OnPlayerBlink?.Invoke();
 
         //if (!InputManager.Instance.IsBlinkHeld) {
@@ -77,21 +77,21 @@ public class PlayerBlink : MonoBehaviour {
         if (!isBlinkingActive) return;
 
         blinkTimer = 1f;
-        CanvasInstance.instance.blinkBar.value = 1f;
+        //CanvasInstance.instance.blinkBar.value = 1f;
         isBlinking = false;
-        PlayerAccessor.instance.isBlinking = false;
-        CanvasInstance.instance.blinkOverlay.SetActive(false);
+        //PlayerAccessor.instance.isBlinking = false;
+        //CanvasInstance.instance.blinkOverlay.SetActive(false);
     }
 
     public void StopBlink() {
-        Tween.Alpha(CanvasInstance.instance.blinkBarFill, 1f, 0f, 1f);
-        Tween.Alpha(CanvasInstance.instance.blinkBarBackground, 1f, 0f, 1f);
+        //Tween.Alpha(CanvasInstance.instance.blinkBarFill, 1f, 0f, 1f);
+        //Tween.Alpha(CanvasInstance.instance.blinkBarBackground, 1f, 0f, 1f);
         StartCoroutine(DisableBlinkCoroutine());
     }
 
     private IEnumerator DisableBlinkCoroutine() {
         yield return new WaitForSeconds(1);
-        CanvasInstance.instance.blinkBar.gameObject.SetActive(false);
+        //CanvasInstance.instance.blinkBar.gameObject.SetActive(false);
         isBlinkingActive = false;
     }
 }

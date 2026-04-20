@@ -13,7 +13,7 @@ public class EVNT_Checkpoint : MonoBehaviour {
     private IEnumerator AutoCloseCountdown(int countdown) {
         yield return new WaitForSeconds(countdown);
         if (masterDoor.isOpen) {
-            AudioManager.instance.PlaySound(lockroomSirenEvent, transform.position);
+            //AudioManager.instance.PlaySound(lockroomSirenEvent, transform.position);
             yield return new WaitForSeconds(2);
             masterDoor.CloseDoor();
         }

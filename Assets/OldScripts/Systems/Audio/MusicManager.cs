@@ -29,14 +29,14 @@ public class MusicManager : MonoBehaviour {
     }
 
     public void SetSoundtrack(int soundtrackID) {
-        AudioManager.instance.SetSoundtrackParameter("SoundtrackID", soundtrackID);
+        //AudioManager.instance.SetSoundtrackParameter("SoundtrackID", soundtrackID);
     }
 
     public void SetMusicState(int state) {
-        AudioManager.instance.SetMusicParameter("MusicState", state);
+        //AudioManager.instance.SetMusicParameter("MusicState", state);
     }
 
     public void SetMusicState(MusicState state) {
-        AudioManager.instance.SetMusicParameter("MusicState", (int)state);
+        //AudioManager.instance.SetMusicParameter("MusicState", (int)state);
     }
 }

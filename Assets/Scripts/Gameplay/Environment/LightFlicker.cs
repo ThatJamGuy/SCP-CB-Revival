@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 /// <summary>
-/// A procedural light flickering script that aims to replicate the one Valve uses in Half-Life.
-/// Supports various presets also inspired by the Valve ones as well as a custom option.
+/// Procedural light flickering replicating Valve's Half-Life implementation.
+/// Supports various presets using an alphabetical intensity pattern system (a = off, z = full).
 /// </summary>
 public class LightFlicker : MonoBehaviour {
-    // Various preset names that can be chosen from in the editor
     public enum Preset {
         Custom,
         Normal,
@@ -25,65 +25,71 @@ public class LightFlicker : MonoBehaviour {
         SlowStrobeB,
         FastPulse
     }
-    
-    // The actual patterns used by the aforementioned presets, using the alphabetical system
-    private static readonly Dictionary<Preset, string> Presets = new()
-    {
-        { Preset.Normal,                    "m" },
-        { Preset.FlickerA,                  "mmnmmommommnonmmonqnmmo" },
-        { Preset.SlowStrongPulse,           "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba" },
-        { Preset.FastStrobe,                "mammogram" },
-        { Preset.GentlePulse,               "jklmnopqrstuvwxyzyxwvutsrqponmlkji" },
-        { Preset.Flicker,                   "nmonqnmomnmomomno" },
-        { Preset.CandleA,                   "mmamammmmammamamaaamammma" },
-        { Preset.SlowStrobeA,               "mmmmmaaaaammmmmaaaaaammmmmmmmmmmaaaaaa" },
-        { Preset.FluorescentFlicker,        "mmamammmmammamamaaamammma" },
-        { Preset.SlowPulseNotFadeToBlack,   "abcdefghijklmnopqrrqponmlkjihgfedcba" },
-        { Preset.CandleB,                   "mmmaaaabcdefgmmmmaaaammmaamm" },
-        { Preset.CandleC,                   "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa" },
-        { Preset.SlowStrobeB,               "aaaaaaaazzzzzzzz" },
-        { Preset.FastPulse,                 "mmnnmmnnnmmnn" },
-        { Preset.FlickerB,                  "mmnommomhamenbobaamgoamnnoaon" },
+
+    // Map each preset to its alphabetical intensity pattern string
+    private static readonly Dictionary<Preset, string> Presets = new() {
+        { Preset.Normal,                  "m" },
+        { Preset.FlickerA,                "mmnmmommommnonmmonqnmmo" },
+        { Preset.FlickerB,                "mmnommomhamenbobaamgoamnnoaon" },
+        { Preset.SlowStrongPulse,         "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba" },
+        { Preset.FastStrobe,              "mammogram" },
+        { Preset.GentlePulse,             "jklmnopqrstuvwxyzyxwvutsrqponmlkji" },
+        { Preset.Flicker,                 "nmonqnmomnmomomno" },
+        { Preset.CandleA,                 "mmamammmmammamamaaamammma" },
+        { Preset.CandleB,                 "mmmaaaabcdefgmmmmaaaammmaamm" },
+        { Preset.CandleC,                 "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa" },
+        { Preset.SlowStrobeA,             "mmmmmaaaaammmmmaaaaaammmmmmmmmmmaaaaaa" },
+        { Preset.SlowStrobeB,             "aaaaaaaazzzzzzzz" },
+        { Preset.FluorescentFlicker,      "mmamammmmammamamaaamammma" },
+        { Preset.SlowPulseNotFadeToBlack, "abcdefghijklmnopqrrqponmlkjihgfedcba" },
+        { Preset.FastPulse,               "mmnnmmnnnmmnn" },
     };
-    
+
     [Header("Pattern")]
     [SerializeField] private Preset preset = Preset.FlickerA;
     [SerializeField] private string customPattern = "mmnmmommommnonmmonqnmmo";
 
-    [Header("Playback")] 
+    [Header("Playback")]
     [SerializeField] private float stepsPerSecond = 10f;
     [SerializeField] private bool randomOffset = true;
+    [SerializeField] private bool startActive = true;
 
-    [Header("Light")] 
+    [Header("Light")]
     [SerializeField] private bool smoothTransitions;
     [SerializeField, Range(0f, 50f)] private float smoothSpeed = 20f;
 
+    private Coroutine oneShotCoroutine;
     private new Light light;
+    
+    private bool isActive;
     private float maxIntensity;
+    private string activePattern;
+    private float stepInterval;
     private float timer;
     private int index;
     private float targetIntensity;
-    private string activePattern;
 
+    #region Unity Callbacks
     private void Awake() {
         light = GetComponent<Light>();
         maxIntensity = light.intensity;
-        
         RefreshPattern();
-        
-        if (randomOffset) index = Random.Range(0, activePattern.Length);
+        isActive = startActive;
+
+        if (randomOffset)
+            index = Random.Range(0, activePattern.Length);
     }
 
     private void Update() {
-        if (activePattern.Length == 0) return;
-        
-        timer += Time.deltaTime;
-        var interval = 1f / Mathf.Max(stepsPerSecond, 0.01f);
+        if (!isActive || activePattern.Length == 0) return;
 
-        while (timer >= interval) {
-            timer -= interval;
+        timer += Time.deltaTime;
+
+        // Advance the pattern index for each elapsed step interval
+        while (timer >= stepInterval) {
+            timer -= stepInterval;
             index = (index + 1) % activePattern.Length;
-            targetIntensity = PatternCharToIntensity(activePattern[index]);
+            targetIntensity = CharToIntensity(activePattern[index]);
         }
 
         light.intensity = smoothTransitions
@@ -91,23 +97,70 @@ public class LightFlicker : MonoBehaviour {
             : targetIntensity;
     }
 
-    private float PatternCharToIntensity(char character) {
-        var t = Mathf.Clamp01((character - 'a') / 25f);
+    // Reflect inspector changes in the editor without entering play mode
+    private void OnValidate() {
+        CacheStepInterval();
+
+        // Guard against missing light reference outside play mode
+        if (light == null) light = GetComponent<Light>();
+        if (light != null) RefreshPattern();
+    }
+    #endregion
+
+    #region Private Methods
+    // Convert a pattern character (a–z) to a [0, maxIntensity] value
+    private float CharToIntensity(char c) {
+        var t = Mathf.Clamp01((c - 'a') / 25f);
         return t * maxIntensity;
     }
-    
+
+    // Precompute the interval used by the Update loop
+    private void CacheStepInterval() =>
+        stepInterval = 1f / Mathf.Max(stepsPerSecond, 0.01f);
+
     private void RefreshPattern() {
         activePattern = preset == Preset.Custom
-        ? customPattern.ToLower()
-        : Presets.GetValueOrDefault(preset, "m");
+            ? customPattern.ToLower()
+            : Presets.GetValueOrDefault(preset, "m");
+
+        CacheStepInterval();
 
         index = 0;
         timer = 0f;
-        targetIntensity = PatternCharToIntensity(activePattern[0]);
+        targetIntensity = CharToIntensity(activePattern[0]);
     }
+    
+    private IEnumerator OneShotRoutine(float duration, string pattern) {
+        (Preset savedPreset, string savedCustom, bool savedActive) = (preset, customPattern, isActive);
 
+        isActive = true;
+        if (pattern != null) {
+            preset = Preset.Custom;
+            customPattern = pattern;
+            RefreshPattern();
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        preset = savedPreset;
+        customPattern = savedCustom;
+        isActive = savedActive;
+        RefreshPattern();
+        oneShotCoroutine = null;
+    }
+    #endregion
+
+    #region Public Methods
     public void SetPreset(Preset newPreset) {
         preset = newPreset;
         RefreshPattern();
     }
+    
+    public void SetActive(bool active) => isActive = active;
+
+    public void PlayPatternForDuration(float duration, string pattern = null) {
+        if (oneShotCoroutine != null) StopCoroutine(oneShotCoroutine);
+        oneShotCoroutine = StartCoroutine(OneShotRoutine(duration, pattern));
+    }
+    #endregion
 }

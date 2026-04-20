@@ -1,9 +1,13 @@
 using System.Collections;
+using FMODUnity;
 using UnityEngine;
 
 public class TeslaController : MonoBehaviour {
+    [SerializeField] private EventReference teslaShockSound;
+    [SerializeField] private GameObject specialEffects;
     [SerializeField] private GameObject teslaTrigger;
     [SerializeField] private GameObject teslaShockEffect;
+    [SerializeField] private StudioEventEmitter teslaIdleEmitter;
     [SerializeField] private BoxCollider teslaKillZoneCollider;
     [SerializeField] private LightFlicker[] flickerableLights;
 
@@ -46,22 +50,29 @@ public class TeslaController : MonoBehaviour {
     }
 
     private IEnumerator TeslaShockCoroutine() {
-        //AudioManager.instance.PlaySound(FMODEvents.instance.teslaShock, transform.position);
+        AudioManager.PlayOneShot(teslaShockSound, transform.position);
         yield return new WaitForSeconds(0.5f);
         teslaShockEffect.SetActive(true);
+        teslaIdleEmitter.Stop();
+        
         
         foreach (var f in flickerableLights) {
-            f.enabled = true;
+            f.PlayPatternForDuration(2.5f);
         }
         
         yield return new WaitForSeconds(0.5f);
+        specialEffects.SetActive(false);
         teslaShockEffect.SetActive(false);
         
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
+        teslaIdleEmitter.Play();
         
-        foreach (var f in flickerableLights) {
-            f.enabled = false;
-        }
+        yield return new WaitForSeconds(1f);
+        specialEffects.SetActive(true);
+        
+        //foreach (var f in flickerableLights) {
+        //    f.enabled = false;
+        //}
     }
 
     private IEnumerator TriggerTeslaCoroutine() {

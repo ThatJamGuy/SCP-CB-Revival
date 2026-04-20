@@ -16,8 +16,8 @@ public class Door : MonoBehaviour {
     [SerializeField] private float openSpeed = 1.5f;
     [SerializeField] private float openDistance = 1.9f;
 
-    [Header("FMOD Audio")]
-    [SerializeField] private EventReference doorEventReference;
+    [Header("Audio")]
+    [SerializeField] private EventReference doorSoundEvent;
 
     [Header("Events")]
     public UnityEvent onDoorOpening;
@@ -32,10 +32,15 @@ public class Door : MonoBehaviour {
     public GameObject doorPart01;
     public GameObject doorPart02;
 
+    private AudioManager audioManager;
+
     private Vector3 door01InitialPos, door02InitialPos;
     private Coroutine moveRoutine;
 
-    void Start() {
+    private void Start() {
+        if (AudioManager.Instance != null) audioManager = AudioManager.Instance;
+        else return;
+        
         door01InitialPos = doorPart01.transform.position;
         door02InitialPos = doorPart02.transform.position;
 
@@ -66,12 +71,12 @@ public class Door : MonoBehaviour {
         isOpen = false;
     }
 
-    void StartMove(Vector3 door1Target, Vector3 door2Target, UnityEvent onComplete) {
+    private void StartMove(Vector3 door1Target, Vector3 door2Target, UnityEvent onComplete) {
         if (moveRoutine != null) StopCoroutine(moveRoutine);
         moveRoutine = StartCoroutine(MoveDoors(door1Target, door2Target, onComplete));
     }
 
-    IEnumerator MoveDoors(Vector3 target1, Vector3 target2, UnityEvent onComplete) {
+    private IEnumerator MoveDoors(Vector3 target1, Vector3 target2, UnityEvent onComplete) {
         PlaySound();
         Vector3 start1 = doorPart01.transform.position;
         Vector3 start2 = doorPart02.transform.position;
@@ -93,26 +98,13 @@ public class Door : MonoBehaviour {
         moveRoutine = null;
     }
 
-    void PlaySound()
+    private void PlaySound()
     {
-        if (doorEventReference.Guid.IsNull)
-            return;
-
-        var instance = AudioManager.instance.CreateInstance(doorEventReference);
-        if (!instance.isValid())
-            return;
-
-        var attributes = RuntimeUtils.To3DAttributes(transform.position);
-        instance.set3DAttributes(attributes);
-
-        float doorStateValue = isOpen ? 1f : 0f;
-        instance.setParameterByName("DoorState", doorStateValue);
-
-        instance.start();
-        instance.release();
+        var doorStateValue = isOpen ? 1f : 0f;
+        AudioManager.PlayOneShot(doorSoundEvent, transform.position, "DoorState", doorStateValue);
     }
 
-    Vector3 GetOffset(float distance) {
+    private Vector3 GetOffset(float distance) {
         return moveAxis switch {
             Axis.Y => transform.up * distance,
             Axis.Z => transform.forward * distance,

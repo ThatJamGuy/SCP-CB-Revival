@@ -1,9 +1,9 @@
-using System;
-using PrimeTween;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Player component that handles all the movement logic. Also pulls a bunch of values from the Player class.
+/// </summary>
 public class PlayerMovement : MonoBehaviour {
     [Header("Movement Status")]
     [SerializeField, Range(0, 1)] private float stamina = 1f;
@@ -31,7 +31,9 @@ public class PlayerMovement : MonoBehaviour {
     private Vector3 velocity;
 
     private bool cantFunction;
+    private bool isSprinting;
 
+    private float currentSpeed;
     private float walkingSpeed;
     private float sprintSpeed;
     private float crouchSpeed;
@@ -40,6 +42,13 @@ public class PlayerMovement : MonoBehaviour {
     private const float STANDING_HEIGHT = 2.2f;
     private const float CROUCHING_HEIGHT = 0.5f;
 
+    private void OnDisable() {
+        // Cleanup to make sure we unsubscribe to the sprint action
+        if (sprintAction == null) return;
+        sprintAction.started -= OnSprintStarted;
+        sprintAction.canceled -= OnSprintCanceled;
+    }
+    
     private void Start() {
         // If there is no InputManager available at the start, disallow functionality and print a warning in console
         if (inputManager == null) {
@@ -54,6 +63,10 @@ public class PlayerMovement : MonoBehaviour {
         sprintAction = inputManager.GetAction("Player", "Sprint");
         crouchAction = inputManager.GetAction("Player", "Crouch");
         
+        // Subscribe to the sprint action so it can determine if the player is holding the sprint key
+        sprintAction.started += OnSprintStarted;
+        sprintAction.canceled += OnSprintCanceled;
+        
         // Set the different speeds to their values from settings.json, which are stored on the player instance
         walkingSpeed = player.walkSpeed;
         sprintSpeed = player.sprintSpeed;
@@ -64,13 +77,18 @@ public class PlayerMovement : MonoBehaviour {
         // If input is manually disabled or functionality is broken then don't do anything
         if (player.disableInput || cantFunction) return;
         
+        DetermineMovementSpeed();
         HandleMovement();
+    }
+
+    private void DetermineMovementSpeed() {
+        currentSpeed = isSprinting ? sprintSpeed : walkingSpeed;
     }
     
     private void HandleMovement() {
         var input = moveAction.ReadValue<Vector2>();
         var move = transform.right * input.x + transform.forward * input.y;
-        var currentSpeed = walkingSpeed; // Temporary until sprinting and crouching checks are in
+        //var currentSpeed = walkingSpeed; // Temporary until sprinting and crouching checks are in
 
         // Move the character controller in the proper Vector3 direction at the currentSpeed
         characterController.Move(move * (currentSpeed * Time.deltaTime));
@@ -83,11 +101,12 @@ public class PlayerMovement : MonoBehaviour {
         velocity.y += GRAVITY * Time.deltaTime;
         characterController.Move(velocity * Time.deltaTime);
     }
+    
+    private void OnSprintStarted(InputAction.CallbackContext ctx) => isSprinting = true;
+    private void OnSprintCanceled(InputAction.CallbackContext ctx) => isSprinting = false;
 
     /*#region Stamina
     private void HandleStamina() {
-        var im = InputManager.Instance;
-
         if (playerAccessor.isSprinting && !playerAccessor.infiniteStamina && !playerAccessor.isCrouching && playerAccessor.isMoving && !sprintLocked) {
             float drainRate = staminaDrainRate * (1f + playerAccessor.staminaDepletionModifier);
             stamina = Mathf.Max(stamina - drainRate * Time.deltaTime, 0f);

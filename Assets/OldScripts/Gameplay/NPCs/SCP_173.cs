@@ -187,7 +187,7 @@ public class SCP_173 : MonoBehaviour {
 
         if (nearest && Random.value < doorOpenChance && !nearest.isOpen && !nearest.requiresKeycard && !nearest.isLocked && !isVisibleByPlayer) {
             nearest.OpenDoor();
-            AudioManager.instance.PlaySound(FMODEvents.instance.doorOpen173, nearest.transform.position);
+            //AudioManager.instance.PlaySound(FMODEvents.instance.doorOpen173, nearest.transform.position);
         }
     }
     #endregion
@@ -267,8 +267,8 @@ public class SCP_173 : MonoBehaviour {
         if (!hasTarget || target == null) return;
         float dist = Vector3.Distance(transform.position, target.position);
         if (dist <= 1.5f && !isVisibleByPlayer) {
-            AudioManager.instance.PlaySound(neckBreakSound, transform.position);
-            AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorNear, transform.position);
+            //AudioManager.instance.PlaySound(neckBreakSound, transform.position);
+            //AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorNear, transform.position);
             GameManager.instance.ShowDeathScreen("Subject D-9341. Cause of death: Fatal cervical fracture. Assumed to be attacked by SCP-173.");
             Destroy(gameObject);
         }
@@ -293,11 +293,11 @@ public class SCP_173 : MonoBehaviour {
         float dist = Vector3.Distance(transform.position, playerTransform.position);
 
         if (dist < HORROR_SOUND_DISTANCE_THRESHOLD) {
-            AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorNear, transform.position);
+            //AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorNear, transform.position);
         }
         else {
             if (!hasPlayedDistanceHorrorSound) {
-                AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorFar, transform.position);
+                //AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorFar, transform.position);
                 hasPlayedDistanceHorrorSound = true;
             }
         }

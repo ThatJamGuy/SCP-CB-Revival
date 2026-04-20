@@ -16,13 +16,13 @@ public class GameManager : MonoBehaviour {
     public void PauseGame() {
         isGamePaused = true;
         Time.timeScale = 0f;
-        AudioManager.instance.PauseGameAudio();
+        //AudioManager.instance.PauseGameAudio();
     }
 
     public void UnpauseGame() {
         isGamePaused = false;
         Time.timeScale = 1f;
-        AudioManager.instance.UnpauseGameAudio();
+        //AudioManager.instance.UnpauseGameAudio();
     }
 
     public void ShowDeathScreen(string causeOfDeath) {
@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour {
         PlayerAccessor.instance.isDead = true;
         PlayerAccessor.instance.isMoving = false;
         MusicManager.instance.SetMusicState(MusicState.LCZ);
-        CanvasInstance.instance.deathMenu.SetActive(true);
-        CanvasInstance.instance.deathMenuDeathCauseText.text = causeOfDeath;
+        //CanvasInstance.instance.deathMenu.SetActive(true);
+        //CanvasInstance.instance.deathMenuDeathCauseText.text = causeOfDeath;
     }
 }

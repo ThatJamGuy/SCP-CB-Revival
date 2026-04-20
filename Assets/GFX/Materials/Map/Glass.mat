@@ -16,7 +16,6 @@ Material:
   - _DOUBLESIDED_ON
   - _NORMALMAP
   - _NORMALMAP_TANGENT_SPACE
-  - _REFRACTION_PLANE
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -30,6 +29,7 @@ Material:
   - TransparentDepthPostpass
   - TransparentBackface
   - RayTracingPrepass
+  - TransparentDepthPrepass
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -143,8 +143,8 @@ Material:
     - _AlphaCutoffPrepass: 0.5
     - _AlphaCutoffShadow: 0.5
     - _AlphaDstBlend: 10
-    - _AlphaRemapMax: 0.5259259
-    - _AlphaRemapMin: 0.173042
+    - _AlphaRemapMax: 1
+    - _AlphaRemapMin: 0.7332272
     - _AlphaSrcBlend: 1
     - _Anisotropy: 0
     - _BlendMode: 0
@@ -206,8 +206,8 @@ Material:
     - _RayTracing: 0
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 0
-    - _RefractionModel: 1
-    - _Smoothness: 0.8
+    - _RefractionModel: 0
+    - _Smoothness: 0
     - _SmoothnessRemapMax: 1
     - _SmoothnessRemapMin: 0
     - _SpecularAAScreenSpaceVariance: 0.1
@@ -215,11 +215,11 @@ Material:
     - _SpecularOcclusionMode: 1
     - _SrcBlend: 1
     - _StencilRef: 0
-    - _StencilRefDepth: 16
+    - _StencilRefDepth: 0
     - _StencilRefGBuffer: 2
     - _StencilRefMV: 32
     - _StencilWriteMask: 6
-    - _StencilWriteMaskDepth: 25
+    - _StencilWriteMaskDepth: 9
     - _StencilWriteMaskGBuffer: 15
     - _StencilWriteMaskMV: 41
     - _SubsurfaceMask: 1

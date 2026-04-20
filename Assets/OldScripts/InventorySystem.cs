@@ -69,47 +69,47 @@ public class InventorySystem : MonoBehaviour {
     }
 
     public void EquipItem(ItemData data) {
-        if (CanvasInstance.instance.heldDocumentDisplay.activeSelf) return;
+        //if (CanvasInstance.instance.heldDocumentDisplay.activeSelf) return;
 
         currentHeldItemData = data;
-        SetDisplayActive(CanvasInstance.instance.heldItemDisplay, data.icon, data.equipSound);
+        //SetDisplayActive(CanvasInstance.instance.heldItemDisplay, data.icon, data.equipSound);
         ingameMenuManager.ToggleMenuByID(0);
     }
 
     public void EquipDocument(ItemData data) {
-        if (CanvasInstance.instance.heldDocumentDisplay.activeSelf) return;
+        //if (CanvasInstance.instance.heldDocumentDisplay.activeSelf) return;
 
         currentHeldItemData = data;
-        SetDisplayActive(CanvasInstance.instance.heldDocumentDisplay, data.icon, data.equipSound);
+        //SetDisplayActive(CanvasInstance.instance.heldDocumentDisplay, data.icon, data.equipSound);
         ingameMenuManager.ToggleMenuByID(0);
     }
 
     private void OnRightClick(InputAction.CallbackContext ctx) {
         if (currentHeldItemData == null) return;
 
-        if (CanvasInstance.instance.heldDocumentDisplay.activeSelf) {
-            UnequipDocument();
-        }
-        else if (CanvasInstance.instance.heldItemDisplay.activeSelf) {
-            UnequipItem();
-        }
+        //if (CanvasInstance.instance.heldDocumentDisplay.activeSelf) {
+        //    UnequipDocument();
+        //}
+        //else if (CanvasInstance.instance.heldItemDisplay.activeSelf) {
+        //    UnequipItem();
+        //}
     }
 
     public void UnequipItem() {
-        CanvasInstance.instance.heldItemDisplay.SetActive(false);
-        AudioManager.instance.PlaySound(currentHeldItemData.equipSound, transform.position);
+        //CanvasInstance.instance.heldItemDisplay.SetActive(false);
+        //AudioManager.instance.PlaySound(currentHeldItemData.equipSound, transform.position);
         currentHeldItemData = null;
     }
 
     private void UnequipDocument() {
-        CanvasInstance.instance.heldDocumentDisplay.SetActive(false);
-        AudioManager.instance.PlaySound(currentHeldItemData.equipSound, transform.position);
+        //CanvasInstance.instance.heldDocumentDisplay.SetActive(false);
+        //AudioManager.instance.PlaySound(currentHeldItemData.equipSound, transform.position);
         currentHeldItemData = null;
     }
 
     private void SetDisplayActive(GameObject display, Sprite sprite, EventReference eventReference) {
         display.GetComponent<Image>().sprite = sprite;
         display.SetActive(true);
-        AudioManager.instance.PlaySound(eventReference, transform.position);
+        //udioManager.instance.PlaySound(eventReference, transform.position);
     }
 }

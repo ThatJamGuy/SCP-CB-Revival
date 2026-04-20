@@ -43,7 +43,7 @@ public class EVNT_PostBreach : MonoBehaviour {
         PlayerAccessor.instance.allowInput = false;
         StartCoroutine(PlayerInputRoutine());
 
-        CanvasInstance.instance.introScreenStuff.SetActive(true);
+        //CanvasInstance.instance.introScreenStuff.SetActive(true);
 
         MusicManager.instance.SetMusicState(MusicState.CreepyMusic03);
 
@@ -54,8 +54,6 @@ public class EVNT_PostBreach : MonoBehaviour {
         eventInstance.setCallback(EventCallback, EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
 
         eventInstance.start();
-
-        AmbienceController.Instance.PlayCommotionEvent();
     }
 
     public void ShakeCameraLarge() {
