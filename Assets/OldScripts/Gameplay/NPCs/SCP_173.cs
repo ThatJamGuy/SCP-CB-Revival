@@ -141,13 +141,13 @@ public class SCP_173 : MonoBehaviour {
 
         if (alreadySeenByPlayer) PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>().StopBlink();
         if (alreadySeenByPlayer) alreadySeenByPlayer = false;
-        if (alreadySeenByPlayer) GameManager.instance.scp173ChasingPlayer = false;
+        //if (alreadySeenByPlayer) GameManager.instance.scp173ChasingPlayer = false;
 
         movementSource.SetActive(false);
         hasPlayedDistanceHorrorSound = false;
 
-        if (!GameManager.instance.scp106Active)
-            MusicManager.instance.SetMusicState(MusicState.LCZ);
+        //if (!GameManager.instance.scp106Active)
+        //    MusicManager.instance.SetMusicState(MusicState.LCZ);
 
         tensionEmitter.Stop();
     }
@@ -225,11 +225,11 @@ public class SCP_173 : MonoBehaviour {
     private void OnBecameVisibleToPlayer() {
         if (!alreadySeenByPlayer) {
             alreadySeenByPlayer = true;
-            GameManager.instance.scp173ChasingPlayer = true;
+            //GameManager.instance.scp173ChasingPlayer = true;
             AcquireTarget(playerTransform);
 
-            if (!GameManager.instance.scp106Active)
-                MusicManager.instance.SetMusicState(MusicState.scp173);
+            //if (!GameManager.instance.scp106Active)
+            //    MusicManager.instance.SetMusicState(MusicState.scp173);
 
             tensionEmitter.Play();
 
@@ -269,7 +269,7 @@ public class SCP_173 : MonoBehaviour {
         if (dist <= 1.5f && !isVisibleByPlayer) {
             //AudioManager.instance.PlaySound(neckBreakSound, transform.position);
             //AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorNear, transform.position);
-            GameManager.instance.ShowDeathScreen("Subject D-9341. Cause of death: Fatal cervical fracture. Assumed to be attacked by SCP-173.");
+            //GameManager.instance.ShowDeathScreen("Subject D-9341. Cause of death: Fatal cervical fracture. Assumed to be attacked by SCP-173.");
             Destroy(gameObject);
         }
 

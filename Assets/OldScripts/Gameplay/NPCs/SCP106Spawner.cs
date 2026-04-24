@@ -40,9 +40,9 @@ namespace scpcbr {
         private IEnumerator SpawnRoutine() {
             while (true) {
                 yield return new WaitForSeconds(spawnInterval);
-                if (player != null && !GameManager.instance.scp106Active && !PlayerAccessor.instance.isDead) {
-                    yield return StartCoroutine(SpawnSequence());
-                }
+                //if (player != null && !GameManager.instance.scp106Active && !PlayerAccessor.instance.isDead) {
+                //    yield return StartCoroutine(SpawnSequence());
+                //}
             }
         }
 
@@ -58,7 +58,7 @@ namespace scpcbr {
             Vector3 scp106Pos = spawnPos;
             Instantiate(scp106Prefab, scp106Pos, PlayerAccessor.instance.transform.rotation);
 
-            GameManager.instance.scp106Active = true;
+            //GameManager.instance.scp106Active = true;
         }
 
         private bool TryGetGroundPosition(out Vector3 groundPos) {

@@ -45,7 +45,7 @@ public class DiscordSystems : MonoBehaviour {
     private static void OnUpdateRichPresence(ClientResult result) {
         // If the RPC was properly updated, let the world know. Otherwise, I assume that user doesn't have discord.
         Debug.Log(result.Successful()
-            ? "Rich presence updated!"
+            ? "<color=purple>[Discord Social SDK]</color> Rich presence updated!"
             : $"<color=red>Failed to update rich presence {result.Error()}</color> Likely no Discord open.");
     }
     

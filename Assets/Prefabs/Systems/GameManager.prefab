@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6783192009410483575}
   - component: {fileID: 8661496756510707625}
   - component: {fileID: 1730556320519880727}
-  - component: {fileID: 1926193062031645467}
   - component: {fileID: 871372182388651735}
   m_Layer: 0
   m_Name: GameManager
@@ -47,10 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f38640ed131e23b49a685ef2e8179ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  isGamePaused: 0
-  scp106Active: 0
-  scp173ChasingPlayer: 0
-  scp173currentVisibleToPlayer: 0
+  inGameMenus:
+  - menuObject: {fileID: 0}
+    inputAction: {fileID: 2752768069252115058, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
 --- !u!114 &1730556320519880727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,31 +56,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3316988252148387290}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43cd83e6caef092478f8f59cf38dbddd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GlobalCameraShake
---- !u!114 &1926193062031645467
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3316988252148387290}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea27803b61b203f4d99575ddada70715, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EntitySystem
-  scp173Prefab: {fileID: 538570090455416849, guid: 0ea0120f659779048820554b735d7fca, type: 3}
-  scp173RelocateDelay: 7
-  scp173MinSpawnDistance: 20
-  scp173NavRadius: 1
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 64
-  groundCheckDistance: 50
 --- !u!114 &871372182388651735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,7 +68,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3316988252148387290}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eea9c6e32ef0d2045a4dcc5dc39ae159, type: 3}
   m_Name: 

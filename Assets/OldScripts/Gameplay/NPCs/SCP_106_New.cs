@@ -104,7 +104,7 @@ public class SCP_106_New : MonoBehaviour {
         if (activeTarget == null) return;
         StartCoroutine(BeginChaseRoutine());
 
-        GameManager.instance.scp106Active = true;
+        //GameManager.instance.scp106Active = true;
     }
 
     /// <summary>
@@ -136,7 +136,7 @@ public class SCP_106_New : MonoBehaviour {
                 }
 
                 //AudioManager.instance.PlaySound(targetHitEvent, transform.position);
-                GameManager.instance.ShowDeathScreen("Subject D-9341. Body partially decomposed by what is assumed to be SCP-106's \"corrosion\" effect. Body disposed of via incineration.");
+                //GameManager.instance.ShowDeathScreen("Subject D-9341. Body partially decomposed by what is assumed to be SCP-106's \"corrosion\" effect. Body disposed of via incineration.");
                 PlayerAccessor.instance.isDead = true;
             }
 
@@ -224,7 +224,7 @@ public class SCP_106_New : MonoBehaviour {
         CantWalk();
         animator.SetTrigger("Despawn1");
         yield return new WaitForSeconds(despawnAnimTime);
-        GameManager.instance.scp106Active = false;
+        //GameManager.instance.scp106Active = false;
         Destroy(gameObject);
     }
 
@@ -242,7 +242,7 @@ public class SCP_106_New : MonoBehaviour {
         CantWalk();
         animator.SetTrigger("Shock");
         yield return new WaitForSeconds(TeslaShockAnimTime);
-        GameManager.instance.scp106Active = false;
+        //GameManager.instance.scp106Active = false;
         Destroy(gameObject);
     }
 

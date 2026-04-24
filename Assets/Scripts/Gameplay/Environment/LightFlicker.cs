@@ -60,6 +60,10 @@ public class LightFlicker : MonoBehaviour {
 
     private Coroutine oneShotCoroutine;
     private new Light light;
+    private Preset oneShotSavedPreset;
+    private string oneShotSavedCustomPattern;
+    private bool oneShotSavedIsActive;
+    private bool hasSavedOneShotState;
     
     private bool isActive;
     private float maxIntensity;
@@ -129,10 +133,29 @@ public class LightFlicker : MonoBehaviour {
         timer = 0f;
         targetIntensity = CharToIntensity(activePattern[0]);
     }
+
+    private void SaveOneShotState() {
+        if (hasSavedOneShotState) return;
+
+        oneShotSavedPreset = preset;
+        oneShotSavedCustomPattern = customPattern;
+        oneShotSavedIsActive = isActive;
+        hasSavedOneShotState = true;
+    }
+
+    private void RestoreOneShotState() {
+        if (!hasSavedOneShotState) return;
+
+        preset = oneShotSavedPreset;
+        customPattern = oneShotSavedCustomPattern;
+        isActive = oneShotSavedIsActive;
+        hasSavedOneShotState = false;
+        RefreshPattern();
+        light.intensity = maxIntensity;
+    }
     
     private IEnumerator OneShotRoutine(float duration, string pattern) {
-        (Preset savedPreset, string savedCustom, bool savedActive) = (preset, customPattern, isActive);
-
+        SaveOneShotState();
         isActive = true;
         if (pattern != null) {
             preset = Preset.Custom;
@@ -142,11 +165,8 @@ public class LightFlicker : MonoBehaviour {
 
         yield return new WaitForSeconds(duration);
 
-        preset = savedPreset;
-        customPattern = savedCustom;
-        isActive = savedActive;
-        RefreshPattern();
         oneShotCoroutine = null;
+        RestoreOneShotState();
     }
     #endregion
 
@@ -159,7 +179,13 @@ public class LightFlicker : MonoBehaviour {
     public void SetActive(bool active) => isActive = active;
 
     public void PlayPatternForDuration(float duration, string pattern = null) {
-        if (oneShotCoroutine != null) StopCoroutine(oneShotCoroutine);
+        SaveOneShotState();
+
+        if (oneShotCoroutine != null) {
+            StopCoroutine(oneShotCoroutine);
+            oneShotCoroutine = null;
+        }
+
         oneShotCoroutine = StartCoroutine(OneShotRoutine(duration, pattern));
     }
     #endregion

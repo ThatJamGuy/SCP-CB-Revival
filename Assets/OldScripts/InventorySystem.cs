@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class InventorySystem : MonoBehaviour {
     public static InventorySystem instance { get; private set; }
 
-    [SerializeField] private IngameMenuManager ingameMenuManager;
+    //[SerializeField] private IngameMenuManager ingameMenuManager;
     public ItemData currentHeldItemData;
 
     [Header("Input")]
@@ -73,7 +73,7 @@ public class InventorySystem : MonoBehaviour {
 
         currentHeldItemData = data;
         //SetDisplayActive(CanvasInstance.instance.heldItemDisplay, data.icon, data.equipSound);
-        ingameMenuManager.ToggleMenuByID(0);
+        //ingameMenuManager.ToggleMenuByID(0);
     }
 
     public void EquipDocument(ItemData data) {
@@ -81,7 +81,7 @@ public class InventorySystem : MonoBehaviour {
 
         currentHeldItemData = data;
         //SetDisplayActive(CanvasInstance.instance.heldDocumentDisplay, data.icon, data.equipSound);
-        ingameMenuManager.ToggleMenuByID(0);
+        //ingameMenuManager.ToggleMenuByID(0);
     }
 
     private void OnRightClick(InputAction.CallbackContext ctx) {

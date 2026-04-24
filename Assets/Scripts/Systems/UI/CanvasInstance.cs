@@ -10,6 +10,7 @@ public class CanvasInstance : MonoBehaviour {
     public static CanvasInstance Instance;
 
     // The different things that need to be accessed from external scripts
+    [Header("Single Objects")]
     public Image interactIcon;
     public RectTransform canvasRectTransform;
     public GameObject heldItemDisplay;
