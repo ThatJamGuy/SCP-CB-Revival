@@ -22,6 +22,10 @@ public class CanvasInstance : MonoBehaviour {
     public GameObject deathMenu;
     public TextMeshProUGUI deathMenuDeathCauseText;
     public GameObject introScreenStuff;
+    
+    [Header("Pause Menu")]
+    public GameObject controllerTooltips;
+    public Button resumeButton;
 
     private void Awake() {
         // Ensure that only of one these exist to prevent issues

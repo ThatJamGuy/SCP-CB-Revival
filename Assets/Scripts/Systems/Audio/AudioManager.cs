@@ -35,6 +35,7 @@ public class AudioManager : MonoBehaviour {
 
     #region Public Methods
     // Play a one-shot with no parameters
+    // ReSharper disable Unity.PerformanceAnalysis
     public static void PlayOneShot(EventReference soundToPlay, Vector3 position) {
         var soundInstance = RuntimeManager.CreateInstance(soundToPlay); // Create a new sound instance
         soundInstance.set3DAttributes(position.To3DAttributes()); // Make this sound play in 3D space
@@ -44,6 +45,7 @@ public class AudioManager : MonoBehaviour {
     }
     
     // Play a one-shot with a single named parameter
+    // ReSharper disable Unity.PerformanceAnalysis
     public static void PlayOneShot(EventReference sound, Vector3 position, string paramName, float paramValue) {
         var soundInstance = RuntimeManager.CreateInstance(sound); // Create a new sound instance
         soundInstance.set3DAttributes(position.To3DAttributes()); // Make this sound play in 3D space

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using PrimeTween;
 
 /// <summary>
 /// Player component that handles all the movement logic. Also pulls a bunch of values from the Player class.
@@ -32,6 +33,7 @@ public class PlayerMovement : MonoBehaviour {
 
     private bool cantFunction;
     private bool isSprinting;
+    private bool isCrouching;
 
     private float currentSpeed;
     private float walkingSpeed;
@@ -42,11 +44,13 @@ public class PlayerMovement : MonoBehaviour {
     private const float STANDING_HEIGHT = 2.2f;
     private const float CROUCHING_HEIGHT = 0.5f;
 
+    #region Unity Callbacks
     private void OnDisable() {
-        // Cleanup to make sure we unsubscribe to the sprint action
-        if (sprintAction == null) return;
+        // Cleanup to make sure we unsubscribe to the sprint and crouch actions
+        if (sprintAction == null || crouchAction == null) return;
         sprintAction.started -= OnSprintStarted;
         sprintAction.canceled -= OnSprintCanceled;
+        crouchAction.performed -= OnCrouchPerformed;
     }
     
     private void Start() {
@@ -63,9 +67,10 @@ public class PlayerMovement : MonoBehaviour {
         sprintAction = inputManager.GetAction("Player", "Sprint");
         crouchAction = inputManager.GetAction("Player", "Crouch");
         
-        // Subscribe to the sprint action so it can determine if the player is holding the sprint key
+        // Subscribe to the sprint and crouch actions so it can determine if the player is holding the right keys
         sprintAction.started += OnSprintStarted;
         sprintAction.canceled += OnSprintCanceled;
+        crouchAction.performed += OnCrouchPerformed;
         
         // Set the different speeds to their values from settings.json, which are stored on the player instance
         walkingSpeed = player.walkSpeed;
@@ -80,15 +85,18 @@ public class PlayerMovement : MonoBehaviour {
         DetermineMovementSpeed();
         HandleMovement();
     }
+    #endregion
 
+    #region Private Methods
     private void DetermineMovementSpeed() {
-        currentSpeed = isSprinting ? sprintSpeed : walkingSpeed;
+        // Prioritize crouch speed, but if that doesn't check out then check for sprinting then walking
+        if (isCrouching) currentSpeed = crouchSpeed; 
+        else currentSpeed = isSprinting ? sprintSpeed : walkingSpeed;
     }
     
     private void HandleMovement() {
         var input = moveAction.ReadValue<Vector2>();
         var move = transform.right * input.x + transform.forward * input.y;
-        //var currentSpeed = walkingSpeed; // Temporary until sprinting and crouching checks are in
 
         // Move the character controller in the proper Vector3 direction at the currentSpeed
         characterController.Move(move * (currentSpeed * Time.deltaTime));
@@ -100,10 +108,71 @@ public class PlayerMovement : MonoBehaviour {
         // Then move the character controller by the velocity alongside the previous Vector3 movement
         velocity.y += GRAVITY * Time.deltaTime;
         characterController.Move(velocity * Time.deltaTime);
+        
+        player.isMoving = input.sqrMagnitude > 0;
+    }
+
+    private void OnSprintStarted(InputAction.CallbackContext ctx) {
+        if (isCrouching) return;
+        isSprinting = true;
+        player.isSprinting = true;
+    }
+
+    private void OnSprintCanceled(InputAction.CallbackContext ctx) {
+        isSprinting = false;
+        player.isSprinting = false;
+    }
+
+    private void OnCrouchPerformed(InputAction.CallbackContext ctx) => AttemptToToggleCrouch();
+
+    #region Crouching
+    // When hitting the crouch button, if crouching stand, otherwise start crouching
+    private void AttemptToToggleCrouch() {
+        if (isCrouching) TryToStand();
+        else StartCrouch();
     }
     
-    private void OnSprintStarted(InputAction.CallbackContext ctx) => isSprinting = true;
-    private void OnSprintCanceled(InputAction.CallbackContext ctx) => isSprinting = false;
+    // If crouching already, don't attempt to crouch again. Important for that one frame where it could bug out
+    // Assuming it continues, set the isCrouching variable to true and start tweening player height to crouching
+    // Also play some crouch foley for some extra cool detail
+    private void StartCrouch() {
+        if (isCrouching) return;
+        isCrouching = true;
+        player.isCrouching = true;
+        TweenHeight(characterController.height, CROUCHING_HEIGHT);
+        AudioManager.PlayOneShot(AudioEventsHolder.Instance.crouchFoley, transform.position);
+    }
+
+    // If not crouching already and the player cannot stand, then do nothing
+    // Otherwise set crouching to false and tween the player height back to the standing height
+    // Also play some crouch foley for some extra cool detail
+    private void TryToStand() {
+        if (!isCrouching || !CanStand()) return;
+        isCrouching = false;
+        player.isCrouching = false;
+        TweenHeight(characterController.height, STANDING_HEIGHT);
+        AudioManager.PlayOneShot(AudioEventsHolder.Instance.crouchFoley, transform.position);
+    }
+
+    // Method that uses PrimeTween to smoothly interpolate between standing and crouching heights
+    private void TweenHeight(float from, float to) {
+        // Tween height and center.y together so the capsule stays grounded. Prevents that weird stuttering
+        Tween.Custom(from, to, 0.1f, val => characterController.height = val);
+    }
+
+    // Some more black magic to determine if the player can stand or not
+    // Checks for any layer collisions above the player by looking above the player for any layers that aren't on
+    // the same Player layer, then returning true or false depending on if there is
+    private bool CanStand() {
+        var playerRadius = characterController.radius;
+        var playerBottom = transform.position + Vector3.up * playerRadius;
+        var playerTop = transform.position + Vector3.up * (STANDING_HEIGHT - playerRadius);
+        var mask = ~(1 << LayerMask.NameToLayer("Player"));
+        return !Physics.CheckCapsule(playerBottom, playerTop, playerRadius - 0.05f, mask, QueryTriggerInteraction.Ignore);
+    }
+    #endregion
+    
+    #endregion
 
     /*#region Stamina
     private void HandleStamina() {
@@ -119,36 +188,6 @@ public class PlayerMovement : MonoBehaviour {
 
         //if (im != null && !im.IsSprinting) sprintLocked = false;
         if (staminaSlider) staminaSlider.value = stamina / maxStamina;
-    }
-    #endregion
-
-    #region Crouch
-    private void AttemptToggleCrouch() {
-        if (playerAccessor.isCrouching) TryStand();
-        else StartCrouch();
-    }
-
-    private void StartCrouch() {
-        if (playerAccessor.isCrouching) return;
-        playerAccessor.isCrouching = true;
-        StartHeightTween(characterController.height, crouchingHeight);
-    }
-
-    private void TryStand() {
-        if (!playerAccessor.isCrouching || !CanStand()) return;
-        playerAccessor.isCrouching = false;
-        StartHeightTween(characterController.height, standingHeight);
-    }
-
-    private void StartHeightTween(float from, float to) {
-        Tween.Custom(from, to, 0.1f, val => characterController.height = val);
-    }
-
-    private bool CanStand() {
-        Vector3 bottom = transform.position + Vector3.up * characterController.radius;
-        Vector3 top = transform.position + Vector3.up * (standingHeight - characterController.radius);
-        int mask = ~(1 << LayerMask.NameToLayer("Player"));
-        return !Physics.CheckCapsule(bottom, top, characterController.radius - 0.05f, mask, QueryTriggerInteraction.Ignore);
     }
     #endregion*/
 }

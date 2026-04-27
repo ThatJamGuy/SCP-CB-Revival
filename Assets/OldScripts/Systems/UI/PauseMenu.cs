@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Local script to handle stuff for the pause menu, such as displaying the basic save stats and opening menus
@@ -18,6 +19,18 @@ public class PauseMenu : MonoBehaviour {
     private int currentDifficulty;
 
     #region Unity Callbacks
+
+    private void OnEnable() {
+        // So if the InputManager thinks we have a controller plugged in, then select resume button so it works
+        if (InputManager.Instance.UsingController) {
+            CanvasInstance.Instance.controllerTooltips.SetActive(true);
+            CanvasInstance.Instance.resumeButton.Select();
+        }
+        else {
+            CanvasInstance.Instance.controllerTooltips.SetActive(false);
+        }
+    }
+    
     private void Start() {
         // If a file called savefile.json exists, load the current save name from that to display it properly
         if (DataSaver.DataFileExists("savefile.json")) {
@@ -69,6 +82,7 @@ public class PauseMenu : MonoBehaviour {
         GameManager.ResumeGame();
 
         // If available, use the SceneController instance to load the menu scene and unload Session and Game scenes
+        if (SceneController.instance == null) return;
         SceneController.instance
             .NewTransition()
             .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu, setActive: true)

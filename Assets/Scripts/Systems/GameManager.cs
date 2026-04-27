@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour {
         // Set the game's timescale to 0 (Pausing Time.deltaTime) and pause FMOD via the AudioManager
         Time.timeScale = 0f;
         Player.SetCursorState(true);
+        Player.Instance.disableInput = true;
         AudioManager.Instance.PauseAllSFX();
     }
     
@@ -51,6 +52,7 @@ public class GameManager : MonoBehaviour {
         // Set the game's timescale to 1 (Resuming Time.deltaTime to normal) and resume FMOD via the AudioManager
         Time.timeScale = 1f;
         Player.SetCursorState(false);
+        Player.Instance.disableInput = false;
         AudioManager.Instance.ResumeAllSFX();
     }
 }

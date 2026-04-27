@@ -8,24 +8,25 @@ using UnityEngine;
 /// </summary>
 public class PlayerFootsteps : MonoBehaviour {
     [SerializeField] private FootstepData[] footstepData;
-    [SerializeField] private PlayerAccessor playerAccessor;
-    [SerializeField] private CharacterController characterController;
     [SerializeField] private LayerMask groundLayer = -1;
 
-    private VCA footstepVCA;
-    private PlayerMovement playerMovement;
+    [Header("References")]
+    [SerializeField] private Player player;
+    [SerializeField] private PlayerMovement playerMovement;
+    [SerializeField] private CharacterController characterController;
 
+    private VCA footstepVCA;
+    
     private bool isSprinting;
     private bool isCrouching;
     private bool isMoving;
 
     #region Unity Callbacks
-    // Immediately set some stuff needed for the script
-    private void Awake() {
-        //footstepVCA = RuntimeManager.GetVCA("vca:/FootstepVCA");
-        playerMovement = GetComponentInParent<PlayerMovement>();
-    }
 
+    private void Awake() {
+        footstepVCA = RuntimeManager.GetVCA("vca:/FootstepVCA");
+    }
+    
     // Just calls UpdateFoosteps() every frame so the script knows what movement state the player is in
     private void Update() {
         UpdateFootsteps();
@@ -37,25 +38,25 @@ public class PlayerFootsteps : MonoBehaviour {
     /// Play a footstep sound based on various factors such as the surface tag under the player and their movement state
     /// </summary>
     public void PlayFootstepAudio() {
-        string surfaceTag = GetSurfaceTagUnderPlayer();
+        var surfaceTag = GetSurfaceTagUnderPlayer();
         if (string.IsNullOrEmpty(surfaceTag)) return;
 
-        FootstepData footstep = GetFootstepDataForTag(surfaceTag);
-        if (footstep == null) return;
+        var footstep = GetFootstepDataForTag(surfaceTag);
+        if (!footstep) return;
 
-        EventReference eventRef = isSprinting ? footstep.assocatedRunEvent : footstep.assocatedWalkEvent;
+        var eventRef = isSprinting ? footstep.associatedRunEvent : footstep.associatedWalkEvent;
         if (eventRef.IsNull) return;
 
-        //AudioManager.instance.PlaySound(eventRef, transform.position);
+        AudioManager.PlayOneShot(eventRef, transform.position);
     }
     #endregion
 
     #region Private Methods
     // Update what kind of footstep to use based on the players movement state (Walking, Sprinting, Crouching)
     private void UpdateFootsteps() {
-        isMoving = playerAccessor.isMoving;
-        //isSprinting = playerMovement != null ? playerMovement.IsActuallySprinting : false;
-        isCrouching = playerAccessor.isCrouching;
+        isMoving = player.isMoving;
+        isSprinting = player.isSprinting;
+        isCrouching = player.isCrouching;
         if (!isMoving) return;
 
         footstepVCA.setVolume(isCrouching ? 0.3f : 1.0f); // If crouching, set volume to 0.3, otherwise 1 (Full Volume)

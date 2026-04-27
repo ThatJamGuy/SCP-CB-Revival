@@ -7,7 +7,7 @@ using FMODUnity;
 /// </summary>
 public class DoorButton : MonoBehaviour, IInteractable {
     [Header("Button Settings")]
-    [SerializeField] private float interactionCooldown = 0.5f;
+    [SerializeField] private float interactionCooldown = 0.2f;
 
     [Header("Audio References")]
     [SerializeField] private EventReference buttonPressSound;
