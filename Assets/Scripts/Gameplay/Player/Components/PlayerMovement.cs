@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using PrimeTween;
 
@@ -7,15 +8,12 @@ using PrimeTween;
 /// </summary>
 public class PlayerMovement : MonoBehaviour {
     [Header("Movement Status")]
-    [SerializeField, Range(0, 1)] private float stamina = 1f;
+    [SerializeField, Range(0, 1)] private float currentStamina = 1f;
 
-    //public float CurrentStamina => stamina;
-
-    //[Header("Stamina")]
-    //[SerializeField] private float maxStamina = 1f;
-    //[SerializeField] private float staminaDrainRate = 0.2f;
-    //[SerializeField] private float staminaRegenRate = 0.1f;
-    //[SerializeField] private Slider staminaSlider;
+    [Header("Stamina Settings")]
+    [SerializeField] private float staminaDrainRate = 0.2f;
+    [SerializeField] private float staminaRegenRate = 0.1f;
+    [SerializeField] private Slider temporaryStaminaSlider;
 
     [Header("References")] 
     [SerializeField] private CharacterController characterController;
@@ -34,6 +32,7 @@ public class PlayerMovement : MonoBehaviour {
     private bool cantFunction;
     private bool isSprinting;
     private bool isCrouching;
+    private bool sprintLocked;
 
     private float currentSpeed;
     private float walkingSpeed;
@@ -43,6 +42,7 @@ public class PlayerMovement : MonoBehaviour {
     private const float GRAVITY = -9.81f;
     private const float STANDING_HEIGHT = 2.2f;
     private const float CROUCHING_HEIGHT = 0.5f;
+    private const float MAX_STAMINA = 1;
 
     #region Unity Callbacks
     private void OnDisable() {
@@ -84,6 +84,7 @@ public class PlayerMovement : MonoBehaviour {
         
         DetermineMovementSpeed();
         HandleMovement();
+        HandleStamina();
     }
     #endregion
 
@@ -112,8 +113,32 @@ public class PlayerMovement : MonoBehaviour {
         player.isMoving = input.sqrMagnitude > 0;
     }
 
+    private void HandleStamina() {
+        temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
+        
+        if (isSprinting && !sprintLocked && player.isMoving) {
+            var finalDrainRate = staminaDrainRate * (1f + player.staminaDepletionModifier);
+            currentStamina = Mathf.Max(currentStamina - finalDrainRate * Time.deltaTime, 0f);
+
+            if (!(currentStamina <= 0f)) return;
+            
+            currentStamina = 0f;
+            sprintLocked = true;
+            isSprinting = false;
+            player.isSprinting = false;
+        }
+        else if (currentStamina < MAX_STAMINA) {
+            currentStamina = Mathf.Min(currentStamina + staminaRegenRate * Time.deltaTime, MAX_STAMINA);
+
+            if (currentStamina > 0.1f)
+                sprintLocked = false;
+        }
+
+        //temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
+    }
+
     private void OnSprintStarted(InputAction.CallbackContext ctx) {
-        if (isCrouching) return;
+        if (isCrouching || sprintLocked) return;
         isSprinting = true;
         player.isSprinting = true;
     }

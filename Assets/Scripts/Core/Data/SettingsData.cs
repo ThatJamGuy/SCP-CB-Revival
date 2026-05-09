@@ -16,4 +16,6 @@ public class SettingsData {
     public float voiceVolume = 1f;
     public float mouseSensitivity = 25f;
     public float mouseSmoothing = 95f;
+    public int hudDesign = 0;
+    public int hudFunctionality = 0;
 }

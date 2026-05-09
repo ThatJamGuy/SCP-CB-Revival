@@ -411,7 +411,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 533d722902637d942a5e80b9f85900aa, type: 2}
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -536,7 +536,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -784,7 +784,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8977949807867704330}
-  - component: {fileID: 4349186135019914954}
   m_Layer: 0
   m_Name: Room2C_2_LCZ
   m_TagString: Untagged
@@ -810,23 +809,6 @@ Transform:
   - {fileID: 7245622883514224527}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4349186135019914954
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3011795917607270948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1bd1b634877afb4798c6f5642debce1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomController
-  roomMesh: {fileID: 1396362905425120040}
-  lighting: {fileID: 2877018751830255857}
-  other: {fileID: 7286063408105389816}
-  disabledToNeutralDistance: 30
-  neutralToEnabledDistance: 15
 --- !u!1 &3115403332259211634
 GameObject:
   m_ObjectHideFlags: 0
@@ -936,7 +918,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1339,6 +1321,11 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: -1
+  m_Version: 14
+  m_ObsoleteShadowResolutionTier: 1
+  m_ObsoleteUseShadowQualitySettings: 0
+  m_ObsoleteCustomShadowResolution: 512
+  m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
   m_VolumetricDimmer: 5
@@ -1398,7 +1385,7 @@ MonoBehaviour:
   m_ShadowNearPlane: 0.1
   m_BlockerSampleCount: 24
   m_FilterSampleCount: 16
-  m_MinFilterSize: 1
+  m_MinFilterSize: 0.5
   m_DirLightPCSSBlockerSampleCount: 24
   m_DirLightPCSSFilterSampleCount: 16
   m_DirLightPCSSMaxPenumbraSize: 0.56
@@ -1453,11 +1440,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
-  m_Version: 14
-  m_ObsoleteShadowResolutionTier: 1
-  m_ObsoleteUseShadowQualitySettings: 0
-  m_ObsoleteCustomShadowResolution: 512
-  m_ObsoleteContactShadows: 0
 --- !u!1 &5157478068504352963
 GameObject:
   m_ObjectHideFlags: 0
@@ -1524,7 +1506,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1592,7 +1574,7 @@ Light:
   serializedVersion: 12
   m_Type: 0
   m_Color: {r: 0.74509805, g: 0.4392157, b: 0.45007917, a: 1}
-  m_Intensity: 21.92335
+  m_Intensity: 22.197023
   m_Range: 20
   m_SpotAngle: 159.79169
   m_InnerSpotAngle: 112.65625
@@ -1669,6 +1651,11 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: -1
+  m_Version: 14
+  m_ObsoleteShadowResolutionTier: 1
+  m_ObsoleteUseShadowQualitySettings: 0
+  m_ObsoleteCustomShadowResolution: 512
+  m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
   m_VolumetricDimmer: 16
@@ -1783,11 +1770,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
-  m_Version: 14
-  m_ObsoleteShadowResolutionTier: 1
-  m_ObsoleteUseShadowQualitySettings: 0
-  m_ObsoleteCustomShadowResolution: 512
-  m_ObsoleteContactShadows: 0
 --- !u!1 &5736706630184734126
 GameObject:
   m_ObjectHideFlags: 0
@@ -2108,7 +2090,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 533d722902637d942a5e80b9f85900aa, type: 2}
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2286,6 +2268,11 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: -1
+  m_Version: 14
+  m_ObsoleteShadowResolutionTier: 1
+  m_ObsoleteUseShadowQualitySettings: 0
+  m_ObsoleteCustomShadowResolution: 512
+  m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
   m_VolumetricDimmer: 5
@@ -2345,7 +2332,7 @@ MonoBehaviour:
   m_ShadowNearPlane: 0.1
   m_BlockerSampleCount: 24
   m_FilterSampleCount: 16
-  m_MinFilterSize: 1
+  m_MinFilterSize: 0.5
   m_DirLightPCSSBlockerSampleCount: 24
   m_DirLightPCSSFilterSampleCount: 16
   m_DirLightPCSSMaxPenumbraSize: 0.56
@@ -2400,11 +2387,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
-  m_Version: 14
-  m_ObsoleteShadowResolutionTier: 1
-  m_ObsoleteUseShadowQualitySettings: 0
-  m_ObsoleteCustomShadowResolution: 512
-  m_ObsoleteContactShadows: 0
 --- !u!1 &7710980904345370555
 GameObject:
   m_ObjectHideFlags: 0
@@ -2754,7 +2736,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Crate1 (2)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2160277541124227892, guid: 0814844764148344b8e90ec0a94609fe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2827,8 +2810,37 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 609503223996927348, guid: 4952a0832985d6e49ad391aa2e2f3d1b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8833746253985806357}
   m_SourcePrefab: {fileID: 100100000, guid: 4952a0832985d6e49ad391aa2e2f3d1b, type: 3}
+--- !u!1 &3724391753237602622 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 609503223996927348, guid: 4952a0832985d6e49ad391aa2e2f3d1b, type: 3}
+  m_PrefabInstance: {fileID: 4312989815551683658}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &8833746253985806357
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3724391753237602622}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5.01894, y: 0.5078422, z: 1.0150001}
+  m_Center: {x: -0.0001488924, y: 0.2464211, z: 0}
 --- !u!4 &3834315022233524435 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1075489842587612313, guid: 4952a0832985d6e49ad391aa2e2f3d1b, type: 3}
@@ -2894,7 +2906,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Crate1 (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2160277541124227892, guid: 0814844764148344b8e90ec0a94609fe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -3042,7 +3055,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Crate1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2160277541124227892, guid: 0814844764148344b8e90ec0a94609fe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -3166,7 +3180,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrafficCone
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3004870661459782585, guid: 91f52158c9778b8449097ce986f1b0b3, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

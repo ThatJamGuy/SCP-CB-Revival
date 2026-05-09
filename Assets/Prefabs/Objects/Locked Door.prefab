@@ -157,6 +157,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &941761121336050549
 GameObject:
@@ -225,7 +226,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 533d722902637d942a5e80b9f85900aa, type: 2}
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -247,6 +248,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &945957731788024363
 GameObject:
@@ -295,19 +297,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c176da06ff179b6488e220d3c431212b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
+  startOpen: 0
   isOpen: 0
   isLocked: 0
   requiresKeycard: 1
   requiredKeyLevel: 4
   openSpeed: 1.5
   openDistance: 1.9
-  doorEventReference:
+  doorSoundEvent:
     Guid:
-      Data1: -676782065
-      Data2: 1186320859
-      Data3: -370646880
-      Data4: 1931670340
-    Path: event:/SFX/Door/Door_LCZ
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   onDoorOpening:
     m_PersistentCalls:
       m_Calls:
@@ -604,6 +607,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &3365828278326853300
 MeshCollider:
@@ -716,6 +720,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &5011817412628528844
 MeshCollider:
@@ -828,6 +833,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &8736578711711361605
 MeshCollider:
@@ -1023,6 +1029,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &4352413010397763234
 GameObject:
@@ -1174,7 +1181,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1196,6 +1203,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &1959114293526969421
 BoxCollider:
@@ -1323,6 +1331,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &3962374156442055211
 MeshCollider:
@@ -1413,7 +1422,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1435,6 +1444,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &5876276688340871900
 BoxCollider:

@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f19d9143a39eb3b46bc4563e9889cfbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.HighDefinition.Runtime::UnityEngine.Rendering.HighDefinition.DecalProjector
+  m_Version: 3
   m_Material: {fileID: 2100000, guid: ae0d5d2f44fa09142801f12f2d245ff0, type: 2}
   m_DrawDistance: 1000
   m_FadeScale: 0.9
@@ -61,7 +62,6 @@ MonoBehaviour:
   m_Offset: {x: 0, y: 0, z: 0}
   m_Size: {x: 0.7, y: 0.5, z: 0.1}
   m_FadeFactor: 1
-  m_Version: 3
 --- !u!1 &944672551014376563
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,6 +183,11 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: 1
+  m_Version: 14
+  m_ObsoleteShadowResolutionTier: 1
+  m_ObsoleteUseShadowQualitySettings: 0
+  m_ObsoleteCustomShadowResolution: 512
+  m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
   m_VolumetricDimmer: 10
@@ -256,7 +261,7 @@ MonoBehaviour:
   m_MaxDepthBias: 0.001
   m_ShadowResolution:
     m_Override: 512
-    m_UseOverride: 1
+    m_UseOverride: 0
     m_Level: 0
   m_ShadowDimmer: 0.7
   m_VolumetricShadowDimmer: 1
@@ -270,7 +275,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
-  m_ShadowUpdateMode: 1
+  m_ShadowUpdateMode: 0
   m_AlwaysDrawDynamicShadows: 1
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -297,11 +302,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
-  m_Version: 14
-  m_ObsoleteShadowResolutionTier: 1
-  m_ObsoleteUseShadowQualitySettings: 0
-  m_ObsoleteCustomShadowResolution: 512
-  m_ObsoleteContactShadows: 0
 --- !u!1 &1471635939944659009
 GameObject:
   m_ObjectHideFlags: 0
@@ -346,7 +346,7 @@ GameObject:
   - component: {fileID: 5634987879029854771}
   - component: {fileID: 4346120283586541700}
   - component: {fileID: 6003852855210478927}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: InteractCol
   m_TagString: Interact
   m_Icon: {fileID: 0}
@@ -446,11 +446,11 @@ MonoBehaviour:
   CollisionTag: 
   EventReference:
     Guid:
-      Data1: -479527678
-      Data2: 1323082653
-      Data3: 1131466380
-      Data4: 413260402
-    Path: event:/SFX/Interact/ButtonPress2
+      Data1: -683116862
+      Data2: 1196277796
+      Data3: -739058558
+      Data4: -1539697353
+    Path: event:/SFX/Interact/ButtonPressLocked
   Event: 
   EventPlayTrigger: 0
   EventStopTrigger: 0
@@ -514,7 +514,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
+  m_StaticShadowCaster: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -708,6 +708,11 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: 1
+  m_Version: 14
+  m_ObsoleteShadowResolutionTier: 1
+  m_ObsoleteUseShadowQualitySettings: 0
+  m_ObsoleteCustomShadowResolution: 512
+  m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
   m_VolumetricDimmer: 10
@@ -781,7 +786,7 @@ MonoBehaviour:
   m_MaxDepthBias: 0.001
   m_ShadowResolution:
     m_Override: 512
-    m_UseOverride: 1
+    m_UseOverride: 0
     m_Level: 0
   m_ShadowDimmer: 0.7
   m_VolumetricShadowDimmer: 1
@@ -795,7 +800,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
-  m_ShadowUpdateMode: 1
+  m_ShadowUpdateMode: 0
   m_AlwaysDrawDynamicShadows: 1
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -822,11 +827,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
-  m_Version: 14
-  m_ObsoleteShadowResolutionTier: 1
-  m_ObsoleteUseShadowQualitySettings: 0
-  m_ObsoleteCustomShadowResolution: 512
-  m_ObsoleteContactShadows: 0
 --- !u!1 &2495816382938093660
 GameObject:
   m_ObjectHideFlags: 0
@@ -948,6 +948,11 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: 1
+  m_Version: 14
+  m_ObsoleteShadowResolutionTier: 1
+  m_ObsoleteUseShadowQualitySettings: 0
+  m_ObsoleteCustomShadowResolution: 512
+  m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
   m_VolumetricDimmer: 10
@@ -1021,7 +1026,7 @@ MonoBehaviour:
   m_MaxDepthBias: 0.001
   m_ShadowResolution:
     m_Override: 512
-    m_UseOverride: 1
+    m_UseOverride: 0
     m_Level: 0
   m_ShadowDimmer: 0.7
   m_VolumetricShadowDimmer: 1
@@ -1035,7 +1040,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
-  m_ShadowUpdateMode: 1
+  m_ShadowUpdateMode: 0
   m_AlwaysDrawDynamicShadows: 1
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -1062,11 +1067,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
-  m_Version: 14
-  m_ObsoleteShadowResolutionTier: 1
-  m_ObsoleteUseShadowQualitySettings: 0
-  m_ObsoleteCustomShadowResolution: 512
-  m_ObsoleteContactShadows: 0
 --- !u!1 &2847728576111172723
 GameObject:
   m_ObjectHideFlags: 0
@@ -1224,7 +1224,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 533d722902637d942a5e80b9f85900aa, type: 2}
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1492,6 +1492,11 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: 1
+  m_Version: 14
+  m_ObsoleteShadowResolutionTier: 1
+  m_ObsoleteUseShadowQualitySettings: 0
+  m_ObsoleteCustomShadowResolution: 512
+  m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
   m_VolumetricDimmer: 10
@@ -1565,7 +1570,7 @@ MonoBehaviour:
   m_MaxDepthBias: 0.001
   m_ShadowResolution:
     m_Override: 512
-    m_UseOverride: 1
+    m_UseOverride: 0
     m_Level: 0
   m_ShadowDimmer: 0.7
   m_VolumetricShadowDimmer: 1
@@ -1579,7 +1584,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
-  m_ShadowUpdateMode: 1
+  m_ShadowUpdateMode: 0
   m_AlwaysDrawDynamicShadows: 1
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -1606,11 +1611,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
-  m_Version: 14
-  m_ObsoleteShadowResolutionTier: 1
-  m_ObsoleteUseShadowQualitySettings: 0
-  m_ObsoleteCustomShadowResolution: 512
-  m_ObsoleteContactShadows: 0
 --- !u!1 &4120172604840788649
 GameObject:
   m_ObjectHideFlags: 0
@@ -1655,6 +1655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f19d9143a39eb3b46bc4563e9889cfbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.HighDefinition.Runtime::UnityEngine.Rendering.HighDefinition.DecalProjector
+  m_Version: 3
   m_Material: {fileID: 2100000, guid: 806488ded44258348a021242ba825a7c, type: 2}
   m_DrawDistance: 1000
   m_FadeScale: 0.9
@@ -1672,7 +1673,6 @@ MonoBehaviour:
   m_Offset: {x: 0, y: 0, z: 0}
   m_Size: {x: 0.7, y: 0.5, z: 0.1}
   m_FadeFactor: 1
-  m_Version: 3
 --- !u!1 &4228154618443376799
 GameObject:
   m_ObjectHideFlags: 0
@@ -1823,7 +1823,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2002,7 +2002,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4506517463020252348}
-  - component: {fileID: 6893747596504639033}
   m_Layer: 0
   m_Name: Room2_CustomTest_LCZ
   m_TagString: Untagged
@@ -2028,23 +2027,6 @@ Transform:
   - {fileID: 1859744912279289249}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6893747596504639033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6498998104503724965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1bd1b634877afb4798c6f5642debce1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomController
-  roomMesh: {fileID: 8706748041459390940}
-  lighting: {fileID: 5462684477542603507}
-  other: {fileID: 3210074969702948190}
-  disabledToNeutralDistance: 30
-  neutralToEnabledDistance: 25
 --- !u!1 &6810761363519643521
 GameObject:
   m_ObjectHideFlags: 0
@@ -2118,7 +2100,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &9170514955549589149
 Transform:
@@ -2295,7 +2277,7 @@ MeshRenderer:
   - {fileID: -5357757427790777556, guid: f16f7bddd027b7c469e64026dfebc32a, type: 3}
   - {fileID: 5994157469074883690, guid: f16f7bddd027b7c469e64026dfebc32a, type: 3}
   - {fileID: 2100000, guid: b4741aaf38d2789419a5b189889d52ee, type: 2}
-  - {fileID: 2100000, guid: 8ed8d8d537d48b142aed35e7e5dbc884, type: 2}
+  - {fileID: 2100000, guid: 793f7b48f6cd106488e62a564a7631e7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3020,13 +3002,38 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7898394887670464533, guid: 2b6285796ce936b468acb39d75ca54d9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4355934757912339021}
   m_SourcePrefab: {fileID: 100100000, guid: 2b6285796ce936b468acb39d75ca54d9, type: 3}
 --- !u!4 &1816688102406978542 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7723071682985669374, guid: 2b6285796ce936b468acb39d75ca54d9, type: 3}
   m_PrefabInstance: {fileID: 8222430470568691984}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2271868921793759493 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7898394887670464533, guid: 2b6285796ce936b468acb39d75ca54d9, type: 3}
+  m_PrefabInstance: {fileID: 8222430470568691984}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4355934757912339021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2271868921793759493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45910f461be5f3444ab69433f3b14acb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExecuteOnDate
+  whatToDo: 02000000
+  executeOnStart: 1
+  year: -1
+  month: 12
+  day: -1
 --- !u!1001 &8230737711665043165
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3268,8 +3275,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7898394887670464533, guid: 2b6285796ce936b468acb39d75ca54d9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7309992692830155389}
   m_SourcePrefab: {fileID: 100100000, guid: 2b6285796ce936b468acb39d75ca54d9, type: 3}
+--- !u!1 &1355984202938851658 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7898394887670464533, guid: 2b6285796ce936b468acb39d75ca54d9, type: 3}
+  m_PrefabInstance: {fileID: 9173216986206445919}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7309992692830155389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1355984202938851658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45910f461be5f3444ab69433f3b14acb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExecuteOnDate
+  whatToDo: 02000000
+  executeOnStart: 1
+  year: -1
+  month: 12
+  day: -1
 --- !u!4 &1468187744950227873 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7723071682985669374, guid: 2b6285796ce936b468acb39d75ca54d9, type: 3}

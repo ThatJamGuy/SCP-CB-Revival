@@ -249,7 +249,6 @@ Transform:
   m_Children:
   - {fileID: 3236173739783627326}
   - {fileID: 340885104819565455}
-  - {fileID: 6184785298610162536}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6218250711187165439
@@ -273,11 +272,11 @@ MonoBehaviour:
   openDistance: 0.85
   doorSoundEvent:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: 67685723
+      Data2: 1223482247
+      Data3: -1555128421
+      Data4: -388608325
+    Path: event:/SFX/Machines/Doors/Door_Elevator
   onDoorOpening:
     m_PersistentCalls:
       m_Calls: []
@@ -383,7 +382,7 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: 78a48c2ade50a50499ca476e28cc1e60, type: 2}
   - {fileID: 2100000, guid: 437f77d3e32f2db4eb83e1e955d072f0, type: 2}
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -439,7 +438,7 @@ GameObject:
   - component: {fileID: 2374894469874174796}
   - component: {fileID: 5999421129132143922}
   - component: {fileID: 77792026480106922}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: InteractCol
   m_TagString: Interact
   m_Icon: {fileID: 0}
@@ -494,7 +493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
-  interactionCooldown: 0.5
+  interactionCooldown: 0.2
   buttonPressSound:
     Guid:
       Data1: -101897791
@@ -748,69 +747,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!1 &6519278111938843646
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6184785298610162536}
-  - component: {fileID: 8996776334582318062}
-  m_Layer: 7
-  m_Name: EventEmitter
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6184785298610162536
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6519278111938843646}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3122119632420647235}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8996776334582318062
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6519278111938843646}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: -676782065
-      Data2: 1186320859
-      Data3: -370646880
-      Data4: 1931670340
-    Path: event:/SFX/Door/Door_LCZ
-  Event: 
-  EventPlayTrigger: 0
-  EventStopTrigger: 12
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
 --- !u!1 &7384547625570225657
 GameObject:
   m_ObjectHideFlags: 0
@@ -971,7 +907,7 @@ GameObject:
   - component: {fileID: 3811439040352282340}
   - component: {fileID: 4334435854430210112}
   - component: {fileID: 5651155956711512201}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: InteractCol
   m_TagString: Interact
   m_Icon: {fileID: 0}
@@ -1026,7 +962,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
-  interactionCooldown: 0.5
+  interactionCooldown: 0.2
   buttonPressSound:
     Guid:
       Data1: -101897791
@@ -1112,7 +1048,7 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: 78a48c2ade50a50499ca476e28cc1e60, type: 2}
   - {fileID: 2100000, guid: 437f77d3e32f2db4eb83e1e955d072f0, type: 2}
-  - {fileID: 2100000, guid: 090b6c57ff05aee4690eceae97da533a, type: 2}
+  - {fileID: 2100000, guid: 0adfcdd5d6457974cabccfd41a6844cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

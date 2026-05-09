@@ -11,15 +11,17 @@ public class Player : MonoBehaviour {
     public float sprintSpeed = 7f;
     public float crouchSpeed = 1f;
 
+    [Header("Player Modifiers")] 
+    public float staminaDepletionModifier;
+    public float blinkDepletionModifier;
+    public float bloodLossModifier;
+
     [Header("Player States")] 
     public bool disableInput;
     public bool isMoving;
     public bool isSprinting;
     public bool isCrouching;
     public bool isDead;
-    
-    [Header("Player Status")]
-    [Range(0, 1)] public float stamina = 1f;
 
     [HideInInspector] public SettingsData settingsData;
     
