@@ -13,12 +13,13 @@ public class PlayerMovement : MonoBehaviour {
     [Header("Stamina Settings")]
     [SerializeField] private float staminaDrainRate = 0.2f;
     [SerializeField] private float staminaRegenRate = 0.1f;
-    [SerializeField] private Slider temporaryStaminaSlider;
+    [SerializeField] private Slider temporaryStaminaSlider; // TODO: REMOVE ME!!!
 
     [Header("References")] 
     [SerializeField] private CharacterController characterController;
     [SerializeField] private Transform playerCameraRoot;
 
+    #region Private Variables
     private static Player player => Player.Instance;
     private static InputManager inputManager => InputManager.Instance;
 
@@ -43,6 +44,7 @@ public class PlayerMovement : MonoBehaviour {
     private const float STANDING_HEIGHT = 2.2f;
     private const float CROUCHING_HEIGHT = 0.5f;
     private const float MAX_STAMINA = 1;
+    #endregion
 
     #region Unity Callbacks
     private void OnDisable() {
@@ -116,20 +118,28 @@ public class PlayerMovement : MonoBehaviour {
     private void HandleStamina() {
         temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
         
+        // If the player is moving, sprinting, and not sprint locked then do the stuff in this if statement
         if (isSprinting && !sprintLocked && player.isMoving) {
+            // Determine the total drain rate based on the default drain rate * the depletion modifier if applicable
+            // Then subtract the current stamina based on this determined drain rate
             var finalDrainRate = staminaDrainRate * (1f + player.staminaDepletionModifier);
             currentStamina = Mathf.Max(currentStamina - finalDrainRate * Time.deltaTime, 0f);
-
+            
+            // Is the stamina more than 0? Too bad, go away
             if (!(currentStamina <= 0f)) return;
             
+            // Okay I guess you have stamina still. I'll give you zero stamina on the dot, and stop you from sprinting
             currentStamina = 0f;
             sprintLocked = true;
             isSprinting = false;
             player.isSprinting = false;
         }
+        // If the player is not moving, sprinting, or sprint locked then check if curr stamina is less than max stamina
         else if (currentStamina < MAX_STAMINA) {
+            // Start refilling the stamina based on the staminaRegenRate
             currentStamina = Mathf.Min(currentStamina + staminaRegenRate * Time.deltaTime, MAX_STAMINA);
-
+            
+            // Wait until stamina is greater than 0.1 before player can sprint again. Presents sprint tapping
             if (currentStamina > 0.1f)
                 sprintLocked = false;
         }
@@ -137,6 +147,7 @@ public class PlayerMovement : MonoBehaviour {
         //temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
     }
 
+    #region Input Callbacks
     private void OnSprintStarted(InputAction.CallbackContext ctx) {
         if (isCrouching || sprintLocked) return;
         isSprinting = true;
@@ -149,6 +160,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void OnCrouchPerformed(InputAction.CallbackContext ctx) => AttemptToToggleCrouch();
+    #endregion
 
     #region Crouching
     // When hitting the crouch button, if crouching stand, otherwise start crouching
@@ -198,21 +210,4 @@ public class PlayerMovement : MonoBehaviour {
     #endregion
     
     #endregion
-
-    /*#region Stamina
-    private void HandleStamina() {
-        if (playerAccessor.isSprinting && !playerAccessor.infiniteStamina && !playerAccessor.isCrouching && playerAccessor.isMoving && !sprintLocked) {
-            float drainRate = staminaDrainRate * (1f + playerAccessor.staminaDepletionModifier);
-            stamina = Mathf.Max(stamina - drainRate * Time.deltaTime, 0f);
-            if (stamina <= 0f) { stamina = 0f; sprintLocked = true; }
-        }
-        else if (stamina < maxStamina) {
-            stamina = Mathf.Min(stamina + staminaRegenRate * Time.deltaTime, maxStamina);
-            //if (stamina > 0f && im != null && !im.IsSprinting) sprintLocked = false;
-        }
-
-        //if (im != null && !im.IsSprinting) sprintLocked = false;
-        if (staminaSlider) staminaSlider.value = stamina / maxStamina;
-    }
-    #endregion*/
 }

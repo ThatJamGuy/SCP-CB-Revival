@@ -22,10 +22,7 @@ public class DoorButton : MonoBehaviour, IInteractable {
     #region Public Methods
     public void Interact(PlayerInteraction playerInteraction) {
         // If a linked door is missing, disallow functionality as this script in meant specifically for doors
-        if (!linkedDoor) {
-            Debug.Log($"[DoorButton ({linkedDoor})] Button is missing a linked door!");
-            return;
-        }
+        if (!linkedDoor) return;
         
         // If the interaction is disabled, do not allow things inside interact to be executed
         if (!canInteract) return;
@@ -43,7 +40,7 @@ public class DoorButton : MonoBehaviour, IInteractable {
 
         // If the previous check passed, play button sound
         AudioManager.PlayOneShot(buttonPressSound, transform.position);
-        if (buttonAnimator != null) buttonAnimator.Play("ModernButtonPress");
+        if (buttonAnimator) buttonAnimator.Play("ModernButtonPress");
 
         // Tells the linked door to toggle it's current state
         linkedDoor.ToggleDoorState();

@@ -25,7 +25,7 @@ public class Player : MonoBehaviour {
 
     [HideInInspector] public SettingsData settingsData;
     
-    private static bool _desiredCursorVisible;
+    private static bool desiredCursorVisible;
 
     #region Unity Callbacks
     private void Awake() {
@@ -55,13 +55,13 @@ public class Player : MonoBehaviour {
     // Apply cursor state only when on KBM; skip silently on controller
     private static void ApplyCursorState() {
         if (InputManager.Instance.UsingController) return;
-        Cursor.lockState = _desiredCursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = _desiredCursorVisible;
+        Cursor.lockState = desiredCursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = desiredCursorVisible;
     }
     #endregion
 
     public static void SetCursorState(bool visibleAndUnlocked) {
-        _desiredCursorVisible = visibleAndUnlocked;
+        desiredCursorVisible = visibleAndUnlocked;
         ApplyCursorState();
     }
 }
