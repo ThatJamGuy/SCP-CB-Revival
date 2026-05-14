@@ -45,9 +45,9 @@ public class EVNT_PostBreach : MonoBehaviour {
 
         //CanvasInstance.instance.introScreenStuff.SetActive(true);
 
-        MusicManager.instance.SetMusicState(MusicState.CreepyMusic03);
+        //MusicManager.instance.SetMusicState(MusicState.CreepyMusic03);
 
-        eventInstance = FMODUnity.RuntimeManager.CreateInstance(FMODEvents.instance.alarm2);
+        //eventInstance = FMODUnity.RuntimeManager.CreateInstance(FMODEvents.instance.alarm2);
 
         callbackHandle = GCHandle.Alloc(this);
         eventInstance.setUserData(GCHandle.ToIntPtr(callbackHandle));
@@ -65,7 +65,7 @@ public class EVNT_PostBreach : MonoBehaviour {
     }
 
     public void ChangeMusicToLCZ() {
-        MusicManager.instance.SetMusicState(MusicState.LCZ);
+        //MusicManager.instance.SetMusicState(MusicState.LCZ);
     }
 
     private void HandleMarker(string marker) {

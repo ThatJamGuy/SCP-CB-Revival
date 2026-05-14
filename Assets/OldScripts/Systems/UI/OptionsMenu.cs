@@ -162,8 +162,8 @@ public class OptionsMenu : MonoBehaviour {
     }
 
     public void SetSoundtrack(int soundtrackID) {
-        if (MusicManager.instance == null) return;
-        MusicManager.instance.SetSoundtrack(soundtrackID);
+        //if (MusicManager.instance == null) return;
+        //MusicManager.instance.SetSoundtrack(soundtrackID);
         settings.soundtrack = soundtrackID;
         //Save();
     }

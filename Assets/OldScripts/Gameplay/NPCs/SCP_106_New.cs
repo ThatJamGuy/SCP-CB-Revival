@@ -153,7 +153,7 @@ public class SCP_106_New : MonoBehaviour {
 
         if (currentTargetIsPlayer) {
             //AudioManager.instance.PlaySound(chaseEndEvent, transform.position);
-            MusicManager.instance.SetMusicState(MusicState.LCZ);
+            //MusicManager.instance.SetMusicState(MusicState.LCZ);
         }
 
         if (activeTarget != null) activeTarget = null;
@@ -166,7 +166,7 @@ public class SCP_106_New : MonoBehaviour {
         //AudioManager.instance.PlaySound(teslaRetreatSound, transform.position);
         if (currentTargetIsPlayer) {
             //AudioManager.instance.PlaySound(chaseEndEvent, transform.position);
-            MusicManager.instance.SetMusicState(MusicState.LCZ);
+            //MusicManager.instance.SetMusicState(MusicState.LCZ);
         }
 
         if (activeTarget != null) activeTarget = null;
@@ -193,7 +193,7 @@ public class SCP_106_New : MonoBehaviour {
 
         if (currentTargetIsPlayer) {
             //AudioManager.instance.PlaySound(chaseStartEvent, transform.position);
-            MusicManager.instance.SetMusicState(MusicState.scp106);
+            //MusicManager.instance.SetMusicState(MusicState.scp106);
 
             StartCoroutine(LaughCoroutine());
         }

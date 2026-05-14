@@ -16,7 +16,7 @@ public class MainMenuController : MonoBehaviour {
 
     #region Unity Callbacks
     private void Start() {
-        MusicManager.instance.SetMusicState(MusicState.Menu);
+        //MusicManager.instance.SetMusicState(MusicState.Menu);
 
         versionText.text = Application.version;
 
