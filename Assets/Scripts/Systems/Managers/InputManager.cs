@@ -8,7 +8,7 @@ using UnityEngine.InputSystem.Utilities;
 /// I am not a fan of this new input system because there's so many ways to do the same thing bruh
 /// </summary>
 public sealed class InputManager : MonoBehaviour {
-    public static InputManager Instance;
+    public static InputManager Instance { get; private set; }
     public event Action<bool> OnInputDeviceChanged;
     public bool UsingController { get; private set; }
     

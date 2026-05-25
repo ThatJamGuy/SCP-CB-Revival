@@ -5,9 +5,10 @@ using EditorAttributes;
 /// Globally accessible script to handle most things related to the state of the game
 /// </summary>
 public class GameManager : MonoBehaviour {
-    public static GameManager Instance;
+    public static GameManager Instance { get; private set; }
 
     [ReadOnly] public int currentDifficulty;
+    [ReadOnly] public int currentZone;
 
     [HideInInspector] public SaveData currentSaveData;
 
@@ -19,25 +20,9 @@ public class GameManager : MonoBehaviour {
         // Set the current save data to the save.json file for future reference. Will later support multiple saves
         currentSaveData = DataSaver.Load<SaveData>("save.json");
         
-        // Set the current difficulty to the one in settings.json
+        // Set some save data values to the ones in settings.json
         currentDifficulty = currentSaveData.difficulty;
-    }
-
-    private void Start() {
-        // After everything is initialized print out some debug stuff to confirm where the game state stands
-        if (currentSaveData != null) {
-            switch (currentDifficulty) {
-                case 0:
-                    Debug.Log("<color=aqua>[GameManager]</color> Current difficulty set to: <color=green>Easy</color>");
-                    break;
-                case 1:
-                    Debug.Log("<color=aqua>[GameManager]</color> Current difficulty set to: <color=yellow>Euclid</color>");
-                    break;
-                case 2:
-                    Debug.Log("<color=aqua>[GameManager]</color> Current difficulty set to: <color=red>Keter</color>");
-                    break;
-            }
-        }
+        currentZone = currentSaveData.currentZone;
     }
 
     public static void PauseGame() {
