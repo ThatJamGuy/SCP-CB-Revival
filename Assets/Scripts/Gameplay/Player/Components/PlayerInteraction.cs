@@ -19,6 +19,9 @@ public class PlayerInteraction : MonoBehaviour {
 
     private InputAction interactAction;
     
+    private IInteractable currentInteractablePress;
+    private IHoldInteractable currentInteractableHold;
+    
     private GameObject currentInteractable;
     private RectTransform canvasRectTransform;
     private Image interactIcon;
@@ -92,6 +95,14 @@ public class PlayerInteraction : MonoBehaviour {
         
         // Set the current interactable to the closest one found in the foreach method
         currentInteractable = closestInteractable;
+
+        currentInteractablePress = closestInteractable
+            ? closestInteractable.GetComponent<IInteractable>()
+            : null;
+
+        currentInteractableHold = closestInteractable
+            ? closestInteractable.GetComponent<IHoldInteractable>()
+            : null;
         
         // If there is a closestInteractable available, try and show the interact icon at the screen position of it
         // Otherwise set that John to be inactive
@@ -124,13 +135,32 @@ public class PlayerInteraction : MonoBehaviour {
     #endregion
     
     #region Handle Interaction Input
+
     private void HandleInteraction() {
         if (!currentInteractable) return;
-        if (!interactAction.triggered) return;
-        
-        var interactable = currentInteractable.GetComponent<IInteractable>();
-            
-        interactable?.Interact(this);
+
+        currentInteractablePress ??=
+            currentInteractable.GetComponent<IInteractable>();
+
+        currentInteractableHold ??=
+            currentInteractable.GetComponent<IHoldInteractable>();
+
+        // Hold interactions
+        if (currentInteractableHold != null) {
+            if (interactAction.WasPressedThisFrame())
+                currentInteractableHold.BeginInteract(this);
+
+            if (interactAction.WasReleasedThisFrame())
+                currentInteractableHold.EndInteract(this);
+
+            return;
+        }
+
+        // Single press interactions
+        if (currentInteractablePress != null &&
+            interactAction.triggered) {
+            currentInteractablePress.Interact(this);
+        }
     }
     #endregion
     

@@ -1,12 +1,16 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
+using EditorAttributes;
 
 public class I_ButtonGeneric : MonoBehaviour, IInteractable {
     [Header("Button Settings")]
     [SerializeField] private bool useInteractMessage;
-    [SerializeField] private float interactionCooldown = 0.5f;
-    [SerializeField] private string interactMessage;
+    [SerializeField] private float interactionCooldown = 0.2f;
+    
+    [SerializeField, ShowField(nameof(useInteractMessage))] private string interactMessage;
+    [SerializeField, ShowField(nameof(useInteractMessage))] private float interactMessageDuration = 3f;
+    [SerializeField, ShowField(nameof(useInteractMessage))] private float interactMessageFadeDuration = 2f;
 
     [Header("Events")]
     [SerializeField] private UnityEvent onInteract;
@@ -14,11 +18,14 @@ public class I_ButtonGeneric : MonoBehaviour, IInteractable {
     private bool canInteract = true;
 
     public void Interact(PlayerInteraction playerInteraction) {
-        if (!canInteract) return;
+        if (!canInteract) return; // Do nothing if the player cannot interact
 
-        onInteract?.Invoke();
-        if (useInteractMessage) InfoTextManager.Instance.NotifyPlayer(interactMessage);
-        StartCoroutine(Cooldown());
+        onInteract?.Invoke(); // Invoke the event
+        
+        // If there is to be an interact message, trigger that as well
+        if (useInteractMessage && InfoTextManager.Instance) InfoTextManager.Instance.NotifyPlayer(interactMessage);
+        
+        StartCoroutine(Cooldown()); // Begin the cooldown before interaction can occur again
     }
 
     private IEnumerator Cooldown() {

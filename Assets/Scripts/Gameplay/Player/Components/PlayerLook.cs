@@ -44,7 +44,7 @@ public class PlayerLook : MonoBehaviour {
     }
 
     private void Update() {
-        if (cantFunction || Player.Instance.disableInput) return;
+        if (cantFunction || Player.Instance.disableInput || Player.Instance.disableLooking) return;
         
         // Take the raw Vector2 (X, Y) input of the look action and multiply it by the mouse sensitivity
         // Then run the rawInput through ApplyMouseSmoothing to see if it needs to apply any smoothing at all

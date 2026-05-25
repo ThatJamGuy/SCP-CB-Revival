@@ -18,6 +18,7 @@ public class Player : MonoBehaviour {
 
     [Header("Player States")] 
     public bool disableInput;
+    public bool disableLooking;
     public bool isMoving;
     public bool isSprinting;
     public bool isCrouching;
