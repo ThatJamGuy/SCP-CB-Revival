@@ -1,5 +1,6 @@
 using UnityEngine;
 using EditorAttributes;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Globally accessible script to handle most things related to the state of the game
@@ -11,8 +12,12 @@ public class GameManager : MonoBehaviour {
     [ReadOnly] public int currentZone;
 
     [HideInInspector] public SaveData currentSaveData;
+    
+    private static readonly int Quicksave = Animator.StringToHash("Quicksave");
 
-    public void Awake() {
+    private InputAction quicksaveAction;
+
+    private void Awake() {
         // Ensure only one GameManager exists in the scene to prevent issues
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
@@ -23,6 +28,17 @@ public class GameManager : MonoBehaviour {
         // Set some save data values to the ones in settings.json
         currentDifficulty = currentSaveData.difficulty;
         currentZone = currentSaveData.currentZone;
+    }
+
+    private void Start() {
+        quicksaveAction = InputManager.Instance.GetAction("Player", "Quicksave");
+    }
+
+    private void Update() {
+        // Check for quicksave action
+        if (quicksaveAction.triggered) {
+            SaveGame(true);
+        }
     }
 
     public static void PauseGame() {
@@ -39,5 +55,13 @@ public class GameManager : MonoBehaviour {
         Player.SetCursorState(false);
         Player.Instance.disableInput = false;
         AudioManager.Instance.ResumeAllSFX();
+    }
+
+    public static void SaveGame(bool playSound = true) {
+        CanvasInstance.Instance.HUD_QuickSave.SetTrigger(Quicksave);
+        
+        if (playSound) {
+            AudioManager.PlayOneShot(AudioEventsHolder.Instance.quicksave01, Player.Instance.transform.position);
+        }
     }
 }

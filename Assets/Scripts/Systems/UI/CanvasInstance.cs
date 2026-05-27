@@ -22,6 +22,7 @@ public class CanvasInstance : MonoBehaviour {
     public GameObject deathMenu;
     public TextMeshProUGUI deathMenuDeathCauseText;
     public GameObject introScreenStuff;
+    public Animator HUD_QuickSave;
     
     [Header("Pause Menu")]
     public GameObject controllerTooltips;
