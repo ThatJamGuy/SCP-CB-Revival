@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IDropHandler {
+public class Slot : MonoBehaviour, IDropHandler {
     [SerializeField] private GameObject outline;
 
     public GameObject Item => transform.childCount > 1 ? transform.GetChild(1).gameObject : null;
@@ -11,23 +11,6 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
     private void Awake() {
         if (rectTransform == null)
             rectTransform = GetComponent<RectTransform>();
-    }
-
-    private void OnEnable() {
-        outline.SetActive(false);
-    }
-
-    public void OnPointerEnter(PointerEventData eventData) {
-        SetOutlineActive(true);
-    }
-
-    public void OnPointerExit(PointerEventData eventData) {
-        SetOutlineActive(false);
-    }
-
-    private void SetOutlineActive(bool active) {
-        if (outline != null && outline.activeSelf != active)
-            outline.SetActive(active);
     }
 
     public void OnDrop(PointerEventData eventData) {

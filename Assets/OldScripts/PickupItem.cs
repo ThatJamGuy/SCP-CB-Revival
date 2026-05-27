@@ -2,7 +2,7 @@ using NUnit.Framework.Interfaces;
 using UnityEngine;
 
 public class PickupItem : MonoBehaviour, IInteractable {
-    public ItemData itemData;
+    public OldItemData itemData;
 
     public void Interact(PlayerInteraction playerInteraciton) {
         if (InventorySystem.instance.IsFull()) {

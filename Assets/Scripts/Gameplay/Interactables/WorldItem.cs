@@ -1,16 +1,16 @@
 using UnityEngine;
+using FMODUnity;
 
-public class WorldItem : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+/// <summary>
+/// Script attached to the physical representations of items scattered around the world. Handles pickup logic
+/// </summary>
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+[AddComponentMenu("SCP:CBR/World Item")]
+public class WorldItem : MonoBehaviour, IInteractable {
+    [SerializeField] private EventReference pickupSound;
+    
+    public void Interact(PlayerInteraction playerInteraction) {
+        AudioManager.PlayOneShot(pickupSound, transform.position);
+        Destroy(gameObject); // Temporary thing
     }
 }

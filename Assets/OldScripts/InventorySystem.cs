@@ -8,7 +8,7 @@ public class InventorySystem : MonoBehaviour {
     public static InventorySystem instance { get; private set; }
 
     //[SerializeField] private IngameMenuManager ingameMenuManager;
-    public ItemData currentHeldItemData;
+    public OldItemData currentHeldItemData;
 
     [Header("Input")]
     public InputActionAsset playerControls;
@@ -68,7 +68,7 @@ public class InventorySystem : MonoBehaviour {
         return null;
     }
 
-    public void EquipItem(ItemData data) {
+    public void EquipItem(OldItemData data) {
         //if (CanvasInstance.instance.heldDocumentDisplay.activeSelf) return;
 
         currentHeldItemData = data;
@@ -76,7 +76,7 @@ public class InventorySystem : MonoBehaviour {
         //ingameMenuManager.ToggleMenuByID(0);
     }
 
-    public void EquipDocument(ItemData data) {
+    public void EquipDocument(OldItemData data) {
         //if (CanvasInstance.instance.heldDocumentDisplay.activeSelf) return;
 
         currentHeldItemData = data;

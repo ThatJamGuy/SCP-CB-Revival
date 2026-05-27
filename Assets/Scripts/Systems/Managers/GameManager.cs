@@ -1,3 +1,5 @@
+using System;
+using System.Globalization;
 using UnityEngine;
 using EditorAttributes;
 using UnityEngine.InputSystem;
@@ -8,6 +10,10 @@ using UnityEngine.InputSystem;
 public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
 
+    [Header("Main Game State")] 
+    [ReadOnly] public bool lczLockdownLifted;
+    
+    [Header("Other Save States")]
     [ReadOnly] public int currentDifficulty;
     [ReadOnly] public int currentZone;
 
@@ -57,8 +63,28 @@ public class GameManager : MonoBehaviour {
         AudioManager.Instance.ResumeAllSFX();
     }
 
-    public static void SaveGame(bool playSound = true) {
+    public void SaveGame(bool playSound = true) {
         CanvasInstance.Instance.HUD_QuickSave.SetTrigger(Quicksave);
+
+        currentSaveData.currentDateTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
+        currentSaveData.currentGameVersion = "v" + Application.version;
+        currentSaveData.playerPos = Player.Instance.transform.position;
+        currentSaveData.playerRot = Player.Instance.transform.rotation;
+        currentSaveData.lczLockdownLifted = lczLockdownLifted;
+        
+        // List of things that should be saved on file for v0.0.6. Map seed & name are already saved on save creation
+        //TODO: Save player inventory
+        //TODO: Save player blink and stamina stats
+        //TODO: Save SCP-173 location
+        //TODO: Save SCP-173 state (Is he chasing the player right now?)
+        //TODO: Save SCP-106 spawn counter
+        //TODO: Save SCP-106 state (Is he chasing the player right now?)
+        //TODO: Save SCP-106 location (IF HE IS CHASING THE PLAYER OR OTHER TARGET ONLY)
+        //TODO: Save currently playing music (Even if a chase is happening, the triggers don't account for loading)
+        //TODO: Save if LCZ has been lifted from lockdown (Find way to flip the lever properly on load???)
+        //TODO: Save door states. Might put this one off for now, not as important to save open/close states (Idk how)
+        
+        DataSaver.Save(currentSaveData, "save.json");
         
         if (playSound) {
             AudioManager.PlayOneShot(AudioEventsHolder.Instance.quicksave01, Player.Instance.transform.position);

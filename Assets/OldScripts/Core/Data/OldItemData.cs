@@ -3,7 +3,7 @@ using EditorAttributes;
 using FMODUnity;
 
 [CreateAssetMenu(fileName = "NewItem", menuName = "SCPCBR/Item Data")]
-public class ItemData : ScriptableObject {
+public class OldItemData : ScriptableObject {
     public enum Type { Normal, Keycard, Consumable, Document, Equipment }
 
     [Header("Basic Info")]

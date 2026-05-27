@@ -32,7 +32,10 @@ public class MusicManager : MonoBehaviour {
         else Destroy(gameObject);
         
         settingsData = DataSaver.Load<SettingsData>("settings.json");
+    }
 
+    private void Start() {
+        // Moved Init(); into start so that disabling MusicManager doesn't make it work anyway
         Init();
     }
     

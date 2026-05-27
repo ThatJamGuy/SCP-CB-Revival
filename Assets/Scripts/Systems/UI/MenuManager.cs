@@ -92,10 +92,24 @@ public class MenuManager : MonoBehaviour {
                 break;
             }
         }
+        
+        // Welcome to this abhorrent section of code that allows Euclid and Keter modes to pause (or not pause)
+        // properly, and it's all hard coded, which is not good by any means. But does it work? Yes. For now...
+        // One day this might end up in a code comments video, so hello from 5/27/2026. Are gas prices down yet?
+        // If I'm not in a video, hello to the random guy reading my code, and I ask you the same question ^^^
+        
+        // If the mode is Euclid specifically, do this pausing stuff anyway because inventory menu needs it
+        if (gameManager.currentDifficulty == 1) {
+            Player.Instance.disableInput = !Player.Instance.disableInput;
+            Player.Instance.isMoving = false;
+            Player.SetCursorState(Player.Instance.disableInput);
+            return;
+        }
 
         // If mode is Keter or higher, only disable inputs. If it's Safe or Euclid, pause and resume respectively
         if (gameManager.currentDifficulty >= 2) {
             Player.Instance.disableInput = !Player.Instance.disableInput;
+            Player.Instance.isMoving = false;
             Player.SetCursorState(Player.Instance.disableInput);
             return;
         }
