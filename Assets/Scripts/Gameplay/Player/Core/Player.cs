@@ -4,8 +4,8 @@ using UnityEngine;
 /// Player instance class that will carry all publicly available information about the player.
 /// </summary>
 public class Player : MonoBehaviour {
-    public static Player Instance;
-    
+    public static Player Instance { get; private set; }
+
     [Header("Movements Settings")]
     public float walkSpeed = 3f;
     public float sprintSpeed = 7f;
@@ -24,9 +24,12 @@ public class Player : MonoBehaviour {
     public bool isCrouching;
     public bool isDead;
 
+    [Header("Accessible References")] 
+    public Camera playerCamera;
+
     [HideInInspector] public SettingsData settingsData;
-    
-    private static bool desiredCursorVisible;
+
+    private static bool desiredCursorVisible { get; set; }
 
     #region Unity Callbacks
     private void Awake() {

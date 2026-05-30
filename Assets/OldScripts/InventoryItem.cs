@@ -15,10 +15,10 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler {
             case OldItemData.Type.Normal:
                 break;
             case OldItemData.Type.Keycard:
-                InventorySystem.instance.EquipItem(itemData);
+                OldInventorySystem.instance.EquipItem(itemData);
                 break;
             case OldItemData.Type.Document:
-                InventorySystem.instance.EquipDocument(itemData);
+                OldInventorySystem.instance.EquipDocument(itemData);
                 break;
             case OldItemData.Type.Consumable:
             case OldItemData.Type.Equipment:

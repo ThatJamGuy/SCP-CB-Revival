@@ -165,6 +165,7 @@ public class PlayerMovement : MonoBehaviour {
     #region Crouching
     // When hitting the crouch button, if crouching stand, otherwise start crouching
     private void AttemptToToggleCrouch() {
+        if (player.disableInput) return; // Added this so the console would stop making me crouch
         if (isCrouching) TryToStand();
         else StartCrouch();
     }

@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using PixeLadder.EasyTooltip;
 
 /// <summary>
 /// Script to handle the opening and closing of various in game menus.
@@ -78,6 +79,9 @@ public class MenuManager : MonoBehaviour {
         menu.isOpen = open;
         menu.associatedMenuScreen.SetActive(open);
         RefreshPauseState();
+        
+        // Cleanup for the tooltip so it's not sticking around on the screen
+        TooltipManager.Instance.HideTooltip();
     }
 
     private void RefreshPauseState() {

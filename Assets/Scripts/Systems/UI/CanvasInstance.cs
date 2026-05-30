@@ -7,21 +7,12 @@ using TMPro;
 /// This allows the Player to still function without the canvas present and vice versa
 /// </summary>
 public class CanvasInstance : MonoBehaviour {
-    public static CanvasInstance Instance;
+    public static CanvasInstance Instance { get; private set; }
 
     // The different things that need to be accessed from external scripts
     [Header("Single Objects")]
     public Image interactIcon;
     public RectTransform canvasRectTransform;
-    public GameObject heldItemDisplay;
-    public GameObject heldDocumentDisplay;
-    public Slider blinkBar;
-    public Image blinkBarBackground;
-    public Image blinkBarFill;
-    public GameObject blinkOverlay;
-    public GameObject deathMenu;
-    public TextMeshProUGUI deathMenuDeathCauseText;
-    public GameObject introScreenStuff;
     public Animator HUD_QuickSave;
     
     [Header("Pause Menu")]

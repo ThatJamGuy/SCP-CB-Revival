@@ -2,6 +2,7 @@ using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
 using EditorAttributes;
+using IngameDebugConsole;
 
 /// <summary>
 /// Global script to handle everything music related, current regular loops as of right now
@@ -35,8 +36,11 @@ public class MusicManager : MonoBehaviour {
     }
 
     private void Start() {
-        // Moved Init(); into start so that disabling MusicManager doesn't make it work anyway
-        Init();
+        // Register all these music related commands so that I don't need those clunky editor buttons anymore
+        DebugLogConsole.AddCommand<int, int>("startmusic",
+            "Plays a given music track based on it's ID number. Intensity only applies to LCZ.", SetTrack);
+        DebugLogConsole.AddCommand<int>("setsoundtrack", "Sets the current soundtrack.", SetSoundtrack);
+        DebugLogConsole.AddCommand("stopmusic", "Stops all currently playing music.", StopAllMusic);
     }
     
     private void OnDestroy() {
@@ -71,7 +75,7 @@ public class MusicManager : MonoBehaviour {
     #endregion
     
     #region Public Methods
-
+    
     public void SetTrack(int trackIndex, int intensity = 0) {
         if (!initialized) Init(); // Ensure that there is a music instance available
         
@@ -90,42 +94,11 @@ public class MusicManager : MonoBehaviour {
         musicInstance.setParameterByID(soundtrackParameterID, currentSoundtrack); // Finally set the FMOD parameter
     }
 
-    public void StopAllMusic(STOP_MODE stopMode = STOP_MODE.ALLOWFADEOUT) {
+    public void StopAllMusic() {
         if (!initialized) return; // If the MusicManager isn't ready yet do nothing
         
-        musicInstance.stop(stopMode); // Stop all music using a fade out by default but can be changed
+        musicInstance.stop(STOP_MODE.ALLOWFADEOUT); // Stop all music using a fade out by default but It no work :(
         initialized = false; // No longer initialized, trigger another Init() on next track played
-    }
-    #endregion
-    
-    #region Debugging Methods
-
-    // DELETE ALL THESE LATER, ESPECIALLY WHEN THE CONSOLE IS ADDED BACK
-    
-    [Button("Pick Random Soundtrack")]
-    public void PickRandomSoundtrack() {
-        var num = Random.Range(0, 3);
-        SetSoundtrack(num);
-    }
-    
-    [Button("Play LCZ Music (Subtle)")]
-    public void PlayLCZMusic() {
-        SetTrack(1);
-    }
-    
-    [Button("Play LCZ Music (Primary)")]
-    public void PlayLCZMusicPrimary() {
-        SetTrack(1, 1);
-    }
-
-    [Button("Play Security Room Music")]
-    public void PlaySLMusic() {
-        SetTrack(2);
-    }
-
-    [Button("Stop All Music")]
-    public void StopMusic() {
-        StopAllMusic();
     }
     #endregion
 }

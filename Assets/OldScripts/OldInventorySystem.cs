@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class InventorySystem : MonoBehaviour {
-    public static InventorySystem instance { get; private set; }
+public class OldInventorySystem : MonoBehaviour {
+    public static OldInventorySystem instance { get; private set; }
 
     //[SerializeField] private IngameMenuManager ingameMenuManager;
     public OldItemData currentHeldItemData;

@@ -22,22 +22,22 @@ public class KeycardButton : MonoBehaviour, IInteractable {
         if (!canInteract) return;
         StartCoroutine(Cooldown());
 
-        if (InventorySystem.instance.currentHeldItemData == null || InventorySystem.instance.currentHeldItemData.keyLevel == 0) {
+        if (OldInventorySystem.instance.currentHeldItemData == null || OldInventorySystem.instance.currentHeldItemData.keyLevel == 0) {
             //AudioManager.instance.PlaySound(keycardSwipeLocked, transform.position);
             InfoTextManager.Instance.NotifyPlayer("A keycard is required to operate this door.");
             return;
         }
 
-        if (InventorySystem.instance.currentHeldItemData != null) {
-            if (InventorySystem.instance.currentHeldItemData.keyLevel >= requiredKeyLevel) {
+        if (OldInventorySystem.instance.currentHeldItemData != null) {
+            if (OldInventorySystem.instance.currentHeldItemData.keyLevel >= requiredKeyLevel) {
                 //AudioManager.instance.PlaySound(keycardSwipeUnlock, transform.position);
                 InfoTextManager.Instance.NotifyPlayer("The keycard was inserted into the slot.");
-                InventorySystem.instance.UnequipItem();
+                OldInventorySystem.instance.UnequipItem();
                 linkedDoor.ToggleDoorState();
             } else {
                 //AudioManager.instance.PlaySound(keycardSwipeLocked, transform.position);
                 InfoTextManager.Instance.NotifyPlayer($"A keycard with security clearance {requiredKeyLevel} or higher is required to operate this door.");
-                InventorySystem.instance.UnequipItem();
+                OldInventorySystem.instance.UnequipItem();
                 return;
             }
         }

@@ -7,10 +7,17 @@ using FMODUnity;
 
 [AddComponentMenu("SCP:CBR/World Item")]
 public class WorldItem : MonoBehaviour, IInteractable {
+    [SerializeField] private ItemData associatedItemData;
     [SerializeField] private EventReference pickupSound;
-    
+ 
     public void Interact(PlayerInteraction playerInteraction) {
+        if (!InventorySystem.Instance || InventorySystem.Instance.IsFull()) {
+            InfoTextManager.Instance.NotifyPlayer("You cannot pick up any more items.");
+            return;
+        }
+ 
+        InventorySystem.Instance.AddItemToInventory(associatedItemData.itemIdentifier);
         AudioManager.PlayOneShot(pickupSound, transform.position);
-        Destroy(gameObject); // Temporary thing
+        Destroy(gameObject);
     }
 }

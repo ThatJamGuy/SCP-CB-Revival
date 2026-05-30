@@ -61,13 +61,13 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     private void DropItemIntoWorld() {
         if (inventoryItem.itemData?.worldPrefab == null) return;
 
-        Camera cam = PlayerAccessor.instance.playerCamera;
-        if (cam == null) return;
+        //Camera cam = PlayerAccessor.instance.playerCamera;
+        //if (cam == null) return;
 
-        Vector3 spawnPos = cam.transform.position + cam.transform.forward * 0.5f;
-        Instantiate(inventoryItem.itemData.worldPrefab, spawnPos, Quaternion.identity);
+        //Vector3 spawnPos = cam.transform.position + cam.transform.forward * 0.5f;
+        //Instantiate(inventoryItem.itemData.worldPrefab, spawnPos, Quaternion.identity);
 
-        InventorySystem.instance.RemoveItem(inventoryItem.itemData.itemName);
+        OldInventorySystem.instance.RemoveItem(inventoryItem.itemData.itemName);
         Destroy(gameObject);
     }
 }
