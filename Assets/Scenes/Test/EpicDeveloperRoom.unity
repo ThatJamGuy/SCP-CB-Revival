@@ -10948,6 +10948,7 @@ GameObject:
   m_Component:
   - component: {fileID: 543450653679174725}
   - component: {fileID: 919132149208063746}
+  - component: {fileID: 919132149208063748}
   - component: {fileID: 919132149208063745}
   - component: {fileID: 919132149208063744}
   - component: {fileID: 919132149208063747}
@@ -10971,7 +10972,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 857da58755ab32547b0b09cd25c088ed, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -11012,21 +11013,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SCP_049
   currentTarget: {fileID: 777610579442020189}
-  updatePathInterval: 0.2
-  stoppingDistance: 1.5
-  headBone: {fileID: 4791781077794224715}
-  visionRange: 20
-  visionAngle: 90
-  visionCheckInterval: 0.15
-  visionBlockMask:
-    serializedVersion: 2
-    m_Bits: 192
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 8
-  speedParam: Speed
-  agent: {fileID: 919132149208063747}
-  animator: {fileID: 919132149208063744}
+  locomotionSystem: {fileID: 919132149208063748}
 --- !u!195 &919132149208063747
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -11037,11 +11024,11 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 0
+  m_Speed: 1
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 360
-  m_StoppingDistance: 0
+  m_AngularSpeed: 120
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -11049,6 +11036,20 @@ NavMeshAgent:
   m_BaseOffset: -0.07
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &919132149208063748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132149208063743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a70e4c551f62244da9a08f27eac99b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPC_Locomotion
+  navMeshAgent: {fileID: 919132149208063747}
+  animator: {fileID: 919132149208063744}
 --- !u!224 &948670092498846739
 RectTransform:
   m_ObjectHideFlags: 0
