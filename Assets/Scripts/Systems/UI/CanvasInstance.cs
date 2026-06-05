@@ -19,6 +19,9 @@ public class CanvasInstance : MonoBehaviour {
     public GameObject controllerTooltips;
     public Button resumeButton;
 
+    [Header("Canvas References")] 
+    public Canvas screensCanvas;
+
     private void Awake() {
         // Ensure that only of one these exist to prevent issues
         if (Instance == null) Instance = this;

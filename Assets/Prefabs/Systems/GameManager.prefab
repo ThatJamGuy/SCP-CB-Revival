@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6783192009410483575}
   - component: {fileID: 8661496756510707625}
+  - component: {fileID: 4104403193213237458}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -44,8 +45,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f38640ed131e23b49a685ef2e8179ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  lczLockdownLifted: 0
   currentDifficulty: 0
+  currentZone: 0
   currentSaveData:
+    currentDateTime: CurrentDateTime
+    currentGameVersion: v0.0.5
     currentSaveName: Untitled
     currentMapSeed: DefaultSeed
     difficulty: 0
+    currentZone: 1
+    lczLockdownLifted: 0
+    playerPos: {x: 0, y: 0, z: 0}
+    playerRot: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4104403193213237458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3316988252148387290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea27803b61b203f4d99575ddada70715, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EntitySystem
+  standbyEntityList:
+  - {fileID: 1998921358069091522, guid: 639555c8687f61441a3a3a7647df9a65, type: 3}
+  - {fileID: 7591148403132998583, guid: aa50c72506b9df74aab3756a209870e3, type: 3}
+  - {fileID: 7034291063567092639, guid: aaadb59ee3ecc1c4cad11c2b2650d548, type: 3}
+  - {fileID: 538570090455416849, guid: 0ea0120f659779048820554b735d7fca, type: 3}

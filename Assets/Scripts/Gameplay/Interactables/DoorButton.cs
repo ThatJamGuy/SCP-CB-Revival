@@ -14,7 +14,7 @@ public class DoorButton : MonoBehaviour, IInteractable {
     [SerializeField] private EventReference buttonPressLockedSound;
 
     [Header("References")]
-    [SerializeField] private Door linkedDoor;
+    public Door linkedDoor;
     [SerializeField] private Animator buttonAnimator;
 
     private bool canInteract = true;

@@ -1,4 +1,5 @@
 using UnityEngine;
+using IngameDebugConsole;
 
 /// <summary>
 /// Player instance class that will carry all publicly available information about the player.
@@ -38,6 +39,10 @@ public class Player : MonoBehaviour {
         
         settingsData = DataSaver.Load<SettingsData>("settings.json");
     }
+
+    private void Start() {
+        DebugLogConsole.AddCommand("getpos", "Returns the current player XYZ coordinates", GetPlayerPos);
+    }
     
     private void OnEnable() {
         if (InputManager.Instance != null)
@@ -51,6 +56,12 @@ public class Player : MonoBehaviour {
     #endregion
     
     #region Private Methods
+
+    // Returns the current player XYZ coordinates
+    private void GetPlayerPos() {
+        Debug.Log("Player Position: " + gameObject.transform.position);
+    }
+    
     // Re-apply cursor state when switching back to KBM so menus restore correctly
     private static void OnDeviceChanged(bool usingController) {
         if (!usingController) ApplyCursorState();

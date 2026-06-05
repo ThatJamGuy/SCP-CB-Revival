@@ -22,7 +22,7 @@ public class KeycardButton : MonoBehaviour, IInteractable {
         if (!canInteract) return;
         StartCoroutine(Cooldown());
 
-        if (OldInventorySystem.instance.currentHeldItemData == null || OldInventorySystem.instance.currentHeldItemData.keyLevel == 0) {
+        /*if (OldInventorySystem.instance.currentHeldItemData == null || OldInventorySystem.instance.currentHeldItemData.keyLevel == 0) {
             //AudioManager.instance.PlaySound(keycardSwipeLocked, transform.position);
             InfoTextManager.Instance.NotifyPlayer("A keycard is required to operate this door.");
             return;
@@ -40,7 +40,7 @@ public class KeycardButton : MonoBehaviour, IInteractable {
                 OldInventorySystem.instance.UnequipItem();
                 return;
             }
-        }
+        }*/
     }
 
     private IEnumerator Cooldown() {

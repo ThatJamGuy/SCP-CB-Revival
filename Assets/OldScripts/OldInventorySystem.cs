@@ -8,7 +8,7 @@ public class OldInventorySystem : MonoBehaviour {
     public static OldInventorySystem instance { get; private set; }
 
     //[SerializeField] private IngameMenuManager ingameMenuManager;
-    public OldItemData currentHeldItemData;
+    //public OldItemData currentHeldItemData;
 
     [Header("Input")]
     public InputActionAsset playerControls;
@@ -31,12 +31,12 @@ public class OldInventorySystem : MonoBehaviour {
     private void OnEnable() {
         playerControls.Enable();
         rightClickAction = playerControls.FindAction("RightClick");
-        rightClickAction.performed += OnRightClick;
+        //rightClickAction.performed += OnRightClick;
     }
 
     private void OnDisable() {
         if (rightClickAction != null) {
-            rightClickAction.performed -= OnRightClick;
+            //rightClickAction.performed -= OnRightClick;
         }
         playerControls.Disable();
     }
@@ -68,7 +68,7 @@ public class OldInventorySystem : MonoBehaviour {
         return null;
     }
 
-    public void EquipItem(OldItemData data) {
+    /*public void EquipItem(OldItemData data) {
         //if (CanvasInstance.instance.heldDocumentDisplay.activeSelf) return;
 
         currentHeldItemData = data;
@@ -111,5 +111,5 @@ public class OldInventorySystem : MonoBehaviour {
         display.GetComponent<Image>().sprite = sprite;
         display.SetActive(true);
         //udioManager.instance.PlaySound(eventReference, transform.position);
-    }
+    }*/
 }

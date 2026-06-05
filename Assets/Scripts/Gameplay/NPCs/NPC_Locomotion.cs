@@ -53,10 +53,24 @@ public class NPC_Locomotion : MonoBehaviour {
         navMeshAgent.nextPosition = pos;
     }
 
+    // Tells the AI to relocate to a new position taking in Transform
     public void WalkToPosition(Transform position) {
-        if (navMeshAgent == null || animator == null) return;
+        if (!navMeshAgent || !animator) return;
 
         navMeshAgent.SetDestination(position.position);
+    }
+    
+    // Tells the AI to relocate to a new position taking in a Vector3 instead
+    public void WalkToPosition(Vector3 position) {
+        if (!navMeshAgent || !animator) return;
+
+        navMeshAgent.SetDestination(position);
+    }
+
+    // Warps the NPC to a given location 
+    public void Warp(Vector3 position) {
+        gameObject.transform.position = position;
+        navMeshAgent.Warp(position);
     }
     
     public void ToggleAgent() => navMeshAgent.enabled = !navMeshAgent.enabled;

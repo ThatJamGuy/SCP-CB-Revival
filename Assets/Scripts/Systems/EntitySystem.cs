@@ -1,0 +1,85 @@
+using System.Collections.Generic;
+using UnityEngine;
+using IngameDebugConsole;
+
+public class EntitySystem : MonoBehaviour {
+    public static EntitySystem Instance { get; private set; }
+    private List<IRoamingSCP> activeEntityList = new List<IRoamingSCP>();
+
+    [SerializeField] private GameObject[] standbyEntityList;
+
+    #region Unity Callbacks
+    
+    private void Awake() {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+        
+        DebugLogConsole.AddCommand("listentities", "Lists all active entities and their IDs", ListEntities);
+        DebugLogConsole.AddCommand<int, Vector3>("spawnentity", "Spawns an NPC prefab by index at a given position.", SpawnEntity);
+        DebugLogConsole.AddCommand<int, Vector3>("teleportentity", "Teleports an entity by ID to a given position", TeleportEntity);
+        DebugLogConsole.AddCommand<int>("walktome", "Tells an NPC by ID to walk to the player", WalkToMe);
+    }
+    #endregion
+    
+    #region Private Methods
+    
+    private void ListEntities() {
+        if (activeEntityList.Count == 0) {
+            Debug.Log("No active entities.");
+            return;
+        }
+
+        var sb = new System.Text.StringBuilder("Active Entities:\n");
+        for (int i = 0; i < activeEntityList.Count; i++)
+            sb.AppendLine($"  [{i}] {activeEntityList[i].GetType().Name}");
+
+        Debug.Log(sb.ToString());
+    }
+
+    private void WalkToMe(int index) {
+        if (index < 0 || index >= activeEntityList.Count) {
+            Debug.LogWarning($"No entity at index {index}.");
+            return;
+        }
+        activeEntityList[index].WalkTo(Player.Instance.transform.position);
+    }
+    #endregion
+    
+    #region Public Methods
+
+    /// <summary>
+    /// Spawn a new instance of an entity from the standbyEntityList
+    /// </summary>
+    /// <param name="prefabIndex">Index of the prefab to spawn</param>
+    /// <param name="position">Position to spawn the entity</param>
+    public void SpawnEntity(int prefabIndex, Vector3 position) {
+        if (prefabIndex < 0 || prefabIndex >= standbyEntityList.Length) {
+            Debug.LogWarning($"No NPC prefab at index {prefabIndex}.");
+            return;
+        }
+
+        Instantiate(standbyEntityList[prefabIndex], position, Quaternion.identity);
+    }
+    
+    /// <summary>
+    /// Teleport an entity to a new location for events and/or debugging
+    /// </summary>
+    /// <param name="index">ID of the entity to be teleported</param>
+    /// <param name="position">Position to teleport the entity to</param>
+    public void TeleportEntity(int index, Vector3 position) {
+        if (index < 0 || index >= activeEntityList.Count) {
+            Debug.LogWarning($"No entity at index {index}.");
+            return;
+        }
+        activeEntityList[index].Teleport(position);
+    }
+
+    /// <summary>
+    /// Register an entity to the Active Entity list so it can be tracked
+    /// </summary>
+    /// <param name="entity">The IRoamingSCP to add to the list</param>
+    public void RegisterEntity(IRoamingSCP entity) {
+        activeEntityList.Add(entity);
+    }
+    #endregion
+}
