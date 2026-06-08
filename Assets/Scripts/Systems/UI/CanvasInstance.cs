@@ -14,6 +14,10 @@ public class CanvasInstance : MonoBehaviour {
     public Image interactIcon;
     public RectTransform canvasRectTransform;
     public Animator HUD_QuickSave;
+    public Animator HUD_AchievementPopup;
+    public TextMeshProUGUI achievementName;
+    public TextMeshProUGUI achievementDesc;
+    public Image achievementIcon;
     
     [Header("Pause Menu")]
     public GameObject controllerTooltips;

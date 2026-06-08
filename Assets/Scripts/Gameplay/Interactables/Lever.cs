@@ -40,9 +40,7 @@ public class Lever : MonoBehaviour, IHoldInteractable {
 
     private void Awake() {
         // Cache the starting local X rotation of the handle
-        currentHandleXRotation = NormalizeAngle(
-            leverHandleObject.transform.localEulerAngles.x
-        );
+        currentHandleXRotation = NormalizeAngle(leverHandleObject.transform.localEulerAngles.x );
     }
 
     private void Start() {
@@ -110,8 +108,7 @@ public class Lever : MonoBehaviour, IHoldInteractable {
         );
 
         // Apply the rotation locally so parent rotation does not interfere
-        leverHandleObject.transform.localRotation =
-            Quaternion.Euler(currentHandleXRotation, 0f, 0f);
+        leverHandleObject.transform.localRotation = Quaternion.Euler(currentHandleXRotation, 0f, 0f);
     }
 
     /// <summary>
@@ -123,8 +120,7 @@ public class Lever : MonoBehaviour, IHoldInteractable {
             leverTurnedOn = true;
 
             // Prevent repeatedly firing events every frame
-            if (lastState == leverTurnedOn)
-                return;
+            if (lastState == leverTurnedOn) return;
 
             lastState = leverTurnedOn;
 
@@ -141,8 +137,7 @@ public class Lever : MonoBehaviour, IHoldInteractable {
             leverTurnedOn = false;
 
             // Prevent repeatedly firing events every frame
-            if (lastState == leverTurnedOn)
-                return;
+            if (lastState == leverTurnedOn) return;
 
             lastState = leverTurnedOn;
 

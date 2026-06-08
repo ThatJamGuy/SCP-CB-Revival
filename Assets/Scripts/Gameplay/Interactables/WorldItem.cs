@@ -7,7 +7,7 @@ using FMODUnity;
 
 [AddComponentMenu("SCP:CBR/World Item")]
 public class WorldItem : MonoBehaviour, IInteractable {
-    [SerializeField] private ItemData associatedItemData;
+    public ItemData associatedItemData;
     [SerializeField] private EventReference pickupSound;
  
     public void Interact(PlayerInteraction playerInteraction) {

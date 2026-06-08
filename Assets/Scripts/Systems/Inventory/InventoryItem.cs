@@ -17,9 +17,7 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IBeginDragHand
     [SerializeField] private Image itemImageComponent;
     
     private Canvas screenCanvas;
-    private Camera playerCamera;
     private Transform itemPreDragParent;
-    //private Vector3 itemPreDragPosition;
     
     private bool itemDroppedOnValidSlot;
 
@@ -27,7 +25,6 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IBeginDragHand
 
     private void Start() {
         if (CanvasInstance.Instance != null) screenCanvas = CanvasInstance.Instance.screensCanvas;
-        if (Player.Instance != null) playerCamera = Player.Instance.playerCamera;
     }
     
     // Handle double-clicking logic
@@ -70,15 +67,13 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IBeginDragHand
     }
 
     private void DropItemIntoWorld() {
-        var spawnPos = playerCamera.transform.position + playerCamera.transform.forward * 0.5f;
-        
-        Instantiate(itemData.itemWorldPrefab, spawnPos, Quaternion.identity);
-        InventorySystem.Instance.RemoveItemFromInventory(itemData.itemIdentifier, false);
-        
+        InventorySystem.Instance.RemoveItemFromInventory(itemData.itemIdentifier, true);
         Destroy(gameObject);
     }
     
     #endregion
+    
+    #region Public Methods
     
     public void SetNewValidParent(Transform newParent) {
         itemDroppedOnValidSlot = true;
@@ -90,4 +85,6 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IBeginDragHand
         transform.localPosition = Vector3.zero;
         itemDroppedOnValidSlot = true;
     }
+    
+    #endregion
 }

@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
     [Header("Other Save States")]
     [ReadOnly] public int currentDifficulty;
     [ReadOnly] public int currentZone;
+    [ReadOnly] public int otherDifficultyFactor;
 
     [HideInInspector] public SaveData currentSaveData;
     
