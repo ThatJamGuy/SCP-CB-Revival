@@ -7,6 +7,8 @@ using IngameDebugConsole;
 /// Global system to handle achievement things
 /// </summary>
 public class AchievementSystem : MonoBehaviour {
+    public static AchievementSystem Instance { get; private set; }
+
     public static int TotalAchievements { get; private set; }
     public static int ObtainedAchievementsCount => obtainedAchievementNames.Count;
     
@@ -19,6 +21,11 @@ public class AchievementSystem : MonoBehaviour {
     private AchievementFile achievementFileData;
 
     #region Unity Callbacks
+
+    private void Awake() {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
     
     private void Start() {
         achievementFileData = DataSaver.Load<AchievementFile>(ACHIEVMENTS_FILE_NAME);

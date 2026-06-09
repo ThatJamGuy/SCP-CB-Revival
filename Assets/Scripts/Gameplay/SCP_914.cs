@@ -66,6 +66,7 @@ public class SCP_914 : MonoBehaviour {
     
     public void BeginRefineProcess() {
         StartCoroutine(RefinementProcess());
+        AchievementSystem.Instance.GiveAchievement("achv_914");
     }
     
     #endregion

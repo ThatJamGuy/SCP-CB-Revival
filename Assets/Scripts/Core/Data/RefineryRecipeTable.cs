@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using EditorAttributes;
 
+//TODO: Rewrite some of this later to output prefabs instead of item data prefabs because I forgot it could do that
+
 [CreateAssetMenu(fileName = "RefineryRecipeData", menuName = "SCP:CBR/914 Recipe Data")]
 public class RefineryRecipeTable : ScriptableObject {
     public readonly struct RefinementResult {
@@ -23,23 +25,41 @@ public class RefineryRecipeTable : ScriptableObject {
         [Min(0)] public int chanceMin;
         [Min(1)] public int chanceMax;
 
-        public bool useOtherDiffFactors;
-        
         // These values are to be used in tandem with otherDifficultyFactors reading off of GameManager to determine
         // the chances of the output based on the current difficulty factor from 0-2
+        public bool useOtherDiffFactors;
         [ShowField(nameof(useOtherDiffFactors)), Min(0)] public int chanceMinEuclid;
         [ShowField(nameof(useOtherDiffFactors)), Min(1)] public int chanceMaxEuclid;
         [ShowField(nameof(useOtherDiffFactors)), Min(0)] public int chanceMinKeter;
         [ShowField(nameof(useOtherDiffFactors)), Min(1)] public int chanceMaxKeter;
 
+        // If any of the chances given don't meet the given range then spit out a random item listed below
         public bool useFailureItems;
-
         [ShowField(nameof(useFailureItems))] public ItemData[] possibleFailureItems;
 
-        /// <summary>
-        /// Returns true if this output succeeds its chance roll.
-        /// </summary>
+        // Do some math stuff that took me and Buck 10 minutes to calculate to change odds based on achievements too
+        public bool useAchievementStats;
+        private const int AchievementOffsetMultiplier = 3;
+        private static readonly int[] DifficultyBaseMultipliers = { 3, 4, 5 }; // HARDCODED PROBABLY FOREVER
+
+        private static int ComputeAchievementRange(int difficultyFactor, int maxAchievements, int currentAchievements) {
+            var clampedFactor = Mathf.Clamp(difficultyFactor, 0, DifficultyBaseMultipliers.Length - 1);
+            var baseRange = (maxAchievements - 1) * DifficultyBaseMultipliers[clampedFactor];
+            var achievementOffset = (currentAchievements - 1) * AchievementOffsetMultiplier;
+
+            return Mathf.Max(1, baseRange - achievementOffset);
+        }
+        
+        // Returns true if this output succeeds its chance roll.
         public bool RollChance(int difficultyFactor) {
+            if (useAchievementStats) {
+                var maxAchievements  = AchievementSystem.TotalAchievements;
+                var currAchievements = AchievementSystem.ObtainedAchievementsCount;
+                
+                var range = ComputeAchievementRange(difficultyFactor, maxAchievements, currAchievements);
+                return UnityEngine.Random.Range(0, range) == 0;
+            }
+            
             var min = chanceMin;
             var max = chanceMax;
 
