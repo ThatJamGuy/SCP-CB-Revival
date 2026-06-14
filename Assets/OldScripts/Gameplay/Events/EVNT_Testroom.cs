@@ -11,13 +11,13 @@ public class EVNT_Testroom : MonoBehaviour {
     private bool shatterEventReady = false;
     private bool glassEventTriggered;
 
-    private void OnEnable() {
+    /*private void OnEnable() {
         PlayerBlink.OnPlayerBlink += ShatterGlass;
     }
 
     private void OnDisable() {
         PlayerBlink.OnPlayerBlink -= ShatterGlass;
-    }
+    }*/
 
     public void Bring173ToTestroom(Transform placeToBringHim) {
         if (glassEventTriggered) return;

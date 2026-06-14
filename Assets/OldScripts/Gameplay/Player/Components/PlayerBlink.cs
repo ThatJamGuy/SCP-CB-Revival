@@ -5,7 +5,7 @@ using System.Collections;
 using System;
 
 public class PlayerBlink : MonoBehaviour {
-    public static Action OnPlayerBlink;
+    public static Action OnPlayerBlink {  get; private set; }
 
     [SerializeField] private float blinkDrainRate = 0.07f;
     [SerializeField] private float blinkOverlayDuration = 0.2f;
@@ -29,10 +29,10 @@ public class PlayerBlink : MonoBehaviour {
     }
 
     private void Update() {
-        if (!isBlinkingActive || isBlinking || PlayerAccessor.instance.infiniteBlink) return;
+        //if (!isBlinkingActive || isBlinking || PlayerAccessor.instance.infiniteBlink) return;
 
-        float drain = blinkDrainRate * (1 + PlayerAccessor.instance.blinkDepletionModifier);
-        blinkTimer = Mathf.MoveTowards(blinkTimer, 0f, drain * Time.deltaTime);
+        //float drain = blinkDrainRate * (1 + PlayerAccessor.instance.blinkDepletionModifier);
+        //blinkTimer = Mathf.MoveTowards(blinkTimer, 0f, drain * Time.deltaTime);
         //CanvasInstance.instance.blinkBar.value = blinkTimer;
 
         if (blinkTimer <= 0f) TriggerBlink();

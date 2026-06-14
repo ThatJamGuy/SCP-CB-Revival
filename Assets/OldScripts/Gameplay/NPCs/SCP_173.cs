@@ -57,8 +57,8 @@ public class SCP_173 : MonoBehaviour {
 
     #region Unity Callbacks
     private void Start() {
-        playerCamera = PlayerAccessor.instance.playerCamera;
-        playerTransform = PlayerAccessor.instance.transform;
+        //playerCamera = PlayerAccessor.instance.playerCamera;
+        //playerTransform = PlayerAccessor.instance.transform;
         navMeshAgent = GetComponent<NavMeshAgent>();
         meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         animator = GetComponent<Animator>();
@@ -77,20 +77,20 @@ public class SCP_173 : MonoBehaviour {
         HandleHorrorSoundReset();
         HandleMoving();
 
-        if (hasTarget && !PlayerAccessor.instance.isDead)
-            AttemptToKillPlayer();
+        /*if (hasTarget && !PlayerAccessor.instance.isDead)
+            AttemptToKillPlayer();*/
     }
     #endregion
 
     #region Movement Control
     private void HandleMoving() {
-        if (isVisibleByPlayer || isVisibleByAnyNPC) {
+        /*if (isVisibleByPlayer || isVisibleByAnyNPC) {
             if (!PlayerAccessor.instance.isBlinking) {
                 movementSource.SetActive(false);
                 StopCompletely();
                 return;
             }
-        }
+        }*/
 
         if (hasTarget && target != null) {
             if (ShouldAbandonTarget()) {
@@ -114,9 +114,9 @@ public class SCP_173 : MonoBehaviour {
 
     private float GetChaseSpeed() {
         float speed = CHASE_SPEED;
-        if (PlayerAccessor.instance.isBlinking) {
+        /*if (PlayerAccessor.instance.isBlinking) {
             speed *= 2.5f;
-        }
+        }*/
         return speed;
     }
 
@@ -139,7 +139,7 @@ public class SCP_173 : MonoBehaviour {
         hasTarget = false;
         navMeshAgent.ResetPath();
 
-        if (alreadySeenByPlayer) PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>().StopBlink();
+        //if (alreadySeenByPlayer) PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>().StopBlink();
         if (alreadySeenByPlayer) alreadySeenByPlayer = false;
         //if (alreadySeenByPlayer) GameManager.instance.scp173ChasingPlayer = false;
 
@@ -197,7 +197,7 @@ public class SCP_173 : MonoBehaviour {
         bool wasVisible = isVisibleByPlayer;
         isVisibleByPlayer = false;
 
-        if (meshRenderer.isVisible && !PlayerAccessor.instance.isBlinking) {
+        /*if (meshRenderer.isVisible && !PlayerAccessor.instance.isBlinking) {
             frustumPlanes = GeometryUtility.CalculateFrustumPlanes(playerCamera);
             if (GeometryUtility.TestPlanesAABB(frustumPlanes, meshRenderer.bounds)) {
                 Vector3 origin = playerCamera.transform.position;
@@ -213,7 +213,7 @@ public class SCP_173 : MonoBehaviour {
                     isVisibleByPlayer = true;
                 }
             }
-        }
+        }*/
 
         if (isVisibleByPlayer && !wasVisible) {
             OnBecameVisibleToPlayer();
@@ -233,7 +233,7 @@ public class SCP_173 : MonoBehaviour {
 
             tensionEmitter.Play();
 
-            playerBlink = PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>();
+            //playerBlink = PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>();
             playerBlink.StartBlink();
         }
 

@@ -60,7 +60,7 @@ public class SCP_106_New : MonoBehaviour {
         // If that one little checkbox is ticked about, then SCP-106 will immediately target the player and start chasing them. This is true in most cases.
         if (targetPlayerOnStart) {
             currentTargetIsPlayer = true;
-            SetTarget(PlayerAccessor.instance.transform);
+            //SetTarget(PlayerAccessor.instance.transform);
             ChaseTarget();
         }
     }
@@ -130,14 +130,14 @@ public class SCP_106_New : MonoBehaviour {
         if (activeTarget == null) return;
         if (distanceToTarget <= 2 && isAttacking) {
             if (currentTargetIsPlayer) {
-                if (PlayerAccessor.instance.isDead) {
+                /*if (PlayerAccessor.instance.isDead) {
                     currentTargetCaptured = true;
                     return;
-                }
+                }*/
 
                 //AudioManager.instance.PlaySound(targetHitEvent, transform.position);
                 //GameManager.instance.ShowDeathScreen("Subject D-9341. Body partially decomposed by what is assumed to be SCP-106's \"corrosion\" effect. Body disposed of via incineration.");
-                PlayerAccessor.instance.isDead = true;
+                //PlayerAccessor.instance.isDead = true;
             }
 
             currentTargetCaptured = true;

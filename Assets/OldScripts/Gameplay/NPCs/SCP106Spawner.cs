@@ -56,7 +56,7 @@ namespace scpcbr {
             yield return new WaitForSeconds(effectDuration);
 
             Vector3 scp106Pos = spawnPos;
-            Instantiate(scp106Prefab, scp106Pos, PlayerAccessor.instance.transform.rotation);
+            //Instantiate(scp106Prefab, scp106Pos, PlayerAccessor.instance.transform.rotation);
 
             //GameManager.instance.scp106Active = true;
         }
