@@ -75,7 +75,15 @@ public class PauseMenu : MonoBehaviour {
     }
 
     /// <summary>
-    /// Public methods to clean up some game stuff and return to the main menu. Should be accessed via buttons
+    /// Public method to switch the active state of the achievements menu, mostly via that one button in pause menu
+    /// </summary>
+    /// <param name="active">Boolean whether the achievements screen should be set to active</param>
+    public void ToggleAchievementsMenu(bool active) {
+        GlobalCanvasInstance.ToggleAchievementsMenu(active);
+    }
+
+    /// <summary>
+    /// Public method to clean up some game stuff and return to the main menu. Should be accessed via buttons
     /// </summary>
     public void ReturnToMenu() {
         // Resume game as to not get stuck before attempting to load the main menu

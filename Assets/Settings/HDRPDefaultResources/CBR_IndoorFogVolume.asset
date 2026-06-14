@@ -210,7 +210,7 @@ MonoBehaviour:
   active: 1
   quality:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 3
   enabled:
     m_OverrideState: 1
     m_Value: 1
@@ -279,10 +279,10 @@ MonoBehaviour:
     m_Value: 64
   m_VolumetricFogBudget:
     m_OverrideState: 1
-    m_Value: 0.5
+    m_Value: 0.7
   m_ResolutionDepthRatio:
     m_OverrideState: 1
-    m_Value: 0.5
+    m_Value: 0.7
   directionalLightsOnly:
     m_OverrideState: 0
     m_Value: 0
@@ -303,6 +303,7 @@ MonoBehaviour:
   - {fileID: -5224953925154397420}
   - {fileID: 1461096828148578562}
   - {fileID: -3581892990188951185}
+  - {fileID: 8566986711973765123}
 --- !u!114 &1461096828148578562
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -347,5 +348,45 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 0
   m_HighQualityFiltering:
+    m_OverrideState: 1
+    m_Value: 1
+--- !u!114 &8566986711973765123
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c1be1b6c95cd2e41b27903b9270817f, type: 3}
+  m_Name: Vignette
+  m_EditorClassIdentifier: Unity.RenderPipelines.HighDefinition.Runtime::UnityEngine.Rendering.HighDefinition.Vignette
+  active: 1
+  mode:
+    m_OverrideState: 1
+    m_Value: 0
+  color:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  center:
+    m_OverrideState: 1
+    m_Value: {x: 0.5, y: 0.5}
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.2
+  smoothness:
+    m_OverrideState: 1
+    m_Value: 0.2
+  roundness:
+    m_OverrideState: 1
+    m_Value: 1
+  rounded:
+    m_OverrideState: 1
+    m_Value: 0
+  mask:
+    m_OverrideState: 1
+    m_Value: {fileID: 0}
+  opacity:
     m_OverrideState: 1
     m_Value: 1

@@ -40,6 +40,8 @@ public class Door : MonoBehaviour {
     private Vector3 door01InitialPos, door02InitialPos, door01Target, door02Target;
     private Vector3 offset;
 
+    private bool isTransitioning;
+
     #region Unity Callbacks
     private void Start() {
         // Set the initial positions for the doors so they know where to slide back to when closing
@@ -93,7 +95,7 @@ public class Door : MonoBehaviour {
 
     private void PlaySound() {
         // Set the doorStateValue based on the isOpen bool. Then play the door sound passing in the doorState as param
-        var doorStateValue = isOpen ? 1f : 0f;
+        var doorStateValue = isOpen ? 0 : 1;
         AudioManager.PlayOneShot(doorSoundEvent, transform.position, "DoorState", doorStateValue);
     }
 
@@ -125,12 +127,15 @@ public class Door : MonoBehaviour {
     /// </summary>
     public void OpenDoor() {
         // If the door is already open, locked, or the move coroutine exists and is active already then do nothing
-        if (isOpen || isLocked || moveRoutine != null) return;
+        if (isOpen || isLocked || moveRoutine != null || isTransitioning) return;
+
+        isTransitioning = true;
+        isOpen = true;
         
         // Trigger the related event and start opening the door
         onDoorOpening?.Invoke();
         StartMove(door01Target, door02Target, onDoorOpened);
-        isOpen = true;
+        isTransitioning = false;
     }
 
     /// <summary>
@@ -138,12 +143,15 @@ public class Door : MonoBehaviour {
     /// </summary>
     public void CloseDoor() {
         // If the door is not open or the move coroutine exists and is active already then do nothing
-        if (!isOpen || moveRoutine != null) return;
+        if (!isOpen || moveRoutine != null || isTransitioning) return;
+        
+        isTransitioning = true;
+        isOpen = false;
         
         // Trigger the related event and start closing the door
         onDoorClosing?.Invoke();
         StartMove(door01InitialPos, door02InitialPos, onDoorClosed);
-        isOpen = false;
+        isTransitioning = false;
     }
     #endregion
 }
