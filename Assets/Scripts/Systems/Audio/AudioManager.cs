@@ -34,6 +34,16 @@ public class AudioManager : MonoBehaviour {
     #endregion
 
     #region Public Methods
+    
+    // Play a one-shot but automatically set to Player transform
+    public static void PlayOneShot(EventReference soundToPlay) {
+        var soundInstance = RuntimeManager.CreateInstance(soundToPlay); // Create a new sound instance
+        soundInstance.set3DAttributes(Player.Instance.transform.position.To3DAttributes());
+        soundInstance.start(); // Play the sound
+        soundInstance.release(); // Cleanup leftovers to save memory
+        Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to keep track of it
+    }
+    
     // Play a one-shot with no parameters
     // ReSharper disable Unity.PerformanceAnalysis
     public static void PlayOneShot(EventReference soundToPlay, Vector3 position) {

@@ -9,7 +9,6 @@ using TMPro;
 public class CanvasInstance : MonoBehaviour {
     public static CanvasInstance Instance { get; private set; }
 
-    // The different things that need to be accessed from external scripts
     [Header("Single Objects")]
     public Image interactIcon;
     public RectTransform canvasRectTransform;
@@ -18,6 +17,11 @@ public class CanvasInstance : MonoBehaviour {
     public TextMeshProUGUI achievementName;
     public TextMeshProUGUI achievementDesc;
     public Image achievementIcon;
+
+    [Header("Inventory Things")] 
+    public Image genericItemIcon;
+    public GameObject wearableOverlay;
+    public GameObject documentDisplay;
     
     [Header("Pause Menu")]
     public GameObject controllerTooltips;
@@ -27,7 +31,6 @@ public class CanvasInstance : MonoBehaviour {
     public Canvas screensCanvas;
 
     private void Awake() {
-        // Ensure that only of one these exist to prevent issues
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }

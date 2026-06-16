@@ -20,21 +20,17 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     }
 
     private void OnEnable() {
-        // Ensure the outline is disabled when the slot enables so it's not sitting their awkwardly already enabled
         slotOutline.SetActive(false);
     }
 
-    // Set the outline to be active on mouse hover
     public void OnPointerEnter(PointerEventData eventData) {
         slotOutline.SetActive(true);
     }
 
-    // Set the outline to be inactive when the mouse leaves
     public void OnPointerExit(PointerEventData eventData) {
         slotOutline.SetActive(false);
     }
 
-    // Handle some things when items are dragged and dropped onto this slot
     public void OnDrop(PointerEventData eventData) {
         var invItem = InventoryItem.itemBeingDragged?.GetComponent<InventoryItem>();
         if (invItem == null) return;

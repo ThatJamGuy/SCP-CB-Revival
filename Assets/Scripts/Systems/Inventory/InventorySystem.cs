@@ -4,6 +4,7 @@ using System.Linq;
 using IngameDebugConsole;
 using PixeLadder.EasyTooltip;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Inventory system script to handle the current items in the inventory and communicate with other scripts needing
@@ -11,6 +12,8 @@ using UnityEngine.UI;
 /// </summary>
 public class InventorySystem : MonoBehaviour {
     public static InventorySystem Instance { get; private set; }
+
+    [SerializeField] private MenuManager menuManager;
     
     //[System.Serializable] public readonly List<ItemData> itemsInInventory = new List<ItemData>();
     [SerializeField] private GameObject inventoryItemTemplate;
@@ -45,13 +48,12 @@ public class InventorySystem : MonoBehaviour {
         DebugLogConsole.AddCommand<string>("spawnitem", "Spawns an item with the given ID", DebugSpawnItem);
         DebugLogConsole.AddCommand("listitems", "Lists available item IDs", DebugListItems);
         DebugLogConsole.AddCommand<string, int>("additem", "Adds an item with the given ID to the inventory", AddItemToInventory);
-        DebugLogConsole.AddCommand("listinventory", "Lists current inventory contents", DebugListInventory);
         DebugLogConsole.AddCommand<string, bool>("removeitem", "Removes one instance of an item by ID", RemoveItemFromInventory);
     }
     #endregion
-    
+
     #region Private Methods
-    
+
     private GameObject CheckForEmptySlots() {
         // For every slot in the inventorySlotObjects array...
         foreach (var slot in inventorySlotObjects) {
@@ -79,8 +81,7 @@ public class InventorySystem : MonoBehaviour {
     
     #region Public Methods
     
-    public int GetItemCount(string itemIdentifier) =>
-        inventoryContents.GetValueOrDefault(itemIdentifier, 0);
+    public int GetItemCount(string itemIdentifier) => inventoryContents.GetValueOrDefault(itemIdentifier, 0);
     
     public bool IsFull() => inventorySlotObjects.Count(slot => slot.transform.childCount > 2) >= MAX_SLOTS;
     public bool HasItem(string itemIdentifier) => GetItemCount(itemIdentifier) > 0;
@@ -118,28 +119,21 @@ public class InventorySystem : MonoBehaviour {
             break; // Stop as soon as the first match is found
         }
     
-        // Guard against the item not being found
         if (targetSlot == null) return;
-    
-        // Unregister the item from the target slot
         UnregisterItem(targetSlot);
-    
-        // Destroy the item UI object (child index 2; index 0 is the equipped outline; index 1 is hover outline)
-        //Destroy(targetSlot.transform.GetChild(2).gameObject);
     
         // Spawn the item in the world if defined to do so
         if (alsoSpawnItemInWorld) DebugSpawnItem(itemIdentifier);
+    }
+
+    public void CloseInventory() {
+        menuManager.ToggleMenu(1, false);
     }
     #endregion
 
     #region Debug Methods
     
     private void DebugListItems() => Debug.Log(string.Join(", ", itemDataLookup.Keys));
-
-    private void DebugListInventory() {
-        if (inventoryContents.Count == 0) { Debug.Log("Inventory is empty."); return; }
-        Debug.Log(string.Join(", ", inventoryContents.Select(kvp => $"{kvp.Key} x{kvp.Value}")));
-    }
     
     private void DebugSpawnItem(string itemIdentifier) {
         if (!itemDataLookup.TryGetValue(itemIdentifier, out var item)) return;

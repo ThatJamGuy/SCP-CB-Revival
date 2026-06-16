@@ -11,11 +11,10 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IBeginDragHand
     // Hide this to avoid confusion as it will never ever be modified before runtime
     [HideInInspector] public ItemData itemData;
     
-    // Set these ahead of time in the editor as they aren't changed at runtime and will save on calculations on start
     [Header("Local References")]
     [SerializeField] private RectTransform itemRectTransform;
     [SerializeField] private Image itemImageComponent;
-    
+
     private Canvas screenCanvas;
     private Transform itemPreDragParent;
     
@@ -30,7 +29,7 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IBeginDragHand
     // Handle double-clicking logic
     public void OnPointerClick(PointerEventData eventData) {
         if (eventData.clickCount == 2) {
-            HandleDoubleClick();
+            //TODO: Implement the trigger to equip the given item
         }
     }
 
@@ -61,10 +60,6 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IBeginDragHand
     #endregion
 
     #region Private Methods
-    
-    private void HandleDoubleClick() {
-        Debug.Log("Item " + itemData +" has been double clicked.");
-    }
 
     private void DropItemIntoWorld() {
         InventorySystem.Instance.RemoveItemFromInventory(itemData.itemIdentifier, true);
