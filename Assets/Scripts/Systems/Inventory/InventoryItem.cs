@@ -29,7 +29,22 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IBeginDragHand
     // Handle double-clicking logic
     public void OnPointerClick(PointerEventData eventData) {
         if (eventData.clickCount == 2) {
-            //TODO: Implement the trigger to equip the given item
+            switch (itemData.chosenBehavior) {
+                case PresetBehavior.None:
+                    break;
+                case PresetBehavior.Key:
+                    InventorySystem.Instance.EquipItem(itemData);
+                    break;
+                case PresetBehavior.Document:
+                    InventorySystem.Instance.EquipItem(itemData);
+                    break;
+                case PresetBehavior.Custom:
+                    itemData.itemBehavior.OnDoubleClick(itemData);
+                    break;
+            }
+
+            InventorySystem.Instance.CloseInventory();
+            AudioManager.PlayOneShot(itemData.useItemSound);
         }
     }
 

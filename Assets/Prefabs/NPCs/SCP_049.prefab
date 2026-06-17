@@ -553,7 +553,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7993035376382527187}
   - component: {fileID: 1828670305505845830}
-  - component: {fileID: 5450502500536785756}
   - component: {fileID: 8308020149542121843}
   - component: {fileID: 3673063662950284664}
   - component: {fileID: 245703920964240416}
@@ -602,31 +601,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 290b6009c37cf6344a94fa7b5303650a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SCP_049
-  ikHandTarget: {fileID: 6982424146750772949}
-  buttonHandOffset: {x: 0, y: -0.2, z: -0.57}
-  buttonHandRotation: {x: 25.6, y: -20.28, z: 0}
+  doorOpenRadius: 2
   animator: {fileID: 253217549824114799}
   agent: {fileID: 6401517475739828868}
-  locomotionSystem: {fileID: 5450502500536785756}
+  locomotionSystem: {fileID: 0}
   handIKConstraint: {fileID: 8879930472989412342}
-  buttonPressDistance: 1.9
-  doorLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
---- !u!114 &5450502500536785756
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1998921358069091522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a70e4c551f62244da9a08f27eac99b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NPC_Locomotion
-  navMeshAgent: {fileID: 6401517475739828868}
-  animator: {fileID: 253217549824114799}
+  ikHandTarget: {fileID: 6982424146750772949}
 --- !u!114 &8308020149542121843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -661,6 +641,7 @@ MonoBehaviour:
   m_Graph: {fileID: 5341922695754282239, guid: 884046fe6bc55b743b51c023cf0d777e, type: 2}
   m_BlackboardVariableOverridesList:
   - rid: 9075543890272715071
+  - rid: 9075544179853492770
   m_OriginalGraph: {fileID: 5341922695754282239, guid: 884046fe6bc55b743b51c023cf0d777e, type: 2}
   m_IsInitialised: 0
   m_IsStarted: 0
@@ -675,6 +656,16 @@ MonoBehaviour:
           m_Value1: 0
         Name: Self
         m_Value: {fileID: 1998921358069091522}
+    - rid: 9075544179853492770
+      type: {class: 'BlackboardVariable`1[[System.Collections.Generic.List`1[[UnityEngine.GameObject, UnityEngine.CoreModule]], mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 2329736074565652633
+          m_Value1: 12601693451087864809
+        Name: Waypoints
+        m_Value:
+        - {fileID: 0}
+        - {fileID: 0}
 --- !u!136 &245703920964240416
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -734,12 +725,12 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0.25
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2.7
-  m_BaseOffset: -0.07
+  m_BaseOffset: -0.09
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &2562920546436990093

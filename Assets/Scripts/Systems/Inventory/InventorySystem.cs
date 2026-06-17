@@ -7,8 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// Inventory system script to handle the current items in the inventory and communicate with other scripts needing
-/// access to inventory values
+/// Inventory system script to handle the current items in the inventory and communicate with other scripts needing access to inventory values
 /// </summary>
 public class InventorySystem : MonoBehaviour {
     public static InventorySystem Instance { get; private set; }
@@ -18,20 +17,25 @@ public class InventorySystem : MonoBehaviour {
     //[System.Serializable] public readonly List<ItemData> itemsInInventory = new List<ItemData>();
     [SerializeField] private GameObject inventoryItemTemplate;
     [SerializeField] private GameObject[] inventorySlotObjects;
-    
+
+    [Header("Inventory States")]
+    // Two equipped item layers to allow the player to wear stuff and hold things at the same time
+    public ItemData currentlyHeldItem; // Layer 1 for regular items
+    public ItemData currentlyWornItem; // Layer 2 for worn items
+
     [Header("Debug")]
     public ItemData[] itemDataList;
-    
-    private const int MAX_SLOTS = 10;
-    
+
+    private Camera playerCamera;
+
     // Tracks all the items in the itemDataList for referencing when needed, like spawning/adding items
     private Dictionary<string, ItemData> itemDataLookup;
-    // Tracks how many of each item the player holds (identifier -> count)
     private readonly Dictionary<string, int> inventoryContents = new();
-    // Maps each slot GameObject to the identifier of the item it holds
     private readonly Dictionary<GameObject, string> slotContents = new();
-    
-    private Camera playerCamera;
+
+    private const int MAX_SLOTS = 10;
+
+    private InputAction unequipItemAction;
     
     #region Unity Callbacks
 
@@ -39,6 +43,8 @@ public class InventorySystem : MonoBehaviour {
         // Ensure that there is only one instance of the Inventory system
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        unequipItemAction = InputManager.Instance.GetAction("Player", "RightClick");
     }
     
     private void Start() {
@@ -50,6 +56,17 @@ public class InventorySystem : MonoBehaviour {
         DebugLogConsole.AddCommand<string, int>("additem", "Adds an item with the given ID to the inventory", AddItemToInventory);
         DebugLogConsole.AddCommand<string, bool>("removeitem", "Removes one instance of an item by ID", RemoveItemFromInventory);
     }
+
+    private void OnEnable() {
+        unequipItemAction.performed += OnRightClick;
+        unequipItemAction.Enable();
+    }
+
+    private void OnDisable() {
+        unequipItemAction.performed -= OnRightClick;
+        unequipItemAction.Disable();
+    }
+
     #endregion
 
     #region Private Methods
@@ -76,6 +93,10 @@ public class InventorySystem : MonoBehaviour {
         if (!inventoryContents.TryGetValue(itemIdentifier, out var count)) return;
         if (count <= 1) inventoryContents.Remove(itemIdentifier);
         else inventoryContents[itemIdentifier] = count - 1;
+    }
+
+    private void OnRightClick(InputAction.CallbackContext context) {
+        if (context.performed && currentlyHeldItem != null) UnequipCurrentItem();
     }
     #endregion
     
@@ -127,6 +148,7 @@ public class InventorySystem : MonoBehaviour {
     }
 
     public void CloseInventory() {
+        GameManager.ResumeGame();
         menuManager.ToggleMenu(1, false);
     }
     #endregion
@@ -142,5 +164,27 @@ public class InventorySystem : MonoBehaviour {
         var randomRot = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
         Instantiate(item.itemWorldPrefab, spawnPos, randomRot);
     }
+    #endregion
+
+    #region Equipment Methods (Move Somewhere Else Later)
+
+    public void EquipItem(ItemData itemToEquip) {
+        if (itemToEquip == currentlyHeldItem) { UnequipCurrentItem(); return; }
+        currentlyHeldItem = itemToEquip;
+    }
+
+    public void UnequipCurrentItem() {
+        AudioManager.PlayOneShot(currentlyHeldItem.useItemSound);
+        currentlyHeldItem = null;
+    }
+
+    public void DisplayItem() {
+
+    }
+
+    public void DisplayDocument() {
+
+    }
+
     #endregion
 }

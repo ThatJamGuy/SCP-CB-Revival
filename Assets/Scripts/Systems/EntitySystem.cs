@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using IngameDebugConsole;
+using System.Linq;
 
 public class EntitySystem : MonoBehaviour {
     public static EntitySystem Instance { get; private set; }
+
+    public List<Transform> waypointList;
     private List<IRoamingSCP> activeEntityList = new List<IRoamingSCP>();
 
     [SerializeField] private GameObject[] standbyEntityList;
@@ -19,10 +22,19 @@ public class EntitySystem : MonoBehaviour {
         DebugLogConsole.AddCommand<int, Vector3>("teleportentity", "Teleports an entity by ID to a given position", TeleportEntity);
         DebugLogConsole.AddCommand<int>("walktome", "Tells an NPC by ID to walk to the player", WalkToMe);
     }
+
+    private void Start() {
+        // For testing do this at start, but when map-gen is in then call this after the map has been generated
+        InitWaypoints();
+    }
     #endregion
-    
+
     #region Private Methods
-    
+
+    private void InitWaypoints() {
+        waypointList = GameObject.FindGameObjectsWithTag("Finish").Select(go => go.transform).ToList();
+    }
+
     private void ListEntities() {
         if (activeEntityList.Count == 0) {
             Debug.Log("No active entities.");
