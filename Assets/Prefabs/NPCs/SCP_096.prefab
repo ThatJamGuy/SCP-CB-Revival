@@ -1435,12 +1435,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SCP_096
   currentState: 1
+  doorOpenRadius: 2
+  doorCheckInterval: 3
+  playerNearbyRadius: 0
   roamRadius: 25
   minIdlePauseTime: 5
   maxIdlePauseTime: 10
   reachedDestinationThreshold: 0.5
   agent: {fileID: 6791098199658452249}
   animator: {fileID: 8286727119949726594}
+  spatialEventEmitter: {fileID: 0}
+  screamEmitter: {fileID: 0}
 --- !u!114 &8950595859375270761
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1459,7 +1464,7 @@ MonoBehaviour:
       Data2: 1107554139
       Data3: -261156187
       Data4: -308157185
-    Path: event:/SFX/SCP/096/Step_049
+    Path: event:/SFX/SCP/096/Step_096
 --- !u!114 &4965447996633195543
 MonoBehaviour:
   m_ObjectHideFlags: 0

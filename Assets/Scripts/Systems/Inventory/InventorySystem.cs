@@ -23,6 +23,10 @@ public class InventorySystem : MonoBehaviour {
     public ItemData currentlyHeldItem; // Layer 1 for regular items
     public ItemData currentlyWornItem; // Layer 2 for worn items
 
+    [Header("UI Things")]
+    [SerializeField] private Image itemDisplay;
+    [SerializeField] private Image documentDisplay;
+
     [Header("Debug")]
     public ItemData[] itemDataList;
 
@@ -132,6 +136,9 @@ public class InventorySystem : MonoBehaviour {
     }
 
     public void RemoveItemFromInventory(string itemIdentifier, bool alsoSpawnItemInWorld) {
+        // Make sure item still isn't being held when dropped
+        if (currentlyHeldItem != null && currentlyHeldItem.itemIdentifier == itemIdentifier) UnequipCurrentItem();
+
         // Find the first slot holding this item without modifying the collection
         GameObject targetSlot = null;
         foreach (var (slot, id) in slotContents) {
@@ -142,8 +149,7 @@ public class InventorySystem : MonoBehaviour {
     
         if (targetSlot == null) return;
         UnregisterItem(targetSlot);
-    
-        // Spawn the item in the world if defined to do so
+
         if (alsoSpawnItemInWorld) DebugSpawnItem(itemIdentifier);
     }
 
@@ -166,24 +172,47 @@ public class InventorySystem : MonoBehaviour {
     }
     #endregion
 
-    #region Equipment Methods (Move Somewhere Else Later)
+    #region Equipment Methods (Move Somewhere Else Later Maybe)
 
     public void EquipItem(ItemData itemToEquip) {
         if (itemToEquip == currentlyHeldItem) { UnequipCurrentItem(); return; }
         currentlyHeldItem = itemToEquip;
+
+        UpdateDisplay();
     }
 
     public void UnequipCurrentItem() {
         AudioManager.PlayOneShot(currentlyHeldItem.useItemSound);
         currentlyHeldItem = null;
+
+        UpdateDisplay();
     }
 
-    public void DisplayItem() {
+    public void UpdateDisplay() {
+        // Disable all this stuff immediately to reset the display or just hide things
+        itemDisplay.gameObject.SetActive(false);
+        documentDisplay.gameObject.SetActive(false);
 
-    }
+        // After reset check to see if something was unequipped or new item was equipped
+        if (currentlyHeldItem == null) return;
 
-    public void DisplayDocument() {
+        // Display key item if set to do so (Other items displayed via Custom)
+        if (currentlyHeldItem.chosenBehavior == PresetBehavior.Key) {
+            itemDisplay.sprite = currentlyHeldItem.itemInventoryIcon;
+            itemDisplay.gameObject.SetActive(true);
 
+            return;
+        }
+
+        // Display a document if set to do so
+        if (currentlyHeldItem.chosenBehavior == PresetBehavior.Document) {
+            documentDisplay.sprite = currentlyHeldItem.documentDisplaySprite;
+            documentDisplay.gameObject.SetActive(true);
+
+            return;
+        }
+
+        //TODO: Figure out what to do if it's a custom item, as it could go multiple ways
     }
 
     #endregion

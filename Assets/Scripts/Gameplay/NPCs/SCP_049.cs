@@ -18,7 +18,7 @@ public class SCP_049 : MonoBehaviour, IRoamingSCP {
 
     private Transform currentTarget;
 
-    private float doorCheckElapsedTime = 0;
+    private float doorCheckElapsedTime;
     
 
     #region Unity Callbacks

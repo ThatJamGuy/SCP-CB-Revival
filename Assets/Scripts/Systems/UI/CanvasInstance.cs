@@ -17,11 +17,8 @@ public class CanvasInstance : MonoBehaviour {
     public TextMeshProUGUI achievementName;
     public TextMeshProUGUI achievementDesc;
     public Image achievementIcon;
-
-    [Header("Inventory Things")] 
-    public Image genericItemIcon;
-    public GameObject wearableOverlay;
-    public GameObject documentDisplay;
+    public GameObject deathMenu;
+    public TextMeshProUGUI deathMenuDeathCauseText;
     
     [Header("Pause Menu")]
     public GameObject controllerTooltips;

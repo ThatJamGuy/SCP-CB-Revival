@@ -9,6 +9,20 @@ using IngameDebugConsole;
 /// </summary>
 public class MusicManager : MonoBehaviour {
     public static MusicManager Instance { get; private set; }
+
+    // Preset numbers for the music so whenever changes are needed I can just do them here
+    // Prevents changes from breaking other calls for music and makes things generally nicer
+    public enum MusicTrack {
+        Menu = 0,
+        LCZ = 1,
+        HCZ = 2,
+        SL = 3,
+        SCP_049 = 4,
+        SCP_096 = 5,
+        SCP_106 = 6,
+        SCP_173 = 7,
+        SCP_914 = 9
+    }
     
     [Header("FMOD Settings")]
     [SerializeField] private EventReference musicMasterEvent;
@@ -82,6 +96,14 @@ public class MusicManager : MonoBehaviour {
         musicInstance.setParameterByID(soundtrackParameterID, currentSoundtrack); // Set the soundtrack to the right one
         musicInstance.setParameterByID(intensityParameterID, intensity); // Set intensity of the track (LCZ ONLY RN)
         musicInstance.setParameterByID(trackParameterID, trackIndex); // Play the track by setting the parameter
+    }
+
+    public void SetTrack(MusicTrack trackIndex, int intensity = 0) {
+        if (!initialized) Init(); // Ensure that there is a music instance available
+
+        musicInstance.setParameterByID(soundtrackParameterID, currentSoundtrack); // Set the soundtrack to the right one
+        musicInstance.setParameterByID(intensityParameterID, intensity); // Set intensity of the track (LCZ ONLY RN)
+        musicInstance.setParameterByID(trackParameterID, ((float)trackIndex)); // Play the track by setting the parameter
     }
 
     public void SetSoundtrack(int soundtrackToUse) {

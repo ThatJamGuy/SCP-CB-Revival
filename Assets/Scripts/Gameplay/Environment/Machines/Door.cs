@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using FMODUnity;
+using UnityEngine.AI;
 
 /// <summary>
 /// Script to handle doors that follow the sliding left-right movements
@@ -13,6 +14,7 @@ public class Door : MonoBehaviour {
     public bool startOpen;
     [HideInInspector] public bool isOpen;
     public bool isLocked;
+    public bool isBroken;
     public bool requiresKeycard;
     public int requiredKeyLevel;
 
@@ -34,6 +36,8 @@ public class Door : MonoBehaviour {
     [Header("Door Parts")]
     public GameObject doorPart01;
     public GameObject doorPart02;
+    public GameObject doorPhys01;
+    public GameObject doorPhys02;
 
     private Coroutine moveRoutine;
     
@@ -127,7 +131,7 @@ public class Door : MonoBehaviour {
     /// </summary>
     public void OpenDoor() {
         // If the door is already open, locked, or the move coroutine exists and is active already then do nothing
-        if (isOpen || isLocked || moveRoutine != null || isTransitioning) return;
+        if (isOpen || isLocked || isBroken || moveRoutine != null || isTransitioning) return;
 
         isTransitioning = true;
         isOpen = true;
@@ -152,6 +156,26 @@ public class Door : MonoBehaviour {
         onDoorClosing?.Invoke();
         StartMove(door01InitialPos, door02InitialPos, onDoorClosed);
         isTransitioning = false;
+    }
+
+    /// <summary>
+    /// Enables gravity on the physics door children and applies force in a specified direction
+    /// </summary>
+    public void EnableGravityOnDoors(Vector3 explosionDirection, float explosionForce = 50f) {
+        //TODO: FIX THIS (IT DOES NOT WORK RIGHT NOW BUT IT DOES ALLOW 096 RIGHT OF PASSAGE SO KEEPING IT LIKE THIS FOR NOW)
+
+        isBroken = true;
+
+        doorPart01.SetActive(false);
+        doorPart02.SetActive(false);
+        doorPhys01.SetActive(true);
+        doorPhys02.SetActive(true);
+
+        Rigidbody rbPhys01 = doorPhys01.GetComponent<Rigidbody>();
+        Rigidbody rbPhys02 = doorPhys02.GetComponent<Rigidbody>();
+
+        rbPhys01.AddForce(explosionDirection * explosionForce);
+        rbPhys02.AddForce(explosionDirection * explosionForce);
     }
     #endregion
 }

@@ -59,7 +59,7 @@ public class SCP_914_Knob : MonoBehaviour, IHoldInteractable {
         var distanceSinceLastClick = currentZAngle - lastClickAngle;
         
         currentZAngle = Mathf.Clamp(currentZAngle + input, -90f, 90f);
-        transform.rotation = Quaternion.Euler(0, 0, currentZAngle);
+        transform.localRotation = Quaternion.Euler(0, 0, currentZAngle);
         
         while (Mathf.Abs(distanceSinceLastClick) >= knobClickDistance) {
             AudioManager.PlayOneShot(knobClickSound, transform.position);

@@ -12,10 +12,17 @@ public class GameManager : MonoBehaviour {
 
     [Header("Main Game State")] 
     [ReadOnly] public bool lczLockdownLifted;
+
+    [Header("SCP States")]
+    [ReadOnly] public bool playerNear096;
+    [ReadOnly] public bool scp049pursuing;
+    [ReadOnly] public bool scp096pursuing;
+    [ReadOnly] public bool scp106pursuing;
+    [ReadOnly] public bool scp173pursuing;
     
     [Header("Other Save States")]
     [ReadOnly] public int currentDifficulty;
-    [ReadOnly] public int currentZone;
+    [ReadOnly] public int currentZone = 1;
     [ReadOnly] public int otherDifficultyFactor;
 
     [HideInInspector] public SaveData currentSaveData;
@@ -62,6 +69,30 @@ public class GameManager : MonoBehaviour {
         Player.SetCursorState(false);
         Player.Instance.disableInput = false;
         AudioManager.Instance.ResumeAllSFX();
+    }
+
+    public void SetTrackBasedOnZone() {
+        switch (currentZone) {
+            case 0:
+                // Intro Sequence Music
+                break;
+            case 1:
+                MusicManager.Instance.SetTrack(1, 0);
+                break;
+            case 2:
+                MusicManager.Instance.SetTrack(2, 0);
+                break;
+            case 3:
+                // Entrance Zone Music
+                break;
+        }
+    }
+
+    public void ShowDeathScreen(string causeOfDeath) {
+        MusicManager.Instance.StopAllMusic();
+        CanvasInstance.Instance.deathMenu.SetActive(true);
+        CanvasInstance.Instance.deathMenuDeathCauseText.text = causeOfDeath;
+        Player.SetCursorState(true);
     }
 
     public void SaveGame(bool playSound = true) {

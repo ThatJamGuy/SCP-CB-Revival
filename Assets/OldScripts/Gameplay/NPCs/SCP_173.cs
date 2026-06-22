@@ -56,12 +56,15 @@ public class SCP_173 : MonoBehaviour {
     private const float HORROR_SOUND_DISTANCE_THRESHOLD = 5f;
 
     #region Unity Callbacks
-    private void Start() {
-        //playerCamera = PlayerAccessor.instance.playerCamera;
-        //playerTransform = PlayerAccessor.instance.transform;
+    private void Awake() {
         navMeshAgent = GetComponent<NavMeshAgent>();
         meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         animator = GetComponent<Animator>();
+    }
+
+    private void Start() {
+        playerCamera = Player.Instance.playerCamera;
+        playerTransform = Player.Instance.transform;
         roamTimer = ROAM_INTERVAL;
 
         InvokeRepeating(nameof(CheckForDoors), doorCheckInterval, doorCheckInterval);
@@ -77,20 +80,20 @@ public class SCP_173 : MonoBehaviour {
         HandleHorrorSoundReset();
         HandleMoving();
 
-        /*if (hasTarget && !PlayerAccessor.instance.isDead)
-            AttemptToKillPlayer();*/
+        if (hasTarget && !Player.Instance.isDead) AttemptToKillPlayer();
     }
     #endregion
 
     #region Movement Control
+
     private void HandleMoving() {
-        /*if (isVisibleByPlayer || isVisibleByAnyNPC) {
-            if (!PlayerAccessor.instance.isBlinking) {
+        if (isVisibleByPlayer || isVisibleByAnyNPC) {
+            if (!Player.Instance.isBlinking) {
                 movementSource.SetActive(false);
                 StopCompletely();
                 return;
             }
-        }*/
+        }
 
         if (hasTarget && target != null) {
             if (ShouldAbandonTarget()) {
@@ -114,9 +117,9 @@ public class SCP_173 : MonoBehaviour {
 
     private float GetChaseSpeed() {
         float speed = CHASE_SPEED;
-        /*if (PlayerAccessor.instance.isBlinking) {
+        if (Player.Instance.isBlinking) {
             speed *= 2.5f;
-        }*/
+        }
         return speed;
     }
 
@@ -129,6 +132,7 @@ public class SCP_173 : MonoBehaviour {
     #endregion
 
     #region Target Abandonment
+
     private bool ShouldAbandonTarget() {
         if (target == null) return true;
         return Vector3.Distance(transform.position, target.position) > maxTargetDistance;
@@ -141,16 +145,17 @@ public class SCP_173 : MonoBehaviour {
 
         //if (alreadySeenByPlayer) PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>().StopBlink();
         if (alreadySeenByPlayer) alreadySeenByPlayer = false;
-        //if (alreadySeenByPlayer) GameManager.instance.scp173ChasingPlayer = false;
+        if (alreadySeenByPlayer) GameManager.Instance.scp173pursuing = false;
 
         movementSource.SetActive(false);
         hasPlayedDistanceHorrorSound = false;
 
-        //if (!GameManager.instance.scp106Active)
-        //    MusicManager.instance.SetMusicState(MusicState.LCZ);
+        if (!GameManager.Instance.scp106pursuing && !GameManager.Instance.scp049pursuing && !GameManager.Instance.scp096pursuing)
+            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.LCZ);
 
         tensionEmitter.Stop();
     }
+
     #endregion
 
     #region Free Roaming
@@ -171,6 +176,8 @@ public class SCP_173 : MonoBehaviour {
     #endregion
 
     #region Door Hijacking
+
+    //TODO: Revisit this later to optimize, might make door opening a modular component in the future
     private void CheckForDoors() {
         var colliders = Physics.OverlapSphere(transform.position, DOOR_CHECK_RADIUS);
         Door nearest = null;
@@ -187,17 +194,19 @@ public class SCP_173 : MonoBehaviour {
 
         if (nearest && Random.value < doorOpenChance && !nearest.isOpen && !nearest.requiresKeycard && !nearest.isLocked && !isVisibleByPlayer) {
             nearest.OpenDoor();
-            //AudioManager.instance.PlaySound(FMODEvents.instance.doorOpen173, nearest.transform.position);
+            AudioManager.PlayOneShot(AudioEventsHolder.Instance.doorOpen173, nearest.transform.position);
         }
     }
+
     #endregion
 
     #region Visibility Detection
+
     private void CheckPlayerVisibility() {
         bool wasVisible = isVisibleByPlayer;
         isVisibleByPlayer = false;
 
-        /*if (meshRenderer.isVisible && !PlayerAccessor.instance.isBlinking) {
+        if (meshRenderer.isVisible && !Player.Instance.isBlinking) {
             frustumPlanes = GeometryUtility.CalculateFrustumPlanes(playerCamera);
             if (GeometryUtility.TestPlanesAABB(frustumPlanes, meshRenderer.bounds)) {
                 Vector3 origin = playerCamera.transform.position;
@@ -213,7 +222,7 @@ public class SCP_173 : MonoBehaviour {
                     isVisibleByPlayer = true;
                 }
             }
-        }*/
+        }
 
         if (isVisibleByPlayer && !wasVisible) {
             OnBecameVisibleToPlayer();
@@ -225,16 +234,16 @@ public class SCP_173 : MonoBehaviour {
     private void OnBecameVisibleToPlayer() {
         if (!alreadySeenByPlayer) {
             alreadySeenByPlayer = true;
-            //GameManager.instance.scp173ChasingPlayer = true;
+            GameManager.Instance.scp173pursuing = true;
             AcquireTarget(playerTransform);
 
-            //if (!GameManager.instance.scp106Active)
-            //    MusicManager.instance.SetMusicState(MusicState.scp173);
+            if (!GameManager.Instance.scp106pursuing && !GameManager.Instance.scp096pursuing && !GameManager.Instance.scp049pursuing) 
+                MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173);
 
             tensionEmitter.Play();
 
             //playerBlink = PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>();
-            playerBlink.StartBlink();
+            //playerBlink.StartBlink();
         }
 
         if (horrorSoundReady) {
@@ -250,33 +259,40 @@ public class SCP_173 : MonoBehaviour {
     }
 
     public void SetVisibleByNPC(bool visible) => isVisibleByAnyNPC = visible;
+
     #endregion
 
     #region Posing
+
     public void PlayRandomPose() {
+        // Use the animator to change 173 poses
         if (poseAnimations.Length == 0 && isVisibleByPlayer) return;
         string anim = poseAnimations[Random.Range(0, poseAnimations.Length)];
         if (animator != null && !isVisibleByPlayer) {
             animator.Play(anim);
         }
     }
+
     #endregion
 
     #region Target Killing
+
     private void AttemptToKillPlayer() {
         if (!hasTarget || target == null) return;
         float dist = Vector3.Distance(transform.position, target.position);
         if (dist <= 1.5f && !isVisibleByPlayer) {
-            //AudioManager.instance.PlaySound(neckBreakSound, transform.position);
-            //AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorNear, transform.position);
-            //GameManager.instance.ShowDeathScreen("Subject D-9341. Cause of death: Fatal cervical fracture. Assumed to be attacked by SCP-173.");
+            Player.Instance.KillPlayer(2, 0.5f, 0, "Subject D-9341. Cause of death: Fatal cervical fracture. Assumed to be attacked by SCP-173.");
+            AudioManager.PlayOneShot(neckBreakSound, transform.position);
+            AudioManager.PlayOneShot(AudioEventsHolder.Instance.statueHorrorNear, transform.position);
             Destroy(gameObject);
         }
 
     }
+
     #endregion
 
     #region Audio
+
     private void HandleHorrorSoundReset() {
         if (!isVisibleByPlayer) {
             notVisibleTimer += Time.deltaTime;
@@ -293,14 +309,15 @@ public class SCP_173 : MonoBehaviour {
         float dist = Vector3.Distance(transform.position, playerTransform.position);
 
         if (dist < HORROR_SOUND_DISTANCE_THRESHOLD) {
-            //AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorNear, transform.position);
+            AudioManager.PlayOneShot(AudioEventsHolder.Instance.statueHorrorNear);
         }
         else {
             if (!hasPlayedDistanceHorrorSound) {
-                //AudioManager.instance.PlaySound(FMODEvents.instance.statueHorrorFar, transform.position);
+                AudioManager.PlayOneShot(AudioEventsHolder.Instance.statueHorrorFar);
                 hasPlayedDistanceHorrorSound = true;
             }
         }
     }
+
     #endregion
 }
