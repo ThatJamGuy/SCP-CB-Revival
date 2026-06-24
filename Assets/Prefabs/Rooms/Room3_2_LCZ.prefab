@@ -44,7 +44,7 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1.5915494
+  m_Intensity: 0.7957747
   m_Range: 30
   m_SpotAngle: 30
   m_InnerSpotAngle: 0
@@ -185,7 +185,7 @@ MonoBehaviour:
   m_ShadowNearPlane: 0.1
   m_BlockerSampleCount: 24
   m_FilterSampleCount: 16
-  m_MinFilterSize: 0.5
+  m_MinFilterSize: 0
   m_DirLightPCSSBlockerSampleCount: 24
   m_DirLightPCSSFilterSampleCount: 16
   m_DirLightPCSSMaxPenumbraSize: 0.56
@@ -213,7 +213,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
-  m_ShadowUpdateMode: 0
+  m_ShadowUpdateMode: 1
   m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -379,7 +379,7 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1.5915494
+  m_Intensity: 0.7957747
   m_Range: 30
   m_SpotAngle: 30
   m_InnerSpotAngle: 0
@@ -520,7 +520,7 @@ MonoBehaviour:
   m_ShadowNearPlane: 0.1
   m_BlockerSampleCount: 24
   m_FilterSampleCount: 16
-  m_MinFilterSize: 0.5
+  m_MinFilterSize: 0
   m_DirLightPCSSBlockerSampleCount: 24
   m_DirLightPCSSFilterSampleCount: 16
   m_DirLightPCSSMaxPenumbraSize: 0.56
@@ -548,7 +548,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
-  m_ShadowUpdateMode: 0
+  m_ShadowUpdateMode: 1
   m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -575,91 +575,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
---- !u!1 &3190654612979561385
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 521243077494643480}
-  - component: {fileID: 3222400138145475359}
-  - component: {fileID: 2245147077868846713}
-  m_Layer: 2
-  m_Name: AmbienceZone
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
---- !u!4 &521243077494643480
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3190654612979561385}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 888897319938996518}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3222400138145475359
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3190654612979561385}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 21, y: 10, z: 21}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2245147077868846713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3190654612979561385}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
-  CollisionTag: Player
-  EventReference:
-    Guid:
-      Data1: -877661569
-      Data2: 1247767477
-      Data3: -674235979
-      Data4: 1083816676
-    Path: event:/SFX/Ambience/Soundscapes/Industrial_Ambience_04
-  Event: 
-  EventPlayTrigger: 3
-  EventStopTrigger: 4
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
 --- !u!1 &3723090499791452849
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,7 +619,7 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1.5915494
+  m_Intensity: 0.7957747
   m_Range: 30
   m_SpotAngle: 30
   m_InnerSpotAngle: 0
@@ -845,7 +760,7 @@ MonoBehaviour:
   m_ShadowNearPlane: 0.1
   m_BlockerSampleCount: 24
   m_FilterSampleCount: 16
-  m_MinFilterSize: 0.5
+  m_MinFilterSize: 0
   m_DirLightPCSSBlockerSampleCount: 24
   m_DirLightPCSSFilterSampleCount: 16
   m_DirLightPCSSMaxPenumbraSize: 0.56
@@ -873,7 +788,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
-  m_ShadowUpdateMode: 0
+  m_ShadowUpdateMode: 1
   m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -1041,7 +956,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 521243077494643480}
   - {fileID: 7843274281620390067}
   - {fileID: 8525382984890669975}
   m_Father: {fileID: 8758469939806623735}

@@ -5,6 +5,7 @@ public class AudioEventsHolder : MonoBehaviour {
     public static AudioEventsHolder Instance { get; private set; }
 
     public EventReference doorExplode;
+    public EventReference doorBangEvent;
 
     [Header("Player Sounds")] 
     public EventReference crouchFoley;

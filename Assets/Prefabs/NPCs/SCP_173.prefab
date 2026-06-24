@@ -113,7 +113,6 @@ GameObject:
   - component: {fileID: 4770502282531191508}
   - component: {fileID: 6641338790082918912}
   - component: {fileID: 6082540291444094696}
-  - component: {fileID: 1267168079071797423}
   m_Layer: 0
   m_Name: SCP_173
   m_TagString: NPC
@@ -157,7 +156,8 @@ MonoBehaviour:
   alreadySeenByPlayer: 0
   hasTarget: 0
   doorOpenChance: 0.3
-  doorCheckInterval: 5
+  doorCheckInterval: 3
+  maxTargetDistance: 25
   poseAnimations:
   - Pose1
   - Pose2
@@ -167,8 +167,7 @@ MonoBehaviour:
   - Pose6
   - Pose7
   - Pose8
-  maxTargetDistance: 25
-  maxVisibilityRange: 20
+  maxVisibilityRange: 30
   obstructionMask:
     serializedVersion: 2
     m_Bits: 192
@@ -278,27 +277,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &1267168079071797423
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 538570090455416849}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 3, z: 1}
-  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!1 &563345840605161381
 GameObject:
   m_ObjectHideFlags: 0

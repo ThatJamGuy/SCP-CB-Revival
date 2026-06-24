@@ -6,7 +6,7 @@ public class TeslaKillZone : MonoBehaviour {
     private void OnTriggerEnter(Collider other) {
         if (other.CompareTag("Player")) {
             if (teslaController != null) {
-                teslaController.KillPlayer();
+                Player.Instance.KillPlayer(1, 0.5f, 3f, "Subject D-9341 killed by the Tesla Gate at [REDACTED].");
             }
         }
 

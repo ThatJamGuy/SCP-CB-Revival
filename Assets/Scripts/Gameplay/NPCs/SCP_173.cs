@@ -2,9 +2,13 @@ using FMODUnity;
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// A rather poorly written script to handle SCP-173 logic but it took forever to get here
+/// and it otherwise works fine so I'm afraid to touch it beyond adding on to it.
+/// TODO: Refactor this one day or pray a really smart person does it for me.
+/// </summary>
 public class SCP_173 : MonoBehaviour {
     [Header("Status")]
-    //[SerializeField] private bool canRoam = true;
     public bool isVisibleByPlayer = false;
     [SerializeField] private bool isVisibleByAnyNPC = false;
     [SerializeField] private bool alreadySeenByPlayer = false;
@@ -12,12 +16,11 @@ public class SCP_173 : MonoBehaviour {
 
     [Header("Behavior")]
     [SerializeField, Range(0f, 1f)] float doorOpenChance = 0.3f;
-    [SerializeField, Range(5f, 10f)] float doorCheckInterval = 10;
+    [SerializeField, Range(1f, 10f)] float doorCheckInterval = 10;
+    [SerializeField] private float maxTargetDistance;
+
     [Header("Posing")]
     [SerializeField] private string[] poseAnimations;
-
-    [Header("Target Abandonment")]
-    [SerializeField] private float maxTargetDistance = 50f;
 
     [Header("Detection")]
     [SerializeField] private float maxVisibilityRange = 20f;
@@ -56,6 +59,7 @@ public class SCP_173 : MonoBehaviour {
     private const float HORROR_SOUND_DISTANCE_THRESHOLD = 5f;
 
     #region Unity Callbacks
+
     private void Awake() {
         navMeshAgent = GetComponent<NavMeshAgent>();
         meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
@@ -82,6 +86,7 @@ public class SCP_173 : MonoBehaviour {
 
         if (hasTarget && !Player.Instance.isDead) AttemptToKillPlayer();
     }
+
     #endregion
 
     #region Movement Control
@@ -159,6 +164,7 @@ public class SCP_173 : MonoBehaviour {
     #endregion
 
     #region Free Roaming
+
     private void Roam() {
         roamTimer -= Time.deltaTime;
         if (roamTimer <= 0f) {
@@ -173,6 +179,7 @@ public class SCP_173 : MonoBehaviour {
         return NavMesh.SamplePosition(randomDir, out var hit, radius, NavMesh.AllAreas) ?
             hit.position : origin;
     }
+
     #endregion
 
     #region Door Hijacking
@@ -192,9 +199,12 @@ public class SCP_173 : MonoBehaviour {
             }
         }
 
+        // Randomly be able to either open the nearest door or fail to do so and bang on it a bit
         if (nearest && Random.value < doorOpenChance && !nearest.isOpen && !nearest.requiresKeycard && !nearest.isLocked && !isVisibleByPlayer) {
             nearest.OpenDoor();
             AudioManager.PlayOneShot(AudioEventsHolder.Instance.doorOpen173, nearest.transform.position);
+        } else if (nearest && !nearest.isOpen) {
+            AudioManager.PlayOneShot(AudioEventsHolder.Instance.doorBangEvent, nearest.transform.position);
         }
     }
 
@@ -214,8 +224,7 @@ public class SCP_173 : MonoBehaviour {
                 Vector3 dir = targetPoint - origin;
                 float dist = dir.magnitude;
 
-                if (dist > maxVisibilityRange)
-                    return;
+                if (dist > maxVisibilityRange) return;
 
                 if (!Physics.Raycast(origin, dir.normalized, out var hit, dist, obstructionMask) ||
                     hit.transform == transform || hit.transform.IsChildOf(transform)) {
@@ -224,9 +233,7 @@ public class SCP_173 : MonoBehaviour {
             }
         }
 
-        if (isVisibleByPlayer && !wasVisible) {
-            OnBecameVisibleToPlayer();
-        }
+        if (isVisibleByPlayer && !wasVisible) OnBecameVisibleToPlayer();
 
         wasVisibleLastFrame = isVisibleByPlayer;
     }
@@ -250,6 +257,8 @@ public class SCP_173 : MonoBehaviour {
             PlayHorrorSound();
             horrorSoundReady = false;
         }
+
+        AchievementSystem.Instance.GiveAchievement("achv_173");
     }
 
     private void AcquireTarget(Transform newTarget) {

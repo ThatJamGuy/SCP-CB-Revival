@@ -44,11 +44,6 @@ public class TeslaController : MonoBehaviour {
         StartCoroutine(TriggerTeslaCoroutine());
     }
 
-    public void KillPlayer() {
-        //GameManager.instance.ShowDeathScreen("Subject D-9341 killed by the Tesla Gate at [REDACTED].");
-        Player.Instance.isDead = true;
-    }
-
     private IEnumerator TeslaShockCoroutine() {
         AudioManager.PlayOneShot(teslaShockSound, transform.position);
         yield return new WaitForSeconds(0.5f);

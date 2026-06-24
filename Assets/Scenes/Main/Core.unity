@@ -380,7 +380,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &838895397
 Transform:
   m_ObjectHideFlags: 0
@@ -460,6 +460,10 @@ PrefabInstance:
     - target: {fileID: 4123013798509009504, guid: 44f4d950dd2cd224680db7a50915fd9f, type: 3}
       propertyPath: m_Name
       value: AudioManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 4123013798509009504, guid: 44f4d950dd2cd224680db7a50915fd9f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -860,7 +864,6 @@ Transform:
   m_Children:
   - {fileID: 838895397}
   - {fileID: 271904301}
-  - {fileID: 7842951310051197719}
   - {fileID: 1199470430}
   - {fileID: 2059961564}
   m_Father: {fileID: 0}
@@ -926,6 +929,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TooltipManager
       objectReference: {fileID: 0}
+    - target: {fileID: 2220824214996446733, guid: f301a33cd1f8f854ca40161655c6998d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6417823111944852834, guid: f301a33cd1f8f854ca40161655c6998d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -976,50 +983,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6417823111944852834, guid: f301a33cd1f8f854ca40161655c6998d, type: 3}
   m_PrefabInstance: {fileID: 2059961563}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &3491925445136322700
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7842951310051197719}
-  - component: {fileID: 9014664185285797811}
-  m_Layer: 0
-  m_Name: DiscordManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
---- !u!4 &7842951310051197719
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3491925445136322700}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1712706619}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9014664185285797811
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3491925445136322700}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b1c69b0d78989f4d9f2fda805675349, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RichPresence
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
