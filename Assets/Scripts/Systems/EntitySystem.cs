@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using UnityEngine;
-using IngameDebugConsole;
 using System.Linq;
+using UnityEngine;
 
 public class EntitySystem : MonoBehaviour {
     public static EntitySystem Instance { get; private set; }
@@ -12,15 +11,15 @@ public class EntitySystem : MonoBehaviour {
     [SerializeField] private GameObject[] standbyEntityList;
 
     #region Unity Callbacks
-    
+
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-        
-        DebugLogConsole.AddCommand("listentities", "Lists all active entities and their IDs", ListEntities);
-        DebugLogConsole.AddCommand<int, Vector3>("spawnentity", "Spawns an NPC prefab by index at a given position.", SpawnEntity);
-        DebugLogConsole.AddCommand<int, Vector3>("teleportentity", "Teleports an entity by ID to a given position", TeleportEntity);
-        DebugLogConsole.AddCommand<int>("walktome", "Tells an NPC by ID to walk to the player", WalkToMe);
+
+        DebugConsole.AddCommand("listentities", "Lists all active entities and their indexes in the standy array.", ListEntities);
+        DebugConsole.AddCommand<int, Vector3>("spawnentity", "Spawns the NPC prefab with the given index in the active array at the given position.", SpawnEntity);
+        DebugConsole.AddCommand<int, Vector3>("teleportentity", "Teleports an entity by index in the active array to a given position", TeleportEntity);
+        DebugConsole.AddCommand<int>("walktome", "Tells an NPC by index in the active array to walk to the player", WalkToMe);
     }
 
     private void Start() {
@@ -56,7 +55,7 @@ public class EntitySystem : MonoBehaviour {
         activeEntityList[index].WalkTo(Player.Instance.transform.position);
     }
     #endregion
-    
+
     #region Public Methods
 
     /// <summary>
@@ -72,7 +71,7 @@ public class EntitySystem : MonoBehaviour {
 
         Instantiate(standbyEntityList[prefabIndex], position, Quaternion.identity);
     }
-    
+
     /// <summary>
     /// Teleport an entity to a new location for events and/or debugging
     /// </summary>

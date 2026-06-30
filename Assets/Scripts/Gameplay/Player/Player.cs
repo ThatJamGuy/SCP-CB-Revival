@@ -1,7 +1,6 @@
-using UnityEngine;
-using IngameDebugConsole;
 using PrimeTween;
 using System.Collections;
+using UnityEngine;
 
 /// <summary>
 /// Player instance class that will carry all publicly available information about the player.
@@ -14,12 +13,12 @@ public class Player : MonoBehaviour {
     public float sprintSpeed = 7f;
     public float crouchSpeed = 1f;
 
-    [Header("Player Modifiers")] 
+    [Header("Player Modifiers")]
     public float staminaDepletionModifier;
     public float blinkDepletionModifier;
     public float bloodLossModifier;
 
-    [Header("Player States")] 
+    [Header("Player States")]
     public bool disableInput;
     public bool disableLooking;
     public bool isMoving;
@@ -40,21 +39,17 @@ public class Player : MonoBehaviour {
     private static bool desiredCursorVisible { get; set; }
 
     #region Unity Callbacks
+
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-        
+
         settingsData = DataSaver.Load<SettingsData>("settings.json");
 
         cameraStartPos = cameraRoot.transform.localPosition;
         cameraStartRot = cameraRoot.transform.localRotation;
     }
 
-    private void Start() {
-        DebugLogConsole.AddCommand("getpos", "Returns the current player XYZ coordinates", GetPlayerPos);
-        DebugLogConsole.AddCommand<int, float, float, string>("kill", "Kills the player with animation killType for animDuration", KillPlayer);
-    }
-    
     private void OnEnable() {
         if (InputManager.Instance != null)
             InputManager.Instance.OnInputDeviceChanged += OnDeviceChanged;
@@ -64,8 +59,9 @@ public class Player : MonoBehaviour {
         if (InputManager.Instance != null)
             InputManager.Instance.OnInputDeviceChanged -= OnDeviceChanged;
     }
+
     #endregion
-    
+
     #region Private Methods
 
     // Returns the current player XYZ coordinates
@@ -119,12 +115,12 @@ public class Player : MonoBehaviour {
         yield return new WaitForSeconds(delayTime);
         GameManager.Instance.ShowDeathScreen(causeOfDeath);
     }
-    
+
     // Re-apply cursor state when switching back to KBM so menus restore correctly
     private static void OnDeviceChanged(bool usingController) {
         if (!usingController) ApplyCursorState();
     }
-    
+
     // Apply cursor state only when on KBM; skip silently on controller
     private static void ApplyCursorState() {
         if (InputManager.Instance.UsingController) return;

@@ -59,7 +59,7 @@ public class OptionsMenu : MonoBehaviour {
         qualityDropdown.SetValueWithoutNotify(qualIndex);
         vSyncToggle.SetIsOnWithoutNotify(settings.vSync);
         soundtrackDropdown.SetValueWithoutNotify(settings.soundtrack);
-        consoleToggle.SetIsOnWithoutNotify(settings.console);
+        //consoleToggle.SetIsOnWithoutNotify(settings.console);
         fpsCounterToggle.SetIsOnWithoutNotify(settings.fpsCounter);
         masterVolumeSlider.SetValueWithoutNotify(settings.masterVolume);
         musicVolumeSlider.SetValueWithoutNotify(settings.musicVolume);
@@ -72,7 +72,7 @@ public class OptionsMenu : MonoBehaviour {
         SetQualityLevel(qualIndex);
         SetVSync(settings.vSync);
         SetSoundtrack(settings.soundtrack);
-        SetConsoleState(settings.console);
+        //SetConsoleState(settings.console);
         SetFpsCounter(settings.fpsCounter);
         SetMasterVolume(settings.masterVolume);
         SetMusicVolume(settings.musicVolume);
@@ -153,8 +153,7 @@ public class OptionsMenu : MonoBehaviour {
         if (!int.TryParse(value, out var limit) || limit <= 0) {
             Application.targetFrameRate = UnlimitedFrameRate;
             settings.frameLimit = UnlimitedFrameRate;
-        }
-        else {
+        } else {
             Application.targetFrameRate = limit;
             settings.frameLimit = limit;
         }
@@ -169,7 +168,7 @@ public class OptionsMenu : MonoBehaviour {
     }
 
     public void SetConsoleState(bool enabled) {
-        settings.console = enabled;
+        //settings.console = enabled;
         //Save();
     }
 

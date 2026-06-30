@@ -8,7 +8,7 @@ public class SettingsData {
     public bool vSync;
     public int frameLimit = -1;
     public int soundtrack = 0;
-    public bool console;
+    public bool consoleEnabled;
     public bool fpsCounter;
     public float masterVolume = 1f;
     public float musicVolume = 1f;

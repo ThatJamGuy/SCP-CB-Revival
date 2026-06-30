@@ -1,8 +1,6 @@
 using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
-using EditorAttributes;
-using IngameDebugConsole;
 
 /// <summary>
 /// Global script to handle everything music related, current regular loops as of right now
@@ -23,10 +21,10 @@ public class MusicManager : MonoBehaviour {
         SCP_173 = 7,
         SCP_914 = 9
     }
-    
+
     [Header("FMOD Settings")]
     [SerializeField] private EventReference musicMasterEvent;
-    
+
     // Probably gonna rename these later to follow standard const naming conventions
     private const string currTrackParameterName = "CurrentTrack";
     private const string currIntensityParameterName = "IntensityState";
@@ -37,7 +35,7 @@ public class MusicManager : MonoBehaviour {
     private PARAMETER_ID trackParameterID;
     private PARAMETER_ID intensityParameterID;
     private PARAMETER_ID soundtrackParameterID;
-    
+
     private bool initialized;
     private int currentSoundtrack;
 
@@ -45,54 +43,52 @@ public class MusicManager : MonoBehaviour {
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-        
+
         settingsData = DataSaver.Load<SettingsData>("settings.json");
     }
 
     private void Start() {
-        // Register all these music related commands so that I don't need those clunky editor buttons anymore
-        DebugLogConsole.AddCommand<int, int>("startmusic",
-            "Plays a given music track based on it's ID number. Intensity only applies to LCZ.", SetTrack);
-        DebugLogConsole.AddCommand<int>("setsoundtrack", "Sets the current soundtrack.", SetSoundtrack);
-        DebugLogConsole.AddCommand("stopmusic", "Stops all currently playing music.", StopAllMusic);
+        DebugConsole.AddCommand<int, int>("startmusic", "Plays the music track with the given ID and with the given intensity.", SetTrack);
+        DebugConsole.AddCommand<int>("setsoundtrack", "Sets the current soundtrack.", SetSoundtrack);
+        DebugConsole.AddCommand("stopmusic", "Stops all currently playing music.", StopAllMusic);
     }
-    
+
     private void OnDestroy() {
         musicInstance.stop(STOP_MODE.IMMEDIATE);
         musicInstance.release();
     }
     #endregion
-    
+
     #region Private Methods
 
     private void Init() {
         if (initialized) return; // If already initialized do nothing
-        
+
         musicInstance = RuntimeManager.CreateInstance(musicMasterEvent); // Create the music instance
         musicInstance.getDescription(out var eventDescription); // Create eventDescription from instance description
-        
+
         // Find the parameter that controls the current track, and create variable parameterDescription 
         eventDescription.getParameterDescriptionByName(currTrackParameterName, out var parameterDescription);
         eventDescription.getParameterDescriptionByName(currIntensityParameterName, out var intensityParameterDescription);
         eventDescription.getParameterDescriptionByName(currSoundtrackParameterName, out var soundtrackParameterDescription);
-        
+
         trackParameterID = parameterDescription.id; // Set trackParameterId to parameterDescription's ID
         intensityParameterID = intensityParameterDescription.id; // Do the same thing for intensityParameterID
         soundtrackParameterID = soundtrackParameterDescription.id; // And of course the same for this long name guy
 
         currentSoundtrack = settingsData.soundtrack; // Set the currentSoundtrack value to the one saved in settings
-        
+
         musicInstance.setParameterByID(soundtrackParameterID, currentSoundtrack);
         musicInstance.start(); // Start playing the default music track
         initialized = true; // Set initialized to true so the thing knows not to initialize again, though why would it
     }
     #endregion
-    
+
     #region Public Methods
-    
+
     public void SetTrack(int trackIndex, int intensity = 0) {
         if (!initialized) Init(); // Ensure that there is a music instance available
-        
+
         musicInstance.setParameterByID(soundtrackParameterID, currentSoundtrack); // Set the soundtrack to the right one
         musicInstance.setParameterByID(intensityParameterID, intensity); // Set intensity of the track (LCZ ONLY RN)
         musicInstance.setParameterByID(trackParameterID, trackIndex); // Play the track by setting the parameter
@@ -108,17 +104,17 @@ public class MusicManager : MonoBehaviour {
 
     public void SetSoundtrack(int soundtrackToUse) {
         if (!initialized) Init(); // Ensure that there is a music instance available
-        
+
         currentSoundtrack = soundtrackToUse; // Set local currentSoundtrack to the new soundtrack integer
         settingsData.soundtrack = soundtrackToUse; // Set global settingsData.soundtrack to new soundtrack integer
         DataSaver.Save(settingsData, "settings.json"); // Save changes so they are ready on next launch
-        
+
         musicInstance.setParameterByID(soundtrackParameterID, currentSoundtrack); // Finally set the FMOD parameter
     }
 
     public void StopAllMusic() {
         if (!initialized) return; // If the MusicManager isn't ready yet do nothing
-        
+
         musicInstance.stop(STOP_MODE.ALLOWFADEOUT); // Stop all music using a fade out by default but It no work :(
         initialized = false; // No longer initialized, trigger another Init() on next track played
     }

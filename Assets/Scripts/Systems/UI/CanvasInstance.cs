@@ -24,11 +24,35 @@ public class CanvasInstance : MonoBehaviour {
     public GameObject controllerTooltips;
     public Button resumeButton;
 
+    [Header("HUD")]
+    public GameObject selectedBarStyleObject;
+    public GameObject revivalBarStyle;
+    public GameObject legacyBarStyle;
+
     [Header("Canvas References")] 
     public Canvas screensCanvas;
+
+    private SettingsData settingsData;
 
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        settingsData = DataSaver.Load<SettingsData>("settings.json");
+
+        switch (settingsData.hudDesign) {
+            case 0:
+                
+                break;
+            case 1:
+                break;
+        }
+
+        switch (settingsData.hudFunctionality) {
+            case 0:
+                break;
+            case 1:
+                break;
+        }
     }
 }
