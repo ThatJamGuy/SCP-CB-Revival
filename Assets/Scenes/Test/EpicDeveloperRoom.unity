@@ -4524,6 +4524,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6803418808038968126, guid: 58e1fca493e381c44b1736f036c99383, type: 3}
   m_PrefabInstance: {fileID: 487432443}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &492008617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 492008618}
+  m_Layer: 0
+  m_Name: ------------------------------------
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 0
+--- !u!4 &492008618
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492008617}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &499625144
 GameObject:
   m_ObjectHideFlags: 0
@@ -4907,7 +4938,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 36efcf4a287890c47b87f8b27a2ab82c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 602b7c82f2b58f542aea35247b7ed84b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7342,7 +7373,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99c627f6d6e749a4ca6d9afa4cea7204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanvasInstance
-  interactIcon: {fileID: 7679224635536735469}
   canvasRectTransform: {fileID: 1946981504535282070}
   HUD_QuickSave: {fileID: 446492166}
   HUD_AchievementPopup: {fileID: 431920968}
@@ -7353,9 +7383,17 @@ MonoBehaviour:
   deathMenuDeathCauseText: {fileID: 8649102250612414334}
   controllerTooltips: {fileID: 1607153384}
   resumeButton: {fileID: 8370186333736172137}
-  selectedBarStyleObject: {fileID: 0}
-  revivalBarStyle: {fileID: 0}
-  legacyBarStyle: {fileID: 0}
+  revivalBarStyleParent: {fileID: 963875680}
+  legacyBarStyleParent: {fileID: 632003733}
+  revivalBlinkSlider: {fileID: 1352373421}
+  revivalSprintSlider: {fileID: 5468983081665216777}
+  legacyBlinkSlider: {fileID: 670688003}
+  legacySprintSlider: {fileID: 986703564}
+  revivalInteractIcon: {fileID: 21300000, guid: 014ba0d451cf01c4794f35dca390ddbe, type: 3}
+  legacyInteractIcon: {fileID: 21300000, guid: cc281d850ab400846b014aad2706a6c0, type: 3}
+  interactIcon: {fileID: 7679224635536735469}
+  currBlinkSlider: {fileID: 0}
+  currSprintSlider: {fileID: 0}
   screensCanvas: {fileID: 1621621691}
 --- !u!114 &938413973
 MonoBehaviour:
@@ -7436,6 +7474,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ca669755f0c19f54d9ba289b5db47d23, type: 2}
   - {fileID: 11400000, guid: 2a0c107a2ba1aec4e965d35b0c8b7d6b, type: 2}
   - {fileID: 11400000, guid: 3eedaeed2f43377499a10b74b7b0cb6f, type: 2}
+  - {fileID: 11400000, guid: 6fa6fa91b8117a940ae5f6f31c53a7f3, type: 2}
+  - {fileID: 11400000, guid: edbf8647cf5879e48ac85812db7924ba, type: 2}
+  - {fileID: 11400000, guid: 0427e402712af9740a5fb5e5f60f1fe2, type: 2}
 --- !u!114 &938413976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8349,6 +8390,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1082440836}
+  - component: {fileID: 1082440837}
   m_Layer: 3
   m_Name: PlayerBlink
   m_TagString: Untagged
@@ -8371,6 +8413,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6017586895285786262}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1082440837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1082440835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a758f74ca08ef543a16084f13b3a8b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerBlink
+  currentBlink: 1
+  blinkDrainRate: 0.07
+  blinkOverlayDuration: 0.2
 --- !u!1 &1091530137
 GameObject:
   m_ObjectHideFlags: 0
@@ -11235,7 +11292,7 @@ GameObject:
   - component: {fileID: 1557375107}
   - component: {fileID: 1557375108}
   m_Layer: 0
-  m_Name: === ENVIRONMENT ===
+  m_Name: '[ ENVIRONMENT ]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12147,7 +12204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39c6a7d1413c54843bde6883a0084878, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneController
-  loadingOverlay: {fileID: 0}
+  loadingOverlay: {fileID: 1292696360}
 --- !u!1 &1650803564
 GameObject:
   m_ObjectHideFlags: 0
@@ -14845,7 +14902,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2062324046}
   m_Layer: 0
-  m_Name: === REQUIRED_THINGS ===
+  m_Name: DontKeep_RequiredComponents
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15975,7 +16032,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6017586895285786262}
-  - component: {fileID: 1202985484311938827}
   m_Layer: 3
   m_Name: Components
   m_TagString: Untagged
@@ -16059,20 +16115,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1202985484311938827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 906672163014504712}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a758f74ca08ef543a16084f13b3a8b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerBlink
-  blinkDrainRate: 0.07
-  blinkOverlayDuration: 0.2
 --- !u!114 &1218425335688611289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18446,7 +18488,6 @@ MonoBehaviour:
   isMoving: 0
   isSprinting: 0
   isCrouching: 0
-  isBlinking: 0
   isDead: 0
   cameraRoot: {fileID: 3528127443903515907}
   playerCamera: {fileID: 5020729084184143851}
@@ -21456,6 +21497,7 @@ SceneRoots:
   - {fileID: 766453446}
   - {fileID: 111933150}
   - {fileID: 1492986393}
+  - {fileID: 492008618}
   - {fileID: 938413971}
   - {fileID: 825543532}
   - {fileID: 702305791}

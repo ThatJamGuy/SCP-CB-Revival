@@ -1,6 +1,6 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// Globally accessable class that scripts can use to grab stuff on the canvas without direct references
@@ -10,7 +10,6 @@ public class CanvasInstance : MonoBehaviour {
     public static CanvasInstance Instance { get; private set; }
 
     [Header("Single Objects")]
-    public Image interactIcon;
     public RectTransform canvasRectTransform;
     public Animator HUD_QuickSave;
     public Animator HUD_AchievementPopup;
@@ -19,39 +18,51 @@ public class CanvasInstance : MonoBehaviour {
     public Image achievementIcon;
     public GameObject deathMenu;
     public TextMeshProUGUI deathMenuDeathCauseText;
-    
+
     [Header("Pause Menu")]
     public GameObject controllerTooltips;
     public Button resumeButton;
 
     [Header("HUD")]
-    public GameObject selectedBarStyleObject;
-    public GameObject revivalBarStyle;
-    public GameObject legacyBarStyle;
+    public GameObject revivalBarStyleParent;
+    public GameObject legacyBarStyleParent;
+    public Slider revivalBlinkSlider;
+    public Slider revivalSprintSlider;
+    public Slider legacyBlinkSlider;
+    public Slider legacySprintSlider;
+    public Sprite revivalInteractIcon;
+    public Sprite legacyInteractIcon;
 
-    [Header("Canvas References")] 
+    public Image interactIcon;
+    [HideInInspector] public Slider currBlinkSlider;
+    [HideInInspector] public Slider currSprintSlider;
+
+    [Header("Canvas References")]
     public Canvas screensCanvas;
-
-    private SettingsData settingsData;
 
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
 
-        settingsData = DataSaver.Load<SettingsData>("settings.json");
-
-        switch (settingsData.hudDesign) {
+    private void Start() {
+        // Set up which HUD Designs to use so other scripts don't have to think about it
+        switch (SettingsManager.settingsData.hudDesign) {
             case 0:
-                
+                revivalBarStyleParent.SetActive(true);
+                legacyBarStyleParent.SetActive(false);
+
+                currBlinkSlider = revivalBlinkSlider;
+                currSprintSlider = revivalSprintSlider;
+                interactIcon.sprite = revivalInteractIcon;
                 break;
             case 1:
-                break;
-        }
+                revivalBarStyleParent.SetActive(false);
+                legacyBarStyleParent.SetActive(true);
 
-        switch (settingsData.hudFunctionality) {
-            case 0:
-                break;
-            case 1:
+                currBlinkSlider = legacyBlinkSlider;
+                currSprintSlider = legacySprintSlider;
+                interactIcon.sprite = legacyInteractIcon;
                 break;
         }
     }
