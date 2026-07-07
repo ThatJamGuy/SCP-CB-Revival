@@ -12,13 +12,14 @@ public class MusicManager : MonoBehaviour {
     // Prevents changes from breaking other calls for music and makes things generally nicer
     public enum MusicTrack {
         Menu = 0,
-        LCZ = 1,
-        HCZ = 2,
-        SL = 3,
-        SCP_049 = 4,
-        SCP_096 = 5,
-        SCP_106 = 6,
-        SCP_173 = 7,
+        Intro = 1,
+        LCZ = 2,
+        HCZ = 3,
+        SL = 4,
+        SCP_049 = 5,
+        SCP_096 = 6,
+        SCP_106 = 7,
+        SCP_173 = 8,
         SCP_914 = 9
     }
 

@@ -5,7 +5,7 @@ public class SettingsManager : MonoBehaviour {
 
     private const string SETTINGS_FILE_NAME = "settings.json";
 
-    private void Start() {
+    private void Awake() {
         settingsData = DataSaver.Load<SettingsData>(SETTINGS_FILE_NAME);
     }
 

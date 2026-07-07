@@ -1,7 +1,7 @@
-using PrimeTween;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using PrimeTween;
 
 /// <summary>
 /// Player component that handles all the movement logic. Also pulls a bunch of values from the Player class.
@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] private float staminaRegenRate = 0.1f;
     [SerializeField] private Slider temporaryStaminaSlider; // TODO: REMOVE ME!!!
 
-    [Header("References")]
+    [Header("References")] 
     [SerializeField] private CharacterController characterController;
     [SerializeField] private Transform playerCameraRoot;
 
@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour {
     private InputAction moveAction;
     private InputAction sprintAction;
     private InputAction crouchAction;
-
+    
     private Vector2 moveDirection;
     private Vector3 velocity;
 
@@ -47,7 +47,6 @@ public class PlayerMovement : MonoBehaviour {
     #endregion
 
     #region Unity Callbacks
-
     private void OnDisable() {
         // Cleanup to make sure we unsubscribe to the sprint and crouch actions
         if (sprintAction == null || crouchAction == null) return;
@@ -55,7 +54,7 @@ public class PlayerMovement : MonoBehaviour {
         sprintAction.canceled -= OnSprintCanceled;
         crouchAction.performed -= OnCrouchPerformed;
     }
-
+    
     private void Start() {
         // If there is no InputManager available at the start, disallow functionality and print a warning in console
         if (inputManager == null) {
@@ -64,17 +63,17 @@ public class PlayerMovement : MonoBehaviour {
 
             return;
         }
-
+        
         // Retrieve the different input actions from InputManager so they can be cached
         moveAction = inputManager.GetAction("Player", "Move");
         sprintAction = inputManager.GetAction("Player", "Sprint");
         crouchAction = inputManager.GetAction("Player", "Crouch");
-
+        
         // Subscribe to the sprint and crouch actions so it can determine if the player is holding the right keys
         sprintAction.started += OnSprintStarted;
         sprintAction.canceled += OnSprintCanceled;
         crouchAction.performed += OnCrouchPerformed;
-
+        
         // Set the different speeds to their values from settings.json, which are stored on the player instance
         walkingSpeed = player.walkSpeed;
         sprintSpeed = player.sprintSpeed;
@@ -84,53 +83,59 @@ public class PlayerMovement : MonoBehaviour {
     private void Update() {
         // If input is manually disabled or functionality is broken then don't do anything
         if (player.disableInput || cantFunction) return;
-
+        
         DetermineMovementSpeed();
         HandleMovement();
         HandleStamina();
     }
-
     #endregion
 
     #region Private Methods
-
     private void DetermineMovementSpeed() {
         // Prioritize crouch speed, but if that doesn't check out then check for sprinting then walking
-        if (isCrouching) currentSpeed = crouchSpeed;
+        if (isCrouching) currentSpeed = crouchSpeed; 
         else currentSpeed = isSprinting ? sprintSpeed : walkingSpeed;
     }
-
+    
     private void HandleMovement() {
         var input = moveAction.ReadValue<Vector2>();
         var move = transform.right * input.x + transform.forward * input.y;
 
         // Move the character controller in the proper Vector3 direction at the currentSpeed
         characterController.Move(move * (currentSpeed * Time.deltaTime));
-
+        
         // If the player is not on the ground, set the up-down velocity to -2 so they go down
         if (characterController.isGrounded && velocity.y < 0f) velocity.y = -2f;
-
+        
         // Set the velocity to the gravity value
         // Then move the character controller by the velocity alongside the previous Vector3 movement
         velocity.y += GRAVITY * Time.deltaTime;
         characterController.Move(velocity * Time.deltaTime);
-
+        
         player.isMoving = input.sqrMagnitude > 0;
     }
 
     private void HandleStamina() {
+<<<<<<< Updated upstream
         temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
+        
+=======
+        // Remove dependance on the UI being in the scene
+        if (temporaryStaminaSlider != null) {
+            temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
+        }
 
+>>>>>>> Stashed changes
         // If the player is moving, sprinting, and not sprint locked then do the stuff in this if statement
         if (isSprinting && !sprintLocked && player.isMoving) {
             // Determine the total drain rate based on the default drain rate * the depletion modifier if applicable
             // Then subtract the current stamina based on this determined drain rate
             var finalDrainRate = staminaDrainRate * (1f + player.staminaDepletionModifier);
             currentStamina = Mathf.Max(currentStamina - finalDrainRate * Time.deltaTime, 0f);
-
+            
             // Is the stamina more than 0? Too bad, go away
             if (!(currentStamina <= 0f)) return;
-
+            
             // Okay I guess you have stamina still. I'll give you zero stamina on the dot, and stop you from sprinting
             currentStamina = 0f;
             sprintLocked = true;
@@ -141,7 +146,7 @@ public class PlayerMovement : MonoBehaviour {
         else if (currentStamina < MAX_STAMINA) {
             // Start refilling the stamina based on the staminaRegenRate
             currentStamina = Mathf.Min(currentStamina + staminaRegenRate * Time.deltaTime, MAX_STAMINA);
-
+            
             // Wait until stamina is greater than 0.1 before player can sprint again. Presents sprint tapping
             if (currentStamina > 0.1f)
                 sprintLocked = false;
@@ -168,11 +173,10 @@ public class PlayerMovement : MonoBehaviour {
     #region Crouching
     // When hitting the crouch button, if crouching stand, otherwise start crouching
     private void AttemptToToggleCrouch() {
-        if (player.disableInput) return; // Added this so the console would stop making me crouch
         if (isCrouching) TryToStand();
         else StartCrouch();
     }
-
+    
     // If crouching already, don't attempt to crouch again. Important for that one frame where it could bug out
     // Assuming it continues, set the isCrouching variable to true and start tweening player height to crouching
     // Also play some crouch foley for some extra cool detail
@@ -212,6 +216,6 @@ public class PlayerMovement : MonoBehaviour {
         return !Physics.CheckCapsule(playerBottom, playerTop, playerRadius - 0.05f, mask, QueryTriggerInteraction.Ignore);
     }
     #endregion
-
+    
     #endregion
 }
