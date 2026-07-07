@@ -6,7 +6,7 @@ public class SettingsManager : MonoBehaviour {
     
     private SettingsData settingsData;
 
-    private void Start() {
+    private void Awake() {
         settingsData = DataSaver.Load<SettingsData>(SETTINGS_FILE_NAME);
     }
     

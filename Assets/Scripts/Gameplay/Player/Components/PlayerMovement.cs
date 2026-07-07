@@ -116,8 +116,16 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void HandleStamina() {
+<<<<<<< Updated upstream
         temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
         
+=======
+        // Remove dependance on the UI being in the scene
+        if (temporaryStaminaSlider != null) {
+            temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
+        }
+
+>>>>>>> Stashed changes
         // If the player is moving, sprinting, and not sprint locked then do the stuff in this if statement
         if (isSprinting && !sprintLocked && player.isMoving) {
             // Determine the total drain rate based on the default drain rate * the depletion modifier if applicable

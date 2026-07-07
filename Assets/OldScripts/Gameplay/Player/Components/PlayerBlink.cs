@@ -10,6 +10,24 @@ public class PlayerBlink : MonoBehaviour {
     [SerializeField] private float blinkDrainRate = 0.07f;
     [SerializeField] private float blinkOverlayDuration = 0.2f;
 
+<<<<<<< Updated upstream:Assets/OldScripts/Gameplay/Player/Components/PlayerBlink.cs
+=======
+    #region Unity Callbacks
+
+    private void Update() {
+        if (currentBlink <= 0) currentBlink = 1f;
+
+        float finalDrainRate = blinkDrainRate * (1f + Player.Instance.blinkDepletionModifier);
+        currentBlink = Mathf.MoveTowards(currentBlink, 0f, finalDrainRate * Time.deltaTime);
+
+        if (CanvasInstance.Instance != null) CanvasInstance.Instance.currBlinkSlider.value = currentBlink;
+    }
+
+    #endregion
+
+    /*public static Action OnPlayerBlink {  get; private set; }
+
+>>>>>>> Stashed changes:Assets/Scripts/Gameplay/Player/Components/PlayerBlink.cs
     private InputAction blinkAction;
     private bool isBlinkingActive = false;
     private bool isBlinking = false;
