@@ -93,7 +93,7 @@ public class SCP_173 : MonoBehaviour {
 
     private void HandleMoving() {
         if (isVisibleByPlayer || isVisibleByAnyNPC) {
-            if (!Player.isBlinking) {
+            if (!Player.Instance.isBlinking) {
                 movementSource.SetActive(false);
                 StopCompletely();
                 return;
@@ -109,7 +109,8 @@ public class SCP_173 : MonoBehaviour {
             navMeshAgent.speed = currentChaseSpeed;
             navMeshAgent.acceleration = currentChaseSpeed;
             navMeshAgent.SetDestination(target.position);
-        } else {
+        }
+        else {
             navMeshAgent.speed = ROAM_SPEED;
             navMeshAgent.acceleration = ROAM_SPEED;
             //canRoam = true;
@@ -121,7 +122,7 @@ public class SCP_173 : MonoBehaviour {
 
     private float GetChaseSpeed() {
         float speed = CHASE_SPEED;
-        if (Player.isBlinking) {
+        if (Player.Instance.isBlinking) {
             speed *= 2.5f;
         }
         return speed;
@@ -215,7 +216,7 @@ public class SCP_173 : MonoBehaviour {
         bool wasVisible = isVisibleByPlayer;
         isVisibleByPlayer = false;
 
-        if (meshRenderer.isVisible && !Player.isBlinking) {
+        if (meshRenderer.isVisible && !Player.Instance.isBlinking) {
             frustumPlanes = GeometryUtility.CalculateFrustumPlanes(playerCamera);
             if (GeometryUtility.TestPlanesAABB(frustumPlanes, meshRenderer.bounds)) {
                 Vector3 origin = playerCamera.transform.position;
@@ -243,7 +244,7 @@ public class SCP_173 : MonoBehaviour {
             GameManager.Instance.scp173pursuing = true;
             AcquireTarget(playerTransform);
 
-            if (!GameManager.Instance.scp106pursuing && !GameManager.Instance.scp096pursuing && !GameManager.Instance.scp049pursuing)
+            if (!GameManager.Instance.scp106pursuing && !GameManager.Instance.scp096pursuing && !GameManager.Instance.scp049pursuing) 
                 MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173);
 
             tensionEmitter.Play();
@@ -307,7 +308,8 @@ public class SCP_173 : MonoBehaviour {
             if (notVisibleTimer >= horrorSoundResetDelay) {
                 horrorSoundReady = true;
             }
-        } else {
+        }
+        else {
             notVisibleTimer = 0f;
         }
     }
@@ -317,7 +319,8 @@ public class SCP_173 : MonoBehaviour {
 
         if (dist < HORROR_SOUND_DISTANCE_THRESHOLD) {
             AudioManager.PlayOneShot(AudioEventsHolder.Instance.statueHorrorNear);
-        } else {
+        }
+        else {
             if (!hasPlayedDistanceHorrorSound) {
                 AudioManager.PlayOneShot(AudioEventsHolder.Instance.statueHorrorFar);
                 hasPlayedDistanceHorrorSound = true;

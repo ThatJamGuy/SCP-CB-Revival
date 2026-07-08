@@ -1,27 +1,14 @@
 using UnityEngine;
+using PrimeTween;
+using UnityEngine.InputSystem;
+using System.Collections;
+using System;
 
 public class PlayerBlink : MonoBehaviour {
-    [Header("Blink Status")]
-    [SerializeField, Range(0, 1)] private float currentBlink = 1f;
+    public static Action OnPlayerBlink {  get; private set; }
 
-    [Header("Blink Settings")]
     [SerializeField] private float blinkDrainRate = 0.07f;
     [SerializeField] private float blinkOverlayDuration = 0.2f;
-
-    #region Unity Callbacks
-
-    private void Update() {
-        if (currentBlink <= 0) currentBlink = 1f;
-
-        float finalDrainRate = blinkDrainRate * (1f + Player.Instance.blinkDepletionModifier);
-        currentBlink = Mathf.MoveTowards(currentBlink, 0f, finalDrainRate * Time.deltaTime);
-
-        CanvasInstance.Instance.currBlinkSlider.value = currentBlink;
-    }
-
-    #endregion
-
-    /*public static Action OnPlayerBlink {  get; private set; }
 
     private InputAction blinkAction;
     private bool isBlinkingActive = false;
@@ -44,6 +31,8 @@ public class PlayerBlink : MonoBehaviour {
     private void Update() {
         //if (!isBlinkingActive || isBlinking) return;
 
+        //float drain = blinkDrainRate * (1 + PlayerAccessor.instance.blinkDepletionModifier);
+        //blinkTimer = Mathf.MoveTowards(blinkTimer, 0f, drain * Time.deltaTime);
         //CanvasInstance.instance.blinkBar.value = blinkTimer;
 
         if (blinkTimer <= 0f) TriggerBlink();
@@ -104,5 +93,5 @@ public class PlayerBlink : MonoBehaviour {
         yield return new WaitForSeconds(1);
         //CanvasInstance.instance.blinkBar.gameObject.SetActive(false);
         isBlinkingActive = false;
-    }*/
+    }
 }
