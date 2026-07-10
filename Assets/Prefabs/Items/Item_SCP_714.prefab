@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3916621596520169224}
   - component: {fileID: 8719696491505580900}
   - component: {fileID: 8558454769258398187}
+  - component: {fileID: -4439530280174275786}
   m_Layer: 8
   m_Name: Item_SCP_714
   m_TagString: Interact
@@ -140,3 +141,25 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &-4439530280174275786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787617998551357219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e607d8e2d40f02c4581421f0931c9709, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItem
+  associatedItemData: {fileID: 11400000, guid: 6fa6fa91b8117a940ae5f6f31c53a7f3, type: 2}
+  pickupSound:
+    Guid:
+      Data1: 2119000112
+      Data2: 1255431472
+      Data3: -44724046
+      Data4: -985827227
+    Path: event:/SFX/Interact/Pick_Item_Small
+  giveAchievementOnPickup: 0
+  achievementId: 

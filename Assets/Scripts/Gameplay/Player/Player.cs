@@ -24,7 +24,7 @@ public class Player : MonoBehaviour {
     public bool isMoving;
     public bool isSprinting;
     public bool isCrouching;
-    public bool isBlinking;
+    public static bool isBlinking { get; set; }
     public bool isDead;
 
     public GameObject cameraRoot;
@@ -63,11 +63,6 @@ public class Player : MonoBehaviour {
     #endregion
 
     #region Private Methods
-
-    // Returns the current player XYZ coordinates
-    private void GetPlayerPos() {
-        Debug.Log("Player Position: " + gameObject.transform.position);
-    }
 
     private void PlayFallForwardAnim(float animDuration = 0.5f) {
         currentDeathTween = Sequence.Create()
