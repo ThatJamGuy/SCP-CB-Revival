@@ -44,7 +44,7 @@ public class Player : MonoBehaviour {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        settingsData = DataSaver.Load<SettingsData>("settings.json");
+        settingsData = SettingsManager.settingsData;
 
         cameraStartPos = cameraRoot.transform.localPosition;
         cameraStartRot = cameraRoot.transform.localRotation;

@@ -119,8 +119,6 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void HandleStamina() {
-        temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
-
         // Remove dependance on the UI being in the scene
         if (temporaryStaminaSlider != null) {
             temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
