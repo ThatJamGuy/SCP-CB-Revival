@@ -1,6 +1,6 @@
 # SCP - Containment Breach Revival
 
-**WARNING: CURRENTLY UNDERGOING REPOSITORY ISSUES STEMMING FROM A MISPLACED COMMIT. YOU'RE WELCOME TO TRY AND FIX IT IT IF YOU THINK YOU CAN.**
+**WARNING: Currently experiencing mild issues with the project files. This is undergoing work in progress fixes as of right now.**
 
 SCP - Containment Breach Revival is an In-Development remake of [SCP - Containment Breach](https://github.com/Regalis11/scpcb) built on the [Unity 6.3 Engine](https://unity.com/).\
 Play the latest Windows (Linux and MacOs Coming Soon) releases on Itch.io: https://thatjamguy.itch.io/scpcbr \
