@@ -41,8 +41,8 @@ public class PlayerMovement : MonoBehaviour {
     private float crouchSpeed;
 
     private const float GRAVITY = -9.81f;
-    private const float STANDING_HEIGHT = 2.2f;
-    private const float CROUCHING_HEIGHT = 0.5f;
+    private const float STANDING_HEIGHT = 2.45f;
+    private const float CROUCHING_HEIGHT = 0.4f;
     private const float MAX_STAMINA = 1;
     #endregion
 

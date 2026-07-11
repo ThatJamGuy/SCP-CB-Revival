@@ -52,7 +52,6 @@ public class InventorySystem : MonoBehaviour {
 
     private void Start() {
         itemDataLookup = itemDataList.ToDictionary(item => item.itemIdentifier);
-        playerCamera = Player.Instance.playerCamera;
 
         DebugConsole.AddCommand<string>("spawnitem", "Spawns an item with the given identifier.", DebugSpawnItem);
         DebugConsole.AddCommand("listitems", "Lists available item identifiers.", DebugListItems);
@@ -99,6 +98,7 @@ public class InventorySystem : MonoBehaviour {
     private void OnRightClick(InputAction.CallbackContext context) {
         if (context.performed && currentlyHeldItem != null) UnequipCurrentItem();
     }
+
     #endregion
 
     #region Public Methods
@@ -154,6 +154,16 @@ public class InventorySystem : MonoBehaviour {
         GameManager.ResumeGame();
         menuManager.ToggleMenu(1, false);
     }
+
+    /// <summary>
+    /// Call this from the player or something on it so that the inventory systems knows what the camera is.
+    /// Used to be able to do this in start but loading order no longer lets this happen
+    /// </summary>
+    /// <param name="camera">Camera to pass into the Inventory System.</param>
+    public void SetPlayerCamera(Camera camera) {
+        playerCamera = camera;
+    }
+
     #endregion
 
     #region Debug Methods

@@ -35,7 +35,7 @@ public class MainMenuController : MonoBehaviour {
         SceneController.instance
             .NewTransition()
             .Load(SceneDatabase.Slots.Session, SceneDatabase.Scenes.Session)
-            .Load(SceneDatabase.Slots.Game, SceneDatabase.Scenes.Game, setActive: true)
+            .Load(SceneDatabase.Slots.Intro, SceneDatabase.Scenes.Intro, setActive: true)
             .Unload(SceneDatabase.Slots.Menu)
             .WithOverlay()
             .WithClearUnusedAssets()

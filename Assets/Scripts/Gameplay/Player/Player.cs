@@ -53,6 +53,8 @@ public class Player : MonoBehaviour {
     private void OnEnable() {
         if (InputManager.Instance != null)
             InputManager.Instance.OnInputDeviceChanged += OnDeviceChanged;
+
+        if (InventorySystem.Instance != null) InventorySystem.Instance.SetPlayerCamera(playerCamera);
     }
 
     private void OnDisable() {
