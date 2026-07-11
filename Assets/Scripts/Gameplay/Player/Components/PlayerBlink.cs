@@ -6,7 +6,7 @@ public class PlayerBlink : MonoBehaviour {
 
     [Header("Blink Settings")]
     [SerializeField] private float blinkDrainRate = 0.07f;
-    [SerializeField] private float blinkOverlayDuration = 0.2f;
+    //[SerializeField] private float blinkOverlayDuration = 0.2f;
 
     #region Unity Callbacks
 

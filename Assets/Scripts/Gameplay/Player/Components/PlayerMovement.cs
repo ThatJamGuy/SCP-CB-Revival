@@ -121,6 +121,11 @@ public class PlayerMovement : MonoBehaviour {
     private void HandleStamina() {
         temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
 
+        // Remove dependance on the UI being in the scene
+        if (temporaryStaminaSlider != null) {
+            temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
+        }
+
         // If the player is moving, sprinting, and not sprint locked then do the stuff in this if statement
         if (isSprinting && !sprintLocked && player.isMoving) {
             // Determine the total drain rate based on the default drain rate * the depletion modifier if applicable
@@ -166,9 +171,10 @@ public class PlayerMovement : MonoBehaviour {
     #endregion
 
     #region Crouching
+
     // When hitting the crouch button, if crouching stand, otherwise start crouching
     private void AttemptToToggleCrouch() {
-        if (player.disableInput) return; // Added this so the console would stop making me crouch
+        if (player.disableInput) return;
         if (isCrouching) TryToStand();
         else StartCrouch();
     }
@@ -211,6 +217,7 @@ public class PlayerMovement : MonoBehaviour {
         var mask = ~(1 << LayerMask.NameToLayer("Player"));
         return !Physics.CheckCapsule(playerBottom, playerTop, playerRadius - 0.05f, mask, QueryTriggerInteraction.Ignore);
     }
+
     #endregion
 
     #endregion

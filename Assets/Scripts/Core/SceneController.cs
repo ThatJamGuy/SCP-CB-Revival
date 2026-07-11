@@ -1,11 +1,11 @@
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour {
     #region Singleton
-    public static SceneController instance;
+    public static SceneController instance { get; private set; }
 
     private void Awake() {
         if (instance != null && instance != this) {
@@ -54,7 +54,7 @@ public class SceneController : MonoBehaviour {
             }
             yield return LoadAdditiveRoutine(kvp.Key, kvp.Value, plan.ActiveSceneName == kvp.Value);
         }
-        if(plan.Overlay) {
+        if (plan.Overlay) {
             yield return loadingOverlay.FadeOutBlack();
         }
         isBusy = false;
@@ -85,7 +85,7 @@ public class SceneController : MonoBehaviour {
         if (!loadedSceneBySlot.TryGetValue(slotKey, out string sceneName)) yield break;
         if (string.IsNullOrEmpty(sceneName)) yield break;
         AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(sceneName);
-        
+
         if (unloadOp != null) {
             while (!unloadOp.isDone) {
                 yield return null;
@@ -130,7 +130,7 @@ public class SceneController : MonoBehaviour {
             return this;
         }
 
-        public Coroutine Perform() { 
+        public Coroutine Perform() {
             return SceneController.instance.ExecutePlan(this);
         }
     }
