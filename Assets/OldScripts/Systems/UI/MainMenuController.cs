@@ -1,30 +1,32 @@
 using System.Text;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour {
+    [Header("References")]
     [SerializeField] private TextMeshProUGUI versionText;
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private TMP_InputField seedInputField;
 
     private const string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private const string optionsSceneName = "Settings";
-    private const string SAVE_FILE_NAME = "savefile.json";
+    private const string SAVE_FILE_NAME = "save.json";
 
     private SaveData currentSaveData;
 
     #region Unity Callbacks
+
     private void Start() {
-        //MusicManager.instance.SetMusicState(MusicState.Menu);
+        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Menu);
 
         versionText.text = Application.version;
 
         AutomaticallyDefineSeed();
     }
+
     #endregion
 
     #region Public Methods
+
     public void StartGame() {
         if (string.IsNullOrEmpty(nameInputField.text)) return;
         //SaveSystem.Save(new SaveData { currentSaveName = nameInputField.text, currentMapSeed = seedInputField.text }, SAVE_FILE_NAME);
@@ -41,8 +43,7 @@ public class MainMenuController : MonoBehaviour {
     }
 
     public void OpenOptionsScene() {
-        if (!SceneManager.GetSceneByName(optionsSceneName).isLoaded)
-            SceneManager.LoadSceneAsync(optionsSceneName, LoadSceneMode.Additive);
+        // Write new logic here
     }
 
     public void OpenLink(string link) {
@@ -52,9 +53,11 @@ public class MainMenuController : MonoBehaviour {
     public void QuitGame() {
         Application.Quit();
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Generate a random 5 character seed or choose a random preset seed based on the dice roll done in this method
     /// </summary>
@@ -64,8 +67,7 @@ public class MainMenuController : MonoBehaviour {
 
         if (seedTypeChance != 2) {
             seedInputField.text = GenerateRandomString(5);
-        }
-        else {
+        } else {
             ProvidePresetSeed();
         }
     }
@@ -94,9 +96,11 @@ public class MainMenuController : MonoBehaviour {
 
         seedInputField.text = presetSeeds[Random.Range(0, presetSeeds.Length)];
     }
+
     #endregion
 
     #region Helpers
+
     /// <summary>
     /// Generates a random string based on the defined length
     /// </summary>
@@ -112,5 +116,6 @@ public class MainMenuController : MonoBehaviour {
 
         return randomString.ToString();
     }
+
     #endregion
 }
