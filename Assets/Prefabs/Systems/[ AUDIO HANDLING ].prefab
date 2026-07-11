@@ -1,0 +1,213 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3506059588876360674
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3840007172645957241}
+  - component: {fileID: 6084310876464712997}
+  - component: {fileID: 7495218781905344218}
+  - component: {fileID: 8866725282923316555}
+  m_Layer: 0
+  m_Name: '[ AUDIO HANDLING ]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &3840007172645957241
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3506059588876360674}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5807173988768434813}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6084310876464712997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3506059588876360674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d72adbadb2a0cc948936cda45482d323, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+--- !u!114 &7495218781905344218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3506059588876360674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1198c7ed76166c146bfa3639495a68f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioEventsHolder
+  doorExplode:
+    Guid:
+      Data1: -1715860146
+      Data2: 1157477692
+      Data3: -1379592058
+      Data4: 797013997
+    Path: event:/SFX/Machines/Doors/DoorExplode
+  doorBangEvent:
+    Guid:
+      Data1: 270666812
+      Data2: 1160780035
+      Data3: 107934620
+      Data4: -2058546964
+    Path: event:/SFX/Machines/Doors/Door_Bang
+  crouchFoley:
+    Guid:
+      Data1: -401583249
+      Data2: 1140451502
+      Data3: 1450273977
+      Data4: 1456093973
+    Path: event:/SFX/Character/Foley/CrouchFoley
+  quicksave01:
+    Guid:
+      Data1: 916501674
+      Data2: 1183632526
+      Data3: -1431402055
+      Data4: -516989284
+    Path: event:/SFX/General/One-Shots/Quicksave_OneShot
+  scp096Triggered:
+    Guid:
+      Data1: -1817703766
+      Data2: 1303531059
+      Data3: -181915776
+      Data4: 441872678
+    Path: event:/SFX/SCP/096/096_Triggered
+  scp096ChargeUp:
+    Guid:
+      Data1: 442767865
+      Data2: 1260001514
+      Data3: 25109689
+      Data4: -1219393662
+    Path: event:/SFX/SCP/096/096_ChargeUp
+  scp096KillPlayer:
+    Guid:
+      Data1: -988009026
+      Data2: 1143985431
+      Data3: 953728390
+      Data4: -557540446
+    Path: event:/SFX/Character/D9341/Damage5
+  doorOpen173:
+    Guid:
+      Data1: -1810901652
+      Data2: 1140817525
+      Data3: 1779114637
+      Data4: 1304032171
+    Path: event:/SFX/Machines/Doors/Door_Open173
+  statueHorrorNear:
+    Guid:
+      Data1: -775554264
+      Data2: 1312367329
+      Data3: 996343735
+      Data4: -1908047556
+    Path: event:/SFX/Horror/StatueHorrorNear
+  statueHorrorFar:
+    Guid:
+      Data1: -2003241648
+      Data2: 1101917530
+      Data3: -1202569543
+      Data4: -1616776122
+    Path: event:/SFX/Horror/StatueHorrorFar
+--- !u!114 &8866725282923316555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3506059588876360674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5064d4f6279355409b5d86adb05afc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicManager
+  musicMasterEvent:
+    Guid:
+      Data1: 186775529
+      Data2: 1188310004
+      Data3: -968861254
+      Data4: 173096564
+    Path: event:/Music/MusicMaster
+--- !u!1 &8340118713864486499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5807173988768434813}
+  - component: {fileID: 2179113666302945303}
+  m_Layer: 0
+  m_Name: AmbienceManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &5807173988768434813
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340118713864486499}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3840007172645957241}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2179113666302945303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340118713864486499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -83462521
+      Data2: 1084632286
+      Data3: 1915627944
+      Data4: -1018130161
+    Path: event:/SFX/Ambience/Zone Soundscapes/Soundscape_LCZ
+  Event: 
+  EventPlayTrigger: 1
+  EventStopTrigger: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
