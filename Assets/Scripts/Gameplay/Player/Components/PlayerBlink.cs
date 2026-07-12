@@ -16,7 +16,8 @@ public class PlayerBlink : MonoBehaviour {
         float finalDrainRate = blinkDrainRate * (1f + Player.Instance.blinkDepletionModifier);
         currentBlink = Mathf.MoveTowards(currentBlink, 0f, finalDrainRate * Time.deltaTime);
 
-        CanvasInstance.Instance.currBlinkSlider.value = currentBlink;
+        if (CanvasInstance.Instance != null)
+            CanvasInstance.Instance.currBlinkSlider.value = currentBlink;
     }
 
     #endregion

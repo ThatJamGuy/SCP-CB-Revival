@@ -1,6 +1,7 @@
 using FMODUnity;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Video;
 
 /// <summary>
 /// Gigantic ass script to handle all the intro related things.
@@ -22,6 +23,9 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private Animator cellDoorAnimator;
     [SerializeField] private StudioEventEmitter doorEmitter;
     [SerializeField] private GameObject cellLight;
+    [SerializeField] private VideoPlayer introVideoPlayer;
+    [SerializeField] private Animator brightnessFlashAnimator;
+    [SerializeField] private GameObject playerCellAmbience;
 
     [Header("SFX References")]
     [SerializeField] private EventReference requestDoorEvent;
@@ -56,7 +60,9 @@ public class EVNT_Intro : MonoBehaviour {
         // Keep it persistent to work in both pre and post breach scenes
         // Destroy later to not take up resources, likely after the ulgrin franklin post breach event
         // As ambience and whatnot is handled by a post breach script similar to before
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
+
+        // Remove that for now to prevent bugs
 
         // Set up developer mode for direct testing within the scene
         if (developerMode) {
@@ -74,16 +80,22 @@ public class EVNT_Intro : MonoBehaviour {
     }
 
     private void Start() {
+        if (MusicManager.Instance != null) MusicManager.Instance.StopAllMusic();
+
         // Normal setup
         if (!skipIntro) {
             // Intro Zone
             if (GameManager.Instance != null) GameManager.Instance.currentZone = 0;
+            if (MusicManager.Instance != null) MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror02);
 
             // Eventually make it to do this later as the waking up animation has yet to be made
             SetupPlayer(spawnRegular);
 
-            StartCoroutine(OpenCellTimerDef());
-            reusableTimerActive = true;
+            // Disable inputs and play the intro video
+            Player.Instance.disableInput = true;
+            Player.Instance.disableLooking = true;
+
+            StartCoroutine(IntroVideoDelay());
         }
         // Skip intro setup
         else {
@@ -110,6 +122,18 @@ public class EVNT_Intro : MonoBehaviour {
 
     #region Private Methods
 
+    private void IntroVideoEndReached(VideoPlayer videoPlayer) {
+        videoPlayer.transform.parent.gameObject.SetActive(false);
+        brightnessFlashAnimator.SetTrigger("Flash");
+        AudioManager.PlayOneShot(AudioEventsHolder.Instance.legacyLightFlicker);
+        playerCellAmbience.SetActive(true);
+        Player.Instance.disableInput = false;
+        Player.Instance.disableLooking = false;
+
+        StartCoroutine(OpenCellTimerDef());
+        reusableTimerActive = true;
+    }
+
     // May later move this to public methods, will be triggered doing the loading process
     private void SetupPlayer(Transform posToSpawn) {
         Instantiate(playerPrefab, posToSpawn);
@@ -133,6 +157,19 @@ public class EVNT_Intro : MonoBehaviour {
     #endregion
 
     #region Private Coroutines
+
+    #region Sequence 0: Intro Video
+
+    private IEnumerator IntroVideoDelay() {
+        yield return new WaitForSeconds(3);
+
+        introVideoPlayer.Prepare();
+        introVideoPlayer.Play();
+        introVideoPlayer.loopPointReached += IntroVideoEndReached;
+        AudioManager.PlayOneShot(AudioEventsHolder.Instance.introVideoSound);
+    }
+
+    #endregion
 
     #region Sequence 1: Cell Door
 
@@ -192,7 +229,10 @@ public class EVNT_Intro : MonoBehaviour {
             yield return new WaitForSeconds(1);
 
             MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_096, 0);
+            playerCellAmbience.gameObject.SetActive(false);
             cellLight.SetActive(false);
+
+            yield return new WaitForSeconds(1);
 
         } else {
             AudioManager.PlayOneShot(ulgrinPissedLines, agentUlgrin.voiceSource.position, "ulgrinPissedLevel", 1);
