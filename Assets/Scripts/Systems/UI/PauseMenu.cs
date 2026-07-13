@@ -1,3 +1,4 @@
+using FMODUnity;
 using TMPro;
 using UnityEngine;
 
@@ -87,14 +88,17 @@ public class PauseMenu : MonoBehaviour {
         // Resume game as to not get stuck before attempting to load the main menu
         GameManager.ResumeGame();
 
+        // Prevents sounds from bleeding into the main menu
+        RuntimeManager.GetBus("bus:/").stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
+
         // If available, use the SceneController instance to load the menu scene and unload Session and Game scenes
         if (SceneController.instance == null) return;
         SceneController.instance
             .NewTransition()
             .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu, setActive: true)
+            .Unload(SceneDatabase.Slots.Intro)
             .Unload(SceneDatabase.Slots.Session)
             .Unload(SceneDatabase.Slots.Game)
-            .Unload(SceneDatabase.Slots.Intro)
             .WithClearUnusedAssets()
             .WithOverlay()
             .Perform();

@@ -1,39 +1,43 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class IK_PointOfInterest : MonoBehaviour {
-    [SerializeField] private bool registerToAllActors = true;
+    [Header("POI Settings")]
+    public bool poiIsActive = true;
+    [SerializeField] private bool registerOnEnable;
 
-    #region Default Methods
-    private void Start() {
-        // Register this POI to all NPC actors in the scene
-        if (registerToAllActors) {
-            NPC_Actor[] actors = FindObjectsByType<NPC_Actor>(FindObjectsSortMode.None);
-            foreach (NPC_Actor actor in actors) {
-                if (!actor.PointsOfInterest.Contains(this)) {
-                    actor.PointsOfInterest.Add(this);
+    [Header("Register to...")]
+    [SerializeField] private bool allActors;
+    [SerializeField] private bool specificActor;
+
+    #region Unity Callbacks
+
+    private void OnEnable() {
+        if (registerOnEnable) {
+            if (allActors) {
+                IK_MasterComponent[] ikSystems = FindObjectsByType<IK_MasterComponent>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+                List<IK_MasterComponent> ikSystemsList = new List<IK_MasterComponent>(ikSystems);
+
+                foreach (IK_MasterComponent ikSystemss in ikSystemsList) {
+                    ikSystemss.pointsOfInterest.Add(this);
                 }
             }
         }
     }
+
     #endregion
 
     #region Public Methods
-    // If actor is unable to recieve this POI, re-register to all actors
-    public void ReRegisterToAllActors() {
-        if (registerToAllActors) {
-            NPC_Actor[] actors = FindObjectsByType<NPC_Actor>(FindObjectsSortMode.None);
-            foreach (NPC_Actor actor in actors) {
-                if (!actor.PointsOfInterest.Contains(this)) {
-                    actor.PointsOfInterest.Add(this);
-                }
-            }
+
+    // In most cases this will be for the players POI as he enters all kinds of rooms full of IK Masters yet to be activated
+    public void RegisterPOIToAllActors() {
+        IK_MasterComponent[] ikSystems = FindObjectsByType<IK_MasterComponent>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        List<IK_MasterComponent> ikSystemsList = new List<IK_MasterComponent>(ikSystems);
+
+        foreach (IK_MasterComponent ikSystemss in ikSystemsList) {
+            ikSystemss.pointsOfInterest.Add(this);
         }
     }
 
-    // Register this POI to a specific actor
-    public void RegisterToSpecificActor(NPC_Actor actor) {
-        if(!actor.PointsOfInterest.Contains(this))
-            actor.PointsOfInterest.Add(this);
-    }
     #endregion
 }

@@ -11,7 +11,6 @@ public class Actor_Guard : MonoBehaviour {
 
     [Header("Generic Settings")]
     [SerializeField] private string actorName;
-    [SerializeField] private int test;
 
     [Header("Animation Settings")]
     [SerializeField] private string initialAnimationName;

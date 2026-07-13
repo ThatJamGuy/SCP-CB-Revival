@@ -12,7 +12,7 @@ public class VolumeSlider : MonoBehaviour {
     private Slider volumeSlider;
 
     private void Awake() {
-        volumeSlider = GetComponentInChildren<Slider>();
+        //volumeSlider = GetComponentInChildren<Slider>();
     }
 
     private void Update() {
@@ -36,7 +36,7 @@ public class VolumeSlider : MonoBehaviour {
     }
 
     public void OnSliderValueChanged() {
-        switch (volumeType) {
+        /*switch (volumeType) {
             case VolumeType.MASTER:
                 optionsMenu.SetMasterVolume(volumeSlider.value);
                 break;
@@ -52,6 +52,6 @@ public class VolumeSlider : MonoBehaviour {
             default:
                 Debug.LogWarning("Volume Type not supported: " + volumeType);
                 break;
-        }
+        }*/
     }
 }

@@ -1,15 +1,16 @@
 using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour {
     [Header("References")]
     [SerializeField] private TextMeshProUGUI versionText;
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private TMP_InputField seedInputField;
+    [SerializeField] private Toggle[] difficultyCheckboxes;
 
-    private const string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private const string SAVE_FILE_NAME = "save.json";
+    private const string CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     private SaveData currentSaveData;
 
@@ -17,6 +18,7 @@ public class MainMenuController : MonoBehaviour {
 
     private void Start() {
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Menu);
+        DiscordSystems.Instance.ChangeDiscordStatus("In the Main Menu");
 
         versionText.text = Application.version;
 
@@ -29,7 +31,7 @@ public class MainMenuController : MonoBehaviour {
 
     public void StartGame() {
         if (string.IsNullOrEmpty(nameInputField.text)) return;
-        //SaveSystem.Save(new SaveData { currentSaveName = nameInputField.text, currentMapSeed = seedInputField.text }, SAVE_FILE_NAME);
+        DataSaver.Save(new SaveData { currentSaveName = nameInputField.text, currentMapSeed = seedInputField.text }, "save.json");
         Debug.Log("Starting game with name: " + nameInputField.text + " and seed: " + seedInputField.text);
 
         SceneController.instance
@@ -42,8 +44,22 @@ public class MainMenuController : MonoBehaviour {
             .Perform();
     }
 
-    public void OpenOptionsScene() {
-        // Write new logic here
+    public void LoadPreviousGame() {
+        if (DataSaver.DataFileExists("save.json")) {
+            var previousSave = DataSaver.Load<SaveData>("save.json");
+            if (previousSave.newGame == true) return;
+
+            // TODO: Implement loading of the most recent save
+            Debug.Log("TODO: Implement loading of the most recent save");
+        }
+    }
+
+    public void OpenOptionsMenu() {
+        GlobalCanvasInstance.ToggleOptionsMenu(true);
+    }
+
+    public void OpenAchievementsMenu() {
+        GlobalCanvasInstance.ToggleAchievementsMenu(true);
     }
 
     public void OpenLink(string link) {
@@ -110,7 +126,7 @@ public class MainMenuController : MonoBehaviour {
         StringBuilder randomString = new StringBuilder();
 
         for (int i = 0; i < stringLength; i++) {
-            char randomChar = characters[Random.Range(0, characters.Length)];
+            char randomChar = CHARACTERS[Random.Range(0, CHARACTERS.Length)];
             randomString.Append(randomChar);
         }
 

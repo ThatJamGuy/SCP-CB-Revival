@@ -1,14 +1,38 @@
-using System;
-using System.Linq;
-using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class OptionsMenu : MonoBehaviour {
-    public static OptionsMenu instance;
+    public static OptionsMenu Instance { get; private set; }
 
-    [Header("References")]
+    private SettingsData localSettings;
+
+    #region Unity Callbacks
+
+    private void Awake() {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    private void Start() {
+        localSettings = SettingsManager.settingsData;
+
+        InitializeSettingsUI();
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    // Fill out all the different settings with what's stored on the players machine
+    // Or should I say YOUR MACHINE. Yeah, I know you're reading this...
+    private void InitializeSettingsUI() {
+
+    }
+
+    #endregion
+
+    // All this commented out stuff is getting rewritten as we speak
+
+    /*[Header("References")]
     [SerializeField] private TMP_Dropdown resolutionDropdown;
     [SerializeField] private TMP_Dropdown windowModeDropdown;
     [SerializeField] private TMP_Dropdown qualityDropdown;
@@ -35,9 +59,6 @@ public class OptionsMenu : MonoBehaviour {
     private SettingsData settings;
 
     private void Awake() {
-        if (instance == null) instance = this;
-        else { Destroy(gameObject); return; }
-
         //settings = SaveSystem.Load<SettingsData>(SaveFileName);
         PopulateResolutions();
         PopulateWindowModes();
@@ -206,4 +227,5 @@ public class OptionsMenu : MonoBehaviour {
         if (SceneManager.GetSceneByName(OptionsSceneName).isLoaded)
             SceneManager.UnloadSceneAsync(OptionsSceneName);
     }
+    */
 }

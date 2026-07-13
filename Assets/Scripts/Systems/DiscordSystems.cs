@@ -5,6 +5,8 @@ using UnityEngine;
 /// Global script to initialize, modify and cleanup the Discord Rich Presence stuff
 /// </summary>
 public class DiscordSystems : MonoBehaviour {
+    public static DiscordSystems Instance { get; private set; }
+
     [Header("Default RPC Settings")]
     [SerializeField] private string details = "In the Main Menu";
     [SerializeField] private string state = "Configuring the Settings";
@@ -17,6 +19,9 @@ public class DiscordSystems : MonoBehaviour {
 
     #region Unity Callbacks
     private void Awake() {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
         client = new Client();
 
         // Set the log utility to the OnLog method and set the application ID to applicationID. Then update RPC.
