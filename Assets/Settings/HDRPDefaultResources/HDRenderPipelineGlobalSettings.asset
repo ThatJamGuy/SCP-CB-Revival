@@ -184,12 +184,10 @@ MonoBehaviour:
       - rid: 1895151364409655309
       - rid: 1895151364409655310
       - rid: 1895151364409655311
-      - rid: 1895151364409655312
       - rid: 1895151364409655313
       - rid: 1895151364409655314
       - rid: 1895151364409655315
       - rid: 1895151364409655316
-      - rid: 1895151364409655317
       - rid: 1895151364409655318
       - rid: 1895151364409655319
       - rid: 1895151364409655320
@@ -198,32 +196,10 @@ MonoBehaviour:
       - rid: 1895151364409655323
       - rid: 5758952845529317376
       - rid: 5758952845529317377
-      - rid: 7708824526373519430
+      - rid: 7875910957721977041
+      - rid: 7875910957721977042
     m_RuntimeSettings:
-      m_List:
-      - rid: 8556427327610290176
-      - rid: 8556427327610290180
-      - rid: 1895151364409655296
-      - rid: 1895151364409655297
-      - rid: 1895151364409655300
-      - rid: 1895151364409655301
-      - rid: 1895151364409655302
-      - rid: 1895151364409655303
-      - rid: 1895151364409655304
-      - rid: 1895151364409655305
-      - rid: 1895151364409655306
-      - rid: 1895151364409655307
-      - rid: 1895151364409655309
-      - rid: 1895151364409655310
-      - rid: 1895151364409655311
-      - rid: 1895151364409655313
-      - rid: 1895151364409655315
-      - rid: 1895151364409655316
-      - rid: 1895151364409655319
-      - rid: 1895151364409655320
-      - rid: 1895151364409655321
-      - rid: 1895151364409655322
-      - rid: 1895151364409655323
+      m_List: []
   renderingLayerNames:
   - Light Layer default
   - Light Layer 1
@@ -267,8 +243,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
     - rid: 1895151364409655296
       type: {class: HDRPDefaultVolumeProfileSettings, ns: UnityEngine.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Runtime}
       data:
@@ -615,10 +589,6 @@ MonoBehaviour:
         m_PBRSkyMaterial: {fileID: -876546973899608171, guid: 02532cbb810fb404db49da84f1efe41e, type: 3}
         m_AreaLightMaterial: {fileID: 2100000, guid: ef5f65c980e25304098a95e28f3bd20b, type: 2}
         m_AreaLightCookieMaterial: {fileID: 2100000, guid: 78c6825c5d9c3664f9879ae8609618c7, type: 2}
-    - rid: 1895151364409655312
-      type: {class: HDRenderingLayersLimitSettings, ns: UnityEditor.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Editor}
-      data:
-        m_Version: 0
     - rid: 1895151364409655313
       type: {class: ProbeVolumeGlobalSettings, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
       data:
@@ -643,10 +613,6 @@ MonoBehaviour:
         m_ExportShaderVariants: 1
         m_ShaderVariantLogLevel: 0
         m_StripRuntimeDebugShaders: 0
-    - rid: 1895151364409655317
-      type: {class: RenderingDebuggerRuntimeResources, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
-      data:
-        m_version: 0
     - rid: 1895151364409655318
       type: {class: ProbeVolumeBakingResources, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
       data:
@@ -731,17 +697,14 @@ MonoBehaviour:
       type: {class: ColorCheckerResources, ns: UnityEngine.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Runtime}
       data:
         m_ColorCheckerMaterial: {fileID: 2100000, guid: 7a1044256d39dba4aa777255550527bf, type: 2}
-    - rid: 7708824526373519430
-      type: {class: WorldRenderPipelineResources, ns: UnityEngine.PathTracing.Core, asm: Unity.PathTracing.Runtime}
+    - rid: 7875910957721977041
+      type: {class: HDRenderingLayersLimitSettings, ns: UnityEditor.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Editor}
       data:
-        _version: 3
-        _blitCubemap: {fileID: 7200000, guid: 5a992812cb320d146a66cc600200cce7, type: 3}
-        _blitGrayScaleCookie: {fileID: 7200000, guid: 557fa399e33bf7647bda5697c5c158df, type: 3}
-        _setAlphaChannelShader: {fileID: 7200000, guid: 5efaea0e81c66334aa9d062d6573e6fd, type: 3}
-        _environmentImportanceSamplingBuild: {fileID: 7200000, guid: 5bb2534d2411d344cbc54f880232640f, type: 3}
-        _skyBoxMesh: {fileID: 4300000, guid: 0529e6c5f6dea8c4a8c2835ed7de57cb, type: 2}
-        _sixFaceSkyBoxMesh: {fileID: 4300000, guid: a80925ceebd011741b42509226cefc74, type: 2}
-        _buildLightGridShader: {fileID: 7200000, guid: 16e47c1641bd0104e92b624601457bb0, type: 3}
+        m_Version: 0
+    - rid: 7875910957721977042
+      type: {class: RenderingDebuggerRuntimeResources, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
+      data:
+        m_version: 0
     - rid: 8556427327610290176
       type: {class: HDRenderPipelineRuntimeAssets, ns: UnityEngine.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Runtime}
       data:
