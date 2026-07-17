@@ -9,5 +9,5 @@ public class SettingsManager : MonoBehaviour {
         settingsData = DataSaver.Load<SettingsData>(SETTINGS_FILE_NAME);
     }
 
-    private void SaveSettingsData() => DataSaver.Save<SettingsData>(settingsData, SETTINGS_FILE_NAME);
+    public static void SaveSettingsData() => DataSaver.Save<SettingsData>(settingsData, SETTINGS_FILE_NAME);
 }

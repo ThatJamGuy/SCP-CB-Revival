@@ -22,6 +22,8 @@ public class MainMenuController : MonoBehaviour {
 
         versionText.text = Application.version;
 
+
+
         AutomaticallyDefineSeed();
     }
 

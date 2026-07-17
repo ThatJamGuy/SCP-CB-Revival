@@ -21,7 +21,11 @@ public class MusicManager : MonoBehaviour {
         SCP_106 = 7,
         SCP_173 = 8,
         SCP_914 = 9,
-        GeneralHorror02 = 10
+        GeneralHorror01 = 10,
+        GeneralHorror02 = 11,
+        GeneralHorror03 = 12,
+        GeneralHorror04 = 13,
+        Credits = 14
     }
 
     [Header("FMOD Settings")]

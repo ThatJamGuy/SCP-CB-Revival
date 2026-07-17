@@ -86,7 +86,7 @@ public class EVNT_Intro : MonoBehaviour {
         if (!skipIntro) {
             // Intro Zone
             if (GameManager.Instance != null) GameManager.Instance.currentZone = 0;
-            if (MusicManager.Instance != null) MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror02);
+            if (MusicManager.Instance != null) MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror01);
 
             // Eventually make it to do this later as the waking up animation has yet to be made
             SetupPlayer(spawnRegular);

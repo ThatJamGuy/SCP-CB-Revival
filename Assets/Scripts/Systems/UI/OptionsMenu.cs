@@ -1,9 +1,46 @@
+using System;
+using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OptionsMenu : MonoBehaviour {
     public static OptionsMenu Instance { get; private set; }
 
+    [Header("Graphics Settings")]
+    [SerializeField] private TMP_Dropdown resolutionDropdown;
+    [SerializeField] private TMP_Dropdown windowModeDropdown;
+    [SerializeField] private Toggle vSyncToggle;
+    [SerializeField] private GameObject frameLimitOption;
+    [SerializeField] private TMP_InputField frameLimitInput;
+    [SerializeField] private Toggle fpsCounterToggle;
+    [SerializeField] private TMP_Dropdown qualityDropdown;
+    [SerializeField] private TMP_Dropdown textureDropdown;
+
+    [Header("Audio Settings")]
+    [SerializeField] private Slider masterVolumeSlider;
+    [SerializeField] private Slider musicVolumeSlider;
+    [SerializeField] private Slider sfxVolumeSlider;
+    [SerializeField] private Slider voiceVolumeSlider;
+    [SerializeField] private TMP_Dropdown soundtrackDropdown;
+
+    [Header("Gameplay Settings")]
+    [SerializeField] private TMP_Dropdown hudPresetDropdown;
+    [SerializeField] private TMP_Dropdown hudDesignDropdown;
+    [SerializeField] private TMP_Dropdown hudFunctionDropdown;
+
+    [Header("Advanced Settings")]
+    [SerializeField] private Toggle consoleToggle;
+
+    [Header("References")]
+    [SerializeField] private GameObject fpsDisplayObj;
+
     private SettingsData localSettings;
+
+    private Vector2Int[] resolutions;
+    private FullScreenMode[] windowModes;
+
+    private int lastHudPreset = -1;
 
     #region Unity Callbacks
 
@@ -15,6 +52,8 @@ public class OptionsMenu : MonoBehaviour {
     private void Start() {
         localSettings = SettingsManager.settingsData;
 
+        PopulateResolutions();
+        PopulateWindowModes();
         InitializeSettingsUI();
     }
 
@@ -24,85 +63,40 @@ public class OptionsMenu : MonoBehaviour {
 
     // Fill out all the different settings with what's stored on the players machine
     // Or should I say YOUR MACHINE. Yeah, I know you're reading this...
+    // Also automatically applies the settings because they applications are linked to the OnValueChanged stuff
     private void InitializeSettingsUI() {
-
-    }
-
-    #endregion
-
-    // All this commented out stuff is getting rewritten as we speak
-
-    /*[Header("References")]
-    [SerializeField] private TMP_Dropdown resolutionDropdown;
-    [SerializeField] private TMP_Dropdown windowModeDropdown;
-    [SerializeField] private TMP_Dropdown qualityDropdown;
-    [SerializeField] private TMP_Dropdown soundtrackDropdown;
-    [SerializeField] private Toggle vSyncToggle;
-    [SerializeField] private Toggle fpsCounterToggle;
-    [SerializeField] private Toggle consoleToggle;
-    [SerializeField] private GameObject frameLimitOption;
-    [SerializeField] private TMP_InputField frameLimitInput;
-    [SerializeField] private Slider masterVolumeSlider;
-    [SerializeField] private Slider musicVolumeSlider;
-    [SerializeField] private Slider sfxVolumeSlider;
-    [SerializeField] private Slider voiceVolumeSlider;
-
-    public static event Action<bool> OnSettingsChanged;
-
-    private const string SaveFileName = "settings.json";
-    private const int UnlimitedFrameRate = -1;
-    private const string OptionsSceneName = "Settings";
-
-    private Vector2Int[] resolutions;
-    private FullScreenMode[] windowModes;
-    private string[] qualityLevels;
-    private SettingsData settings;
-
-    private void Awake() {
-        //settings = SaveSystem.Load<SettingsData>(SaveFileName);
-        PopulateResolutions();
-        PopulateWindowModes();
-        PopulateQualityLevels();
-        ApplySettings();
-    }
-
-    //private void Save() => SaveSystem.Save(settings, SaveFileName);
-
-    private void ApplySettings() {
-        int resIndex = Array.FindIndex(resolutions, r => r.x == settings.resolutionWidth && r.y == settings.resolutionHeight);
+        int winIndex = Mathf.Clamp(localSettings.windowMode, 0, windowModes.Length - 1);
+        int resIndex = Array.FindIndex(resolutions, r => r.x == localSettings.resolutionWidth && r.y == localSettings.resolutionHeight);
         if (resIndex < 0) resIndex = 0;
 
-        int winIndex = Mathf.Clamp(settings.windowMode, 0, windowModes.Length - 1);
-        int qualIndex = Mathf.Clamp(settings.qualityLevel, 0, qualityLevels.Length - 1);
+        // Graphics settings
+        resolutionDropdown.value = resIndex;
+        windowModeDropdown.value = winIndex;
+        vSyncToggle.isOn = localSettings.vSync;
+        frameLimitInput.text = localSettings.frameLimit.ToString();
+        fpsCounterToggle.isOn = localSettings.fpsCounter;
+        qualityDropdown.value = localSettings.qualityLevel;
+        textureDropdown.value = localSettings.globalTextureMipmapLimit;
 
-        resolutionDropdown.SetValueWithoutNotify(resIndex);
-        windowModeDropdown.SetValueWithoutNotify(winIndex);
-        qualityDropdown.SetValueWithoutNotify(qualIndex);
-        vSyncToggle.SetIsOnWithoutNotify(settings.vSync);
-        soundtrackDropdown.SetValueWithoutNotify(settings.soundtrack);
-        //consoleToggle.SetIsOnWithoutNotify(settings.console);
-        fpsCounterToggle.SetIsOnWithoutNotify(settings.fpsCounter);
-        masterVolumeSlider.SetValueWithoutNotify(settings.masterVolume);
-        musicVolumeSlider.SetValueWithoutNotify(settings.musicVolume);
-        sfxVolumeSlider.SetValueWithoutNotify(settings.sfxVolume);
-        voiceVolumeSlider.SetValueWithoutNotify(settings.voiceVolume);
-        frameLimitInput.SetTextWithoutNotify(settings.frameLimit > 0 ? settings.frameLimit.ToString() : string.Empty);
+        // Audio settings
+        soundtrackDropdown.value = localSettings.soundtrack;
+        masterVolumeSlider.value = localSettings.masterVolume;
+        musicVolumeSlider.value = localSettings.musicVolume;
+        sfxVolumeSlider.value = localSettings.sfxVolume;
+        voiceVolumeSlider.value = localSettings.voiceVolume;
 
-        SetResolution(resIndex);
-        SetWindowMode(winIndex);
-        SetQualityLevel(qualIndex);
-        SetVSync(settings.vSync);
-        SetSoundtrack(settings.soundtrack);
-        //SetConsoleState(settings.console);
-        SetFpsCounter(settings.fpsCounter);
-        SetMasterVolume(settings.masterVolume);
-        SetMusicVolume(settings.musicVolume);
-        SetSfxVolume(settings.sfxVolume);
-        SetVoiceVolume(settings.voiceVolume);
+        // Gameplay Settings
+        hudDesignDropdown.value = localSettings.hudDesign;
+        hudFunctionDropdown.value = localSettings.hudFunctionality;
 
-        Application.targetFrameRate = settings.vSync || settings.frameLimit <= 0
-            ? UnlimitedFrameRate
-            : settings.frameLimit;
+        if (hudDesignDropdown.value != hudFunctionDropdown.value) hudPresetDropdown.value = 0; // Custom
+        if (hudDesignDropdown.value == 0 && hudDesignDropdown.value == hudFunctionDropdown.value) hudPresetDropdown.value = 1; // Revival
+        if (hudDesignDropdown.value == 1 && hudDesignDropdown.value == hudFunctionDropdown.value) hudPresetDropdown.value = 2; // Legacy
+
+        lastHudPreset = hudPresetDropdown.value;
+
+        // Advanced settings
+        consoleToggle.isOn = localSettings.consoleEnabled;
     }
 
     private void PopulateResolutions() {
@@ -116,10 +110,10 @@ public class OptionsMenu : MonoBehaviour {
 
     private void PopulateWindowModes() {
         windowModes = new[] {
-            FullScreenMode.ExclusiveFullScreen,
-            FullScreenMode.FullScreenWindow,
-            FullScreenMode.Windowed
-        };
+        FullScreenMode.ExclusiveFullScreen,
+        FullScreenMode.FullScreenWindow,
+        FullScreenMode.Windowed
+    };
 
         windowModeDropdown.ClearOptions();
         windowModeDropdown.AddOptions(windowModes.Select(m => m switch {
@@ -130,102 +124,119 @@ public class OptionsMenu : MonoBehaviour {
         }).ToList());
     }
 
-    private void PopulateQualityLevels() {
-        qualityLevels = QualitySettings.names;
-        qualityDropdown.ClearOptions();
-        qualityDropdown.AddOptions(qualityLevels.ToList());
+    #endregion
+
+    #region Public Methods
+
+    public void ApplyMinorGraphicsSettings() {
+        // Set the vSync value and display framelimit if necessary
+        localSettings.vSync = vSyncToggle.isOn;
+        QualitySettings.vSyncCount = localSettings.vSync ? 1 : 0;
+
+        frameLimitOption.SetActive(!localSettings.vSync);
+        if (!localSettings.vSync && localSettings.frameLimit >= 10) {
+            Application.targetFrameRate = int.TryParse(frameLimitInput.text, out int parsedFrameLimit)
+                ? parsedFrameLimit // Parsed input string to int
+                : localSettings.frameLimit; // Fallback to last valid from localSettings
+        }
+
+        // Set the fps counter value and display the fps counter if necessary
+        localSettings.fpsCounter = fpsCounterToggle.isOn;
+        fpsDisplayObj.SetActive(localSettings.fpsCounter);
+
+        SettingsManager.SaveSettingsData();
+    }
+
+    public void SetOverallQuality(int value) {
+        QualitySettings.SetQualityLevel(value, true);
+
+        SettingsManager.SaveSettingsData();
+    }
+
+    public void SetTextureQuality(int value) {
+        // Key in case I forget
+        // 0 = Superb - Full Res
+        // 1 = High - Half Res
+        // 2 = Medium - Quarter Res
+        // 3 = Low - 1/8 Res (I think, I forgot at this point)
+        // 4 = Potato - Something really dogshit
+
+        QualitySettings.globalTextureMipmapLimit = value;
     }
 
     public void SetResolution(int index) {
         if ((uint)index >= resolutions.Length) return;
         var r = resolutions[index];
         Screen.SetResolution(r.x, r.y, Screen.fullScreenMode);
-        settings.resolutionWidth = r.x;
-        settings.resolutionHeight = r.y;
-        //Save();
+        localSettings.resolutionWidth = r.x;
+        localSettings.resolutionHeight = r.y;
+
+        SettingsManager.SaveSettingsData();
     }
 
     public void SetWindowMode(int index) {
         if ((uint)index >= windowModes.Length) return;
         Screen.fullScreenMode = windowModes[index];
-        settings.windowMode = index;
-        //Save();
+        localSettings.windowMode = index;
+
+        SettingsManager.SaveSettingsData();
     }
 
-    public void SetQualityLevel(int index) {
-        if ((uint)index >= qualityLevels.Length) return;
-        QualitySettings.SetQualityLevel(index, true);
-        settings.qualityLevel = index;
-        //Save();
+    public void ApplyOtherAudioSettings() {
+        // Set the soundtrack to the dropdown value and apply it via MusicManager
+        localSettings.soundtrack = soundtrackDropdown.value;
+        MusicManager.Instance.SetSoundtrack(localSettings.soundtrack);
+
+        SettingsManager.SaveSettingsData();
     }
 
-    public void SetVSync(bool enabled) {
-        QualitySettings.vSyncCount = enabled ? 1 : 0;
-        frameLimitOption.SetActive(!enabled);
-        settings.vSync = enabled;
-        //Save();
+    public void ApplyAudioSliders() {
+        // Set all the volume values in the cached settings data to the slider values
+        localSettings.masterVolume = masterVolumeSlider.value;
+        localSettings.musicVolume = musicVolumeSlider.value;
+        localSettings.sfxVolume = sfxVolumeSlider.value;
+        localSettings.voiceVolume = voiceVolumeSlider.value;
 
-        Application.targetFrameRate = enabled || settings.frameLimit <= 0
-            ? UnlimitedFrameRate
-            : settings.frameLimit;
+        // Set all the volume values in the AudioManager to the slider values and apply them
+        AudioManager.Instance.masterVolume = masterVolumeSlider.value;
+        AudioManager.Instance.musicVolume = musicVolumeSlider.value;
+        AudioManager.Instance.sfxVolume = sfxVolumeSlider.value;
+        AudioManager.Instance.voiceVolume = voiceVolumeSlider.value;
+        AudioManager.Instance.ApplyAllVolumes();
+
+        SettingsManager.SaveSettingsData();
     }
 
-    public void SetFrameLimit(string value) {
-        if (!int.TryParse(value, out var limit) || limit <= 0) {
-            Application.targetFrameRate = UnlimitedFrameRate;
-            settings.frameLimit = UnlimitedFrameRate;
-        } else {
-            Application.targetFrameRate = limit;
-            settings.frameLimit = limit;
+    public void ApplyHudSettings() {
+        int newPresetValue = hudPresetDropdown.value;
+
+        if (newPresetValue != lastHudPreset) {
+            if (newPresetValue == 1) { // Revival
+                hudDesignDropdown.SetValueWithoutNotify(0);
+                hudFunctionDropdown.SetValueWithoutNotify(0);
+            } else if (newPresetValue == 2) { // Legacy
+                hudDesignDropdown.SetValueWithoutNotify(1);
+                hudFunctionDropdown.SetValueWithoutNotify(1);
+            }
         }
-        //Save();
+
+        localSettings.hudDesign = hudDesignDropdown.value;
+        localSettings.hudFunctionality = hudFunctionDropdown.value;
+
+        if (hudDesignDropdown.value != hudFunctionDropdown.value) hudPresetDropdown.SetValueWithoutNotify(0); // Custom
+        else if (hudDesignDropdown.value == 0) hudPresetDropdown.SetValueWithoutNotify(1); // Revival
+        else if (hudDesignDropdown.value == 1) hudPresetDropdown.SetValueWithoutNotify(2); // Legacy
+
+        lastHudPreset = hudPresetDropdown.value;
+
+        SettingsManager.SaveSettingsData();
     }
 
-    public void SetSoundtrack(int soundtrackID) {
-        //if (MusicManager.instance == null) return;
-        //MusicManager.instance.SetSoundtrack(soundtrackID);
-        settings.soundtrack = soundtrackID;
-        //Save();
+    public void ApplyAdvancedSettings() {
+        localSettings.consoleEnabled = consoleToggle.isOn;
+
+        SettingsManager.SaveSettingsData();
     }
 
-    public void SetConsoleState(bool enabled) {
-        //settings.console = enabled;
-        //Save();
-    }
-
-    public void SetFpsCounter(bool enabled) {
-        settings.fpsCounter = enabled;
-        //Save();
-        OnSettingsChanged?.Invoke(enabled);
-    }
-
-    public void SetMasterVolume(float value) {
-        //if (AudioManager.instance != null) AudioManager.instance.masterVolume = value;
-        settings.masterVolume = value;
-        //Save();
-    }
-
-    public void SetMusicVolume(float value) {
-        //if (AudioManager.instance != null) AudioManager.instance.musicVolume = value;
-        settings.musicVolume = value;
-        //Save();
-    }
-
-    public void SetSfxVolume(float value) {
-        //if (AudioManager.instance != null) AudioManager.instance.SFXVolume = value;
-        settings.sfxVolume = value;
-        //Save();
-    }
-
-    public void SetVoiceVolume(float value) {
-        //if (AudioManager.instance != null) AudioManager.instance.voiceVolume = value;
-        settings.voiceVolume = value;
-        //Save();
-    }
-
-    public void CloseOptionsScene() {
-        if (SceneManager.GetSceneByName(OptionsSceneName).isLoaded)
-            SceneManager.UnloadSceneAsync(OptionsSceneName);
-    }
-    */
+    #endregion
 }

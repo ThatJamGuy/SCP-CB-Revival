@@ -73,6 +73,10 @@ public class PauseMenu : MonoBehaviour {
         GameManager.ResumeGame();
     }
 
+    public void ToggleOptionsMenu(bool active) {
+        GlobalCanvasInstance.ToggleOptionsMenu(active);
+    }
+
     /// <summary>
     /// Public method to switch the active state of the achievements menu, mostly via that one button in pause menu
     /// </summary>
@@ -85,11 +89,12 @@ public class PauseMenu : MonoBehaviour {
     /// Public method to clean up some game stuff and return to the main menu. Should be accessed via buttons
     /// </summary>
     public void ReturnToMenu() {
-        // Resume game as to not get stuck before attempting to load the main menu
-        GameManager.ResumeGame();
+        // Kind of resume game as to not get stuck before attempting to load the main menu
+        Time.timeScale = 1f;
+        AudioManager.Instance.ResumeAllSFX();
 
         // Prevents sounds from bleeding into the main menu
-        RuntimeManager.GetBus("bus:/").stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        RuntimeManager.GetBus("bus:/SFX").stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
 
         // If available, use the SceneController instance to load the menu scene and unload Session and Game scenes
         if (SceneController.instance == null) return;
@@ -97,8 +102,8 @@ public class PauseMenu : MonoBehaviour {
             .NewTransition()
             .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu, setActive: true)
             .Unload(SceneDatabase.Slots.Intro)
-            .Unload(SceneDatabase.Slots.Session)
             .Unload(SceneDatabase.Slots.Game)
+            .Unload(SceneDatabase.Slots.Session)
             .WithClearUnusedAssets()
             .WithOverlay()
             .Perform();
