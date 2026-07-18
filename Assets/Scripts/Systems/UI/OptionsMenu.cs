@@ -25,6 +25,10 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private TMP_Dropdown soundtrackDropdown;
 
     [Header("Gameplay Settings")]
+    [SerializeField] private Slider lookSensSlider;
+    [SerializeField] private TextMeshProUGUI lookSensText;
+    [SerializeField] private Slider lookSmoothSlider;
+    [SerializeField] private TextMeshProUGUI lookSmoothText;
     [SerializeField] private TMP_Dropdown hudPresetDropdown;
     [SerializeField] private TMP_Dropdown hudDesignDropdown;
     [SerializeField] private TMP_Dropdown hudFunctionDropdown;
@@ -86,6 +90,8 @@ public class OptionsMenu : MonoBehaviour {
         voiceVolumeSlider.value = localSettings.voiceVolume;
 
         // Gameplay Settings
+        lookSensSlider.value = localSettings.mouseSensitivity;
+        lookSmoothSlider.value = localSettings.mouseSmoothing;
         hudDesignDropdown.value = localSettings.hudDesign;
         hudFunctionDropdown.value = localSettings.hudFunctionality;
 
@@ -203,6 +209,16 @@ public class OptionsMenu : MonoBehaviour {
         AudioManager.Instance.sfxVolume = sfxVolumeSlider.value;
         AudioManager.Instance.voiceVolume = voiceVolumeSlider.value;
         AudioManager.Instance.ApplyAllVolumes();
+
+        SettingsManager.SaveSettingsData();
+    }
+
+    public void ApplyInputSliders() {
+        lookSensText.text = lookSensSlider.value.ToString();
+        lookSmoothText.text = lookSmoothSlider.value.ToString();
+
+        localSettings.mouseSensitivity = lookSensSlider.value;
+        localSettings.mouseSmoothing = lookSmoothSlider.value;
 
         SettingsManager.SaveSettingsData();
     }

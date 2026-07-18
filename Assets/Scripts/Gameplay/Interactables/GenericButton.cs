@@ -1,16 +1,16 @@
+using EditorAttributes;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
-using System.Collections;
-using EditorAttributes;
 
-public class I_ButtonGeneric : MonoBehaviour, IInteractable {
+public class GenericButton : MonoBehaviour, IInteractable {
     [Header("Button Settings")]
     [SerializeField] private bool useInteractMessage;
     [SerializeField] private float interactionCooldown = 0.2f;
-    
+
     [SerializeField, ShowField(nameof(useInteractMessage))] private string interactMessage;
-    [SerializeField, ShowField(nameof(useInteractMessage))] private float interactMessageDuration = 3f;
-    [SerializeField, ShowField(nameof(useInteractMessage))] private float interactMessageFadeDuration = 2f;
+    [SerializeField, ShowField(nameof(useInteractMessage))] private float messageDuration = 3f;
+    [SerializeField, ShowField(nameof(useInteractMessage))] private float messageFadeDuration = 2f;
 
     [Header("Events")]
     [SerializeField] private UnityEvent onInteract;
@@ -21,10 +21,11 @@ public class I_ButtonGeneric : MonoBehaviour, IInteractable {
         if (!canInteract) return; // Do nothing if the player cannot interact
 
         onInteract?.Invoke(); // Invoke the event
-        
+
         // If there is to be an interact message, trigger that as well
-        if (useInteractMessage && InfoTextManager.Instance) InfoTextManager.Instance.NotifyPlayer(interactMessage);
-        
+        if (useInteractMessage && InfoTextManager.Instance)
+            InfoTextManager.Instance.NotifyPlayer(interactMessage, messageDuration, messageFadeDuration);
+
         StartCoroutine(Cooldown()); // Begin the cooldown before interaction can occur again
     }
 

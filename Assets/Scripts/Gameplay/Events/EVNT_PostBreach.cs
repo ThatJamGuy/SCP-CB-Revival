@@ -51,11 +51,11 @@ public class EVNT_PostBreach : MonoBehaviour {
     }
 
     public void ShakeCameraLarge() {
-        GlobalCameraShake.instance.ShakeCamera(0.2f, 0f, 5f);
+        //GlobalCameraShake.instance.ShakeCamera(0.2f, 0f, 5f);
     }
 
     public void ShakeCameraSmall() {
-        GlobalCameraShake.instance.ShakeCamera(0.03f, 0f, 2f);
+        //GlobalCameraShake.instance.ShakeCamera(0.03f, 0f, 2f);
     }
 
     public void ChangeMusicToLCZ() {
@@ -70,7 +70,7 @@ public class EVNT_PostBreach : MonoBehaviour {
             case "Shake_Small":
                 ShakeCameraSmall();
                 break;
-             case "Music_LCZ":
+            case "Music_LCZ":
                 ChangeMusicToLCZ();
                 break;
         }

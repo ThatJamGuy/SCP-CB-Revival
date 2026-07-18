@@ -50,6 +50,9 @@ public class MapGenerator : MonoBehaviour {
     // Internal State
     private MapTemplate selectedMapTemplate;
     private readonly List<GameObject> spawnedRooms = new();
+    private readonly Dictionary<AssetReferenceGameObject, AsyncOperationHandle<GameObject>> loadedRoomAssets = new();
+    private readonly List<GameObject> spawnedDoors = new();
+    private readonly Dictionary<AssetReferenceGameObject, AsyncOperationHandle<GameObject>> loadedDoorAssets = new();
     private readonly Dictionary<Vector2Int, RoomData.Zone> zoneLookup = new();
     private readonly Dictionary<Vector2Int, RoomData> placedMandatoryRooms = new();
     private readonly HashSet<RoomData> usedUniqueRooms = new();
@@ -62,9 +65,9 @@ public class MapGenerator : MonoBehaviour {
         else Destroy(gameObject);
     }
 
-    /*private void Start() {
-        if (SaveSystem.SaveFileExists("savefile.json")) {
-            var saveData = SaveSystem.Load<SaveData>("savefile.json");
+    private void Start() {
+        if (DataSaver.DataFileExists("save.json")) {
+            var saveData = DataSaver.Load<SaveData>("save.json");
             seed = saveData.currentMapSeed;
 
             if (string.IsNullOrEmpty(seed))
@@ -74,7 +77,7 @@ public class MapGenerator : MonoBehaviour {
         }
 
         StartCoroutine(GenerateMapSequence());
-    }*/
+    }
 
     public IEnumerator GenerateMapSequence() {
         IsGenerationComplete = false;
@@ -101,15 +104,18 @@ public class MapGenerator : MonoBehaviour {
             yield return null;
         }
 
-        // 5. Spawn Doors
-        SpawnDoors();
+        // 5. Spawn Doors and Wait
+        yield return StartCoroutine(SpawnDoorsRoutine());
 
         IsGenerationComplete = true;
         Debug.Log("<color=green>Map Generation Sequence Finished!</color>");
     }
 
     private IEnumerator SpawnPlacedRoomsRoutine() {
-        List<AsyncOperationHandle<GameObject>> handles = new();
+        // Decide which room goes in each placement up front, so we know exactly
+        // which addressable prefabs actually need to be loaded.
+        List<(RoomPlacement placement, RoomData room)> placementRooms = new();
+        HashSet<AssetReferenceGameObject> prefabsToLoad = new();
 
         foreach (var placement in selectedMapTemplate.roomPlacements) {
             RoomData roomToSpawn = placedMandatoryRooms.TryGetValue(placement.gridPosition, out RoomData mandatory)
@@ -118,56 +124,63 @@ public class MapGenerator : MonoBehaviour {
 
             if (roomToSpawn == null || !roomToSpawn.roomPrefab.RuntimeKeyIsValid()) continue;
 
+            placementRooms.Add((placement, roomToSpawn));
+            prefabsToLoad.Add(roomToSpawn.roomPrefab);
+        }
+
+        // Load every distinct prefab once - this is the only part that stays async,
+        // since Addressables may need to pull the bundle from disk or network.
+        List<AsyncOperationHandle<GameObject>> loadHandles = new(prefabsToLoad.Count);
+        foreach (var prefabRef in prefabsToLoad) {
+            var handle = prefabRef.LoadAssetAsync();
+            loadedRoomAssets[prefabRef] = handle;
+            loadHandles.Add(handle);
+        }
+
+        foreach (var handle in loadHandles) {
+            yield return handle;
+        }
+
+        // Every prefab is resident in memory now, so placing a room is just a plain,
+        // synchronous Instantiate - no need to spread it across frames like InstantiateAsync does.
+        foreach (var (placement, room) in placementRooms) {
+            AsyncOperationHandle<GameObject> handle = loadedRoomAssets[room.roomPrefab];
+            if (handle.Status != AsyncOperationStatus.Succeeded) {
+                Debug.LogWarning($"Failed to load addressable prefab for room: {room.name}");
+                continue;
+            }
+
             Vector3 worldPos = GridToWorld(placement.gridPosition);
             Quaternion rotation = Quaternion.Euler(0f, placement.rotation, 0f);
 
-            var handle = roomToSpawn.roomPrefab.InstantiateAsync(worldPos, rotation, generatedMapParent);
-            handles.Add(handle);
-
-            handle.Completed += (op) => {
-                if (op.Status == AsyncOperationStatus.Succeeded) spawnedRooms.Add(op.Result);
-            };
+            GameObject instance = Instantiate(handle.Result, worldPos, rotation, generatedMapParent);
+            spawnedRooms.Add(instance);
         }
-
-        // Wait until ALL room addressables are finished loading
-        while (handles.Count > 0) {
-            for (int i = handles.Count - 1; i >= 0; i--) {
-                if (handles[i].IsDone) handles.RemoveAt(i);
-            }
-            yield return null;
-        }
-    }
-
-    public void GenerateMap() {
-        Cleanup();
-
-        // Setup the seed stuff
-        if (useRandomSeed) {
-            currentSeed = Random.Range(0, 99999);
-        } else {
-            currentSeed = seed.GetHashCode(); // Map gen cant use strings, so convert any user seeds to a number
-        }
-        Random.InitState(currentSeed);
-        Debug.Log($"Generating map with Seed: {currentSeed}");
-
-        if (availableMapTemplates == null || availableMapTemplates.Length == 0) {
-            Debug.LogError("No Map Templates assigned to MapGenerator!");
-            return;
-        }
-
-        selectedMapTemplate = availableMapTemplates[Random.Range(0, availableMapTemplates.Length)];
-
-        BuildGridData();
-        PlaceMandatoryRooms();
-        SpawnPlacedRooms();
-        SpawnDoors();
     }
 
     private void Cleanup() {
         foreach (var room in spawnedRooms) {
-            if (room != null) Addressables.ReleaseInstance(room);
+            if (room != null) Destroy(room);
         }
         spawnedRooms.Clear();
+
+        foreach (var door in spawnedDoors) {
+            if (door != null) Destroy(door);
+        }
+        spawnedDoors.Clear();
+
+        // Release every addressable load handle now that its instances are gone -
+        // this is what actually decrements Addressables' ref count for the bundle.
+        foreach (var handle in loadedRoomAssets.Values) {
+            Addressables.Release(handle);
+        }
+        loadedRoomAssets.Clear();
+
+        foreach (var handle in loadedDoorAssets.Values) {
+            Addressables.Release(handle);
+        }
+        loadedDoorAssets.Clear();
+
         placedMandatoryRooms.Clear();
         usedUniqueRooms.Clear();
         zoneLookup.Clear();
@@ -223,42 +236,7 @@ public class MapGenerator : MonoBehaviour {
     }
     #endregion
 
-    #region PHASE 3: Room Spawning / Placing
-    private void SpawnPlacedRooms() {
-        if (selectedMapTemplate.roomPlacements == null) return;
-
-        foreach (var placement in selectedMapTemplate.roomPlacements) {
-            RoomData roomToSpawn = null;
-
-            // Priority 1: Mandatory Pre-placed rooms
-            if (placedMandatoryRooms.TryGetValue(placement.gridPosition, out RoomData mandatory)) {
-                roomToSpawn = mandatory;
-            }
-            // Priority 2: Random selection based on shape/zone
-            else {
-                roomToSpawn = GetRandomValidRoom(placement.requiredShape, GetZoneAtPosition(placement.gridPosition));
-            }
-
-            if (roomToSpawn == null) continue;
-
-            SpawnRoom(roomToSpawn, placement.gridPosition, placement.rotation);
-        }
-    }
-
-    private void SpawnRoom(RoomData room, Vector2Int gridPos, int rotationY) {
-        if (!room.roomPrefab.RuntimeKeyIsValid()) return;
-
-        Vector3 worldPos = GridToWorld(gridPos);
-        Quaternion rotation = Quaternion.Euler(0f, rotationY, 0f);
-
-        var handle = room.roomPrefab.InstantiateAsync(worldPos, rotation, generatedMapParent);
-        handle.Completed += (op) => {
-            if (op.Status == AsyncOperationStatus.Succeeded) spawnedRooms.Add(op.Result);
-        };
-    }
-    #endregion
-
-    #region PHASE 4: Spawn the doors
+    #region PHASE 3: Spawn the doors
     private static readonly Dictionary<RoomData.RoomShape, int[]> BaseExits = new() {
         { RoomData.RoomShape.TwoWay, new[] { 0, 180 } },
         { RoomData.RoomShape.ThreeWay, new[] { 270, 180, 90 } },
@@ -268,8 +246,12 @@ public class MapGenerator : MonoBehaviour {
         { RoomData.RoomShape.Checkpoint, new[] { 0, 180 } }
     };
 
-    private void SpawnDoors() {
+    private IEnumerator SpawnDoorsRoutine() {
+        // Walk every placement's exits and work out where a door is actually needed,
+        // same adjacency logic as before - just collecting instead of spawning immediately.
         HashSet<string> processedEdges = new();
+        List<(Vector3 position, Quaternion rotation, AssetReferenceGameObject prefab)> doorsToPlace = new();
+        HashSet<AssetReferenceGameObject> prefabsToLoad = new();
 
         foreach (var placement in selectedMapTemplate.roomPlacements) {
             Vector2Int currentPos = placement.gridPosition;
@@ -283,42 +265,57 @@ public class MapGenerator : MonoBehaviour {
 
                 // Check if neighbor exists and has a matching exit
                 var neighborPlacement = GetPlacementAt(neighborPos);
-                if (neighborPlacement != null) {
-                    List<int> neighborExits = GetWorldExits(neighborPlacement.requiredShape, neighborPlacement.rotation);
-                    int oppositeAngle = (localAngle + 180) % 360;
+                if (neighborPlacement == null) continue;
 
-                    if (neighborExits.Contains(oppositeAngle)) {
-                        SpawnDoorBetween(currentPos, neighborPos, localAngle);
-                        processedEdges.Add(edgeKey);
-                    }
-                }
+                List<int> neighborExits = GetWorldExits(neighborPlacement.requiredShape, neighborPlacement.rotation);
+                int oppositeAngle = (localAngle + 180) % 360;
+                if (!neighborExits.Contains(oppositeAngle)) continue;
+
+                processedEdges.Add(edgeKey);
+
+                AssetReferenceGameObject doorPrefab = GetDoorPrefabForZone(GetZoneAtPosition(currentPos));
+                if (doorPrefab == null || !doorPrefab.RuntimeKeyIsValid()) continue;
+
+                // Midpoint between the two rooms, rotated to point along the exit axis
+                Vector3 doorPosition = (GridToWorld(currentPos) + GridToWorld(neighborPos)) / 2f;
+                Quaternion doorRotation = Quaternion.Euler(0f, localAngle, 0f);
+
+                doorsToPlace.Add((doorPosition, doorRotation, doorPrefab));
+                prefabsToLoad.Add(doorPrefab);
             }
+        }
+
+        // Load every distinct door prefab once - the only async part.
+        List<AsyncOperationHandle<GameObject>> loadHandles = new(prefabsToLoad.Count);
+        foreach (var prefabRef in prefabsToLoad) {
+            var handle = prefabRef.LoadAssetAsync();
+            loadedDoorAssets[prefabRef] = handle;
+            loadHandles.Add(handle);
+        }
+
+        foreach (var handle in loadHandles) {
+            yield return handle;
+        }
+
+        // Every door prefab is resident in memory now, so place them with plain,
+        // synchronous Instantiate calls.
+        foreach (var (position, rotation, prefab) in doorsToPlace) {
+            AsyncOperationHandle<GameObject> handle = loadedDoorAssets[prefab];
+            if (handle.Status != AsyncOperationStatus.Succeeded) {
+                Debug.LogWarning("Failed to load addressable door prefab.");
+                continue;
+            }
+
+            GameObject instance = Instantiate(handle.Result, position, rotation, generatedDoorParent);
+            spawnedDoors.Add(instance);
         }
     }
 
-    private void SpawnDoorBetween(Vector2Int posA, Vector2Int posB, int angleFromA) {
-        RoomData.Zone zone = GetZoneAtPosition(posA);
-        AssetReferenceGameObject doorPrefab = null;
-
-        // Find the door prefab for this zone from the template
+    private AssetReferenceGameObject GetDoorPrefabForZone(RoomData.Zone zone) {
         foreach (var zT in selectedMapTemplate.zones) {
-            if (zT.zoneType == zone) {
-                doorPrefab = zT.zoneDoor;
-                break;
-            }
+            if (zT.zoneType == zone) return zT.zoneDoor;
         }
-
-        if (doorPrefab == null || !doorPrefab.RuntimeKeyIsValid()) return;
-
-        // Calculate Midpoint
-        Vector3 worldPosA = GridToWorld(posA);
-        Vector3 worldPosB = GridToWorld(posB);
-        Vector3 doorPosition = (worldPosA + worldPosB) / 2f;
-
-        // Rotation: Point the door along the axis of the exit
-        Quaternion doorRotation = Quaternion.Euler(0, angleFromA, 0);
-
-        doorPrefab.InstantiateAsync(doorPosition, doorRotation, generatedDoorParent);
+        return null;
     }
     #endregion
 
@@ -333,6 +330,7 @@ public class MapGenerator : MonoBehaviour {
 
         List<RoomData> validPool = new();
         foreach (var r in candidates) {
+            if (r == null) continue;
             if (r.roomZone != zone) continue;
             if (r.isUnique && usedUniqueRooms.Contains(r)) continue;
             validPool.Add(r);
@@ -371,13 +369,19 @@ public class MapGenerator : MonoBehaviour {
 
     private List<RoomData> GetAllRooms() {
         List<RoomData> all = new();
-        System.Action<RoomData[]> addIfNotNull = (arr) => { if (arr != null) all.AddRange(arr); };
 
-        addIfNotNull(roomSet.twoWayRooms);
-        addIfNotNull(roomSet.cornerRooms);
-        addIfNotNull(roomSet.threeWayRooms);
-        addIfNotNull(roomSet.fourWayRooms);
-        addIfNotNull(roomSet.deadEndRooms);
+        void AddValidRooms(RoomData[] arr) {
+            if (arr == null) return;
+            foreach (var room in arr) {
+                if (room != null) all.Add(room);
+            }
+        }
+
+        AddValidRooms(roomSet.twoWayRooms);
+        AddValidRooms(roomSet.cornerRooms);
+        AddValidRooms(roomSet.threeWayRooms);
+        AddValidRooms(roomSet.fourWayRooms);
+        AddValidRooms(roomSet.deadEndRooms);
         return all;
     }
 
