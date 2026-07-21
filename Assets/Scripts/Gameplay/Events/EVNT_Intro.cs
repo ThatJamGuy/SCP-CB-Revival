@@ -36,6 +36,7 @@ public class EVNT_Intro : MonoBehaviour {
 
     [Header("NPC References")]
     [SerializeField] private Actor_Guard agentUlgrin;
+    [SerializeField] private Animator ulgrinAnimator;
     [SerializeField] private Actor_Guard agentThomas;
 
     // These are normally loaded in via the loading stuff, but that's ofc not possible when starting directly from this scene
@@ -212,11 +213,30 @@ public class EVNT_Intro : MonoBehaviour {
     private IEnumerator CheckExitCellCoroutine() {
         AudioManager.PlayOneShot(cellExitEvent, agentUlgrin.voiceSource.position);
 
-        yield return new WaitForSeconds(CHECK_IF_LEFT_CELL_TIME);
+        yield return new WaitForSeconds(1);
+
+        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = false;
+        ulgrinAnimator.SetTrigger("Cocky");
+
+        yield return new WaitForSeconds(2);
+
+        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = true;
+
+        yield return new WaitForSeconds(CHECK_IF_LEFT_CELL_TIME - 4);
 
         if (playerStillInCell) AudioManager.PlayOneShot(cellExitRefuseEvent, agentUlgrin.voiceSource.position);
+        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = false;
+        ulgrinAnimator.SetTrigger("Sigh");
 
-        yield return new WaitForSeconds(CHECK_IF_LEFT_CELL_TIME);
+        yield return new WaitForSeconds(2);
+
+        ulgrinAnimator.SetTrigger("Annoyed");
+
+        yield return new WaitForSeconds(2);
+
+        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = true;
+
+        yield return new WaitForSeconds(CHECK_IF_LEFT_CELL_TIME - 4);
 
         if (playerStillInCell) AudioManager.PlayOneShot(ulgrinPissedLines, agentUlgrin.voiceSource.position, "ulgrinPissedLevel", 0);
 
@@ -241,12 +261,33 @@ public class EVNT_Intro : MonoBehaviour {
 
     #endregion
 
+    #region Sequence 3: Escort
+
+    private IEnumerator BeginEscortRoutine() {
+        InfoTextManager.Instance.NotifyPlayer("'Just follow me, oh and by the way you should cooperate or I'll kill ya buddy.'");
+        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = false;
+        ulgrinAnimator.SetTrigger("Cocky");
+
+        yield return new WaitForSeconds(2);
+
+        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = true;
+
+        yield return new WaitForSeconds(5);
+
+
+    }
+
+    #endregion
+
     #endregion
 
     #region public methods
 
     public void OnPlayerExitCell() {
+        StopAllCoroutines();
         playerStillInCell = false;
+
+        StartCoroutine(BeginEscortRoutine());
     }
 
     #endregion
