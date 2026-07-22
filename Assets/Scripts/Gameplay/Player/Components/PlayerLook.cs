@@ -23,8 +23,10 @@ public class PlayerLook : MonoBehaviour {
 
     private void Awake() {
         // Set the mouse sens and mouse smooth values according to the values in settings.json
-        sensitivity = Player.Instance.settingsData.mouseSensitivity;
-        mouseSmoothing = Player.Instance.settingsData.mouseSmoothing;
+        if (Player.Instance != null) {
+            sensitivity = Player.Instance.settingsData.mouseSensitivity;
+            mouseSmoothing = Player.Instance.settingsData.mouseSmoothing;
+        }
     }
 
     private void Start() {
