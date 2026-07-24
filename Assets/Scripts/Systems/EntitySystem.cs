@@ -1,3 +1,4 @@
+using IngameDebugConsole;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,10 +17,10 @@ public class EntitySystem : MonoBehaviour {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        DebugConsole.AddCommand("listentities", "Lists all active entities and their indexes in the standy array.", ListEntities);
-        DebugConsole.AddCommand<int, Vector3>("spawnentity", "Spawns the NPC prefab with the given index in the active array at the given position.", SpawnEntity);
-        DebugConsole.AddCommand<int, Vector3>("teleportentity", "Teleports an entity by index in the active array to a given position", TeleportEntity);
-        DebugConsole.AddCommand<int>("walktome", "Tells an NPC by index in the active array to walk to the player", WalkToMe);
+        DebugLogConsole.AddCommand("listentities", "Lists all active entities and their indexes in the standy array.", ListEntities);
+        DebugLogConsole.AddCommand<int, Vector3>("spawnentity", "Spawns the NPC prefab with the given index in the active array at the given position.", SpawnEntity);
+        DebugLogConsole.AddCommand<int, Vector3>("teleportentity", "Teleports an entity by index in the active array to a given position", TeleportEntity);
+        DebugLogConsole.AddCommand<int>("walktome", "Tells an NPC by index in the active array to walk to the player", WalkToMe);
     }
 
     private void Start() {

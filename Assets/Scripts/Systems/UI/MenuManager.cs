@@ -7,11 +7,14 @@ using UnityEngine.InputSystem;
 /// Script to handle the opening and closing of various in game menus.
 /// Now supports unregistered menus for less detailed toggling of said menus.
 /// </summary>
+
 public class MenuManager : MonoBehaviour {
+    public static MenuManager Instance { get; private set; }
+
     [System.Serializable]
     public class Menu {
         public InputActionReference openCloseKey; // Action to open and close the menu
-        public GameObject associatedMenuScreen; // The parent gameObject for the screen to open
+        public GameObject associatedMenuScreen; // The parent gameObject for the screen to open, leave empty for dummy menu
         public bool pausesOnSafe; // Should this menu pause the game on Safe mode?
         public bool pausesOnEuclid; // Should this menu pause the game on Euclid mode?
 
@@ -29,6 +32,11 @@ public class MenuManager : MonoBehaviour {
     private int currentDifficulty;
 
     #region Unity Callbacks
+
+    private void Awake() {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
 
     private void OnEnable() {
         // For every menu in the list, register each action callback to the ToggleMenu method
@@ -80,7 +88,7 @@ public class MenuManager : MonoBehaviour {
         // Then set its screen to enabled or disabled based on that isOpen value
         // Refresh the pause state to make sure stuff is paused respectively
         menu.isOpen = open;
-        menu.associatedMenuScreen.SetActive(open);
+        if (menu.associatedMenuScreen != null) menu.associatedMenuScreen.SetActive(open);
         RefreshPauseState();
 
         // Cleanup for the tooltip so it's not sticking around on the screen

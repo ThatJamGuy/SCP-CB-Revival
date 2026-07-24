@@ -1,3 +1,4 @@
+using IngameDebugConsole;
 using PixeLadder.EasyTooltip;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,8 +54,11 @@ public class InventorySystem : MonoBehaviour {
     private void Start() {
         itemDataLookup = itemDataList.ToDictionary(item => item.itemIdentifier);
 
-        DebugConsole.AddCommand<string>("spawnitem", "Spawns an item with the given identifier.", DebugSpawnItem);
-        DebugConsole.AddCommand("listitems", "Lists available item identifiers.", DebugListItems);
+        if (playerCamera == null && Player.Instance != null)
+            playerCamera = Player.Instance.playerCamera;
+
+        DebugLogConsole.AddCommand<string>("spawnitem", "Spawns an item with the given identifier.", DebugSpawnItem);
+        DebugLogConsole.AddCommand("listitems", "Lists available item identifiers.", DebugListItems);
     }
 
     private void OnEnable() {
@@ -177,7 +181,7 @@ public class InventorySystem : MonoBehaviour {
         var randomRot = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
         Instantiate(item.itemWorldPrefab, spawnPos, randomRot);
 
-        Debug.Log($"<color=aqua>Spawned an item with id: {itemIdentifier}</color>");
+        Debug.Log($"> <color=#00b5ff>Spawned a {itemIdentifier}</color>");
     }
     #endregion
 

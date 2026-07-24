@@ -6087,7 +6087,6 @@ GameObject:
   - component: {fileID: 3714986947274237453}
   - component: {fileID: 4055845431398609038}
   - component: {fileID: 1976986676757264774}
-  - component: {fileID: 288090052666041169}
   m_Layer: 5
   m_Name: '[ SESSION THINGS ]'
   m_TagString: Untagged
@@ -6103,7 +6102,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3380067115595750127}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6170,6 +6169,11 @@ MonoBehaviour:
     pausesOnSafe: 1
     pausesOnEuclid: 0
     isOpen: 0
+  - openCloseKey: {fileID: 2826055423122125811, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+    associatedMenuScreen: {fileID: 0}
+    pausesOnSafe: 1
+    pausesOnEuclid: 1
+    isOpen: 0
 --- !u!114 &4055845431398609038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6230,19 +6234,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6fa6fa91b8117a940ae5f6f31c53a7f3, type: 2}
   - {fileID: 11400000, guid: edbf8647cf5879e48ac85812db7924ba, type: 2}
   - {fileID: 11400000, guid: 0427e402712af9740a5fb5e5f60f1fe2, type: 2}
---- !u!114 &288090052666041169
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3380067115595750127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 118311c2f64fe14419aa893ab403061a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DebugInterface
-  menuManager: {fileID: 3714986947274237453}
 --- !u!1 &3429904439028330264
 GameObject:
   m_ObjectHideFlags: 0

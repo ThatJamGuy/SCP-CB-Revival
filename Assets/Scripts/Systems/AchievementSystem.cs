@@ -15,9 +15,13 @@ public class AchievementSystem : MonoBehaviour {
 
     [SerializeField] private AchievementData[] achievements;
     [SerializeField] private EventReference achievementUnlockStinger;
+    [SerializeField] private GameObject achievementItemPrefab;
+    [SerializeField] private Transform achievementContainer;
 
     private static readonly HashSet<string> obtainedAchievementNames = new HashSet<string>();
     private AchievementFile achievementFileData;
+
+    private GameObject currentAchievementItem = null;
 
     #region Unity Callbacks
 
@@ -37,7 +41,11 @@ public class AchievementSystem : MonoBehaviour {
             }
         }
 
-        DebugConsole.AddCommand<string>("giveachievement", "Gives the player an achievement via it's identifier.", GiveAchievement);
+        // Create the visual representations of each achievement and assign it's data accordingly
+        foreach (AchievementData achievementData in achievements) {
+            currentAchievementItem = Instantiate(achievementItemPrefab, achievementContainer);
+            currentAchievementItem.GetComponent<AchivementDisplay>().DisplayAchievementValues(achievementData);
+        }
     }
 
     #endregion
@@ -57,11 +65,26 @@ public class AchievementSystem : MonoBehaviour {
     #region Public Methods
 
     /// <summary>
+    /// Returns a true or false value based on if the defined achievement is unlocked.
+    /// </summary>
+    /// <param name="achievementIdentifier">ID of the achievement to check</param>
+    /// <returns></returns>
+    public bool AchievementUnlocked(string achievementIdentifier) {
+        if (obtainedAchievementNames.Contains(achievementIdentifier)) return true;
+        else return false;
+    }
+
+    /// <summary>
     /// Gives the player an achievement via that achievements identifier
     /// </summary>
     /// <param name="achievementIdentifier">Identifier for this achievement. (IE. "achv_914")</param>
     public void GiveAchievement(string achievementIdentifier) {
         foreach (var achievement in achievements) {
+            if (SettingsManager.settingsData.consoleEnabled) {
+                Debug.Log("<color=#ff0000>Tried to give you an achievement, but it looks like you have the console enabled!");
+                return;
+            }
+
             if (achievement.achievementIdentifier != achievementIdentifier) continue;
             if (obtainedAchievementNames.Contains(achievement.achievementIdentifier)) return;
 

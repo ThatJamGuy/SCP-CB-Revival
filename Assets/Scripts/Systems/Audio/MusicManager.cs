@@ -1,5 +1,6 @@
 using FMOD.Studio;
 using FMODUnity;
+using IngameDebugConsole;
 using UnityEngine;
 
 /// <summary>
@@ -54,9 +55,9 @@ public class MusicManager : MonoBehaviour {
     }
 
     private void Start() {
-        DebugConsole.AddCommand<int, int>("startmusic", "Plays the music track with the given ID and with the given intensity.", SetTrack);
-        DebugConsole.AddCommand<int>("setsoundtrack", "Sets the current soundtrack.", SetSoundtrack);
-        DebugConsole.AddCommand("stopmusic", "Stops all currently playing music.", StopAllMusic);
+        DebugLogConsole.AddCommand<int, int>("startmusic", "Plays the music track with the given ID and with the given intensity.", SetTrack);
+        DebugLogConsole.AddCommand<int>("setsoundtrack", "Sets the current soundtrack.", SetSoundtrack);
+        DebugLogConsole.AddCommand("stopmusic", "Stops all currently playing music.", StopAllMusic);
     }
 
     private void OnDestroy() {
