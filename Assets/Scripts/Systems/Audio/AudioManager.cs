@@ -68,7 +68,9 @@ public class AudioManager : MonoBehaviour {
     // Play a one-shot but automatically set to Player transform
     public static void PlayOneShot(EventReference soundToPlay) {
         var soundInstance = RuntimeManager.CreateInstance(soundToPlay); // Create a new sound instance
-        soundInstance.set3DAttributes(Player.Instance.transform.position.To3DAttributes());
+        if (Player.Instance != null) {
+            soundInstance.set3DAttributes(Player.Instance.transform.position.To3DAttributes());
+        }
         soundInstance.start(); // Play the sound
         soundInstance.release(); // Cleanup leftovers to save memory
         Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to keep track of it

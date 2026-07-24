@@ -1,3 +1,5 @@
+using FMODUnity;
+using System.Collections;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -9,6 +11,13 @@ public class MainMenuController : MonoBehaviour {
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private TMP_InputField seedInputField;
     [SerializeField] private Toggle[] difficultyCheckboxes;
+
+    [Header("Other References")]
+    [SerializeField] private bool enableMenuShakes;
+    [SerializeField] private float minShakeTime = 25;
+    [SerializeField] private float maxShakeTime = 40f;
+    [SerializeField] private EventReference bigBooms;
+    [SerializeField] private GameObject shakeDebris;
 
     private const string CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -25,6 +34,9 @@ public class MainMenuController : MonoBehaviour {
 
 
         AutomaticallyDefineSeed();
+
+        if (enableMenuShakes)
+            StartCoroutine(PeriodicMenuShake());
     }
 
     #endregion
@@ -113,6 +125,25 @@ public class MainMenuController : MonoBehaviour {
         };
 
         seedInputField.text = presetSeeds[Random.Range(0, presetSeeds.Length)];
+    }
+
+    private IEnumerator PeriodicMenuShake() {
+        if (!enableMenuShakes) StopCoroutine(PeriodicMenuShake());
+
+        yield return new WaitForSeconds(Random.Range(minShakeTime, maxShakeTime));
+
+        if (!enableMenuShakes) StopCoroutine(PeriodicMenuShake());
+
+        shakeDebris.SetActive(true);
+        GlobalCameraShake.Instance.ShakeCamera(0.02f, 0f, 4);
+        AudioManager.PlayOneShot(bigBooms);
+
+        yield return new WaitForSeconds(5);
+
+        shakeDebris.SetActive(false);
+
+        if (enableMenuShakes)
+            StartCoroutine(PeriodicMenuShake());
     }
 
     #endregion

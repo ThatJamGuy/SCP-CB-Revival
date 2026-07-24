@@ -18,6 +18,9 @@ public class PanoramicCameraController : MonoBehaviour {
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        if (GlobalCameraShake.Instance != null)
+            GlobalCameraShake.Instance.RegisterCamera(gameObject.transform);
     }
 
     private void Update() {
