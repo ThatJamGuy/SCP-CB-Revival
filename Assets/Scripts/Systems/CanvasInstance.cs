@@ -47,7 +47,7 @@ public class CanvasInstance : MonoBehaviour {
 
     private void Start() {
         // Set up which HUD Designs to use so other scripts don't have to think about it
-        switch (SettingsManager.settingsData.hudDesign) {
+        switch (RevivalRuntimeEngine.SettingsData.hudDesign) {
             case 0:
                 revivalBarStyleParent.SetActive(true);
                 legacyBarStyleParent.SetActive(false);

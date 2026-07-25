@@ -93,7 +93,7 @@ public class SCP_106_New : MonoBehaviour {
     /// Give SCP-106 something to target. Player, other npcs, etc.
     /// </summary>
     /// <param name="target"></param>
-    public void SetTarget(Transform target) { 
+    public void SetTarget(Transform target) {
         activeTarget = target;
     }
 
@@ -110,7 +110,7 @@ public class SCP_106_New : MonoBehaviour {
     /// <summary>
     /// Call this guy to stop allowing SCP-106 to move. Useful for animations where agent movement shouldnt happen.
     /// </summary>
-    public void CantWalk() { 
+    public void CantWalk() {
         canWalk = false;
         agent.isStopped = true;
     }
@@ -118,7 +118,7 @@ public class SCP_106_New : MonoBehaviour {
     /// <summary>
     /// Similar to CanWalk() but for allowing SCP-106 to move again.
     /// </summary>
-    public void CanWalk() { 
+    public void CanWalk() {
         canWalk = true;
         agent.isStopped = false;
     }
@@ -207,7 +207,7 @@ public class SCP_106_New : MonoBehaviour {
     }
 
     // Start the animation to attack the target
-    private IEnumerator AttackCoroutine() { 
+    private IEnumerator AttackCoroutine() {
         CantWalk();
         isAttacking = true;
         animator.SetTrigger("Attack");
@@ -285,26 +285,26 @@ public class SCP_106_New : MonoBehaviour {
         Vector3 directionToTarget = (activeTarget.position - transform.position).normalized;
         Vector3 checkOrigin = transform.position + Vector3.up * 0.5f;
 
-        RaycastHit[] hits = Physics.RaycastAll(checkOrigin, directionToTarget,
-            Mathf.Min(distanceToTarget, wallCheckDistance), wallLayerMask);
+        /*RaycastHit[] hits = Physics.RaycastAll(checkOrigin, directionToTarget,
+            Mathf.Min(distanceToTarget, wallCheckDistance), wallLayerMask);*/
 
-        if (hits.Length < 2) return false;
+        //if (hits.Length < 2) return false;
 
-        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        //System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
 
-        RaycastHit entryHit = hits[0];
-        RaycastHit exitHit = hits[1];
+        //RaycastHit entryHit = hits[0];
+        //RaycastHit exitHit = hits[1];
 
-        float wallThickness = Vector3.Distance(entryHit.point, exitHit.point);
-        if (wallThickness > maxWallThickness) return false;
+        //float wallThickness = Vector3.Distance(entryHit.point, exitHit.point);
+        //if (wallThickness > maxWallThickness) return false;
 
-        bool oppositeSides = Vector3.Dot(entryHit.normal, exitHit.normal) < -0.5f;
-        bool differentColliders = entryHit.collider != exitHit.collider;
+        //bool oppositeSides = Vector3.Dot(entryHit.normal, exitHit.normal) < -0.5f;
+        //bool differentColliders = entryHit.collider != exitHit.collider;
 
-        if (oppositeSides || differentColliders) {
-            StartCoroutine(TraverseWallRoutine(entryHit, exitHit));
-            return true;
-        }
+        //if (oppositeSides || differentColliders) {
+        //StartCoroutine(TraverseWallRoutine(entryHit, exitHit));
+        //return true;
+        //}
 
         return false;
     }

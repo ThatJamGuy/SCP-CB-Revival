@@ -257,7 +257,7 @@ public class SCP_173 : MonoBehaviour {
             horrorSoundReady = false;
         }
 
-        AchievementSystem.Instance.GiveAchievement("achv_173");
+        RevivalRuntimeEngine.Instance.GiveAchievement("achv_173");
     }
 
     private void AcquireTarget(Transform newTarget) {

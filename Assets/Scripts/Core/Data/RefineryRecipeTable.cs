@@ -1,7 +1,7 @@
+using EditorAttributes;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using EditorAttributes;
 
 //TODO: Rewrite some of this later to output prefabs instead of item data prefabs because I forgot it could do that
 
@@ -14,9 +14,9 @@ public class RefineryRecipeTable : ScriptableObject {
             Item = item;
         }
     }
-    
+
     public enum RefinementMode { Rough, Coarse, OneToOne, Fine, VeryFine }
-    
+
     [Serializable]
     public class Output {
         public ItemData outputItem; // Leave this blank to destroy the item instead of returning something
@@ -49,17 +49,17 @@ public class RefineryRecipeTable : ScriptableObject {
 
             return Mathf.Max(1, baseRange - achievementOffset);
         }
-        
+
         // Returns true if this output succeeds its chance roll.
         public bool RollChance(int difficultyFactor) {
             if (useAchievementStats) {
-                var maxAchievements  = AchievementSystem.TotalAchievements;
-                var currAchievements = AchievementSystem.ObtainedAchievementsCount;
-                
+                var maxAchievements = RevivalRuntimeEngine.TotalAchievements;
+                var currAchievements = RevivalRuntimeEngine.ObtainedAchievementsCount;
+
                 var range = ComputeAchievementRange(difficultyFactor, maxAchievements, currAchievements);
                 return UnityEngine.Random.Range(0, range) == 0;
             }
-            
+
             var min = chanceMin;
             var max = chanceMax;
 
@@ -76,7 +76,7 @@ public class RefineryRecipeTable : ScriptableObject {
                         break;
                 }
             }
-            
+
             min = Mathf.Max(0, min);
             max = Mathf.Max(1, max);
 
@@ -84,7 +84,7 @@ public class RefineryRecipeTable : ScriptableObject {
 
             return UnityEngine.Random.Range(0, max) < min;
         }
-        
+
         public ItemData ResolveItem(int difficultyFactor) {
             if (RollChance(difficultyFactor)) return outputItem;
 
@@ -110,11 +110,11 @@ public class RefineryRecipeTable : ScriptableObject {
     }
 
     public Recipe[] recipes;
-    
+
     private readonly Dictionary<(ItemData, RefinementMode), ModeRecipe> recipeLookup = new();
-    
+
     #region Unity Callbacks
-    
+
     private void OnEnable() {
         BuildRecipeLookup();
     }
@@ -124,11 +124,11 @@ public class RefineryRecipeTable : ScriptableObject {
         BuildRecipeLookup();
     }
 #endif
-    
+
     #endregion
-    
+
     #region Private Methods
-    
+
     private void BuildRecipeLookup() {
         recipeLookup.Clear();
 
@@ -151,9 +151,9 @@ public class RefineryRecipeTable : ScriptableObject {
             }
         }
     }
-    
+
     #endregion
-    
+
     #region Public Methods
     /// <summary>
     /// Method called by the SCP-914 script to figure out the output for a given item dropped into the input area.
@@ -164,7 +164,7 @@ public class RefineryRecipeTable : ScriptableObject {
     public ItemData GetOutput(ItemData inputItem, RefinementMode mode) {
         if (!recipeLookup.TryGetValue((inputItem, mode), out var modeRecipe)) return inputItem;
         if (modeRecipe.possibleOutputs == null || modeRecipe.possibleOutputs.Length == 0) return null;
-        
+
         var difficultyFactor = GameManager.Instance.otherDifficultyFactor;
 
         foreach (var output in modeRecipe.possibleOutputs) {

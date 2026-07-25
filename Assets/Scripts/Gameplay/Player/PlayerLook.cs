@@ -49,8 +49,8 @@ public class PlayerLook : MonoBehaviour {
         if (cantFunction || Player.Instance.disableInput || Player.Instance.disableLooking) return;
 
         // Update the sensitivity and smoothing settings if they are out of date
-        if (sensitivity != SettingsManager.settingsData.mouseSensitivity) sensitivity = SettingsManager.settingsData.mouseSensitivity;
-        if (mouseSmoothing != SettingsManager.settingsData.mouseSmoothing) mouseSmoothing = SettingsManager.settingsData.mouseSmoothing;
+        if (sensitivity != RevivalRuntimeEngine.SettingsData.mouseSensitivity) sensitivity = RevivalRuntimeEngine.SettingsData.mouseSensitivity;
+        if (mouseSmoothing != RevivalRuntimeEngine.SettingsData.mouseSmoothing) mouseSmoothing = RevivalRuntimeEngine.SettingsData.mouseSmoothing;
 
         // Take the raw Vector2 (X, Y) input of the look action and multiply it by the mouse sensitivity
         // Then run the rawInput through ApplyMouseSmoothing to see if it needs to apply any smoothing at all

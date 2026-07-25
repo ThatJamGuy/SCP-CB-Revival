@@ -30,7 +30,7 @@ public class AchivementDisplay : MonoBehaviour {
 
     public void DisplayAchievementValues(AchievementData achievementData) {
         if (cachedAchievementData == null) cachedAchievementData = achievementData;
-        unlocked = AchievementSystem.Instance.AchievementUnlocked(achievementData.achievementIdentifier);
+        unlocked = RevivalRuntimeEngine.Instance.AchievementUnlocked(achievementData.achievementIdentifier);
 
         if (unlocked) {
             // Set references for if the achievement is achieved

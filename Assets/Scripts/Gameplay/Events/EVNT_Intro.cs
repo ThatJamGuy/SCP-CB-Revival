@@ -68,7 +68,7 @@ public class EVNT_Intro : MonoBehaviour {
         // Set up developer mode for direct testing within the scene
         if (developerMode) {
             if (inputManager == null || audioManager == null || gameManager == null || sessionCanvas == null || globalCanvas == null) {
-                Debug.LogWarning("One or more of the required dev references was not set, so something vill probably break.");
+                //Debug.LogWarning("One or more of the required dev references was not set, so something vill probably break.");
                 return;
             }
 

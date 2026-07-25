@@ -37,10 +37,10 @@ public class AudioManager : MonoBehaviour {
         UI_SFXBus = RuntimeManager.GetBus("bus:/SFX_UI");
         voiceBus = RuntimeManager.GetBus("bus:/Voice");
 
-        masterVolume = SettingsManager.settingsData.masterVolume;
-        musicVolume = SettingsManager.settingsData.musicVolume;
-        sfxVolume = SettingsManager.settingsData.sfxVolume;
-        voiceVolume = SettingsManager.settingsData.voiceVolume;
+        masterVolume = RevivalRuntimeEngine.SettingsData.masterVolume;
+        musicVolume = RevivalRuntimeEngine.SettingsData.musicVolume;
+        sfxVolume = RevivalRuntimeEngine.SettingsData.sfxVolume;
+        voiceVolume = RevivalRuntimeEngine.SettingsData.voiceVolume;
         ApplyAllVolumes();
     }
 

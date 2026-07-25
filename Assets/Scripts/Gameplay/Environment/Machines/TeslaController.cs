@@ -1,5 +1,5 @@
-using System.Collections;
 using FMODUnity;
+using System.Collections;
 using UnityEngine;
 
 public class TeslaController : MonoBehaviour {
@@ -27,15 +27,15 @@ public class TeslaController : MonoBehaviour {
     private void Update() {
         // Animates the texture offset of the tesla shock effect to make it look cooler kind if like the original game did it
         if (!teslaShockEffect.activeSelf) return;
-        
+
         timer += Time.deltaTime;
 
         if (!(timer >= 0.01f)) return;
-            
+
         timer = 0f;
         currentYOffset += 0.1f;
         if (currentYOffset > 1.0f) currentYOffset -= 1.0f;
-        teslaShockEffectRenderer.material.mainTextureOffset = new Vector2(0, currentYOffset);
+        teslaShockEffectRenderer.sharedMaterial.mainTextureOffset = new Vector2(0, currentYOffset);
     }
 
     public void TriggerTesla() {
@@ -49,22 +49,22 @@ public class TeslaController : MonoBehaviour {
         yield return new WaitForSeconds(0.5f);
         teslaShockEffect.SetActive(true);
         teslaIdleEmitter.Stop();
-        
-        
+
+
         foreach (var f in flickerableLights) {
             f.PlayPatternForDuration(2.5f);
         }
-        
+
         yield return new WaitForSeconds(0.5f);
         specialEffects.SetActive(false);
         teslaShockEffect.SetActive(false);
-        
+
         yield return new WaitForSeconds(1f);
         teslaIdleEmitter.Play();
-        
+
         yield return new WaitForSeconds(1f);
         specialEffects.SetActive(true);
-        
+
         //foreach (var f in flickerableLights) {
         //    f.enabled = false;
         //}

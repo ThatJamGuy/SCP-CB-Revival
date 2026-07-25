@@ -133,7 +133,7 @@ public class MainMenuController : MonoBehaviour {
         if (!enableMenuShakes) StopCoroutine(PeriodicMenuShake());
 
         shakeDebris.SetActive(true);
-        GlobalCameraShake.Instance.ShakeCamera(0.02f, 0f, 4);
+        RevivalRuntimeEngine.Instance.ShakeCamera(0.02f, 0f, 4);
         AudioManager.PlayOneShot(bigBooms);
 
         yield return new WaitForSeconds(5);

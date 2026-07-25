@@ -1402,7 +1402,9 @@ public class CFXEasyEditor : EditorWindow {
         }
     }
 
-    static public GUIStyle _LineStyle;
+#pragma warning disable UDR0001 // Domain Reload Analyzer
+    public static GUIStyle _LineStyle;
+#pragma warning restore UDR0001 // Domain Reload Analyzer
     static public GUIStyle LineStyle {
         get {
             if (_LineStyle == null) {

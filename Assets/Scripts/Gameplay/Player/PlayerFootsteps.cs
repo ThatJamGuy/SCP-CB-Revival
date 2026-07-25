@@ -16,7 +16,7 @@ public class PlayerFootsteps : MonoBehaviour {
     [SerializeField] private CharacterController characterController;
 
     private VCA footstepVCA;
-    
+
     private bool isSprinting;
     private bool isCrouching;
     private bool isMoving;
@@ -26,7 +26,7 @@ public class PlayerFootsteps : MonoBehaviour {
     private void Awake() {
         footstepVCA = RuntimeManager.GetVCA("vca:/FootstepVCA");
     }
-    
+
     // Just calls UpdateFoosteps() every frame so the script knows what movement state the player is in
     private void Update() {
         UpdateFootsteps();

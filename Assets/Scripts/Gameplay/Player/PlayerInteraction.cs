@@ -17,18 +17,28 @@ public class PlayerInteraction : MonoBehaviour {
     [Header("References")]
     [SerializeField] private Camera playerCamera;
 
-    private InputAction interactAction;
+    // Not a clanker comment btw I'm learning about sphere overlap non alloc,
+    // this is stuff from the Unity Docs
+    // Set the maximum number of colliders that can be detected at once.
+    private const int MAX_COLLIDERS = 10;
 
     private IInteractable currentInteractablePress;
     private IHoldInteractable currentInteractableHold;
 
+    private InputAction interactAction;
     private GameObject currentInteractable;
     private RectTransform canvasRectTransform;
     private Image interactIcon;
+    private Collider[] hitColliders; // Declare hitColliders as a reusable field.
 
     private bool cantFunction;
 
     #region Unity Callbacks
+    private void Awake() {
+        // Initialize the colliders once
+        hitColliders = new Collider[MAX_COLLIDERS];
+    }
+
     private void Start() {
         // If there is no InputManager available at the start, disallow functionality and print a warning in console
         if (InputManager.Instance == null) {
@@ -68,14 +78,15 @@ public class PlayerInteraction : MonoBehaviour {
 
     #region Determine Current Interactable
     private void DetermineClosestInteractable() {
-        // hits checks a sphere around the player in a radius instead of the entire scene
-        // In terms of the other stuff, set the closestInteractable to nothing since we don't have anything yet obv
-        var hits = Physics.OverlapSphere(transform.position, interactRadius, interactableMask);
+        // Reuse the pre-allocated array for Physics.OverlapSphereNonAlloc.
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, interactRadius, hitColliders, interactableMask);
         var closestDist = float.MaxValue;
         GameObject closestInteractable = null;
 
         // For every collider in the cool circle area around the player...
-        foreach (var hit in hits) {
+        for (int i = 0; i < numColliders; i++) {
+            Collider hit = hitColliders[i];
+
             // Check if it uses the interactTag. If not, give up this foreach check
             if (!hit.CompareTag(interactTag)) continue;
 

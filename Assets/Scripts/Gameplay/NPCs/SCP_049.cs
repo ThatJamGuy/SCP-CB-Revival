@@ -3,6 +3,9 @@ using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
 
 public class SCP_049 : MonoBehaviour {
+    [Header("Door Manip Settings")]
+    [SerializeField] private LayerMask doorlayerMask;
+    [SerializeField] private float doorCheckInterval;
     [SerializeField] private float doorOpenRadius;
 
     [Header("References")]
@@ -15,13 +18,18 @@ public class SCP_049 : MonoBehaviour {
     private const float IK_DISTANCE = 5f;
     private const float IK_DISTANCE_SQR = IK_DISTANCE * IK_DISTANCE;
     private const float IK_BLEND_SPEED = 5f;
+    private const int MAX_COLLIDERS = 5;
 
     private Transform currentTarget;
+    private Collider[] hitColliders;
 
     private float doorCheckElapsedTime;
 
-
     #region Unity Callbacks
+
+    private void Awake() {
+        hitColliders = new Collider[MAX_COLLIDERS];
+    }
 
     private void Update() {
         UpdateHandIK();
@@ -48,11 +56,13 @@ public class SCP_049 : MonoBehaviour {
         doorCheckElapsedTime += Time.deltaTime;
 
         // Check for nearby doors every 3 seconds and open them if found
-        if (doorCheckElapsedTime >= 3f) {
+        if (doorCheckElapsedTime >= doorCheckInterval) {
 
-            Collider[] hits = Physics.OverlapSphere(transform.position, doorOpenRadius);
+            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, doorOpenRadius, hitColliders);
 
-            foreach (Collider hit in hits) {
+            for (int i = 0; i < numColliders; i++) {
+                Collider hit = hitColliders[i];
+
                 if (hit.TryGetComponent<Door>(out Door door)) {
                     door.OpenDoor();
                     return;

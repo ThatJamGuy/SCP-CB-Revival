@@ -1,5 +1,4 @@
 using FMODUnity;
-using System.Collections;
 using UnityEngine;
 
 public class EVNT_Testroom : MonoBehaviour {
@@ -23,14 +22,10 @@ public class EVNT_Testroom : MonoBehaviour {
         if (glassEventTriggered) return;
 
         //EntitySystem.instance.MoveEntity(EntitySystem.EntityType.SCP173, placeToBringHim);
-
-        Debug.Log("Brought SCP-173 to the testroom for an event.");
     }
 
     public void SetEventReadyState(bool ready) {
         shatterEventReady = ready;
-
-        Debug.Log("Is the event ready to be triggered:" + ready);
     }
 
     private void ShatterGlass() {
@@ -41,7 +36,5 @@ public class EVNT_Testroom : MonoBehaviour {
         glassObject.SetActive(false);
         //AudioManager.instance.PlaySound(glassShatterEvent, glassShatterOrigin.position);
         //EntitySystem.instance.MoveEntity(EntitySystem.EntityType.SCP173, postGlassShatter173Pos);
-
-        Debug.Log("Shatter! SCP-173 should now be in the room with the player.");
     }
 }

@@ -44,7 +44,7 @@ public class Player : MonoBehaviour {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        settingsData = SettingsManager.settingsData;
+        settingsData = RevivalRuntimeEngine.SettingsData;
 
         cameraStartPos = cameraRoot.transform.localPosition;
         cameraStartRot = cameraRoot.transform.localRotation;

@@ -1,7 +1,15 @@
 using UnityEngine;
 
+[System.Serializable]
+public class Entity {
+    public string entityIdentifier;
+    public GameObject entityPrefab;
+}
+
 public class EntitySystem : MonoBehaviour {
     public static EntitySystem Instance { get; private set; }
+
+    [SerializeField] private Entity[] entities;
 
     #region Unity Callbacks
 

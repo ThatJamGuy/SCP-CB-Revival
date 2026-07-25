@@ -1,5 +1,7 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
+
+//using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -51,12 +53,13 @@ public class OptionsMenu : MonoBehaviour {
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        PopulateResolutions();
     }
 
     private void Start() {
-        localSettings = SettingsManager.settingsData;
+        localSettings = RevivalRuntimeEngine.SettingsData;
 
-        PopulateResolutions();
         PopulateWindowModes();
         InitializeSettingsUI();
     }
@@ -105,29 +108,49 @@ public class OptionsMenu : MonoBehaviour {
         consoleToggle.isOn = localSettings.consoleEnabled;
     }
 
+    // Same thing as before but replaced LINQ usage for CPU performance
     private void PopulateResolutions() {
-        resolutions = Screen.resolutions
-            .Select(r => new Vector2Int(r.width, r.height))
-            .Distinct().OrderBy(r => r.x).ThenBy(r => r.y).ToArray();
+        var seen = new HashSet<Vector2Int>();
+        var uniqueResolutions = new List<Vector2Int>();
+
+        foreach (Resolution r in Screen.resolutions) {
+            Vector2Int res = new Vector2Int(r.width, r.height);
+            if (seen.Add(res)) {
+                uniqueResolutions.Add(res);
+            }
+        }
+
+        uniqueResolutions.Sort((a, b) => a.x != b.x ? a.x.CompareTo(b.x) : a.y.CompareTo(b.y));
+        resolutions = uniqueResolutions.ToArray();
+
+        var options = new List<string>(resolutions.Length);
+        foreach (Vector2Int r in resolutions) {
+            options.Add($"{r.x} x {r.y}");
+        }
 
         resolutionDropdown.ClearOptions();
-        resolutionDropdown.AddOptions(resolutions.Select(r => $"{r.x} x {r.y}").ToList());
+        resolutionDropdown.AddOptions(options);
     }
 
     private void PopulateWindowModes() {
         windowModes = new[] {
-        FullScreenMode.ExclusiveFullScreen,
-        FullScreenMode.FullScreenWindow,
-        FullScreenMode.Windowed
-    };
+            FullScreenMode.ExclusiveFullScreen,
+            FullScreenMode.FullScreenWindow,
+            FullScreenMode.Windowed
+        };
+
+        var options = new List<string>(windowModes.Length);
+        foreach (FullScreenMode m in windowModes) {
+            options.Add(m switch {
+                FullScreenMode.ExclusiveFullScreen => "Fullscreen",
+                FullScreenMode.FullScreenWindow => "Borderless",
+                FullScreenMode.Windowed => "Windowed",
+                _ => m.ToString()
+            });
+        }
 
         windowModeDropdown.ClearOptions();
-        windowModeDropdown.AddOptions(windowModes.Select(m => m switch {
-            FullScreenMode.ExclusiveFullScreen => "Fullscreen",
-            FullScreenMode.FullScreenWindow => "Borderless",
-            FullScreenMode.Windowed => "Windowed",
-            _ => m.ToString()
-        }).ToList());
+        windowModeDropdown.AddOptions(options);
     }
 
     #endregion
@@ -150,13 +173,13 @@ public class OptionsMenu : MonoBehaviour {
         localSettings.fpsCounter = fpsCounterToggle.isOn;
         fpsDisplayObj.SetActive(localSettings.fpsCounter);
 
-        SettingsManager.SaveSettingsData();
+        RevivalRuntimeEngine.SaveSettingsData();
     }
 
     public void SetOverallQuality(int value) {
         QualitySettings.SetQualityLevel(value, true);
 
-        SettingsManager.SaveSettingsData();
+        RevivalRuntimeEngine.SaveSettingsData();
     }
 
     public void SetTextureQuality(int value) {
@@ -177,7 +200,7 @@ public class OptionsMenu : MonoBehaviour {
         localSettings.resolutionWidth = r.x;
         localSettings.resolutionHeight = r.y;
 
-        SettingsManager.SaveSettingsData();
+        RevivalRuntimeEngine.SaveSettingsData();
     }
 
     public void SetWindowMode(int index) {
@@ -185,7 +208,7 @@ public class OptionsMenu : MonoBehaviour {
         Screen.fullScreenMode = windowModes[index];
         localSettings.windowMode = index;
 
-        SettingsManager.SaveSettingsData();
+        RevivalRuntimeEngine.SaveSettingsData();
     }
 
     public void ApplyOtherAudioSettings() {
@@ -193,7 +216,7 @@ public class OptionsMenu : MonoBehaviour {
         localSettings.soundtrack = soundtrackDropdown.value;
         MusicManager.Instance.SetSoundtrack(localSettings.soundtrack);
 
-        SettingsManager.SaveSettingsData();
+        RevivalRuntimeEngine.SaveSettingsData();
     }
 
     public void ApplyAudioSliders() {
@@ -210,7 +233,7 @@ public class OptionsMenu : MonoBehaviour {
         AudioManager.Instance.voiceVolume = voiceVolumeSlider.value;
         AudioManager.Instance.ApplyAllVolumes();
 
-        SettingsManager.SaveSettingsData();
+        RevivalRuntimeEngine.SaveSettingsData();
     }
 
     public void ApplyInputSliders() {
@@ -220,7 +243,7 @@ public class OptionsMenu : MonoBehaviour {
         localSettings.mouseSensitivity = lookSensSlider.value;
         localSettings.mouseSmoothing = lookSmoothSlider.value;
 
-        SettingsManager.SaveSettingsData();
+        RevivalRuntimeEngine.SaveSettingsData();
     }
 
     public void ApplyHudSettings() {
@@ -245,13 +268,13 @@ public class OptionsMenu : MonoBehaviour {
 
         lastHudPreset = hudPresetDropdown.value;
 
-        SettingsManager.SaveSettingsData();
+        RevivalRuntimeEngine.SaveSettingsData();
     }
 
     public void ApplyAdvancedSettings() {
         localSettings.consoleEnabled = consoleToggle.isOn;
 
-        SettingsManager.SaveSettingsData();
+        RevivalRuntimeEngine.SaveSettingsData();
     }
 
     #endregion
