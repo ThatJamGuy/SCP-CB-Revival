@@ -76,7 +76,6 @@ public class EVNT_Intro : MonoBehaviour {
             if (AudioManager.Instance == null) Instantiate(audioManager);
             if (GameManager.Instance == null) Instantiate(gameManager);
             if (CanvasInstance.Instance == null) Instantiate(sessionCanvas);
-            if (GlobalCanvasInstance.Instance == null) Instantiate(globalCanvas);
         }
     }
 

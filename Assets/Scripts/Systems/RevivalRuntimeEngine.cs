@@ -2,14 +2,20 @@ using Discord.Sdk;
 using UnityEngine;
 
 /// <summary>
-/// Global script to initialize, modify and cleanup the Discord Rich Presence stuff
+/// Master script to sit on the Global Things object.
+/// Basically the functionality of a bunch of other scripts merged into one to clean
+/// things up a bit.
 /// </summary>
-public class DiscordSystems : MonoBehaviour {
-    public static DiscordSystems Instance { get; private set; }
+public class RevivalRuntimeEngine : MonoBehaviour {
+    public static RevivalRuntimeEngine Instance { get; private set; }
 
     [Header("Default RPC Settings")]
-    [SerializeField] private string details = "In the Main Menu";
-    [SerializeField] private string state = "Configuring the Settings";
+    [SerializeField] private string details = "";
+    [SerializeField] private string state = "";
+
+    [Header("Canvas References")]
+    public GameObject achievementsScreen;
+    public GameObject optionsScreen;
 
     private Client client;
 
@@ -18,6 +24,7 @@ public class DiscordSystems : MonoBehaviour {
     private const ulong APPLICATION_ID = 1450277986178830448;
 
     #region Unity Callbacks
+
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
@@ -40,9 +47,11 @@ public class DiscordSystems : MonoBehaviour {
         // Do some black magic shit to set the timestamp to the 0:00 mark
         startTimestamp = (ulong)System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
     }
+
     #endregion
 
     #region Private Methods
+
     private static void OnLog(string message, LoggingSeverity severity) {
         Debug.Log($"Log: {severity} -  {message}");
     }
@@ -58,7 +67,7 @@ public class DiscordSystems : MonoBehaviour {
     private void UpdateRichPresence() {
         var activity = new Activity();
 
-        // Set the state to something like "Play SCP - CB Revival, details, state"
+        // Set the state to something like "Playing SCP - CB Revival, details, state"
         activity.SetType(ActivityTypes.Playing);
         activity.SetDetails(details);
         activity.SetState(state);
@@ -71,7 +80,10 @@ public class DiscordSystems : MonoBehaviour {
         // Actually update the rich presence and run the method that prints the output to the console
         client.UpdateRichPresence(activity, OnUpdateRichPresence);
     }
+
     #endregion
+
+    #region Public Methods
 
     /// <summary>
     /// Publicly available method to change the discord RPC to whatever (USE WISELY, OTHER SCRIPTS KNOW THIS GUY)
@@ -86,4 +98,14 @@ public class DiscordSystems : MonoBehaviour {
         // Update the rich presence so it shows properly
         UpdateRichPresence();
     }
+
+    public static void ToggleAchievementsMenu(bool active) {
+        Instance.achievementsScreen.SetActive(active);
+    }
+
+    public static void ToggleOptionsMenu(bool active) {
+        Instance.optionsScreen.SetActive(active);
+    }
+
+    #endregion
 }

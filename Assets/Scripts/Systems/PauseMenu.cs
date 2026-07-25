@@ -74,7 +74,7 @@ public class PauseMenu : MonoBehaviour {
     }
 
     public void ToggleOptionsMenu(bool active) {
-        GlobalCanvasInstance.ToggleOptionsMenu(active);
+        RevivalRuntimeEngine.ToggleOptionsMenu(active);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public class PauseMenu : MonoBehaviour {
     /// </summary>
     /// <param name="active">Boolean whether the achievements screen should be set to active</param>
     public void ToggleAchievementsMenu(bool active) {
-        GlobalCanvasInstance.ToggleAchievementsMenu(active);
+        RevivalRuntimeEngine.ToggleAchievementsMenu(active);
     }
 
     /// <summary>

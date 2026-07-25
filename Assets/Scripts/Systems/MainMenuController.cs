@@ -27,11 +27,9 @@ public class MainMenuController : MonoBehaviour {
 
     private void Start() {
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Menu);
-        DiscordSystems.Instance.ChangeDiscordStatus("In the Main Menu");
+        RevivalRuntimeEngine.Instance.ChangeDiscordStatus("In the Main Menu");
 
         versionText.text = Application.version;
-
-
 
         AutomaticallyDefineSeed();
 
@@ -69,11 +67,11 @@ public class MainMenuController : MonoBehaviour {
     }
 
     public void OpenOptionsMenu() {
-        GlobalCanvasInstance.ToggleOptionsMenu(true);
+        RevivalRuntimeEngine.ToggleOptionsMenu(true);
     }
 
     public void OpenAchievementsMenu() {
-        GlobalCanvasInstance.ToggleAchievementsMenu(true);
+        RevivalRuntimeEngine.ToggleAchievementsMenu(true);
     }
 
     public void OpenLink(string link) {

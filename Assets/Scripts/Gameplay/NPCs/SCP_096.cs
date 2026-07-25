@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SCP_096 : MonoBehaviour, IRoamingSCP {
+public class SCP_096 : MonoBehaviour {
     public enum State { Puppet, Roaming, Chasing }
     public State currentState = State.Roaming;
 
@@ -17,7 +17,7 @@ public class SCP_096 : MonoBehaviour, IRoamingSCP {
     [SerializeField] private float minIdlePauseTime = 5f;
     [SerializeField] private float maxIdlePauseTime = 10f;
     [SerializeField] private float reachedDestinationThreshold = 0.5f;
-    
+
     [Header("References")]
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Animator animator;
@@ -37,13 +37,11 @@ public class SCP_096 : MonoBehaviour, IRoamingSCP {
     private bool chaseMusicStarted;
     private float doorCheckElapsedTime;
     private float idleWaitTimer;
-    
+
     #region Unity Callbacks
 
     private void Start() {
         if (GameManager.Instance != null) gm = GameManager.Instance;
-
-        EntitySystem.Instance.RegisterEntity(this);
     }
 
     private void Update() {
@@ -65,13 +63,13 @@ public class SCP_096 : MonoBehaviour, IRoamingSCP {
     }
 
     #endregion
-    
+
     #region Private Methods
 
     private void PerformRoamingActivities() {
         if (isCurrentlyIdling) {
             idleWaitTimer -= Time.deltaTime;
-            
+
             if (idleWaitTimer <= 0f) {
                 if (!TryGetNavMeshPoint(out Vector3 destination))
                     return;
@@ -82,11 +80,11 @@ public class SCP_096 : MonoBehaviour, IRoamingSCP {
 
             return;
         }
-        
+
         // Check if destination is reached then begin idle wait
         if (!agent.pathPending && agent.remainingDistance <= reachedDestinationThreshold)
             BeginIdling();
-        
+
         animator.SetBool(WalkingHash, !isCurrentlyIdling && agent.velocity.sqrMagnitude > 0.01f);
     }
 
@@ -108,7 +106,7 @@ public class SCP_096 : MonoBehaviour, IRoamingSCP {
             }
         }
     }
-    
+
     private void BeginIdling() {
         isCurrentlyIdling = true;
         idleWaitTimer = UnityEngine.Random.Range(minIdlePauseTime, maxIdlePauseTime);
@@ -145,19 +143,19 @@ public class SCP_096 : MonoBehaviour, IRoamingSCP {
             Destroy(gameObject);
         }
     }
-    
+
     private bool TryGetNavMeshPoint(out Vector3 result) {
         // Sample random points until a valid NavMesh position is found
         for (var i = 0; i < 10; i++) {
             var randomPoint = transform.position + UnityEngine.Random.insideUnitSphere * roamRadius;
             randomPoint.y = transform.position.y;
- 
+
             if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, roamRadius, NavMesh.AllAreas)) {
                 result = hit.position;
                 return true;
             }
         }
- 
+
         result = transform.position;
         return false;
     }
@@ -218,7 +216,7 @@ public class SCP_096 : MonoBehaviour, IRoamingSCP {
 
         PerformRoamingActivities();
     }
-    
+
     public void Teleport(Vector3 position) {
         gameObject.transform.position = position;
         agent.Warp(position);

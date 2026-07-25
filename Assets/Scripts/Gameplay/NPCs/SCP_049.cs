@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
 
-public class SCP_049 : MonoBehaviour, IRoamingSCP {
+public class SCP_049 : MonoBehaviour {
     [SerializeField] private float doorOpenRadius;
 
     [Header("References")]
@@ -19,13 +19,9 @@ public class SCP_049 : MonoBehaviour, IRoamingSCP {
     private Transform currentTarget;
 
     private float doorCheckElapsedTime;
-    
+
 
     #region Unity Callbacks
-
-    private void Start() {
-        EntitySystem.Instance.RegisterEntity(this);
-    }
 
     private void Update() {
         UpdateHandIK();
@@ -35,18 +31,18 @@ public class SCP_049 : MonoBehaviour, IRoamingSCP {
     #endregion
 
     #region Private Methods
-    
+
+    #region IK
+
     private void UpdateHandIK() {
         if (currentTarget == null) return;
 
         bool isWithinRange = (currentTarget.position - transform.position).sqrMagnitude < IK_DISTANCE_SQR;
 
-        handIKConstraint.weight = Mathf.MoveTowards(
-            handIKConstraint.weight,
-            isWithinRange ? 1f : 0f,
-            IK_BLEND_SPEED * Time.deltaTime
-        );
+        handIKConstraint.weight = Mathf.MoveTowards(handIKConstraint.weight, isWithinRange ? 1f : 0f, IK_BLEND_SPEED * Time.deltaTime);
     }
+
+    #endregion
 
     private void CheckForDoors() {
         doorCheckElapsedTime += Time.deltaTime;
@@ -70,14 +66,6 @@ public class SCP_049 : MonoBehaviour, IRoamingSCP {
     #endregion
 
     #region Public Methods
-
-    public void WalkTo(Vector3 position) {
-        locomotionSystem.WalkToPosition(position);
-    }
-
-    public void Teleport(Vector3 position) {
-        locomotionSystem.Warp(position);
-    }
 
     #endregion
 }
