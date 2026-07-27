@@ -34,12 +34,21 @@ public class SCP_173 : MonoBehaviour {
     [SerializeField] private EventReference neckBreakSound;
     [SerializeField] private float horrorSoundResetDelay = 1f;
 
+    private const float ROAM_SPEED = 5f;
+    private const float ROAM_INTERVAL = 3f;
+    private const float ROAM_RADIUS = 10f;
+    private const float DOOR_CHECK_RADIUS = 2f;
+    private const float CHASE_SPEED = 100f;
+    private const float HORROR_SOUND_DISTANCE_THRESHOLD = 5f;
+
+    private readonly Plane[] frustumPlanes = new Plane[6];
+
     private Camera playerCamera;
     private NavMeshAgent navMeshAgent;
     private SkinnedMeshRenderer meshRenderer;
     private Transform playerTransform;
     private Animator animator;
-    private Plane[] frustumPlanes;
+    //private Plane[] frustumPlanes;
     private PlayerBlink playerBlink;
 
     private Vector3 roamDestination;
@@ -51,12 +60,7 @@ public class SCP_173 : MonoBehaviour {
     private bool wasVisibleLastFrame = false;
     private bool hasPlayedDistanceHorrorSound = false;
 
-    private const float ROAM_SPEED = 5f;
-    private const float ROAM_INTERVAL = 3f;
-    private const float ROAM_RADIUS = 10f;
-    private const float DOOR_CHECK_RADIUS = 2f;
-    private const float CHASE_SPEED = 100f;
-    private const float HORROR_SOUND_DISTANCE_THRESHOLD = 5f;
+
 
     #region Unity Callbacks
 
@@ -216,7 +220,9 @@ public class SCP_173 : MonoBehaviour {
         isVisibleByPlayer = false;
 
         if (meshRenderer.isVisible && !Player.isBlinking) {
-            frustumPlanes = GeometryUtility.CalculateFrustumPlanes(playerCamera);
+            Matrix4x4 worldToProjectionMatrix = playerCamera.projectionMatrix * playerCamera.worldToCameraMatrix;
+            GeometryUtility.CalculateFrustumPlanes(worldToProjectionMatrix, frustumPlanes);
+
             if (GeometryUtility.TestPlanesAABB(frustumPlanes, meshRenderer.bounds)) {
                 Vector3 origin = playerCamera.transform.position;
                 Vector3 targetPoint = transform.position + eyeOffset;

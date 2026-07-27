@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -32,8 +31,10 @@ public class IK_MasterComponent : MonoBehaviour {
     private void Start() {
         trackingRadiusSqr = trackingRadius * trackingRadius;
 
-        if (findPoisOnStart)
-            pointsOfInterest = FindObjectsByType<IK_PointOfInterest>(FindObjectsSortMode.None).ToList();
+        if (findPoisOnStart) {
+            var foundPois = FindObjectsByType<IK_PointOfInterest>(FindObjectsSortMode.None);
+            pointsOfInterest = new List<IK_PointOfInterest>(foundPois);
+        }
     }
 
     private void Update() {

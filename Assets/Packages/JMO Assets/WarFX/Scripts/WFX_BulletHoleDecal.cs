@@ -12,7 +12,9 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 public class WFX_BulletHoleDecal : MonoBehaviour {
+#pragma warning disable UDR0001 // Domain Reload Analyzer
     static private Vector2[] quadUVs = new Vector2[] { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 0), new Vector2(1, 1) };
+#pragma warning restore UDR0001 // Domain Reload Analyzer
 
     public float lifetime = 10f;
     public float fadeoutpercent = 80;

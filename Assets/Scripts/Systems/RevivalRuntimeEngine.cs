@@ -238,7 +238,7 @@ public class RevivalRuntimeEngine : MonoBehaviour {
             return;
         }
 
-        Debug.LogWarning($"No achievement found with name: '{achievementIdentifier}'");
+        Debug.LogWarning($"No achievement found with name: " + achievementIdentifier);
     }
 
     public void RegisterCamera(Transform cam) {

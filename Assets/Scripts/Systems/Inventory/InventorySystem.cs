@@ -1,7 +1,6 @@
 using IngameDebugConsole;
 using PixeLadder.EasyTooltip;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -52,7 +51,11 @@ public class InventorySystem : MonoBehaviour {
     }
 
     private void Start() {
-        itemDataLookup = itemDataList.ToDictionary(item => item.itemIdentifier);
+        itemDataLookup = new Dictionary<string, ItemData>();
+
+        foreach (var item in itemDataList) {
+            itemDataLookup.Add(item.itemIdentifier, item);
+        }
 
         if (playerCamera == null && Player.Instance != null)
             playerCamera = Player.Instance.playerCamera;
@@ -109,7 +112,18 @@ public class InventorySystem : MonoBehaviour {
 
     public int GetItemCount(string itemIdentifier) => inventoryContents.GetValueOrDefault(itemIdentifier, 0);
 
-    public bool IsFull() => inventorySlotObjects.Count(slot => slot.transform.childCount > 2) >= MAX_SLOTS;
+    public bool IsFull() {
+        int fullSlotCount = 0;
+        foreach (var slot in inventorySlotObjects) {
+            if (slot.transform.childCount > 2) {
+                fullSlotCount++;
+                if (fullSlotCount >= MAX_SLOTS)
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public bool HasItem(string itemIdentifier) => GetItemCount(itemIdentifier) > 0;
 
     public void AddItemToInventory(string itemIdentifier, int amount = 1) {
