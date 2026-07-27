@@ -1751,9 +1751,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
   actorName: Generic Actor
   useRootMotion: 1
-  walkinInTransitionAnim: 1
   rmotionWalkingBool: walking_rmotion
-  rmotionWalkingTrigger: start_walking
+  useStopWalkingAnim: 1
+  stopWalkingTrigger: stop_walking
+  stopWalkingDistance: 2
   playAnimOnStart: 0
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 0
@@ -1761,15 +1762,20 @@ MonoBehaviour:
   - 
   minAnimSpeed: 0
   maxAnimSpeed: 0
-  wanderRandomly: 1
-  wanderingRadius: 10
+  wanderRandomly: 0
+  wanderingRadius: 20
   wanderingTime: 10
-  useWaypoints: 0
-  waypoints: []
-  autoStartWaypoints: 0
-  loopWaypoints: 0
-  allowWaypointIdle: 0
-  waypointIdleChance: 100
+  useWaypoints: 1
+  waypoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  autoStartWaypoints: 1
+  loopWaypoints: 1
+  allowWaypointIdle: 1
+  waypointIdleChance: 50
   waypointIdleMinTime: 5
   waypointIdleMaxTime: 10
   actorAnimator: {fileID: 2359661291580496135}

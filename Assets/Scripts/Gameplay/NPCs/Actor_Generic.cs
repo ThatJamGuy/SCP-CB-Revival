@@ -6,6 +6,8 @@ using UnityEngine.AI;
 /// <summary>
 /// Master script for puppeteering fellas on the field.
 /// Yes this is an absolute mess but I have a habit of trying to future proof things.
+/// 
+/// WARNING: UNFINISHED AND BUGGY
 /// </summary>
 public class Actor_Generic : MonoBehaviour {
     [Header("General Settings")]
@@ -13,9 +15,10 @@ public class Actor_Generic : MonoBehaviour {
 
     [Header("Animation Settings")]
     [SerializeField] private bool useRootMotion;
-    [SerializeField, ShowField(nameof(useRootMotion))] private bool walkinInTransitionAnim;
     [SerializeField, ShowField(nameof(useRootMotion))] private string rmotionWalkingBool = "walking_rmotion";
-    [SerializeField, ShowField(nameof(walkinInTransitionAnim))] private string rmotionWalkingTrigger = "start_walking";
+    [SerializeField, ShowField(nameof(useRootMotion))] private bool useStopWalkingAnim;
+    [SerializeField, ShowField(nameof(useStopWalkingAnim))] private string stopWalkingTrigger = "stop_walking";
+    [SerializeField, ShowField(nameof(useStopWalkingAnim))] private float stopWalkingDistance;
     [SerializeField] private bool playAnimOnStart;
     [SerializeField, ShowField(nameof(playAnimOnStart))] private bool randomAnimOnStart;
     [SerializeField, ShowField(nameof(playAnimOnStart))] private bool randomAnimSpeedOnStart;
@@ -24,17 +27,9 @@ public class Actor_Generic : MonoBehaviour {
     [SerializeField, ShowField(nameof(randomAnimSpeedOnStart))] private int maxAnimSpeed;
 
     [Header("AI Settings")]
-    [SerializeField, HideField(nameof(useWaypoints))] private bool wanderRandomly;
+    [SerializeField] private bool wanderRandomly;
     [SerializeField, ShowField(nameof(wanderRandomly))] private float wanderingRadius;
     [SerializeField, ShowField(nameof(wanderRandomly))] private float wanderingTime;
-    [SerializeField, HideField(nameof(wanderRandomly))] private bool useWaypoints;
-    [SerializeField, ShowField(nameof(useWaypoints))] private Transform[] waypoints;
-    [SerializeField, ShowField(nameof(useWaypoints))] private bool autoStartWaypoints;
-    [SerializeField, ShowField(nameof(useWaypoints))] private bool loopWaypoints;
-    [SerializeField, ShowField(nameof(useWaypoints))] private bool allowWaypointIdle;
-    [SerializeField, ShowField(nameof(allowWaypointIdle))] private int waypointIdleChance = 100;
-    [SerializeField, ShowField(nameof(allowWaypointIdle))] private float waypointIdleMinTime = 5;
-    [SerializeField, ShowField(nameof(allowWaypointIdle))] private float waypointIdleMaxTime = 10;
 
     [Header("References")]
     [SerializeField] private Animator actorAnimator;
@@ -42,9 +37,9 @@ public class Actor_Generic : MonoBehaviour {
     [SerializeField] private Transform voiceSource;
 
     private int rmotionWalkingBoolHash;
-    private int rmotionWalkingTriggerHash;
-    private bool wasMoving;
+    private int rmotionStopWalkingTriggerHash;
     private bool useRootMotionNav;
+    private bool isMoving;
     private float wanderTimer;
 
     #region Unity Callbacks
@@ -55,7 +50,7 @@ public class Actor_Generic : MonoBehaviour {
     }
 
     private void Start() {
-        if (useRootMotion && rmotionWalkingBool != null) {
+        if (useRootMotion) {
             actorAgent.updatePosition = false;
             actorAgent.updateRotation = false;
         }
@@ -64,10 +59,12 @@ public class Actor_Generic : MonoBehaviour {
 
         if (useRootMotionNav) {
             rmotionWalkingBoolHash = Animator.StringToHash(rmotionWalkingBool);
-            if (walkinInTransitionAnim && rmotionWalkingTrigger != null)
-                rmotionWalkingTriggerHash = Animator.StringToHash(rmotionWalkingTrigger);
+
+            if (useStopWalkingAnim)
+                rmotionStopWalkingTriggerHash = Animator.StringToHash(stopWalkingTrigger);
         }
 
+        // Play specific animation on start if applicable
         if (playAnimOnStart) {
             if (randomAnimSpeedOnStart) {
                 actorAnimator.speed = Random.Range(minAnimSpeed, maxAnimSpeed);
@@ -96,17 +93,15 @@ public class Actor_Generic : MonoBehaviour {
 
         // If root motion navigation is to be utilized then manage that stuff
         if (useRootMotionNav) {
-            bool isMoving = !actorAgent.pathPending && actorAgent.remainingDistance > actorAgent.stoppingDistance;
-
-            // Only fire the trigger on the idle -> walking transition, not every frame
-            if (isMoving && !wasMoving && walkinInTransitionAnim) {
-                actorAnimator.SetTrigger(rmotionWalkingTriggerHash);
-            }
+            isMoving = actorAgent.remainingDistance > actorAgent.stoppingDistance;
 
             actorAnimator.SetBool(rmotionWalkingBoolHash, isMoving);
-            wasMoving = isMoving;
 
             if (!isMoving) return;
+
+            if (actorAgent.remainingDistance <= stopWalkingDistance && actorAgent.remainingDistance > actorAgent.stoppingDistance && useStopWalkingAnim) {
+                actorAnimator.SetTrigger(rmotionStopWalkingTriggerHash);
+            }
 
             Vector3 direction = actorAgent.desiredVelocity.normalized;
             if (direction.sqrMagnitude > 0.01f) {
