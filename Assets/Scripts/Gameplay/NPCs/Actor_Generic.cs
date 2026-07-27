@@ -8,45 +8,64 @@ using UnityEngine.AI;
 /// Yes this is an absolute mess but I have a habit of trying to future proof things.
 /// </summary>
 public class Actor_Generic : MonoBehaviour {
+    [Header("General Settings")]
+    [SerializeField] private string actorName = "Generic Actor";
 
-    // -----------------------------------------------------------------------------
-    [TabGroup(nameof(animationSettings), nameof(references))]
-    [SerializeField] private Void groupHolder;
+    [Header("Animation Settings")]
+    [SerializeField] private bool useRootMotion;
+    [SerializeField, ShowField(nameof(useRootMotion))] private bool walkinInTransitionAnim;
+    [SerializeField, ShowField(nameof(useRootMotion))] private string rmotionWalkingBool = "walking_rmotion";
+    [SerializeField, ShowField(nameof(walkinInTransitionAnim))] private string rmotionWalkingTrigger = "start_walking";
+    [SerializeField] private bool playAnimOnStart;
+    [SerializeField, ShowField(nameof(playAnimOnStart))] private bool randomAnimOnStart;
+    [SerializeField, ShowField(nameof(playAnimOnStart))] private bool randomAnimSpeedOnStart;
+    [SerializeField, ShowField(nameof(playAnimOnStart))] private string[] startingAnimList;
+    [SerializeField, ShowField(nameof(randomAnimSpeedOnStart))] private int minAnimSpeed;
+    [SerializeField, ShowField(nameof(randomAnimSpeedOnStart))] private int maxAnimSpeed;
 
-    [VerticalGroup(nameof(useRootMotionWalking), nameof(rmotionWalkingBool), nameof(playAnimOnStart), nameof(randomAnimSpeedOnStart),
-        nameof(randomAnimOnStart), nameof(startingAnimList), nameof(minAnimSpeed), nameof(maxAnimSpeed))]
-    [SerializeField, HideInInspector] private Void animationSettings;
+    [Header("AI Settings")]
+    [SerializeField, HideField(nameof(useWaypoints))] private bool wanderRandomly;
+    [SerializeField, ShowField(nameof(wanderRandomly))] private float wanderingRadius;
+    [SerializeField, ShowField(nameof(wanderRandomly))] private float wanderingTime;
+    [SerializeField, HideField(nameof(wanderRandomly))] private bool useWaypoints;
+    [SerializeField, ShowField(nameof(useWaypoints))] private Transform[] waypoints;
+    [SerializeField, ShowField(nameof(useWaypoints))] private bool autoStartWaypoints;
+    [SerializeField, ShowField(nameof(useWaypoints))] private bool loopWaypoints;
+    [SerializeField, ShowField(nameof(useWaypoints))] private bool allowWaypointIdle;
+    [SerializeField, ShowField(nameof(allowWaypointIdle))] private int waypointIdleChance = 100;
+    [SerializeField, ShowField(nameof(allowWaypointIdle))] private float waypointIdleMinTime = 5;
+    [SerializeField, ShowField(nameof(allowWaypointIdle))] private float waypointIdleMaxTime = 10;
 
-    [VerticalGroup(nameof(actorAnimator), nameof(actorAgent), nameof(voiceSource))]
-    [SerializeField, HideInInspector] private Void references;
+    [Header("References")]
+    [SerializeField] private Animator actorAnimator;
+    [SerializeField] private NavMeshAgent actorAgent;
+    [SerializeField] private Transform voiceSource;
 
-    // -----------------------------------------------------------------------------
-
-    // General Settings
-
-    // Animation Settings
-    [SerializeField, HideProperty] private bool useRootMotionWalking;
-    [SerializeField, HideProperty, ShowField(nameof(useRootMotionWalking))] private string rmotionWalkingBool = "walking_rmotion";
-    [SerializeField, HideProperty] private bool playAnimOnStart;
-    [SerializeField, HideProperty, ShowField(nameof(playAnimOnStart))] private bool randomAnimOnStart;
-    [SerializeField, HideProperty, ShowField(nameof(playAnimOnStart))] private bool randomAnimSpeedOnStart;
-    [SerializeField, HideProperty, ShowField(nameof(playAnimOnStart))] private string[] startingAnimList;
-    [SerializeField, HideProperty, ShowField(nameof(randomAnimSpeedOnStart))] private int minAnimSpeed;
-    [SerializeField, HideProperty, ShowField(nameof(randomAnimSpeedOnStart))] private int maxAnimSpeed;
-
-    // AI Settings
-
-    // References
-    [SerializeField, HideProperty] private Animator actorAnimator;
-    [SerializeField, HideProperty] private NavMeshAgent actorAgent;
-    [SerializeField, HideProperty] private Transform voiceSource;
+    private int rmotionWalkingBoolHash;
+    private int rmotionWalkingTriggerHash;
+    private bool wasMoving;
+    private bool useRootMotionNav;
+    private float wanderTimer;
 
     #region Unity Callbacks
 
+    private void OnEnable() {
+        if (wanderRandomly)
+            wanderTimer = wanderingTime;
+    }
+
     private void Start() {
-        if (useRootMotionWalking && rmotionWalkingBool != null) {
+        if (useRootMotion && rmotionWalkingBool != null) {
             actorAgent.updatePosition = false;
             actorAgent.updateRotation = false;
+        }
+
+        useRootMotionNav = useRootMotion && actorAnimator != null && actorAgent != null && rmotionWalkingBool != null;
+
+        if (useRootMotionNav) {
+            rmotionWalkingBoolHash = Animator.StringToHash(rmotionWalkingBool);
+            if (walkinInTransitionAnim && rmotionWalkingTrigger != null)
+                rmotionWalkingTriggerHash = Animator.StringToHash(rmotionWalkingTrigger);
         }
 
         if (playAnimOnStart) {
@@ -65,18 +84,33 @@ public class Actor_Generic : MonoBehaviour {
     }
 
     private void Update() {
-        // If root motion navigation is to be utilized then manage that stuff
-        if (actorAnimator != null && actorAgent != null && rmotionWalkingBool != null && useRootMotionWalking) {
-            var isMoving = actorAgent.remainingDistance > actorAgent.stoppingDistance;
+        if (actorAgent != null && wanderRandomly) {
+            wanderTimer += Time.deltaTime;
 
-            actorAnimator.SetBool(rmotionWalkingBool, isMoving);
+            if (wanderTimer >= wanderingTime) {
+                Vector3 newPos = RandomNavSphere(transform.position, wanderingRadius, -1);
+                WalkTo(newPos);
+                wanderTimer = 0;
+            }
+        }
+
+        // If root motion navigation is to be utilized then manage that stuff
+        if (useRootMotionNav) {
+            bool isMoving = !actorAgent.pathPending && actorAgent.remainingDistance > actorAgent.stoppingDistance;
+
+            // Only fire the trigger on the idle -> walking transition, not every frame
+            if (isMoving && !wasMoving && walkinInTransitionAnim) {
+                actorAnimator.SetTrigger(rmotionWalkingTriggerHash);
+            }
+
+            actorAnimator.SetBool(rmotionWalkingBoolHash, isMoving);
+            wasMoving = isMoving;
 
             if (!isMoving) return;
 
-            var direction = actorAgent.desiredVelocity.normalized;
-
+            Vector3 direction = actorAgent.desiredVelocity.normalized;
             if (direction.sqrMagnitude > 0.01f) {
-                var targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+                Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
             }
 
@@ -86,7 +120,7 @@ public class Actor_Generic : MonoBehaviour {
 
     private void LateUpdate() {
         // If root motion navigation is to be utilized then manage that stuff
-        if (actorAnimator != null && actorAgent != null && rmotionWalkingBool != null && useRootMotionWalking) {
+        if (actorAnimator != null && actorAgent != null && rmotionWalkingBool != null && useRootMotion) {
             var targetRotation = actorAnimator.rootRotation;
             actorAnimator.transform.rotation = targetRotation;
         }
@@ -94,7 +128,7 @@ public class Actor_Generic : MonoBehaviour {
 
     private void OnAnimatorMove() {
         // If root motion navigation is to be utilized then manage that stuff
-        if (actorAnimator != null && actorAgent != null && rmotionWalkingBool != null && useRootMotionWalking) {
+        if (actorAnimator != null && actorAgent != null && rmotionWalkingBool != null && useRootMotion) {
             if (!actorAgent.enabled) return;
 
             Vector3 rootMotion = actorAnimator.deltaPosition;
@@ -105,6 +139,18 @@ public class Actor_Generic : MonoBehaviour {
             transform.position = pos;
             actorAgent.nextPosition = pos;
         }
+    }
+
+    #endregion
+
+    #region Private Helpers
+
+    public static Vector3 RandomNavSphere(Vector3 origin, float distance, int layerMask) {
+        Vector3 randomDirection = Random.insideUnitSphere * distance;
+        randomDirection += origin;
+        NavMeshHit navHit;
+        NavMesh.SamplePosition(randomDirection, out navHit, distance, layerMask);
+        return navHit.position;
     }
 
     #endregion

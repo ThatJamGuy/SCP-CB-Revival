@@ -1710,6 +1710,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8538896539491565560}
   - component: {fileID: 1177066568190858371}
+  - component: {fileID: 6184347593723374388}
   - component: {fileID: 2359661291580496135}
   - component: {fileID: 7695138438225850502}
   m_Layer: 0
@@ -1748,8 +1749,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotionWalking: 1
+  actorName: Generic Actor
+  useRootMotion: 1
+  walkinInTransitionAnim: 1
   rmotionWalkingBool: walking_rmotion
+  rmotionWalkingTrigger: start_walking
   playAnimOnStart: 0
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 0
@@ -1757,9 +1761,39 @@ MonoBehaviour:
   - 
   minAnimSpeed: 0
   maxAnimSpeed: 0
+  wanderRandomly: 1
+  wanderingRadius: 10
+  wanderingTime: 10
+  useWaypoints: 0
+  waypoints: []
+  autoStartWaypoints: 0
+  loopWaypoints: 0
+  allowWaypointIdle: 0
+  waypointIdleChance: 100
+  waypointIdleMinTime: 5
+  waypointIdleMaxTime: 10
   actorAnimator: {fileID: 2359661291580496135}
   actorAgent: {fileID: 7695138438225850502}
   voiceSource: {fileID: 0}
+--- !u!114 &6184347593723374388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8865117916951690855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dfd0d2e2b716a5478ec44785b95fd05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPC_StepSound
+  stepSoundSet:
+    Guid:
+      Data1: 1764315930
+      Data2: 1120703560
+      Data3: 560715176
+      Data4: -1650722396
+    Path: event:/SFX/Step/Step_Concrete_Walk
 --- !u!95 &2359661291580496135
 Animator:
   serializedVersion: 7
@@ -1795,8 +1829,8 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_AngularSpeed: 5
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
