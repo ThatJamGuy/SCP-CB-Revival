@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerBlink : MonoBehaviour {
     [Header("Blink Status")]
@@ -6,13 +7,40 @@ public class PlayerBlink : MonoBehaviour {
 
     [Header("Blink Settings")]
     [SerializeField] private float blinkDrainRate = 0.07f;
-    //[SerializeField] private float blinkOverlayDuration = 0.2f;
+    [SerializeField] private float blinkOverlayDuration = 0.2f;
+
+    private InputAction blinkAction;
+
+    private float blinkTimeElapsed;
 
     #region Unity Callbacks
 
-    private void Update() {
-        if (currentBlink <= 0) currentBlink = 1f;
+    private void OnEnable() {
+        blinkAction = InputManager.Instance.GetAction("Player", "Blink");
+    }
 
+    private void Update() {
+        // Detect manual blink
+        if (blinkAction.WasPressedThisFrame()) {
+            currentBlink = 0;
+        }
+
+        // Handle blink logic and visual overlay when currentBlink is 0
+        if (currentBlink == 0) {
+            Player.isBlinking = true;
+            CanvasInstance.Instance.blinkOverlay.SetActive(true);
+
+            blinkTimeElapsed += Time.deltaTime;
+
+            if (blinkTimeElapsed >= blinkOverlayDuration) {
+                Player.isBlinking = false;
+                CanvasInstance.Instance.blinkOverlay.SetActive(false);
+                currentBlink = 1f;
+                blinkTimeElapsed = 0;
+            }
+        }
+
+        // Handle blink draining
         float finalDrainRate = blinkDrainRate * (1f + Player.Instance.blinkDepletionModifier);
         currentBlink = Mathf.MoveTowards(currentBlink, 0f, finalDrainRate * Time.deltaTime);
 
@@ -22,25 +50,9 @@ public class PlayerBlink : MonoBehaviour {
 
     #endregion
 
-    /*public static Action OnPlayerBlink {  get; private set; }
+    /*
 
     private InputAction blinkAction;
-    private bool isBlinkingActive = false;
-    private bool isBlinking = false;
-    private float blinkTimer = 1f;
-
-    private void OnEnable() {
-        //blinkAction = InputManager.Instance.blinkAction;
-        blinkAction.started += OnBlinkStarted;
-        blinkAction.canceled += OnBlinkCanceled;
-    }
-
-    private void OnDisable() {
-        if (blinkAction != null) {
-            blinkAction.started -= OnBlinkStarted;
-            blinkAction.canceled -= OnBlinkCanceled;
-        }
-    }
 
     private void Update() {
         //if (!isBlinkingActive || isBlinking) return;

@@ -18,6 +18,7 @@ public class CanvasInstance : MonoBehaviour {
     public Image achievementIcon;
     public GameObject deathMenu;
     public TextMeshProUGUI deathMenuDeathCauseText;
+    public GameObject blinkOverlay;
 
     [Header("Pause Menu")]
     public GameObject controllerTooltips;
