@@ -10,9 +10,6 @@ using UnityEngine.AI;
 /// WARNING: UNFINISHED AND BUGGY
 /// </summary>
 public class Actor_Generic : MonoBehaviour {
-    [Header("General Settings")]
-    [SerializeField] private string actorName = "Generic Actor";
-
     [Header("Animation Settings")]
     [SerializeField] private bool useRootMotion;
     [SerializeField, ShowField(nameof(useRootMotion))] private string rmotionWalkingBool = "walking_rmotion";
@@ -23,8 +20,8 @@ public class Actor_Generic : MonoBehaviour {
     [SerializeField, ShowField(nameof(playAnimOnStart))] private bool randomAnimOnStart;
     [SerializeField, ShowField(nameof(playAnimOnStart))] private bool randomAnimSpeedOnStart;
     [SerializeField, ShowField(nameof(playAnimOnStart))] private string[] startingAnimList;
-    [SerializeField, ShowField(nameof(randomAnimSpeedOnStart))] private int minAnimSpeed;
-    [SerializeField, ShowField(nameof(randomAnimSpeedOnStart))] private int maxAnimSpeed;
+    [SerializeField, ShowField(nameof(randomAnimSpeedOnStart))] private float minAnimSpeed;
+    [SerializeField, ShowField(nameof(randomAnimSpeedOnStart))] private float maxAnimSpeed;
 
     [Header("AI Settings")]
     [SerializeField] private bool wanderRandomly;
