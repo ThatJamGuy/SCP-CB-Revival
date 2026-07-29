@@ -554,11 +554,9 @@ GameObject:
   - component: {fileID: 7993035376382527187}
   - component: {fileID: 1828670305505845830}
   - component: {fileID: 8308020149542121843}
-  - component: {fileID: 3673063662950284664}
   - component: {fileID: 245703920964240416}
   - component: {fileID: 253217549824114799}
   - component: {fileID: 6401517475739828868}
-  - component: {fileID: 2562920546436990093}
   - component: {fileID: 1964870264142284630}
   m_Layer: 4
   m_Name: SCP_049
@@ -601,6 +599,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 290b6009c37cf6344a94fa7b5303650a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SCP_049
+  doorlayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  doorCheckInterval: 0
   doorOpenRadius: 2
   animator: {fileID: 253217549824114799}
   agent: {fileID: 6401517475739828868}
@@ -626,46 +628,6 @@ MonoBehaviour:
       Data3: 542800271
       Data4: -1783637341
     Path: event:/SFX/SCP/049/Step_049
---- !u!114 &3673063662950284664
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1998921358069091522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Behavior::Unity.Behavior.BehaviorGraphAgent
-  m_Graph: {fileID: 5341922695754282239, guid: 884046fe6bc55b743b51c023cf0d777e, type: 2}
-  m_BlackboardVariableOverridesList:
-  - rid: 9075543890272715071
-  - rid: 9075544179853492770
-  m_OriginalGraph: {fileID: 5341922695754282239, guid: 884046fe6bc55b743b51c023cf0d777e, type: 2}
-  m_IsInitialised: 0
-  m_IsStarted: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 9075543890272715071
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 1
-          m_Value1: 0
-        Name: Self
-        m_Value: {fileID: 1998921358069091522}
-    - rid: 9075544179853492770
-      type: {class: 'BlackboardVariable`1[[System.Collections.Generic.List`1[[UnityEngine.GameObject, UnityEngine.CoreModule]], mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 2329736074565652633
-          m_Value1: 12601693451087864809
-        Name: Waypoints
-        m_Value:
-        - {fileID: 0}
-        - {fileID: 0}
 --- !u!136 &245703920964240416
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -733,59 +695,6 @@ NavMeshAgent:
   m_BaseOffset: -0.09
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &2562920546436990093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1998921358069091522}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2d8418b0b9634b1892b0268dd9c2743, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.BoneRenderer
-  boneShape: 2
-  drawBones: 1
-  drawTripods: 0
-  boneSize: 1
-  tripodSize: 1
-  boneColor: {r: 0, g: 0, b: 1, a: 0.5}
-  m_Transforms:
-  - {fileID: 3568177099188311730}
-  - {fileID: 2976041851879259606}
-  - {fileID: 8526424082618222163}
-  - {fileID: 2133761774927659421}
-  - {fileID: 4732791360573125419}
-  - {fileID: 2697981108689612520}
-  - {fileID: 4533729741575356655}
-  - {fileID: 3194224646949992825}
-  - {fileID: 8286931931217476615}
-  - {fileID: 3562302033049369597}
-  - {fileID: 6397301315907059129}
-  - {fileID: 2273346909292335109}
-  - {fileID: 4689500907459403301}
-  - {fileID: 6923306747440459935}
-  - {fileID: 1215157140590089335}
-  - {fileID: 6930548248083080695}
-  - {fileID: 8823782990267400261}
-  - {fileID: 4953481744872487516}
-  - {fileID: 6883260137444697052}
-  - {fileID: 3110305113010106687}
-  - {fileID: 4564955634752283051}
-  - {fileID: 5479810264096132341}
-  - {fileID: 926927423013811230}
-  - {fileID: 6020442741766653997}
-  - {fileID: 7800437036234870882}
-  - {fileID: 6654867401756400333}
-  - {fileID: 1651198939270215785}
-  - {fileID: 8918304423357178174}
-  - {fileID: 5959910393832548244}
-  - {fileID: 2050768637601116072}
-  - {fileID: 7080802742089415569}
-  - {fileID: 4716706906787902781}
-  - {fileID: 6723330597954885511}
-  - {fileID: 1984027794469495709}
 --- !u!114 &1964870264142284630
 MonoBehaviour:
   m_ObjectHideFlags: 0

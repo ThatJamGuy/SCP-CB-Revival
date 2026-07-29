@@ -48,8 +48,6 @@ public class SCP_173 : MonoBehaviour {
     private SkinnedMeshRenderer meshRenderer;
     private Transform playerTransform;
     private Animator animator;
-    //private Plane[] frustumPlanes;
-    private PlayerBlink playerBlink;
 
     private Vector3 roamDestination;
     private Transform target;
@@ -57,7 +55,6 @@ public class SCP_173 : MonoBehaviour {
     private float visibilityTimer;
     private float notVisibleTimer;
     private bool horrorSoundReady = true;
-    private bool wasVisibleLastFrame = false;
     private bool hasPlayedDistanceHorrorSound = false;
 
 
@@ -120,13 +117,13 @@ public class SCP_173 : MonoBehaviour {
             Roam();
         }
 
-        movementSource.SetActive(alreadySeenByPlayer && navMeshAgent.velocity.sqrMagnitude > 0.01f);
+        movementSource.SetActive(alreadySeenByPlayer && navMeshAgent.velocity.sqrMagnitude > 0.1f);
     }
 
     private float GetChaseSpeed() {
         float speed = CHASE_SPEED;
         if (Player.isBlinking) {
-            speed *= 2.5f;
+            speed *= 3.5f;
         }
         return speed;
     }
@@ -238,9 +235,9 @@ public class SCP_173 : MonoBehaviour {
             }
         }
 
-        if (isVisibleByPlayer && !wasVisible) OnBecameVisibleToPlayer();
+        //if (Player.isBlinking) isVisibleByPlayer = false;
 
-        wasVisibleLastFrame = isVisibleByPlayer;
+        if (isVisibleByPlayer && !wasVisible) OnBecameVisibleToPlayer();
     }
 
     private void OnBecameVisibleToPlayer() {

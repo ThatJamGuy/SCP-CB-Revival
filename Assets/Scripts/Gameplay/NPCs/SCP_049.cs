@@ -11,7 +11,6 @@ public class SCP_049 : MonoBehaviour {
     [Header("References")]
     [SerializeField] private Animator animator;
     [SerializeField] private NavMeshAgent agent;
-    [SerializeField] private NPC_Locomotion locomotionSystem;
     [SerializeField] private TwoBoneIKConstraint handIKConstraint;
     [SerializeField] private Transform ikHandTarget;
 
@@ -71,6 +70,31 @@ public class SCP_049 : MonoBehaviour {
 
             doorCheckElapsedTime = 0;
         }
+    }
+
+    private void CheckForPlayer() {
+        // Check for the player every second or so via a vision cone and obstructed by obstructions
+    }
+
+    private void On049SawPlayer() {
+        //TODO: When 049 sees the player, play a drastic stinger thing, start the chase music, and chase down the player
+        // Also give the achievement for encountering 049
+
+        // Chase the player for a given time before calling OnChaseTimerEnded()
+
+        // Enable head & chasing arm IK
+    }
+
+    private void OnPlayerSaw049() {
+        //TODO: When the player sees 049, play a subtle tension singer and trigger the subtle tension track
+        // May later make this public for events such as the SL event
+    }
+
+    private void OnChaseTimerEnded() {
+        //TODO: After the chase timer 049 will go to the position the player was at when the timer ended. He will play a searching animation
+        // to give the vision detection some looking freedom. If the player is spotted recall On049SawPlayer(), otherwise return to patrol state
+
+        // Disable head & chasing arm IK to prevent jank
     }
 
     #endregion
