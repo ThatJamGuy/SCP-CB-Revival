@@ -1,18 +1,52 @@
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
 
 public class SCP_049 : MonoBehaviour {
+    private enum State { None, Roaming, Chasing, Checking };
+
+    [SerializeField] private State state = State.None;
+    [SerializeField] private LayerMask obstructionLayers;
+    [SerializeField] private LayerMask playerLayer;
+
+    [Header("AI Settings")]
+    [SerializeField] private float wanderingRadius;
+    [SerializeField] private float wanderingTime;
+    [SerializeField] private float predictionUpdateInterval = 0.4f;
+    [SerializeField] private float maxPredictionLookahead = 2f;
+    [SerializeField] private float maxPredictedSpeed = 8f;
+
+    [Header("Detection")]
+    [SerializeField] private float visibilityRange;
+    [SerializeField, Range(1, 90)] private int visibilityConeAngle;
+    [SerializeField] private Transform headTransform;
+    [SerializeField] private float plagueDoctoringRange = 25;
+    [SerializeField] private float maxLostTargetTime = 5;
+
     [Header("Door Manip Settings")]
-    [SerializeField] private LayerMask doorlayerMask;
+    [SerializeField] private LayerMask doorLayer;
     [SerializeField] private float doorCheckInterval;
     [SerializeField] private float doorOpenRadius;
 
+    [Header("Audio")]
+    [SerializeField] private EventReference spottedPlayerStinger;
+    [SerializeField] private EventReference killedPlayerStinger;
+    [SerializeField] private EventReference spottedSpeech;
+    [SerializeField] private EventReference searchingSpeech;
+
+    [Header("Animation")]
+    [SerializeField] private string rmotionWalkingBool = "walking_rmotion";
+    [SerializeField] private string checkingBool = "checking";
+    [SerializeField] private float checkAnimationTimer;
+
     [Header("References")]
+    [SerializeField] private Transform voiceSource;
     [SerializeField] private Animator animator;
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private TwoBoneIKConstraint handIKConstraint;
     [SerializeField] private Transform ikHandTarget;
+    [SerializeField] private Collider thisCollider;
 
     private const float IK_DISTANCE = 5f;
     private const float IK_DISTANCE_SQR = IK_DISTANCE * IK_DISTANCE;
@@ -21,8 +55,27 @@ public class SCP_049 : MonoBehaviour {
 
     private Transform currentTarget;
     private Collider[] hitColliders;
+    private Camera playerCamera;
+    private Vector3 lastKnownTargetPos;
 
+    private bool isMoving;
+    private bool seenByPlayer;
+    private bool isLooking;
+    private int rmotionWalkingBoolHash;
+    private int checkingBoolHash;
+    private bool hasRootMotionBinding;
     private float doorCheckElapsedTime;
+    private float wanderTimer;
+    private float lostSightTime;
+    private float checkElapsedTime;
+    private bool predicting;
+    private Vector3 previousTargetPos;
+    private Vector3 lastKnownVelocity;
+    private float predictionElapsedTime;
+    private float sqrDistanceToPlayer;
+    private float visibilityRangeSqr;
+    private float plagueDoctoringRangeSqr;
+    private float visibilityConeHalfAngleCos;
 
     #region Unity Callbacks
 
@@ -30,16 +83,87 @@ public class SCP_049 : MonoBehaviour {
         hitColliders = new Collider[MAX_COLLIDERS];
     }
 
+    private void Start() {
+        rmotionWalkingBoolHash = Animator.StringToHash(rmotionWalkingBool);
+        checkingBoolHash = Animator.StringToHash(checkingBool);
+        hasRootMotionBinding = animator != null && agent != null;
+
+        visibilityRangeSqr = visibilityRange * visibilityRange;
+        plagueDoctoringRangeSqr = plagueDoctoringRange * plagueDoctoringRange;
+        visibilityConeHalfAngleCos = Mathf.Cos(visibilityConeAngle * 0.5f * Mathf.Deg2Rad);
+
+        agent.updatePosition = false;
+        agent.updateRotation = false;
+
+        if (playerCamera == null && Player.Instance != null)
+            playerCamera = Player.Instance.playerCamera;
+    }
+
     private void Update() {
-        UpdateHandIK();
+        if (playerCamera == null) return;
+        if (agent == null) return;
+
+        if (state != State.None)
+            sqrDistanceToPlayer = (playerCamera.transform.position - transform.position).sqrMagnitude;
+
         CheckForDoors();
+
+        switch (state) {
+            case State.Roaming:
+                RoamingState();
+                break;
+
+            case State.Chasing:
+                ChasingState();
+                UpdateHandIK();
+                break;
+
+            case State.Checking:
+                CheckingState();
+                break;
+        }
+
+        if (agent != null)
+            isMoving = agent.remainingDistance > agent.stoppingDistance;
+
+        animator.SetBool(rmotionWalkingBoolHash, isMoving);
+
+        if (!isMoving) return;
+
+        Vector3 direction = agent.desiredVelocity.normalized;
+        if (direction.sqrMagnitude > 0.01f) {
+            Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
+
+        agent.nextPosition = transform.position;
+    }
+
+    private void LateUpdate() {
+        // If root motion navigation is to be utilized then manage that stuff
+        if (hasRootMotionBinding) {
+            animator.transform.rotation = animator.rootRotation;
+        }
+    }
+
+    private void OnAnimatorMove() {
+        // If root motion navigation is to be utilized then manage that stuff
+        if (hasRootMotionBinding) {
+            if (!agent.enabled) return;
+
+            Vector3 rootMotion = animator.deltaPosition;
+            transform.position += new Vector3(rootMotion.x, 0f, rootMotion.z);
+            var pos = transform.position;
+            pos.y = agent.nextPosition.y;
+
+            transform.position = pos;
+            agent.nextPosition = pos;
+        }
     }
 
     #endregion
 
     #region Private Methods
-
-    #region IK
 
     private void UpdateHandIK() {
         if (currentTarget == null) return;
@@ -49,57 +173,237 @@ public class SCP_049 : MonoBehaviour {
         handIKConstraint.weight = Mathf.MoveTowards(handIKConstraint.weight, isWithinRange ? 1f : 0f, IK_BLEND_SPEED * Time.deltaTime);
     }
 
-    #endregion
+    private void ChasingState() {
+        if (DetectPlayer()) {
+            UpdateTargetTracking();
+            lostSightTime = 0;
+            WalkTo(lastKnownTargetPos);
+            CheckKillPlayer();
+            return;
+        }
+
+        lostSightTime += Time.deltaTime;
+
+        if (lostSightTime < maxLostTargetTime) {
+            UpdateTargetTracking();
+            WalkTo(lastKnownTargetPos);
+            CheckKillPlayer();
+            return;
+        }
+
+        EnterCheckingState();
+    }
+
+    private void UpdateTargetTracking() {
+        Vector3 targetPos = currentTarget.position;
+        Vector3 instantVelocity = (targetPos - previousTargetPos) / Mathf.Max(Time.deltaTime, 0.0001f);
+        instantVelocity = Vector3.ClampMagnitude(instantVelocity, maxPredictedSpeed);
+        lastKnownVelocity = Vector3.Lerp(lastKnownVelocity, instantVelocity, 0.3f);
+        previousTargetPos = targetPos;
+        lastKnownTargetPos = targetPos;
+    }
+
+    private void CheckKillPlayer() {
+        if (sqrDistanceToPlayer / 2 <= 4) {
+            AudioManager.PlayOneShot(killedPlayerStinger);
+            Player.Instance.KillPlayer(1, 0.3f, 0, "SCP-049 got ya");
+            Destroy(gameObject);
+        }
+    }
+
+    private void EnterCheckingState() {
+        state = State.Checking;
+        predicting = true;
+        predictionElapsedTime = 0;
+
+        // Drop to the lower intensity track now that 049 is only guessing,
+        // so the player isn't misled into thinking it's still right behind them.
+        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_049, 0);
+    }
+
+    private void CheckingState() {
+        // Player has moved far enough away, so abandon the search
+        if (sqrDistanceToPlayer > plagueDoctoringRangeSqr) {
+            ResetTensionMusic();
+
+            predicting = false;
+            animator.SetBool(checkingBoolHash, false);
+            wanderTimer = 0;
+            state = State.Roaming;
+            return;
+        }
+
+        if (DetectPlayer()) {
+            predicting = false;
+            animator.SetBool(checkingBoolHash, false);
+            lostSightTime = 0;
+            state = State.Chasing;
+            On049SawPlayer();
+            return;
+        }
+
+        if (predicting) {
+            PredictTargetPosition();
+            return;
+        }
+
+        checkElapsedTime += Time.deltaTime;
+
+        if (checkElapsedTime >= checkAnimationTimer) {
+            animator.SetBool(checkingBoolHash, false);
+            wanderTimer = 0;
+            state = State.Roaming;
+        }
+    }
+
+    private void PredictTargetPosition() {
+        lostSightTime += Time.deltaTime;
+        predictionElapsedTime += Time.deltaTime;
+
+        // Take a guess at which direction the target went based on its last known velocity
+        if (predictionElapsedTime >= predictionUpdateInterval) {
+            predictionElapsedTime = 0;
+
+            float lookahead = Mathf.Min(lostSightTime - maxLostTargetTime, maxPredictionLookahead);
+            Vector3 predictedPos = lastKnownTargetPos + lastKnownVelocity * lookahead;
+
+            if (NavMesh.SamplePosition(predictedPos, out NavMeshHit navHit, 3f, NavMesh.AllAreas)) {
+                lastKnownTargetPos = navHit.position;
+                WalkTo(lastKnownTargetPos);
+            }
+        }
+
+        // Once 049 reaches the predicted spot, give up the guesswork and play the checking animation
+        if (!agent.pathPending && agent.remainingDistance <= 1f) {
+            predicting = false;
+            checkElapsedTime = 0;
+            animator.SetBool(checkingBoolHash, true);
+        }
+    }
+
+    private void RoamingState() {
+        if (DetectPlayer()) {
+            state = State.Chasing;
+            On049SawPlayer();
+            return;
+        }
+
+        Vector3 thisPosition = thisCollider != null ? thisCollider.bounds.center : transform.position;
+        Vector3 directionToPlayer = (thisPosition - playerCamera.transform.position).normalized;
+        bool lookingAtPlayer = false;
+
+        // Randomy wandering logic
+        wanderTimer += Time.deltaTime;
+
+        if (wanderTimer >= wanderingTime) {
+            Vector3 newPos = RandomNavSphere(transform.position, wanderingRadius, -1);
+            WalkTo(newPos);
+            wanderTimer = 0;
+        }
+
+        if (sqrDistanceToPlayer <= visibilityRangeSqr) {
+            float dot = Vector3.Dot(playerCamera.transform.forward, directionToPlayer);
+
+            if (dot >= 0.98f) {
+                float visibilityDistance = Mathf.Sqrt(sqrDistanceToPlayer);
+                if (Physics.Raycast(playerCamera.transform.position, directionToPlayer, out RaycastHit hit, visibilityDistance, obstructionLayers))
+                    lookingAtPlayer = hit.collider == thisCollider;
+            }
+        }
+
+        if (lookingAtPlayer && !isLooking) {
+            seenByPlayer = true;
+        }
+
+        isLooking = lookingAtPlayer;
+
+        // Trigger tension if the player saw 049 but not seen by 049 yet
+        // Disable the tension if the player leaves the doctoring range
+        if (seenByPlayer) {
+            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_049, 0);
+
+            if (sqrDistanceToPlayer > plagueDoctoringRangeSqr) {
+                ResetTensionMusic();
+            }
+        }
+    }
+
+    private void ResetTensionMusic() {
+        seenByPlayer = false;
+        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.LCZ, 0);
+    }
 
     private void CheckForDoors() {
         doorCheckElapsedTime += Time.deltaTime;
 
         // Check for nearby doors every 3 seconds and open them if found
         if (doorCheckElapsedTime >= doorCheckInterval) {
+            doorCheckElapsedTime = 0;
 
-            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, doorOpenRadius, hitColliders);
+            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, doorOpenRadius, hitColliders, doorLayer, QueryTriggerInteraction.Collide);
 
             for (int i = 0; i < numColliders; i++) {
-                Collider hit = hitColliders[i];
-
-                if (hit.TryGetComponent<Door>(out Door door)) {
+                if (hitColliders[i].TryGetComponent<Door>(out Door door)) {
                     door.OpenDoor();
-                    return;
+                    break;
                 }
             }
-
-            doorCheckElapsedTime = 0;
         }
     }
 
-    private void CheckForPlayer() {
-        // Check for the player every second or so via a vision cone and obstructed by obstructions
-    }
-
     private void On049SawPlayer() {
-        //TODO: When 049 sees the player, play a drastic stinger thing, start the chase music, and chase down the player
-        // Also give the achievement for encountering 049
+        currentTarget = Player.Instance.transform;
+        lostSightTime = 0;
+        predicting = false;
+        previousTargetPos = currentTarget.position;
+        lastKnownVelocity = Vector3.zero;
+        predictionElapsedTime = 0;
 
-        // Chase the player for a given time before calling OnChaseTimerEnded()
+        AudioManager.PlayOneShot(spottedPlayerStinger);
+        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_049, 1);
 
-        // Enable head & chasing arm IK
+        RevivalRuntimeEngine.Instance.GiveAchievement("achv_049");
     }
 
-    private void OnPlayerSaw049() {
-        //TODO: When the player sees 049, play a subtle tension singer and trigger the subtle tension track
-        // May later make this public for events such as the SL event
+    #endregion
+
+    #region Private Utilities
+
+    public static Vector3 RandomNavSphere(Vector3 origin, float distance, int layerMask) {
+        Vector3 randomDirection = Random.insideUnitSphere * distance;
+        randomDirection += origin;
+        NavMeshHit navHit;
+        NavMesh.SamplePosition(randomDirection, out navHit, distance, layerMask);
+        return navHit.position;
     }
 
-    private void OnChaseTimerEnded() {
-        //TODO: After the chase timer 049 will go to the position the player was at when the timer ended. He will play a searching animation
-        // to give the vision detection some looking freedom. If the player is spotted recall On049SawPlayer(), otherwise return to patrol state
+    private bool DetectPlayer() {
+        if (sqrDistanceToPlayer > visibilityRangeSqr) return false;
 
-        // Disable head & chasing arm IK to prevent jank
+        Vector3 toPlayer = playerCamera.transform.position - headTransform.position;
+        float sqrDist = toPlayer.sqrMagnitude;
+        if (sqrDist > visibilityRangeSqr) return false;
+
+        Vector3 dirToPlayer = toPlayer.normalized;
+        float dot = Vector3.Dot(transform.forward, dirToPlayer);
+        if (dot < visibilityConeHalfAngleCos) return false;
+
+        float dist = Mathf.Sqrt(sqrDist);
+        if (Physics.Raycast(headTransform.position, dirToPlayer, dist, obstructionLayers))
+            return false;
+
+        return true;
     }
 
     #endregion
 
     #region Public Methods
+
+    public void WalkTo(Vector3 position) {
+        if (agent == null) return;
+
+        agent.SetDestination(position);
+    }
 
     #endregion
 }

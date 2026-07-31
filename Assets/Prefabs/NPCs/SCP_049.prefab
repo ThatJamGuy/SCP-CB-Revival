@@ -575,7 +575,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4761955782564996590}
@@ -599,16 +599,65 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 290b6009c37cf6344a94fa7b5303650a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SCP_049
-  doorlayerMask:
+  state: 1
+  obstructionLayers:
     serializedVersion: 2
-    m_Bits: 0
-  doorCheckInterval: 0
+    m_Bits: 208
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  wanderingRadius: 100
+  wanderingTime: 10
+  predictionUpdateInterval: 0.4
+  maxPredictionLookahead: 2
+  maxPredictedSpeed: 8
+  visibilityRange: 25
+  visibilityConeAngle: 90
+  headTransform: {fileID: 3194224646949992825}
+  plagueDoctoringRange: 10
+  maxLostTargetTime: 5
+  doorLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  doorCheckInterval: 2
   doorOpenRadius: 2
+  spottedPlayerStinger:
+    Guid:
+      Data1: 572903973
+      Data2: 1239443995
+      Data3: -1222149961
+      Data4: 2017087579
+    Path: event:/SFX/Horror/DoctorChaseStinger
+  killedPlayerStinger:
+    Guid:
+      Data1: -1351904580
+      Data2: 1279846600
+      Data3: -3494011
+      Data4: 1219151819
+    Path: event:/SFX/Horror/DoctorKillStinger
+  spottedSpeech:
+    Guid:
+      Data1: 1157670264
+      Data2: 1157613486
+      Data3: -132576079
+      Data4: -1036810346
+    Path: event:/SFX/SCP/049/049_Spotted
+  searchingSpeech:
+    Guid:
+      Data1: -1470864767
+      Data2: 1170452355
+      Data3: -1535242842
+      Data4: 402978789
+    Path: event:/SFX/SCP/049/049_Searching
+  rmotionWalkingBool: walking_rmotion
+  checkingBool: checking
+  checkAnimationTimer: 5
+  voiceSource: {fileID: 3194224646949992825}
   animator: {fileID: 253217549824114799}
   agent: {fileID: 6401517475739828868}
-  locomotionSystem: {fileID: 0}
   handIKConstraint: {fileID: 8879930472989412342}
   ikHandTarget: {fileID: 6982424146750772949}
+  thisCollider: {fileID: 245703920964240416}
 --- !u!114 &8308020149542121843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -692,7 +741,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2.7
-  m_BaseOffset: -0.09
+  m_BaseOffset: -0.03
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &1964870264142284630
