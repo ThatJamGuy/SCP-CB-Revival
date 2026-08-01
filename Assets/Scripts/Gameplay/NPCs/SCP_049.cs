@@ -207,8 +207,12 @@ public class SCP_049 : MonoBehaviour {
 
     private void CheckKillPlayer() {
         if (sqrDistanceToPlayer / 2 <= killRadius) {
+            if (Player.Instance.isDead) {
+                state = State.None;
+                return;
+            }
+
             state = State.None;
-            agent.enabled = false;
             AudioManager.PlayOneShot(killedPlayerStinger);
             Player.Instance.KillPlayer(1, 0.3f, 0, "An active instance of SCP-049-2 was discovered in [REDACTED]. Terminated by Nine-Tailed Fox.");
             Destroy(gameObject);

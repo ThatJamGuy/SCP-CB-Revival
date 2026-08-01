@@ -60,8 +60,8 @@ public class InventorySystem : MonoBehaviour {
         if (playerCamera == null && Player.Instance != null)
             playerCamera = Player.Instance.playerCamera;
 
-        DebugLogConsole.AddCommand<string>("spawnitem", "Spawns an item with the given identifier.", DebugSpawnItem);
-        DebugLogConsole.AddCommand("listitems", "Lists available item identifiers.", DebugListItems);
+        DebugLogConsole.AddCommand<string>("spawn_item", "Spawns an item in front of the player with the given identifier.", DebugSpawnItem);
+        DebugLogConsole.AddCommand("print_item_identifiers", "Prints the string identifiers of available items into the console.", DebugListItems);
     }
 
     private void OnEnable() {
@@ -194,8 +194,6 @@ public class InventorySystem : MonoBehaviour {
         var spawnPos = playerCamera.transform.position + playerCamera.transform.forward * 0.7f;
         var randomRot = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
         Instantiate(item.itemWorldPrefab, spawnPos, randomRot);
-
-        Debug.Log($"> <color=#00b5ff>Spawned a {itemIdentifier}</color>");
     }
     #endregion
 
