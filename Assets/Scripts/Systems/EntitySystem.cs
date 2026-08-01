@@ -4,6 +4,7 @@ using UnityEngine;
 public class Entity {
     public string entityIdentifier;
     public GameObject entityPrefab;
+    public bool currentlyActiveInScene;
 }
 
 public class EntitySystem : MonoBehaviour {

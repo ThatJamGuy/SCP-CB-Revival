@@ -402,6 +402,37 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2333433170360960980
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4598540318794376302}
+  m_Layer: 0
+  m_Name: AI_WAYPOINT
+  m_TagString: Respawn
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &4598540318794376302
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2333433170360960980}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8977949807867704330}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2409081341475887177
 GameObject:
   m_ObjectHideFlags: 0
@@ -684,8 +715,8 @@ MonoBehaviour:
   useInteractMessage: 1
   interactionCooldown: 0.5
   interactMessage: The door appears to be locked.
-  interactMessageDuration: 3
-  interactMessageFadeDuration: 2
+  messageDuration: 3
+  messageFadeDuration: 2
   onInteract:
     m_PersistentCalls:
       m_Calls:
@@ -776,6 +807,7 @@ Transform:
   - {fileID: 7787864404945734388}
   - {fileID: 5757085882745946661}
   - {fileID: 7245622883514224527}
+  - {fileID: 4598540318794376302}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3115403332259211634
@@ -1752,8 +1784,8 @@ MonoBehaviour:
   useInteractMessage: 1
   interactionCooldown: 0.5
   interactMessage: The door appears to be locked.
-  interactMessageDuration: 3
-  interactMessageFadeDuration: 2
+  messageDuration: 3
+  messageFadeDuration: 2
   onInteract:
     m_PersistentCalls:
       m_Calls:

@@ -16,6 +16,7 @@ public class SCP_049 : MonoBehaviour {
     [SerializeField] private float predictionUpdateInterval = 0.4f;
     [SerializeField] private float maxPredictionLookahead = 2f;
     [SerializeField] private float maxPredictedSpeed = 8f;
+    [SerializeField] private float killRadius;
 
     [Header("Detection")]
     [SerializeField] private float visibilityRange;
@@ -34,6 +35,7 @@ public class SCP_049 : MonoBehaviour {
     [SerializeField] private EventReference killedPlayerStinger;
     [SerializeField] private EventReference spottedSpeech;
     [SerializeField] private EventReference searchingSpeech;
+    [SerializeField] private EventReference searchingAfterChaseSpeech;
 
     [Header("Animation")]
     [SerializeField] private string rmotionWalkingBool = "walking_rmotion";
@@ -46,7 +48,7 @@ public class SCP_049 : MonoBehaviour {
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private TwoBoneIKConstraint handIKConstraint;
     [SerializeField] private Transform ikHandTarget;
-    [SerializeField] private Collider thisCollider;
+    [SerializeField] private IK_MasterComponent masterIKComponent;
 
     private const float IK_DISTANCE = 5f;
     private const float IK_DISTANCE_SQR = IK_DISTANCE * IK_DISTANCE;
@@ -56,21 +58,20 @@ public class SCP_049 : MonoBehaviour {
     private Transform currentTarget;
     private Collider[] hitColliders;
     private Camera playerCamera;
+
     private Vector3 lastKnownTargetPos;
+    private Vector3 previousTargetPos;
+    private Vector3 lastKnownVelocity;
 
     private bool isMoving;
-    private bool seenByPlayer;
-    private bool isLooking;
+    private bool predicting;
+    private bool hasRootMotionBinding;
     private int rmotionWalkingBoolHash;
     private int checkingBoolHash;
-    private bool hasRootMotionBinding;
     private float doorCheckElapsedTime;
     private float wanderTimer;
     private float lostSightTime;
     private float checkElapsedTime;
-    private bool predicting;
-    private Vector3 previousTargetPos;
-    private Vector3 lastKnownVelocity;
     private float predictionElapsedTime;
     private float sqrDistanceToPlayer;
     private float visibilityRangeSqr;
@@ -100,11 +101,12 @@ public class SCP_049 : MonoBehaviour {
     }
 
     private void Update() {
-        if (playerCamera == null) return;
-        if (agent == null) return;
+        if (playerCamera == null || agent == null) return;
 
         if (state != State.None)
             sqrDistanceToPlayer = (playerCamera.transform.position - transform.position).sqrMagnitude;
+
+        masterIKComponent.enableHeadIK = state == State.Chasing;
 
         CheckForDoors();
 
@@ -115,6 +117,7 @@ public class SCP_049 : MonoBehaviour {
 
             case State.Chasing:
                 ChasingState();
+                if (state == State.None) return;
                 UpdateHandIK();
                 break;
 
@@ -123,8 +126,9 @@ public class SCP_049 : MonoBehaviour {
                 break;
         }
 
-        if (agent != null)
-            isMoving = agent.remainingDistance > agent.stoppingDistance;
+        if (!agent.enabled) return;
+
+        isMoving = agent.remainingDistance > agent.stoppingDistance;
 
         animator.SetBool(rmotionWalkingBoolHash, isMoving);
 
@@ -140,14 +144,12 @@ public class SCP_049 : MonoBehaviour {
     }
 
     private void LateUpdate() {
-        // If root motion navigation is to be utilized then manage that stuff
         if (hasRootMotionBinding) {
             animator.transform.rotation = animator.rootRotation;
         }
     }
 
     private void OnAnimatorMove() {
-        // If root motion navigation is to be utilized then manage that stuff
         if (hasRootMotionBinding) {
             if (!agent.enabled) return;
 
@@ -174,7 +176,7 @@ public class SCP_049 : MonoBehaviour {
     }
 
     private void ChasingState() {
-        if (DetectPlayer()) {
+        if (CanSeePlayer()) {
             UpdateTargetTracking();
             lostSightTime = 0;
             WalkTo(lastKnownTargetPos);
@@ -204,9 +206,11 @@ public class SCP_049 : MonoBehaviour {
     }
 
     private void CheckKillPlayer() {
-        if (sqrDistanceToPlayer / 2 <= 4) {
+        if (sqrDistanceToPlayer / 2 <= killRadius) {
+            state = State.None;
+            agent.enabled = false;
             AudioManager.PlayOneShot(killedPlayerStinger);
-            Player.Instance.KillPlayer(1, 0.3f, 0, "SCP-049 got ya");
+            Player.Instance.KillPlayer(1, 0.3f, 0, "An active instance of SCP-049-2 was discovered in [REDACTED]. Terminated by Nine-Tailed Fox.");
             Destroy(gameObject);
         }
     }
@@ -216,15 +220,13 @@ public class SCP_049 : MonoBehaviour {
         predicting = true;
         predictionElapsedTime = 0;
 
-        // Drop to the lower intensity track now that 049 is only guessing,
-        // so the player isn't misled into thinking it's still right behind them.
-        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_049, 0);
+        if (!GameManager.Instance.scp096pursuing && !GameManager.Instance.scp106pursuing)
+            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_049, 0);
     }
 
     private void CheckingState() {
-        // Player has moved far enough away, so abandon the search
         if (sqrDistanceToPlayer > plagueDoctoringRangeSqr) {
-            ResetTensionMusic();
+            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.LCZ, 0);
 
             predicting = false;
             animator.SetBool(checkingBoolHash, false);
@@ -233,7 +235,7 @@ public class SCP_049 : MonoBehaviour {
             return;
         }
 
-        if (DetectPlayer()) {
+        if (CanSeePlayer()) {
             predicting = false;
             animator.SetBool(checkingBoolHash, false);
             lostSightTime = 0;
@@ -257,10 +259,11 @@ public class SCP_049 : MonoBehaviour {
     }
 
     private void PredictTargetPosition() {
+        if (agent == null) return;
+
         lostSightTime += Time.deltaTime;
         predictionElapsedTime += Time.deltaTime;
 
-        // Take a guess at which direction the target went based on its last known velocity
         if (predictionElapsedTime >= predictionUpdateInterval) {
             predictionElapsedTime = 0;
 
@@ -273,7 +276,6 @@ public class SCP_049 : MonoBehaviour {
             }
         }
 
-        // Once 049 reaches the predicted spot, give up the guesswork and play the checking animation
         if (!agent.pathPending && agent.remainingDistance <= 1f) {
             predicting = false;
             checkElapsedTime = 0;
@@ -282,17 +284,12 @@ public class SCP_049 : MonoBehaviour {
     }
 
     private void RoamingState() {
-        if (DetectPlayer()) {
+        if (CanSeePlayer()) {
             state = State.Chasing;
             On049SawPlayer();
             return;
         }
 
-        Vector3 thisPosition = thisCollider != null ? thisCollider.bounds.center : transform.position;
-        Vector3 directionToPlayer = (thisPosition - playerCamera.transform.position).normalized;
-        bool lookingAtPlayer = false;
-
-        // Randomy wandering logic
         wanderTimer += Time.deltaTime;
 
         if (wanderTimer >= wanderingTime) {
@@ -300,47 +297,15 @@ public class SCP_049 : MonoBehaviour {
             WalkTo(newPos);
             wanderTimer = 0;
         }
-
-        if (sqrDistanceToPlayer <= visibilityRangeSqr) {
-            float dot = Vector3.Dot(playerCamera.transform.forward, directionToPlayer);
-
-            if (dot >= 0.98f) {
-                float visibilityDistance = Mathf.Sqrt(sqrDistanceToPlayer);
-                if (Physics.Raycast(playerCamera.transform.position, directionToPlayer, out RaycastHit hit, visibilityDistance, obstructionLayers))
-                    lookingAtPlayer = hit.collider == thisCollider;
-            }
-        }
-
-        if (lookingAtPlayer && !isLooking) {
-            seenByPlayer = true;
-        }
-
-        isLooking = lookingAtPlayer;
-
-        // Trigger tension if the player saw 049 but not seen by 049 yet
-        // Disable the tension if the player leaves the doctoring range
-        if (seenByPlayer) {
-            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_049, 0);
-
-            if (sqrDistanceToPlayer > plagueDoctoringRangeSqr) {
-                ResetTensionMusic();
-            }
-        }
-    }
-
-    private void ResetTensionMusic() {
-        seenByPlayer = false;
-        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.LCZ, 0);
     }
 
     private void CheckForDoors() {
         doorCheckElapsedTime += Time.deltaTime;
 
-        // Check for nearby doors every 3 seconds and open them if found
         if (doorCheckElapsedTime >= doorCheckInterval) {
             doorCheckElapsedTime = 0;
 
-            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, doorOpenRadius, hitColliders, doorLayer, QueryTriggerInteraction.Collide);
+            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, doorOpenRadius, hitColliders, doorLayer);
 
             for (int i = 0; i < numColliders; i++) {
                 if (hitColliders[i].TryGetComponent<Door>(out Door door)) {
@@ -360,7 +325,9 @@ public class SCP_049 : MonoBehaviour {
         predictionElapsedTime = 0;
 
         AudioManager.PlayOneShot(spottedPlayerStinger);
-        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_049, 1);
+
+        if (!GameManager.Instance.scp096pursuing && !GameManager.Instance.scp106pursuing)
+            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_049, 1);
 
         RevivalRuntimeEngine.Instance.GiveAchievement("achv_049");
     }
@@ -377,7 +344,7 @@ public class SCP_049 : MonoBehaviour {
         return navHit.position;
     }
 
-    private bool DetectPlayer() {
+    private bool CanSeePlayer() {
         if (sqrDistanceToPlayer > visibilityRangeSqr) return false;
 
         Vector3 toPlayer = playerCamera.transform.position - headTransform.position;
@@ -403,6 +370,10 @@ public class SCP_049 : MonoBehaviour {
         if (agent == null) return;
 
         agent.SetDestination(position);
+    }
+
+    public void Speak(EventReference toSpeak) {
+        AudioManager.PlayOneShot(toSpeak, voiceSource.position);
     }
 
     #endregion
