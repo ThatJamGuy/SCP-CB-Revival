@@ -16,7 +16,7 @@ public class WorldItem : MonoBehaviour, IInteractable {
 
     public void Interact(PlayerInteraction playerInteraction) {
         if (!InventorySystem.Instance || InventorySystem.Instance.IsFull()) {
-            InfoTextManager.Instance.NotifyPlayer("You cannot pick up any more items.");
+            RevivalSessionEngine.Instance.NotifyPlayer("You cannot pick up any more items.");
             return;
         }
 

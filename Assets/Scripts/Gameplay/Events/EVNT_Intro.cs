@@ -263,7 +263,7 @@ public class EVNT_Intro : MonoBehaviour {
     #region Sequence 3: Escort
 
     private IEnumerator BeginEscortRoutine() {
-        InfoTextManager.Instance.NotifyPlayer("'Just follow me, oh and by the way you should cooperate or I'll kill ya buddy.'");
+        RevivalSessionEngine.Instance.NotifyPlayer("'Just follow me, oh and by the way you should cooperate or I'll kill ya buddy.'");
         agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = false;
         ulgrinAnimator.SetTrigger("Cocky");
 

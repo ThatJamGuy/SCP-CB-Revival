@@ -5,14 +5,15 @@ using UnityEngine.AI;
 /// <summary>
 /// A rather poorly written script to handle SCP-173 logic but it took forever to get here
 /// and it otherwise works fine so I'm afraid to touch it beyond adding on to it.
-/// TODO: Refactor this one day or pray a really smart person does it for me.
+/// TODO: Refactor this one day.
 /// </summary>
 public class SCP_173 : MonoBehaviour {
     [Header("Status")]
-    public bool isVisibleByPlayer = false;
-    [SerializeField] private bool isVisibleByAnyNPC = false;
-    [SerializeField] private bool alreadySeenByPlayer = false;
-    [SerializeField] private bool hasTarget = false;
+    public bool puppetMode;
+    public bool isVisibleByPlayer;
+    [SerializeField] private bool isVisibleByAnyNPC;
+    [SerializeField] private bool alreadySeenByPlayer;
+    [SerializeField] private bool hasTarget;
 
     [Header("Behavior")]
     [SerializeField, Range(0f, 1f)] float doorOpenChance = 0.3f;
@@ -57,8 +58,6 @@ public class SCP_173 : MonoBehaviour {
     private bool horrorSoundReady = true;
     private bool hasPlayedDistanceHorrorSound = false;
 
-
-
     #region Unity Callbacks
 
     private void Awake() {
@@ -82,10 +81,12 @@ public class SCP_173 : MonoBehaviour {
             CheckPlayerVisibility();
             visibilityTimer = visibilityCheckInterval;
         }
-        HandleHorrorSoundReset();
-        HandleMoving();
+        if (!puppetMode) {
+            HandleHorrorSoundReset();
+            HandleMoving();
 
-        if (hasTarget && !Player.Instance.isDead) AttemptToKillPlayer();
+            if (hasTarget && !Player.Instance.isDead) AttemptToKillPlayer();
+        }
     }
 
     #endregion
@@ -113,7 +114,6 @@ public class SCP_173 : MonoBehaviour {
         } else {
             navMeshAgent.speed = ROAM_SPEED;
             navMeshAgent.acceleration = ROAM_SPEED;
-            //canRoam = true;
             Roam();
         }
 
@@ -129,7 +129,6 @@ public class SCP_173 : MonoBehaviour {
     }
 
     private void StopCompletely() {
-        //canRoam = false;
         if (!navMeshAgent.hasPath) return;
         navMeshAgent.ResetPath();
         navMeshAgent.velocity = Vector3.zero;
@@ -148,9 +147,10 @@ public class SCP_173 : MonoBehaviour {
         hasTarget = false;
         navMeshAgent.ResetPath();
 
-        //if (alreadySeenByPlayer) PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>().StopBlink();
-        if (alreadySeenByPlayer) alreadySeenByPlayer = false;
-        if (alreadySeenByPlayer) GameManager.Instance.scp173pursuing = false;
+        if (alreadySeenByPlayer) {
+            alreadySeenByPlayer = false;
+            GameManager.Instance.scp173pursuing = false;
+        }
 
         movementSource.SetActive(false);
         hasPlayedDistanceHorrorSound = false;
@@ -200,10 +200,10 @@ public class SCP_173 : MonoBehaviour {
         }
 
         // Randomly be able to either open the nearest door or fail to do so and bang on it a bit
-        if (nearest && Random.value < doorOpenChance && !nearest.isOpen && !nearest.requiresKeycard && !nearest.isLocked && !isVisibleByPlayer) {
+        if (nearest && Random.value < doorOpenChance && !nearest.isOpen && !nearest.requiresKeycard && !nearest.isLocked && !isVisibleByPlayer && !puppetMode) {
             nearest.OpenDoor();
             AudioManager.PlayOneShot(AudioEventsHolder.Instance.doorOpen173, nearest.transform.position);
-        } else if (nearest && !nearest.isOpen) {
+        } else if (nearest && !nearest.isOpen && !puppetMode) {
             AudioManager.PlayOneShot(AudioEventsHolder.Instance.doorBangEvent, nearest.transform.position);
         }
     }
@@ -241,7 +241,7 @@ public class SCP_173 : MonoBehaviour {
     }
 
     private void OnBecameVisibleToPlayer() {
-        if (!alreadySeenByPlayer) {
+        if (!alreadySeenByPlayer && !puppetMode) {
             alreadySeenByPlayer = true;
             GameManager.Instance.scp173pursuing = true;
             AcquireTarget(playerTransform);
@@ -250,9 +250,6 @@ public class SCP_173 : MonoBehaviour {
                 MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173);
 
             tensionEmitter.Play();
-
-            //playerBlink = PlayerAccessor.instance.GetComponentInChildren<PlayerBlink>();
-            //playerBlink.StartBlink();
         }
 
         if (horrorSoundReady) {
@@ -279,7 +276,7 @@ public class SCP_173 : MonoBehaviour {
         // Use the animator to change 173 poses
         if (poseAnimations.Length == 0 && isVisibleByPlayer) return;
         string anim = poseAnimations[Random.Range(0, poseAnimations.Length)];
-        if (animator != null && !isVisibleByPlayer) {
+        if (animator != null && !isVisibleByPlayer && !puppetMode) {
             animator.Play(anim);
         }
     }
@@ -291,7 +288,7 @@ public class SCP_173 : MonoBehaviour {
     private void AttemptToKillPlayer() {
         if (!hasTarget || target == null) return;
         float dist = Vector3.Distance(transform.position, target.position);
-        if (dist <= 1.5f && !isVisibleByPlayer) {
+        if (dist <= 1.5f && !isVisibleByPlayer && !puppetMode) {
             Player.Instance.KillPlayer(2, 0.5f, 0, "Subject D-9341. Cause of death: Fatal cervical fracture. Assumed to be attacked by SCP-173.");
             AudioManager.PlayOneShot(neckBreakSound, transform.position);
             AudioManager.PlayOneShot(AudioEventsHolder.Instance.statueHorrorNear, transform.position);

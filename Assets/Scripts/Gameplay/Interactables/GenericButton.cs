@@ -23,8 +23,8 @@ public class GenericButton : MonoBehaviour, IInteractable {
         onInteract?.Invoke(); // Invoke the event
 
         // If there is to be an interact message, trigger that as well
-        if (useInteractMessage && InfoTextManager.Instance)
-            InfoTextManager.Instance.NotifyPlayer(interactMessage, messageDuration, messageFadeDuration);
+        if (useInteractMessage && RevivalSessionEngine.Instance != null)
+            RevivalSessionEngine.Instance.NotifyPlayer(interactMessage, messageDuration, messageFadeDuration);
 
         StartCoroutine(Cooldown()); // Begin the cooldown before interaction can occur again
     }

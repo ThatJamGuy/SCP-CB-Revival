@@ -1,7 +1,7 @@
-using UnityEngine;
-using System.Collections;
-using FMODUnity;
 using EditorAttributes;
+using FMODUnity;
+using System.Collections;
+using UnityEngine;
 
 /// <summary>
 /// Simple preset button script to handle interaction for doors. Meant for the generic ones you find around a lot
@@ -30,14 +30,14 @@ public class DoorButton : MonoBehaviour, IInteractable {
 
         // Player not holding anything
         if (InventorySystem.Instance.currentlyHeldItem == null || InventorySystem.Instance.currentlyHeldItem.chosenBehavior != PresetBehavior.Key) {
-            InfoTextManager.Instance.NotifyPlayer("A keycard is required to operate this door.");
+            RevivalSessionEngine.Instance.NotifyPlayer("A keycard is required to operate this door.");
             return;
         }
 
         // Player has key, but it's not high enough
         if (InventorySystem.Instance.currentlyHeldItem.chosenBehavior == PresetBehavior.Key
             && InventorySystem.Instance.currentlyHeldItem.clearance < linkedDoor.requiredKeyLevel) {
-            InfoTextManager.Instance.NotifyPlayer("A keycard with security clearance " + linkedDoor.requiredKeyLevel + " or higher is required to operate this door.");
+            RevivalSessionEngine.Instance.NotifyPlayer("A keycard with security clearance " + linkedDoor.requiredKeyLevel + " or higher is required to operate this door.");
             AudioManager.PlayOneShot(keycardFailedEvent, transform.position);
 
             InventorySystem.Instance.UnequipCurrentItem();
@@ -48,7 +48,7 @@ public class DoorButton : MonoBehaviour, IInteractable {
         // Player has key and it's all good, so open the door
         if (InventorySystem.Instance.currentlyHeldItem.chosenBehavior == PresetBehavior.Key
             && InventorySystem.Instance.currentlyHeldItem.clearance >= linkedDoor.requiredKeyLevel) {
-            InfoTextManager.Instance.NotifyPlayer("The keycard was inserted into the slot.");
+            RevivalSessionEngine.Instance.NotifyPlayer("The keycard was inserted into the slot.");
             AudioManager.PlayOneShot(keycardGoodEvent, transform.position);
 
             InventorySystem.Instance.UnequipCurrentItem();
@@ -67,7 +67,7 @@ public class DoorButton : MonoBehaviour, IInteractable {
 
         // If a linked door is missing, disallow functionality as this script in meant specifically for doors
         if (!linkedDoor) return;
-        
+
         // If the interaction is disabled, do not allow things inside interact to be executed
         if (!canInteract) return;
 
@@ -75,7 +75,7 @@ public class DoorButton : MonoBehaviour, IInteractable {
         if (linkedDoor.isLocked) {
             AudioManager.PlayOneShot(buttonPressLockedSound, transform.position);
             if (buttonAnimator) buttonAnimator.Play("ModernButtonPress");
-            InfoTextManager.Instance.NotifyPlayer("The door appears to be locked.");
+            RevivalSessionEngine.Instance.NotifyPlayer("The door appears to be locked.");
 
             // Run the coroutine to disable interaction and then enable it again
             StartCoroutine(Cooldown());

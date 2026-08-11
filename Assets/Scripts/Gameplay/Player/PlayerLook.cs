@@ -9,15 +9,23 @@ public class PlayerLook : MonoBehaviour {
     [SerializeField] private float sensitivity = 25f;
     [SerializeField] private float mouseSmoothing = 95f;
     [SerializeField] private float maxLookAngle = 85f;
+    [SerializeField] private float zoomFOV = 30;
 
     [Header("References")]
     [SerializeField] private Transform playerBody;
+    [SerializeField] private Camera playerCamera;
+
+    private const float DEF_FOV = 60;
 
     private InputAction lookAction;
+    private InputAction zoomAction;
+
     private Vector2 smoothedInput;
 
-    private float xRotation;
     private bool cantFunction;
+    private bool canZoom = true;
+    private float xRotation;
+    private float itemNoLongerTime;
 
     #region Unity Callbacks
 
@@ -40,6 +48,7 @@ public class PlayerLook : MonoBehaviour {
 
         // If the check passes, get the look action from the available InputManager
         lookAction = InputManager.Instance.GetAction("Player", "Look");
+        zoomAction = InputManager.Instance.GetAction("Player", "RightClick");
 
         // Lock the cursor and set it to invisible for gameplay by default
         Player.SetCursorState(false);
@@ -64,10 +73,32 @@ public class PlayerLook : MonoBehaviour {
 
         // Rotate the playerBody GameObject on the Vector3.up Axis (Y Axis) multiplied by input.x (Look action X)
         playerBody.Rotate(Vector3.up * input.x);
+
+        // Scuffed code to ensure zooming can't trigger when unequipping held items
+        if (InventorySystem.Instance.currentlyHeldItem != null && canZoom) {
+            itemNoLongerTime = 0;
+            canZoom = false;
+        }
+
+        if (!canZoom && InventorySystem.Instance.currentlyHeldItem == null) {
+            itemNoLongerTime += Time.deltaTime;
+
+            if (itemNoLongerTime >= 0.1f) {
+                canZoom = true;
+            }
+        }
+
+        // zoom the camera by changing fov when holding right click + return to default and checks
+        if (zoomAction.IsPressed() && canZoom) {
+            playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, zoomFOV, 0.2f);
+        } else if (playerCamera.fieldOfView == zoomFOV || (!zoomAction.IsPressed() && playerCamera.fieldOfView != DEF_FOV)) {
+            playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, DEF_FOV, 0.3f);
+        }
     }
     #endregion
 
     #region Helpers
+
     private Vector2 ApplyMouseSmoothing(Vector2 rawInput) {
         // If mouseSmoothing is 0 consider mouse smoothing to be disabled and return the rawInput
         if (mouseSmoothing <= 0) return rawInput;
@@ -80,5 +111,6 @@ public class PlayerLook : MonoBehaviour {
         // Return the smoothedInput to the main looking functionality 
         return smoothedInput;
     }
+
     #endregion
 }

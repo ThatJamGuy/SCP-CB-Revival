@@ -13,7 +13,6 @@ public class PlayerMovement : MonoBehaviour {
     [Header("Stamina Settings")]
     [SerializeField] private float staminaDrainRate = 0.2f;
     [SerializeField] private float staminaRegenRate = 0.1f;
-    [SerializeField] private Slider temporaryStaminaSlider; // TODO: REMOVE ME!!!
 
     [Header("References")]
     [SerializeField] private CharacterController characterController;
@@ -27,8 +26,9 @@ public class PlayerMovement : MonoBehaviour {
     private InputAction sprintAction;
     private InputAction crouchAction;
 
-    private Vector2 moveDirection;
     private Vector3 velocity;
+
+    private Slider currStaminaSlider;
 
     private bool cantFunction;
     private bool isSprinting;
@@ -79,6 +79,9 @@ public class PlayerMovement : MonoBehaviour {
         walkingSpeed = player.walkSpeed;
         sprintSpeed = player.sprintSpeed;
         crouchSpeed = player.crouchSpeed;
+
+        // Default the slider to the chosen one in CanvasInstance based on the players settings
+        currStaminaSlider = CanvasInstance.Instance.currSprintSlider;
     }
 
     private void Update() {
@@ -119,10 +122,11 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void HandleStamina() {
-        // Remove dependance on the UI being in the scene
-        if (temporaryStaminaSlider != null) {
-            temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
-        }
+        // make sure the stamina slider design is up to date with the chosen one in the player settings during runtime
+        if (currStaminaSlider != CanvasInstance.Instance.currSprintSlider)
+            currStaminaSlider = CanvasInstance.Instance.currSprintSlider;
+
+        currStaminaSlider.value = currentStamina / MAX_STAMINA;
 
         // If the player is moving, sprinting, and not sprint locked then do the stuff in this if statement
         if (isSprinting && !sprintLocked && player.isMoving) {

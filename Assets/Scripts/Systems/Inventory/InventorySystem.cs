@@ -13,7 +13,6 @@ public class InventorySystem : MonoBehaviour {
 
     [SerializeField] private MenuManager menuManager;
 
-    //[System.Serializable] public readonly List<ItemData> itemsInInventory = new List<ItemData>();
     [SerializeField] private GameObject inventoryItemTemplate;
     [SerializeField] private GameObject[] inventorySlotObjects;
 
@@ -132,7 +131,7 @@ public class InventorySystem : MonoBehaviour {
         for (var i = 0; i < amount; i++) {
             var slot = CheckForEmptySlots();
             if (!slot) {
-                InfoTextManager.Instance.NotifyPlayer("You cannot pick up any more items.");
+                RevivalSessionEngine.Instance.NotifyPlayer("You cannot pick up any more items.");
                 return;
             }
 

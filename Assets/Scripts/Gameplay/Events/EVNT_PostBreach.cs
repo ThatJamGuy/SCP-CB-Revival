@@ -1,27 +1,35 @@
 using AOT;
 using FMOD.Studio;
+using FMODUnity;
 using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class EVNT_PostBreach : MonoBehaviour {
-    EventInstance eventInstance;
-    GCHandle callbackHandle;
+    [SerializeField] private bool devMode;
+    [SerializeField] private EventReference alarm2;
 
-    readonly System.Collections.Generic.Queue<string> markerQueue = new System.Collections.Generic.Queue<string>();
+    private readonly System.Collections.Generic.Queue<string> markerQueue = new System.Collections.Generic.Queue<string>();
+
+    private EventInstance eventInstance;
+    private GCHandle callbackHandle;
 
     private void OnDisable() {
         if (eventInstance.isValid()) {
             eventInstance.setUserData(IntPtr.Zero);
             eventInstance.setCallback(null);
 
-            eventInstance.stop(STOP_MODE.IMMEDIATE);
+            eventInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
             eventInstance.release();
             eventInstance.clearHandle();
         }
 
         if (callbackHandle.IsAllocated)
             callbackHandle.Free();
+    }
+
+    private void Start() {
+        if (devMode) TriggerPostBreachEvent();
     }
 
     private void Update() {
@@ -37,11 +45,9 @@ public class EVNT_PostBreach : MonoBehaviour {
     }
 
     public void TriggerPostBreachEvent() {
-        Debug.Log("Post-breach event triggered.");
+        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror03);
 
-        //MusicManager.instance.SetMusicState(MusicState.CreepyMusic03);
-
-        //eventInstance = FMODUnity.RuntimeManager.CreateInstance(FMODEvents.instance.alarm2);
+        eventInstance = FMODUnity.RuntimeManager.CreateInstance(alarm2);
 
         callbackHandle = GCHandle.Alloc(this);
         eventInstance.setUserData(GCHandle.ToIntPtr(callbackHandle));
@@ -51,11 +57,11 @@ public class EVNT_PostBreach : MonoBehaviour {
     }
 
     public void ShakeCameraLarge() {
-        //GlobalCameraShake.instance.ShakeCamera(0.2f, 0f, 5f);
+        RevivalRuntimeEngine.Instance.ShakeCamera(0.2f, 0, 5);
     }
 
     public void ShakeCameraSmall() {
-        //GlobalCameraShake.instance.ShakeCamera(0.03f, 0f, 2f);
+        RevivalRuntimeEngine.Instance.ShakeCamera(0.03f, 0, 2);
     }
 
     public void ChangeMusicToLCZ() {
@@ -77,10 +83,7 @@ public class EVNT_PostBreach : MonoBehaviour {
     }
 
     [MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
-    static FMOD.RESULT EventCallback(
-    EVENT_CALLBACK_TYPE type,
-    IntPtr instancePtr,
-    IntPtr parameterPtr) {
+    static FMOD.RESULT EventCallback(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr) {
         if (type != EVENT_CALLBACK_TYPE.TIMELINE_MARKER)
             return FMOD.RESULT.OK;
 
