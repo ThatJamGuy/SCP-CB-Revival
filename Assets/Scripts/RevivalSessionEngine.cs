@@ -27,16 +27,16 @@ public class RevivalSessionEngine : MonoBehaviour {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        pauseKey = InputManager.Instance.GetAction("Player", "Pause");
+        pauseKey = InputManager.Instance.GetAction("Player", "Escape");
         invKey = InputManager.Instance.GetAction("Player", "Inventory");
         consoleKey = InputManager.Instance.GetAction("Player", "Console");
     }
 
     private void Update() {
         // check for currently open menu and close it if applicable; otherwise open the pause menu
-        /*if (pauseKey.WasPressedThisFrame()) {
+        if (pauseKey.WasPressedThisFrame()) {
             ToggleMenu(0, true);
-        }*/
+        }
     }
 
     #region Public Methods
