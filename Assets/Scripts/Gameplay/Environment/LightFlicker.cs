@@ -1,6 +1,6 @@
-using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Procedural light flickering replicating Valve's Half-Life implementation.
@@ -59,12 +59,12 @@ public class LightFlicker : MonoBehaviour {
     [SerializeField, Range(0f, 50f)] private float smoothSpeed = 20f;
 
     private Coroutine oneShotCoroutine;
-    private new Light light;
+    private Light light;
     private Preset oneShotSavedPreset;
     private string oneShotSavedCustomPattern;
     private bool oneShotSavedIsActive;
     private bool hasSavedOneShotState;
-    
+
     private bool isActive;
     private float maxIntensity;
     private string activePattern;
@@ -153,7 +153,7 @@ public class LightFlicker : MonoBehaviour {
         RefreshPattern();
         light.intensity = maxIntensity;
     }
-    
+
     private IEnumerator OneShotRoutine(float duration, string pattern) {
         SaveOneShotState();
         isActive = true;
@@ -175,7 +175,7 @@ public class LightFlicker : MonoBehaviour {
         preset = newPreset;
         RefreshPattern();
     }
-    
+
     public void SetActive(bool active) => isActive = active;
 
     public void PlayPatternForDuration(float duration, string pattern = null) {

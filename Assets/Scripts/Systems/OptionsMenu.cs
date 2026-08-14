@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-
-//using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class OptionsMenu : MonoBehaviour {
     public static OptionsMenu Instance { get; private set; }
+    public static UnityEvent<int> OnMinorGraphicsChanged = new UnityEvent<int>();
 
     [Header("Graphics Settings")]
     [SerializeField] private TMP_Dropdown resolutionDropdown;
@@ -18,6 +18,7 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private Toggle fpsCounterToggle;
     [SerializeField] private TMP_Dropdown qualityDropdown;
     [SerializeField] private TMP_Dropdown textureDropdown;
+    [SerializeField] private TMP_Dropdown antiAliasingDropdown;
 
     [Header("Audio Settings")]
     [SerializeField] private Slider masterVolumeSlider;
@@ -172,6 +173,10 @@ public class OptionsMenu : MonoBehaviour {
         // Set the fps counter value and display the fps counter if necessary
         localSettings.fpsCounter = fpsCounterToggle.isOn;
         fpsDisplayObj.SetActive(localSettings.fpsCounter);
+
+        // Set Anti Aliasing value and broadcast to Remote Settings Loaders
+        localSettings.antiAliasingMode = antiAliasingDropdown.value;
+        OnMinorGraphicsChanged.Invoke(localSettings.antiAliasingMode);
 
         RevivalRuntimeEngine.SaveSettingsData();
     }

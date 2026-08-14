@@ -6,8 +6,10 @@ public class SettingsData {
     public int windowMode;
     public int qualityLevel;
     public int globalTextureMipmapLimit = 0;
+    public int antiAliasingMode; // 0 - None, 1 - FXAA, 2 - TAA, 3 - SMAA
     public bool vSync = true;
     public int frameLimit = 120;
+
     public int soundtrack = 0;
     public bool consoleEnabled = false;
     public bool fpsCounter = false;

@@ -35,7 +35,6 @@ public class SCP_049 : MonoBehaviour {
     [SerializeField] private EventReference killedPlayerStinger;
     [SerializeField] private EventReference spottedSpeech;
     [SerializeField] private EventReference searchingSpeech;
-    [SerializeField] private EventReference searchingAfterChaseSpeech;
 
     [Header("Animation")]
     [SerializeField] private string rmotionWalkingBool = "walking_rmotion";
@@ -44,17 +43,17 @@ public class SCP_049 : MonoBehaviour {
 
     [Header("References")]
     [SerializeField] private Transform voiceSource;
-    [SerializeField] private Animator animator;
-    [SerializeField] private NavMeshAgent agent;
     [SerializeField] private TwoBoneIKConstraint handIKConstraint;
     [SerializeField] private Transform ikHandTarget;
-    [SerializeField] private IK_MasterComponent masterIKComponent;
 
     private const float IK_DISTANCE = 5f;
     private const float IK_DISTANCE_SQR = IK_DISTANCE * IK_DISTANCE;
     private const float IK_BLEND_SPEED = 5f;
     private const int MAX_COLLIDERS = 5;
 
+    private Animator animator;
+    private NavMeshAgent agent;
+    private IK_MasterComponent masterIKComponent;
     private Transform currentTarget;
     private Collider[] hitColliders;
     private Camera playerCamera;
@@ -82,20 +81,28 @@ public class SCP_049 : MonoBehaviour {
 
     private void Awake() {
         hitColliders = new Collider[MAX_COLLIDERS];
+
+        animator = GetComponent<Animator>();
+        agent = GetComponent<NavMeshAgent>();
+        masterIKComponent = GetComponent<IK_MasterComponent>();
     }
 
     private void Start() {
+        // hash some animator bools for optimization I guess
         rmotionWalkingBoolHash = Animator.StringToHash(rmotionWalkingBool);
         checkingBoolHash = Animator.StringToHash(checkingBool);
         hasRootMotionBinding = animator != null && agent != null;
 
+        // setup some visibility and range values
         visibilityRangeSqr = visibilityRange * visibilityRange;
         plagueDoctoringRangeSqr = plagueDoctoringRange * plagueDoctoringRange;
         visibilityConeHalfAngleCos = Mathf.Cos(visibilityConeAngle * 0.5f * Mathf.Deg2Rad);
 
+        // necessary for allow rmotion to work
         agent.updatePosition = false;
         agent.updateRotation = false;
 
+        // grab the player camera
         if (playerCamera == null && Player.Instance != null)
             playerCamera = Player.Instance.playerCamera;
     }

@@ -1,13 +1,11 @@
-﻿namespace PixeLadder.EasyTooltip
-{
+﻿namespace PixeLadder.EasyTooltip {
     using UnityEngine;
     using UnityEngine.Events;
     using UnityEngine.EventSystems;
 
     [ExecuteAlways]
     [AddComponentMenu("PixeLadder/Easy Tooltip/Tooltip Trigger")]
-    public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
-    {
+    public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
         #region Fields
         [Header("Content")]
         [SerializeField] private string title;
@@ -46,57 +44,47 @@
         public Sprite Icon { get => icon; set => icon = value; }
 
         // Styles (Setters auto-enable overrides)
-        public Color TitleColor
-        {
+        public Color TitleColor {
             get => (overrideStyle || TooltipManager.Instance == null) ? titleColor : TooltipManager.Instance.defaultTitleColor;
             set { titleColor = value; overrideStyle = true; }
         }
-        public Color IconColor
-        {
+        public Color IconColor {
             get => (overrideStyle || TooltipManager.Instance == null) ? iconColor : TooltipManager.Instance.defaultIconColor;
             set { iconColor = value; overrideStyle = true; }
         }
-        public Color BackgroundColor
-        {
+        public Color BackgroundColor {
             get => (overrideStyle || TooltipManager.Instance == null) ? backgroundColor : TooltipManager.Instance.defaultBackgroundColor;
             set { backgroundColor = value; overrideStyle = true; }
         }
-        public Color OutlineColor
-        {
+        public Color OutlineColor {
             get => (overrideStyle || TooltipManager.Instance == null) ? outlineColor : TooltipManager.Instance.defaultOutlineColor;
             set { outlineColor = value; overrideStyle = true; }
         }
-        public bool ShowOutline
-        {
+        public bool ShowOutline {
             get => (overrideStyle || TooltipManager.Instance == null) ? showOutline : TooltipManager.Instance.defaultShowOutline;
             set { showOutline = value; overrideStyle = true; }
         }
 
         // Layout (Setters auto-enable overrides)
-        public TooltipPositionMode PositionMode
-        {
+        public TooltipPositionMode PositionMode {
             get => positionMode;
             set { positionMode = value; overrideLayout = true; }
         }
-        public TooltipAnchor AnchorPosition
-        {
+        public TooltipAnchor AnchorPosition {
             get => anchorPosition;
             set { anchorPosition = value; overrideLayout = true; }
         }
-        public Vector2 AdditionalOffset
-        {
+        public Vector2 AdditionalOffset {
             get => additionalOffset;
             set { additionalOffset = value; overrideLayout = true; }
         }
 
         // Timer & Size (Setters auto-enable overrides)
-        public float HoverDelay
-        {
+        public float HoverDelay {
             get => (overrideTimer || TooltipManager.Instance == null) ? hoverDelay : TooltipManager.Instance.defaultHoverDelay;
             set { hoverDelay = value; overrideTimer = true; }
         }
-        public float MaxWidth
-        {
+        public float MaxWidth {
             get => (overrideSize || TooltipManager.Instance == null) ? maxWidth : TooltipManager.Instance.DefaultMaxWidth;
             set { maxWidth = value; overrideSize = true; }
         }
@@ -108,8 +96,7 @@
         #endregion
 
         #region Interface Implementations
-        public void OnPointerEnter(PointerEventData eventData)
-        {
+        public void OnPointerEnter(PointerEventData eventData) {
             if (TooltipManager.Instance == null) return;
 
             // Resolve Values
@@ -128,18 +115,15 @@
             );
         }
 
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            if (TooltipManager.Instance != null)
-            {
+        public void OnPointerExit(PointerEventData eventData) {
+            if (TooltipManager.Instance != null) {
                 TooltipManager.Instance.HideTooltip();
             }
         }
         #endregion
 
         #region Gizmos & Helpers
-        private void OnDrawGizmosSelected()
-        {
+        private void OnDrawGizmosSelected() {
             if (!overrideLayout || positionMode != TooltipPositionMode.Fixed) return;
             RectTransform rect = GetComponent<RectTransform>();
             if (rect == null) return;
@@ -148,8 +132,7 @@
             rect.GetWorldCorners(corners);
             Vector3 target = Vector3.zero;
 
-            switch (anchorPosition)
-            {
+            switch (anchorPosition) {
                 case TooltipAnchor.TopCenter: target = (corners[1] + corners[2]) / 2f; break;
                 case TooltipAnchor.TopLeft: target = corners[1]; break;
                 case TooltipAnchor.TopRight: target = corners[2]; break;
@@ -167,8 +150,7 @@
             Gizmos.DrawWireSphere(target, 5f);
         }
 
-        public static TooltipTrigger AddTooltip(GameObject target, string content, string title = "", Sprite icon = null)
-        {
+        public static TooltipTrigger AddTooltip(GameObject target, string content, string title = "", Sprite icon = null) {
             if (target == null) return null;
             EnsureManagerExists();
             TooltipTrigger trigger = target.GetComponent<TooltipTrigger>() ?? target.AddComponent<TooltipTrigger>();
@@ -178,12 +160,10 @@
             return trigger;
         }
 
-        private static void EnsureManagerExists()
-        {
-            if (TooltipManager.Instance != null || FindFirstObjectByType<TooltipManager>() != null) return;
+        private static void EnsureManagerExists() {
+            if (TooltipManager.Instance != null || FindAnyObjectByType<TooltipManager>() != null) return;
             GameObject managerPrefab = Resources.Load<GameObject>("TooltipManager");
-            if (managerPrefab != null)
-            {
+            if (managerPrefab != null) {
                 GameObject managerInstance = Instantiate(managerPrefab);
                 managerInstance.name = "TooltipManager (Auto-Generated)";
             }

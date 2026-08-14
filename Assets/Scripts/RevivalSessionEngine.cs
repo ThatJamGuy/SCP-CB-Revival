@@ -1,61 +1,21 @@
 using PrimeTween;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class RevivalSessionEngine : MonoBehaviour {
     public static RevivalSessionEngine Instance { get; private set; }
-
-    [Header("Menus")]
-    [SerializeField] private GameObject pauseMenu;
-    [SerializeField] private GameObject invMenu;
 
     [Header("Heads Up Display")]
     [SerializeField] private TextMeshProUGUI infoText;
 
     private Tween infoTextTween;
 
-    // now hardcoding the menus for more control
-    private InputAction pauseKey;
-    private InputAction invKey;
-    private InputAction consoleKey;
-
-    private bool anyMenuOpen;
-    private int openMenuId;
-
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-
-        pauseKey = InputManager.Instance.GetAction("Player", "Escape");
-        invKey = InputManager.Instance.GetAction("Player", "Inventory");
-        consoleKey = InputManager.Instance.GetAction("Player", "Console");
-    }
-
-    private void Update() {
-        // check for currently open menu and close it if applicable; otherwise open the pause menu
-        if (pauseKey.WasPressedThisFrame()) {
-            ToggleMenu(0, true);
-        }
     }
 
     #region Public Methods
-
-    public void ToggleMenu(int menu, bool forceState) {
-        switch (menu) {
-            case 0:
-                pauseMenu.SetActive(!pauseMenu.activeSelf);
-                anyMenuOpen = !anyMenuOpen;
-
-                if (GameManager.Instance.currentDifficulty != 2) GameManager.PauseGame();
-
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-        }
-    }
 
     /// <summary>
     /// Displays a heads-up bit of text to the player similar to how Containment Breach did it.

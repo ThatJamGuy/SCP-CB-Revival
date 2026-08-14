@@ -32,7 +32,7 @@ public class IK_MasterComponent : MonoBehaviour {
         trackingRadiusSqr = trackingRadius * trackingRadius;
 
         if (findPoisOnStart) {
-            var foundPois = FindObjectsByType<IK_PointOfInterest>(FindObjectsSortMode.None);
+            var foundPois = FindObjectsByType<IK_PointOfInterest>();
             pointsOfInterest = new List<IK_PointOfInterest>(foundPois);
         }
     }

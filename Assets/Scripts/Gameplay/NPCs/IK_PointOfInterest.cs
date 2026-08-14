@@ -15,7 +15,7 @@ public class IK_PointOfInterest : MonoBehaviour {
     private void OnEnable() {
         if (registerOnEnable) {
             if (allActors) {
-                IK_MasterComponent[] ikSystems = FindObjectsByType<IK_MasterComponent>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+                IK_MasterComponent[] ikSystems = FindObjectsByType<IK_MasterComponent>();
                 List<IK_MasterComponent> ikSystemsList = new List<IK_MasterComponent>(ikSystems);
 
                 foreach (IK_MasterComponent ikSystemss in ikSystemsList) {
@@ -31,7 +31,7 @@ public class IK_PointOfInterest : MonoBehaviour {
 
     // In most cases this will be for the players POI as he enters all kinds of rooms full of IK Masters yet to be activated
     public void RegisterPOIToAllActors() {
-        IK_MasterComponent[] ikSystems = FindObjectsByType<IK_MasterComponent>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        IK_MasterComponent[] ikSystems = FindObjectsByType<IK_MasterComponent>();
         List<IK_MasterComponent> ikSystemsList = new List<IK_MasterComponent>(ikSystems);
 
         foreach (IK_MasterComponent ikSystemss in ikSystemsList) {

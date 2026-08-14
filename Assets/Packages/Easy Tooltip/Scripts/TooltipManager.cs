@@ -317,7 +317,7 @@ namespace PixeLadder.EasyTooltip {
                 Canvas foundCanvas = triggerContext.GetComponentInParent<Canvas>();
                 if (foundCanvas != null) targetCanvas = foundCanvas.rootCanvas;
             }
-            if (targetCanvas == null) targetCanvas = FindFirstObjectByType<Canvas>();
+            if (targetCanvas == null) targetCanvas = FindAnyObjectByType<Canvas>();
             if (targetCanvas == null) return false;
 
             if (tooltipInstance == null) {
