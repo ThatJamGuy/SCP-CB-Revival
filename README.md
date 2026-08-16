@@ -1,7 +1,7 @@
 # SCP - Containment Breach Revival
 
 SCP - Containment Breach Revival is an In-Development remake of [SCP - Containment Breach](https://github.com/Regalis11/scpcb) built on the [Unity 6.5 Engine](https://unity.com/).\
-Play the latest Windows (Linux and MacOs Coming Soon) releases on Itch.io: https://thatjamguy.itch.io/scpcbr \
+Play the latest Windows (Linux and MacOs Coming Soon) releases [HERE ON Itch.io](https://thatjamguy.itch.io/scpcbr). \
 SCP:CBR Discord Server: https://discord.gg/rarnCP68Dk
 
 No, I don't know how to fix your roblox related issue.
@@ -21,6 +21,7 @@ For any further questions or details you wish to provide (Or if you just want to
 - Anything I haven't already mentioned that would speed up development and help make a better game
 
 For code refactors/additions it's preferable that you can write code better than I can (Which probably isn't very hard), but anything helps as long as it won't be a headache to debug it later.
+Also, **No clanker code!** If you use AI you must yourself understand everything the AI wrote and make sure the final result is clean and consistent. I can understand it's use for monotonous tasks but otherwise it's highly recommended against.
 
 ## FOR DEVELOPERS AND CONTRIBUTORS
 ### 1. PREREQUISITES
@@ -33,27 +34,12 @@ Before even touching this repository, you'll want to have the following programs
 - [GitHub Desktop](https://desktop.github.com/download/) (Optional but recommended unless you know how to use the Git command line)
 
 ### 2. DOWNLOADING AND OPENING THE PROJECT
-
-First you must ask yourself: _"Am I downloading this repository to contribute large and/or imporortant changes or to poke around and possibly contribute more indirectly?"_ Deciding to take the poking around method doesn't mean you can't help, as you can still create issues or talk to me directly via Discord based on things you discover or change during your time in the project.
-
-1. **FOR DIRECT LARGER CONTRIBUTIONS**
-   - Install the latest version of Unity via the hub that SCP:CBR Supports (In this case 6000.5.8f1 at the time of writing)
+   - Install the latest version of Unity via the hub that SCP:CBR Supports (In this case `6000.5.8f1` at the time of writing)
    - Before you proceed with the installation, ensure the following modules are checked to be included:
      - Visual Studio 2026 (If not already installed)
      - Windows Build Support (IL2CPP)
    - Create a fork of this repository. This will allow you to create pull requests.
    - Use GitHub Desktop (Or Git CLI) to clone the most up to date branch from your fork of the repository.
-   - In Unity Hub, click **ADD > Add Project From Disk** and open the SCP-CB-Revival folder
-   - Unity should handle opening the project just fine and if any FMOD related issues show up, visit [SCP-CBR-FMOD](https://github.com/ThatJamGuy/SCP-CBR-FMOD)
-
-2. **FOR POKING AROUND**
-   - Install the latest version of Unity via the hub that SCP:CBR Supports (In this case 6000.5.8f1 at the time of writing)
-   - Before you proceed with the installation, ensure the following modules are checked to be included:
-     - Visual Studio 2026 (If not already installed)
-     - Windows Build Support (IL2CPP)
-   - To get the project onto your computer, you can either:
-     - A) Go to the most Up-To-Date branch on the repository on the web and click **CODE > Donwload ZIP**. Ensure you extract this before opening it.
-     - B) Use GitHub Desktop (Or Git CLI) to clone the most up to date branch from the repository.
    - In Unity Hub, click **ADD > Add Project From Disk** and open the SCP-CB-Revival folder
    - Unity should handle opening the project just fine and if any FMOD related issues show up, visit [SCP-CBR-FMOD](https://github.com/ThatJamGuy/SCP-CBR-FMOD)
 
