@@ -17,6 +17,8 @@ public class SCP_049 : MonoBehaviour {
     [SerializeField] private float maxPredictionLookahead = 2f;
     [SerializeField] private float maxPredictedSpeed = 8f;
     [SerializeField] private float killRadius;
+    [SerializeField] private int minVoiceTime;
+    [SerializeField] private int maxVoiceTime;
 
     [Header("Detection")]
     [SerializeField] private float visibilityRange;

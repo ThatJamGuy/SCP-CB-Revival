@@ -14,6 +14,10 @@ public class RemoteSettingsLoader : MonoBehaviour {
     private HDAdditionalCameraData playerCameraData;
 
     private void OnEnable() {
+        // Shoehorning this in here because unity was yelling at me for having it later
+        if (settingToRetreive == SettingPreset.AntiAliasing)
+            playerCameraData = GetComponent<HDAdditionalCameraData>();
+
         OptionsMenu.OnMinorGraphicsChanged.AddListener(UpdateAntiAliasing);
     }
 

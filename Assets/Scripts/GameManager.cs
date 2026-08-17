@@ -8,9 +8,15 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
+    public static SaveData currentSaveData { get; private set; }
 
     [Header("Main Game State")]
     [ReadOnly] public bool lczLockdownLifted;
+
+    //TODO: IMPLEMENT PRIORITY SYSTEM INSTEAD OF THIS NONSENSE
+    // IE. Assign scp-106 a value of 5, 173 is 1, 049 is 2, etc. (Either in respective npc code, EntityManager, etc.)
+    // When a music call is made compare the requested priority to the current one
+    // If higher play it, if lower dont, if the same then play since none are more important than the other
 
     [Header("SCP States")]
     [ReadOnly] public bool playerNear096;
@@ -21,12 +27,10 @@ public class GameManager : MonoBehaviour {
 
     [Header("Other Save States")]
     [ReadOnly] public int currentDifficulty;
-    [ReadOnly] public int currentZone = 1;
     [ReadOnly] public int otherDifficultyFactor;
 
-    [HideInInspector] public SaveData currentSaveData;
-
     private static readonly int Quicksave = Animator.StringToHash("Quicksave");
+    public static int currentZone = 1;
 
     private InputAction quicksaveAction;
 
@@ -94,6 +98,7 @@ public class GameManager : MonoBehaviour {
         Player.SetCursorState(true);
     }
 
+    //TODO: Maybe move this to the SessionEngine as well as put loading mechanics in there
     public void SaveGame(bool playSound = true) {
         CanvasInstance.Instance.HUD_QuickSave.SetTrigger(Quicksave);
 
@@ -101,6 +106,7 @@ public class GameManager : MonoBehaviour {
         currentSaveData.currentGameVersion = "v" + Application.version;
         currentSaveData.playerPos = Player.Instance.transform.position;
         currentSaveData.playerRot = Player.Instance.transform.rotation;
+        currentSaveData.currentZone = currentZone;
         currentSaveData.lczLockdownLifted = lczLockdownLifted;
 
         // List of things that should be saved on file for v0.0.6. Map seed & name are already saved on save creation
@@ -112,7 +118,6 @@ public class GameManager : MonoBehaviour {
         //TODO: Save SCP-106 state (Is he chasing the player right now?)
         //TODO: Save SCP-106 location (IF HE IS CHASING THE PLAYER OR OTHER TARGET ONLY)
         //TODO: Save currently playing music (Even if a chase is happening, the triggers don't account for loading)
-        //TODO: Save if LCZ has been lifted from lockdown (Find way to flip the lever properly on load???)
         //TODO: Save door states. Might put this one off for now, not as important to save open/close states (Idk how)
 
         DataSaver.Save(currentSaveData, "save.json");
