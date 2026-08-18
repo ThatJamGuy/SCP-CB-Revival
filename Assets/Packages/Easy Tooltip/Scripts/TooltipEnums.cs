@@ -6,7 +6,7 @@ namespace PixeLadder.EasyTooltip
         Fixed
     }
 
-    public enum TooltipAnchor
+    public enum TooltipAnchor 
     {
         TopCenter,
         TopLeft,

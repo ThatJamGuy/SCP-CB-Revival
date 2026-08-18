@@ -54,6 +54,9 @@ public class MusicManager : MonoBehaviour {
     private bool zoneAmbienceInitialized;
     private int currentZoneAmbience;
 
+    private float relocateTimeElapsed;
+    private float relocateTimer = 5;
+
     #region Unity Callbacks
 
     private void Awake() {
@@ -79,10 +82,12 @@ public class MusicManager : MonoBehaviour {
 
     private void Update() {
         // Make sure ambience for the right zone is playing; Only does it once to prevent zone ambience call spam
-        if (GameManager.Instance != null && currentZoneAmbience != RevivalSessionEngine.currentZone) {
+        if (RevivalSessionEngine.Instance != null && currentZoneAmbience != RevivalSessionEngine.currentZone) {
             SetZoneAmbience(RevivalSessionEngine.currentZone);
             currentZoneAmbience = RevivalSessionEngine.currentZone;
         }
+
+        RepositionAmbienceEmitter();
     }
 
     #endregion
@@ -115,7 +120,7 @@ public class MusicManager : MonoBehaviour {
         if (zoneAmbienceInitialized) return; // If already initialized do nothing
 
         zoneAmbienceInstance = RuntimeManager.CreateInstance(zoneAmbienceMasterEvent); // Create the zone ambience instance
-        zoneAmbienceInstance.set3DAttributes(Player.Instance.transform.position.To3DAttributes()); // FMOD wants me to do this
+        zoneAmbienceInstance.set3DAttributes(Player.Instance.transform.To3DAttributes());
         zoneAmbienceInstance.getDescription(out var eventDescription); // Create eventDescription from instance description
 
         eventDescription.getParameterDescriptionByName(CURR_ZONE_AMB_PARAM, out var zoneParameterDescription);
@@ -124,6 +129,15 @@ public class MusicManager : MonoBehaviour {
 
         zoneAmbienceInstance.start(); // Start playing the default ambience track
         zoneAmbienceInitialized = true; // Set initialized to true so the thing knows not to initialize again, though why would it
+    }
+
+    private void RepositionAmbienceEmitter() {
+        relocateTimeElapsed += Time.deltaTime;
+
+        if (relocateTimeElapsed >= relocateTimer) {
+            zoneAmbienceInstance.set3DAttributes(Player.Instance.transform.To3DAttributes());
+            relocateTimeElapsed = 0;
+        }
     }
 
     #endregion

@@ -13,7 +13,7 @@ public class PauseMenu : MonoBehaviour {
     [Header("References")]
     [SerializeField] private MenuManager menuManager;
 
-    private GameManager gameManager;
+    private RevivalSessionEngine gameManager;
     private MapGenerator mapGenerator;
 
     private int currentDifficulty;
@@ -38,8 +38,8 @@ public class PauseMenu : MonoBehaviour {
         }
 
         // If a GameManager is present, set the gameManager to that instance and grab the current difficulty
-        if (GameManager.Instance != null) {
-            gameManager = GameManager.Instance;
+        if (RevivalSessionEngine.Instance != null) {
+            gameManager = RevivalSessionEngine.Instance;
             currentDifficulty = RevivalSessionEngine.currentDifficulty;
         }
 

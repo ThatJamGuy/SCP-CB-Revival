@@ -74,7 +74,7 @@ public class EVNT_Intro : MonoBehaviour {
 
             if (InputManager.Instance == null) Instantiate(inputManager);
             if (AudioManager.Instance == null) Instantiate(audioManager);
-            if (GameManager.Instance == null) Instantiate(gameManager);
+            if (RevivalSessionEngine.Instance == null) Instantiate(gameManager);
             if (CanvasInstance.Instance == null) Instantiate(sessionCanvas);
         }
     }
@@ -85,7 +85,7 @@ public class EVNT_Intro : MonoBehaviour {
         // Normal setup
         if (!skipIntro) {
             // Intro Zone
-            if (GameManager.Instance != null) RevivalSessionEngine.currentZone = 0;
+            if (RevivalSessionEngine.Instance != null) RevivalSessionEngine.currentZone = 0;
             if (MusicManager.Instance != null) MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror01);
 
             // Eventually make it to do this later as the waking up animation has yet to be made
