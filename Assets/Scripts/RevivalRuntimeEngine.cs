@@ -4,14 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Master script to sit on the Global Things object.
-/// Basically the functionality of a bunch of other scripts merged into one to clean
-/// things up a bit.
-/// </summary>
 public class RevivalRuntimeEngine : MonoBehaviour {
     public static RevivalRuntimeEngine Instance { get; private set; }
     public static SettingsData SettingsData { get; private set; }
+    private static readonly HashSet<string> obtainedAchievementNames = new HashSet<string>();
+
     public static int TotalAchievements { get; private set; }
     public static int ObtainedAchievementsCount => obtainedAchievementNames.Count;
 
@@ -35,10 +32,8 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     private const string SETTINGS_FILE_NAME = "settings.json";
     private const string ACHIEVMENTS_FILE_NAME = "achievements.json";
 
-    private static readonly HashSet<string> obtainedAchievementNames = new HashSet<string>();
     private List<Transform> camTransforms = new List<Transform>();
     private Dictionary<Transform, Vector3> originalPositions = new Dictionary<Transform, Vector3>();
-
     private Client client;
     private Coroutine shakeCoroutine;
     private AchievementFile achievementFileData;
@@ -53,7 +48,6 @@ public class RevivalRuntimeEngine : MonoBehaviour {
         else Destroy(gameObject);
 
         SettingsData = DataSaver.Load<SettingsData>(SETTINGS_FILE_NAME);
-
         client = new Client();
 
         // Set the log utility to the OnLog method and set the application ID to applicationID. Then update RPC. 

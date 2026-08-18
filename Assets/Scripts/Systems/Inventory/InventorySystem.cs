@@ -168,7 +168,7 @@ public class InventorySystem : MonoBehaviour {
     }
 
     public void CloseInventory() {
-        GameManager.ResumeGame();
+        RevivalSessionEngine.ResumeGame();
         menuManager.ToggleMenu(1, false);
     }
 

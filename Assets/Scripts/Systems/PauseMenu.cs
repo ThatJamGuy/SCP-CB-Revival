@@ -40,7 +40,7 @@ public class PauseMenu : MonoBehaviour {
         // If a GameManager is present, set the gameManager to that instance and grab the current difficulty
         if (GameManager.Instance != null) {
             gameManager = GameManager.Instance;
-            currentDifficulty = gameManager.currentDifficulty;
+            currentDifficulty = RevivalSessionEngine.currentDifficulty;
         }
 
         // Give the current difficulty the appropriate color when displaying it in the pause menu
@@ -70,7 +70,7 @@ public class PauseMenu : MonoBehaviour {
     public void ResumeGame() {
         // Toggle menu 0 (Pause menu atm) off by forcing it's state to false. Then resume the game
         menuManager.ToggleMenu(0, false);
-        GameManager.ResumeGame();
+        RevivalSessionEngine.ResumeGame();
     }
 
     public void ToggleOptionsMenu(bool active) {

@@ -24,7 +24,7 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private Menu[] menuList;
 
     private readonly Dictionary<InputAction, System.Action<InputAction.CallbackContext>> callbacks = new();
-    private GameManager gameManager;
+    private RevivalSessionEngine gameManager;
 
     private bool cantFunction;
     private bool unregisteredMenuOpen;
@@ -59,20 +59,15 @@ public class MenuManager : MonoBehaviour {
 
     private void Start() {
         // Attempt to locate the GameManager instance at the start of this scripts lifecycle
-        if (GameManager.Instance != null) gameManager = GameManager.Instance;
+        if (RevivalSessionEngine.Instance != null) gameManager = RevivalSessionEngine.Instance;
 
         // If there is no GameManager available at the start, disallow functionality and print a warning in console
         if (gameManager == null) {
             cantFunction = true;
-            Debug.Log("<color=red>[MenuManager]</color> GameManager was not found, menu stuff will not work!");
+            Debug.Log("<color=red>[RevivalSessionEngine]</color> RevivalSessionEngine was not found, menu stuff will not work!");
 
             return;
         }
-
-        if (cantFunction) return;
-
-        // Set the local current difficulty to the one in the GameManager script for easy access
-        currentDifficulty = gameManager.currentDifficulty;
     }
 
     #endregion
@@ -114,7 +109,7 @@ public class MenuManager : MonoBehaviour {
         // If I'm not in a video, hello to the random guy reading my code, and I ask you the same question ^^^
 
         // If the mode is Euclid specifically, do this pausing stuff anyway because inventory menu needs it
-        if (gameManager.currentDifficulty == 1) {
+        if (RevivalSessionEngine.currentDifficulty == 1) {
             Player.Instance.disableInput = !Player.Instance.disableInput;
             Player.Instance.isMoving = false;
             Player.SetCursorState(Player.Instance.disableInput);
@@ -122,15 +117,15 @@ public class MenuManager : MonoBehaviour {
         }
 
         // If mode is Keter or higher, only disable inputs. If it's Safe or Euclid, pause and resume respectively
-        if (gameManager.currentDifficulty >= 2) {
+        if (RevivalSessionEngine.currentDifficulty >= 2) {
             Player.Instance.disableInput = !Player.Instance.disableInput;
             Player.Instance.isMoving = false;
             Player.SetCursorState(Player.Instance.disableInput);
             return;
         }
 
-        if (shouldPause) GameManager.PauseGame();
-        else GameManager.ResumeGame();
+        if (shouldPause) RevivalSessionEngine.PauseGame();
+        else RevivalSessionEngine.ResumeGame();
     }
     #endregion
 

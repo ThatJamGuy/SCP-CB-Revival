@@ -79,9 +79,9 @@ public class MusicManager : MonoBehaviour {
 
     private void Update() {
         // Make sure ambience for the right zone is playing; Only does it once to prevent zone ambience call spam
-        if (GameManager.Instance != null && currentZoneAmbience != GameManager.currentZone) {
-            SetZoneAmbience(GameManager.currentZone);
-            currentZoneAmbience = GameManager.currentZone;
+        if (GameManager.Instance != null && currentZoneAmbience != RevivalSessionEngine.currentZone) {
+            SetZoneAmbience(RevivalSessionEngine.currentZone);
+            currentZoneAmbience = RevivalSessionEngine.currentZone;
         }
     }
 

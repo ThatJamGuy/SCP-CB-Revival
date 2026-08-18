@@ -24,7 +24,7 @@ public class SCP_096 : MonoBehaviour {
     [SerializeField] private StudioEventEmitter spatialEventEmitter;
     [SerializeField] private GameObject screamEmitter;
 
-    private GameManager gm;
+    private RevivalSessionEngine gm;
 
     private const float KILL_RADIUS = 3;
 
@@ -41,7 +41,7 @@ public class SCP_096 : MonoBehaviour {
     #region Unity Callbacks
 
     private void Start() {
-        if (GameManager.Instance != null) gm = GameManager.Instance;
+        if (RevivalSessionEngine.Instance != null) gm = RevivalSessionEngine.Instance;
     }
 
     private void Update() {
@@ -93,14 +93,14 @@ public class SCP_096 : MonoBehaviour {
 
         // Set music track based on range state
         if (!playerInRange) {
-            if (distanceToPlayer < playerNearbyRadius && !gm.scp049pursuing && !gm.scp106pursuing && !gm.scp173pursuing) {
-                MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_096, 0);
+            if (distanceToPlayer < playerNearbyRadius) {
+                RevivalSessionEngine.Instance.PlayChaseTrack(1, MusicManager.MusicTrack.SCP_096, 0);
                 gm.playerNear096 = true;
                 playerInRange = true;
             }
         } else if (playerInRange) {
-            if (distanceToPlayer > playerNearbyRadius && !gm.scp049pursuing && !gm.scp106pursuing && !gm.scp173pursuing) {
-                gm.SetTrackBasedOnZone();
+            if (distanceToPlayer > playerNearbyRadius) {
+                RevivalSessionEngine.Instance.PlayChaseTrack(-1, MusicManager.MusicTrack.SCP_096, 0);
                 gm.playerNear096 = false;
                 playerInRange = false;
             }
@@ -133,7 +133,7 @@ public class SCP_096 : MonoBehaviour {
         agent.SetDestination(Player.Instance.transform.position);
 
         if (!chaseMusicStarted) {
-            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_096, 1);
+            RevivalSessionEngine.Instance.PlayChaseTrack(6, MusicManager.MusicTrack.SCP_096, 1);
             chaseMusicStarted = true;
         }
 

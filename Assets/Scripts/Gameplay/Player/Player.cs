@@ -112,7 +112,7 @@ public class Player : MonoBehaviour {
 
     private IEnumerator DisplayDeathMessageCoroutine(float delayTime, string causeOfDeath) {
         yield return new WaitForSeconds(delayTime);
-        GameManager.Instance.ShowDeathScreen(causeOfDeath);
+        RevivalSessionEngine.Instance.ShowDeathScreen(causeOfDeath);
     }
 
     // Re-apply cursor state when switching back to KBM so menus restore correctly

@@ -149,14 +149,14 @@ public class SCP_173 : MonoBehaviour {
 
         if (alreadySeenByPlayer) {
             alreadySeenByPlayer = false;
-            GameManager.Instance.scp173pursuing = false;
+            //RevivalSessionEngine.Instance.PlayChaseTrack(0, MusicManager.MusicTrack.LCZ);
         }
 
         movementSource.SetActive(false);
         hasPlayedDistanceHorrorSound = false;
 
-        if (!GameManager.Instance.scp106pursuing && !GameManager.Instance.scp049pursuing && !GameManager.Instance.scp096pursuing)
-            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.LCZ);
+        // Play the current zones music
+        RevivalSessionEngine.Instance.PlayChaseTrack(0, MusicManager.MusicTrack.LCZ);
 
         tensionEmitter.Stop();
     }
@@ -243,11 +243,11 @@ public class SCP_173 : MonoBehaviour {
     private void OnBecameVisibleToPlayer() {
         if (!alreadySeenByPlayer && !puppetMode) {
             alreadySeenByPlayer = true;
-            GameManager.Instance.scp173pursuing = true;
+            //GameManager.Instance.scp173pursuing = true;
             AcquireTarget(playerTransform);
 
-            if (!GameManager.Instance.scp106pursuing && !GameManager.Instance.scp096pursuing && !GameManager.Instance.scp049pursuing)
-                MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173);
+            // Make a request for SCP-173 chase music
+            RevivalSessionEngine.Instance.PlayChaseTrack(1, MusicManager.MusicTrack.SCP_173);
 
             tensionEmitter.Play();
         }

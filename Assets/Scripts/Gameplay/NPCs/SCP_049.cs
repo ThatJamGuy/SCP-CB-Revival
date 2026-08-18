@@ -233,8 +233,7 @@ public class SCP_049 : MonoBehaviour {
         predicting = true;
         predictionElapsedTime = 0;
 
-        if (!GameManager.Instance.scp096pursuing && !GameManager.Instance.scp106pursuing)
-            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_049, 0);
+        RevivalSessionEngine.Instance.PlayChaseTrack(1, MusicManager.MusicTrack.SCP_049, 0);
     }
 
     private void CheckingState() {
@@ -338,10 +337,7 @@ public class SCP_049 : MonoBehaviour {
         predictionElapsedTime = 0;
 
         AudioManager.PlayOneShot(spottedPlayerStinger);
-
-        if (!GameManager.Instance.scp096pursuing && !GameManager.Instance.scp106pursuing)
-            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_049, 1);
-
+        RevivalSessionEngine.Instance.PlayChaseTrack(2, MusicManager.MusicTrack.SCP_096, 1);
         RevivalRuntimeEngine.Instance.GiveAchievement("achv_049");
     }
 

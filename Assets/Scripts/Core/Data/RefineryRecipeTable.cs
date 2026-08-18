@@ -165,7 +165,7 @@ public class RefineryRecipeTable : ScriptableObject {
         if (!recipeLookup.TryGetValue((inputItem, mode), out var modeRecipe)) return inputItem;
         if (modeRecipe.possibleOutputs == null || modeRecipe.possibleOutputs.Length == 0) return null;
 
-        var difficultyFactor = GameManager.Instance.otherDifficultyFactor;
+        var difficultyFactor = RevivalSessionEngine.otherDifficultyFactor;
 
         foreach (var output in modeRecipe.possibleOutputs) {
             if (output == null) continue;

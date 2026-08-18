@@ -1,38 +1,35 @@
-using EditorAttributes;
-using System.Globalization;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 /// <summary>
 /// Globally accessible script to handle most things related to the state of the game
 /// </summary>
 public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
-    public static SaveData currentSaveData { get; private set; }
+    //public static SaveData currentSaveData { get; private set; }
 
-    [Header("Main Game State")]
-    [ReadOnly] public bool lczLockdownLifted;
+    //[Header("Main Game State")]
+    //[ReadOnly] public bool lczLockdownLifted;
 
     //TODO: IMPLEMENT PRIORITY SYSTEM INSTEAD OF THIS NONSENSE
     // IE. Assign scp-106 a value of 5, 173 is 1, 049 is 2, etc. (Either in respective npc code, EntityManager, etc.)
     // When a music call is made compare the requested priority to the current one
     // If higher play it, if lower dont, if the same then play since none are more important than the other
 
-    [Header("SCP States")]
-    [ReadOnly] public bool playerNear096;
-    [ReadOnly] public bool scp049pursuing;
-    [ReadOnly] public bool scp096pursuing;
-    [ReadOnly] public bool scp106pursuing;
-    [ReadOnly] public bool scp173pursuing;
+    //[Header("SCP States")]
+    //[ReadOnly] public bool playerNear096;
+    //[ReadOnly] public bool scp049pursuing;
+    //[ReadOnly] public bool scp096pursuing;
+    //[ReadOnly] public bool scp106pursuing;
+    //[ReadOnly] public bool scp173pursuing;
 
-    [Header("Other Save States")]
-    [ReadOnly] public int currentDifficulty;
-    [ReadOnly] public int otherDifficultyFactor;
+    //[Header("Other Save States")]
+    //[ReadOnly] public int currentDifficulty;
+    //[ReadOnly] public int otherDifficultyFactor;
 
-    private static readonly int Quicksave = Animator.StringToHash("Quicksave");
-    public static int currentZone = 1;
+    //private static readonly int Quicksave = Animator.StringToHash("Quicksave");
+    //public static int currentZone = 1;
 
-    private InputAction quicksaveAction;
+    //private InputAction quicksaveAction;
 
     private void Awake() {
         // Ensure only one GameManager exists in the scene to prevent issues
@@ -40,90 +37,14 @@ public class GameManager : MonoBehaviour {
         else Destroy(gameObject);
 
         // Set the current save data to the save.json file for future reference. Will later support multiple saves
-        currentSaveData = DataSaver.Load<SaveData>("save.json");
+        //currentSaveData = DataSaver.Load<SaveData>("save.json");
 
         // Set some save data values to the ones in settings.json
-        currentDifficulty = currentSaveData.difficulty;
-        currentZone = currentSaveData.currentZone;
+        //currentDifficulty = currentSaveData.difficulty;
+        //currentZone = currentSaveData.currentZone;
     }
 
-    private void Start() {
-        quicksaveAction = InputManager.Instance.GetAction("Player", "Quicksave");
-    }
-
-    private void Update() {
-        // Check for quicksave action
-        if (quicksaveAction.triggered) {
-            SaveGame(true);
-        }
-    }
-
-    public static void PauseGame() {
-        // Set the game's timescale to 0 (Pausing Time.deltaTime) and pause FMOD via the AudioManager
-        Time.timeScale = 0f;
-        Player.SetCursorState(true);
-        Player.Instance.disableInput = true;
-        AudioManager.Instance.PauseAllSFX();
-    }
-
-    public static void ResumeGame() {
-        // Set the game's timescale to 1 (Resuming Time.deltaTime to normal) and resume FMOD via the AudioManager
-        Time.timeScale = 1f;
-        Player.SetCursorState(false);
-        Player.Instance.disableInput = false;
-        AudioManager.Instance.ResumeAllSFX();
-    }
-
-    public void SetTrackBasedOnZone() {
-        switch (currentZone) {
-            case 0:
-                // Intro Sequence Music
-                break;
-            case 1:
-                MusicManager.Instance.SetTrack(1, 0);
-                break;
-            case 2:
-                MusicManager.Instance.SetTrack(2, 0);
-                break;
-            case 3:
-                // Entrance Zone Music
-                break;
-        }
-    }
-
-    public void ShowDeathScreen(string causeOfDeath) {
-        MusicManager.Instance.StopAllMusic();
-        CanvasInstance.Instance.deathMenu.SetActive(true);
-        CanvasInstance.Instance.deathMenuDeathCauseText.text = causeOfDeath;
-        Player.SetCursorState(true);
-    }
-
-    //TODO: Maybe move this to the SessionEngine as well as put loading mechanics in there
-    public void SaveGame(bool playSound = true) {
-        CanvasInstance.Instance.HUD_QuickSave.SetTrigger(Quicksave);
-
-        currentSaveData.currentDateTime = Time.time.ToString(CultureInfo.CurrentCulture);
-        currentSaveData.currentGameVersion = "v" + Application.version;
-        currentSaveData.playerPos = Player.Instance.transform.position;
-        currentSaveData.playerRot = Player.Instance.transform.rotation;
-        currentSaveData.currentZone = currentZone;
-        currentSaveData.lczLockdownLifted = lczLockdownLifted;
-
-        // List of things that should be saved on file for v0.0.6. Map seed & name are already saved on save creation
-        //TODO: Save player inventory
-        //TODO: Save player blink and stamina stats
-        //TODO: Save SCP-173 location
-        //TODO: Save SCP-173 state (Is he chasing the player right now?)
-        //TODO: Save SCP-106 spawn counter
-        //TODO: Save SCP-106 state (Is he chasing the player right now?)
-        //TODO: Save SCP-106 location (IF HE IS CHASING THE PLAYER OR OTHER TARGET ONLY)
-        //TODO: Save currently playing music (Even if a chase is happening, the triggers don't account for loading)
-        //TODO: Save door states. Might put this one off for now, not as important to save open/close states (Idk how)
-
-        DataSaver.Save(currentSaveData, "save.json");
-
-        if (playSound) {
-            AudioManager.PlayOneShot(AudioEventsHolder.Instance.quicksave01, Player.Instance.transform.position);
-        }
-    }
+    //private void Start() {
+    //    quicksaveAction = InputManager.Instance.GetAction("Player", "Quicksave");
+    //}
 }

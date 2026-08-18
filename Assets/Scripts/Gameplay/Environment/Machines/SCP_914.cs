@@ -65,7 +65,7 @@ public class SCP_914 : MonoBehaviour {
     #region Public Methods
 
     public void EnterRoomEvent() {
-        if (GameManager.Instance.scp049pursuing || GameManager.Instance.scp096pursuing || GameManager.Instance.scp106pursuing || GameManager.Instance.scp173pursuing) return;
+        if (RevivalSessionEngine.currentPursuit != 0) return;
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_914);
     }
 
