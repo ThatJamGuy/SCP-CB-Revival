@@ -238,7 +238,7 @@ public class SCP_049 : MonoBehaviour {
 
     private void CheckingState() {
         if (sqrDistanceToPlayer > plagueDoctoringRangeSqr) {
-            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.LCZ, 0);
+            RevivalSessionEngine.Instance.PlayChaseTrack(-1, MusicManager.MusicTrack.LCZ, 0);
 
             predicting = false;
             animator.SetBool(checkingBoolHash, false);
@@ -337,7 +337,7 @@ public class SCP_049 : MonoBehaviour {
         predictionElapsedTime = 0;
 
         AudioManager.PlayOneShot(spottedPlayerStinger);
-        RevivalSessionEngine.Instance.PlayChaseTrack(2, MusicManager.MusicTrack.SCP_096, 1);
+        RevivalSessionEngine.Instance.PlayChaseTrack(2, MusicManager.MusicTrack.SCP_049, 1);
         RevivalRuntimeEngine.Instance.GiveAchievement("achv_049");
     }
 
