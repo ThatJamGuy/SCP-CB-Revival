@@ -135,7 +135,11 @@ public class MusicManager : MonoBehaviour {
         relocateTimeElapsed += Time.deltaTime;
 
         if (relocateTimeElapsed >= relocateTimer) {
-            zoneAmbienceInstance.set3DAttributes(Player.Instance.transform.To3DAttributes());
+            if (Player.Instance != null)
+                zoneAmbienceInstance.set3DAttributes(Player.Instance.transform.To3DAttributes());
+            else
+                zoneAmbienceInstance.set3DAttributes(Vector3.zero.To3DAttributes());
+
             relocateTimeElapsed = 0;
         }
     }

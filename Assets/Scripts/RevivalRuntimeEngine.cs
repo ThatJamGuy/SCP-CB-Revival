@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class RevivalRuntimeEngine : MonoBehaviour {
     public static RevivalRuntimeEngine Instance { get; private set; }
-    public static SettingsData SettingsData { get; private set; }
+    public static SettingsData SettingsData { get; set; }
     private static readonly HashSet<string> obtainedAchievementNames = new HashSet<string>();
 
     public static int TotalAchievements { get; private set; }
@@ -235,7 +235,6 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     }
 
     public void ShakeCamera(float startIntensity, float endIntensity, float duration) {
-        Debug.Log("Shake triggered at " + Time.time);
         if (shakeCoroutine != null) StopCoroutine(shakeCoroutine);
         shakeCoroutine = StartCoroutine(ShakeRoutine(startIntensity, endIntensity, duration));
     }

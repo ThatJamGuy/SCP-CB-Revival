@@ -54,13 +54,12 @@ public class OptionsMenu : MonoBehaviour {
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-
-        PopulateResolutions();
     }
 
     private void Start() {
         localSettings = RevivalRuntimeEngine.SettingsData;
 
+        PopulateResolutions();
         PopulateWindowModes();
         InitializeSettingsUI();
     }
@@ -109,7 +108,6 @@ public class OptionsMenu : MonoBehaviour {
         consoleToggle.isOn = localSettings.consoleEnabled;
     }
 
-    // Same thing as before but replaced LINQ usage for CPU performance
     private void PopulateResolutions() {
         var seen = new HashSet<Vector2Int>();
         var uniqueResolutions = new List<Vector2Int>();
