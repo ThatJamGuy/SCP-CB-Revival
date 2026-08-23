@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class OptionsMenu : MonoBehaviour {
     public static OptionsMenu Instance { get; private set; }
     public static UnityEvent<int> OnMinorGraphicsChanged = new UnityEvent<int>();
+    public static UnityEvent<int> OnMajorGraphicsChanged = new UnityEvent<int>();
 
     [Header("Graphics Settings")]
     [SerializeField] private TMP_Dropdown resolutionDropdown;
@@ -19,6 +20,7 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private TMP_Dropdown qualityDropdown;
     [SerializeField] private TMP_Dropdown textureDropdown;
     [SerializeField] private TMP_Dropdown antiAliasingDropdown;
+    [SerializeField] private TMP_Dropdown shadowQualityDropdown;
 
     [Header("Audio Settings")]
     [SerializeField] private Slider masterVolumeSlider;
@@ -76,36 +78,45 @@ public class OptionsMenu : MonoBehaviour {
         int resIndex = Array.FindIndex(resolutions, r => r.x == localSettings.resolutionWidth && r.y == localSettings.resolutionHeight);
         if (resIndex < 0) resIndex = 0;
 
-        // Graphics settings
-        resolutionDropdown.value = resIndex;
-        windowModeDropdown.value = winIndex;
-        vSyncToggle.isOn = localSettings.vSync;
-        frameLimitInput.text = localSettings.frameLimit.ToString();
-        fpsCounterToggle.isOn = localSettings.fpsCounter;
-        qualityDropdown.value = localSettings.qualityLevel;
-        textureDropdown.value = localSettings.globalTextureMipmapLimit;
+        // Graphics settings — SetValueWithoutNotify prevents these from firing
+        // Apply*() methods mid-restore and stomping localSettings with stale UI defaults
+        resolutionDropdown.SetValueWithoutNotify(resIndex);
+        windowModeDropdown.SetValueWithoutNotify(winIndex);
+        vSyncToggle.SetIsOnWithoutNotify(localSettings.vSync);
+        frameLimitInput.SetTextWithoutNotify(localSettings.frameLimit.ToString());
+        fpsCounterToggle.SetIsOnWithoutNotify(localSettings.fpsCounter);
+        qualityDropdown.SetValueWithoutNotify(localSettings.qualityLevel);
+        textureDropdown.SetValueWithoutNotify(localSettings.globalTextureMipmapLimit);
+        antiAliasingDropdown.SetValueWithoutNotify(localSettings.antiAliasingMode);
+        shadowQualityDropdown.SetValueWithoutNotify(localSettings.shadowQualityMode);
 
         // Audio settings
-        soundtrackDropdown.value = localSettings.soundtrack;
-        masterVolumeSlider.value = localSettings.masterVolume;
-        musicVolumeSlider.value = localSettings.musicVolume;
-        sfxVolumeSlider.value = localSettings.sfxVolume;
-        voiceVolumeSlider.value = localSettings.voiceVolume;
+        soundtrackDropdown.SetValueWithoutNotify(localSettings.soundtrack);
+        masterVolumeSlider.SetValueWithoutNotify(localSettings.masterVolume);
+        musicVolumeSlider.SetValueWithoutNotify(localSettings.musicVolume);
+        sfxVolumeSlider.SetValueWithoutNotify(localSettings.sfxVolume);
+        voiceVolumeSlider.SetValueWithoutNotify(localSettings.voiceVolume);
 
         // Gameplay Settings
-        lookSensSlider.value = localSettings.mouseSensitivity;
-        lookSmoothSlider.value = localSettings.mouseSmoothing;
-        hudDesignDropdown.value = localSettings.hudDesign;
-        hudFunctionDropdown.value = localSettings.hudFunctionality;
+        lookSensSlider.SetValueWithoutNotify(localSettings.mouseSensitivity);
+        lookSmoothSlider.SetValueWithoutNotify(localSettings.mouseSmoothing);
+        hudDesignDropdown.SetValueWithoutNotify(localSettings.hudDesign);
+        hudFunctionDropdown.SetValueWithoutNotify(localSettings.hudFunctionality);
 
-        if (hudDesignDropdown.value != hudFunctionDropdown.value) hudPresetDropdown.value = 0; // Custom
-        if (hudDesignDropdown.value == 0 && hudDesignDropdown.value == hudFunctionDropdown.value) hudPresetDropdown.value = 1; // Revival
-        if (hudDesignDropdown.value == 1 && hudDesignDropdown.value == hudFunctionDropdown.value) hudPresetDropdown.value = 2; // Legacy
-
-        lastHudPreset = hudPresetDropdown.value;
+        int presetValue;
+        if (hudDesignDropdown.value != hudFunctionDropdown.value) presetValue = 0; // Custom
+        else if (hudDesignDropdown.value == 0) presetValue = 1; // Revival
+        else if (hudDesignDropdown.value == 1) presetValue = 2; // Legacy
+        else presetValue = 0;
+        hudPresetDropdown.SetValueWithoutNotify(presetValue);
+        lastHudPreset = presetValue;
 
         // Advanced settings
-        consoleToggle.isOn = localSettings.consoleEnabled;
+        consoleToggle.SetIsOnWithoutNotify(localSettings.consoleEnabled);
+
+        frameLimitOption.SetActive(!localSettings.vSync);
+        fpsDisplayObj.SetActive(localSettings.fpsCounter);
+        QualitySettings.vSyncCount = localSettings.vSync ? 1 : 0;
     }
 
     private void PopulateResolutions() {
@@ -174,8 +185,17 @@ public class OptionsMenu : MonoBehaviour {
 
         // Set Anti Aliasing value and broadcast to Remote Settings Loaders
         localSettings.antiAliasingMode = antiAliasingDropdown.value;
-        OnMinorGraphicsChanged.Invoke(localSettings.antiAliasingMode);
 
+
+        OnMinorGraphicsChanged.Invoke(localSettings.antiAliasingMode);
+        RevivalRuntimeEngine.SaveSettingsData();
+    }
+
+    public void ApplyMajorGraphicsSettings() {
+        // Set shadow quality and broadcast to Remote Settings Loaders
+        localSettings.shadowQualityMode = shadowQualityDropdown.value;
+
+        OnMajorGraphicsChanged.Invoke(localSettings.shadowQualityMode);
         RevivalRuntimeEngine.SaveSettingsData();
     }
 

@@ -7,6 +7,7 @@ public class SettingsData {
     public int qualityLevel;
     public int globalTextureMipmapLimit = 0;
     public int antiAliasingMode; // 0 - None, 1 - FXAA, 2 - TAA, 3 - SMAA
+    public int shadowQualityMode; // 0 - High, 1 - Medium, 2 - Low, 3 - None
     public bool vSync = true;
     public int frameLimit = 120;
 
