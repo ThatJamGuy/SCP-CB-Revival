@@ -117,7 +117,7 @@ public class MusicManager : MonoBehaviour {
     }
 
     private void InitZoneAmbience() {
-        if (zoneAmbienceInitialized) return; // If already initialized do nothing
+        if (zoneAmbienceInitialized || Player.Instance == null) return; // If already initialized do nothing or if the player is not there
 
         zoneAmbienceInstance = RuntimeManager.CreateInstance(zoneAmbienceMasterEvent); // Create the zone ambience instance
         zoneAmbienceInstance.set3DAttributes(Player.Instance.transform.To3DAttributes());

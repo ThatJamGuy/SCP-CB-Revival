@@ -3,162 +3,83 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Video;
 
-/// <summary>
-/// Gigantic ass script to handle all the intro related things.
-/// Persistent so that if the intro is skipped it can still work in the second post-breach primary scene
-/// </summary>
+// Planning (CUT DOWN VERSION FOR v0.0.6A / Itch.io Release):
+// 1 - Brightness flash introduces player into the before173 room. Ulgrin starts off with the welp we're here line.
+// 2 - Ulgrin hands the player a paper, and then if waiting long enough he urges him into the 173 room.
+// 3 - Class d 1 stands facing the chamber door. Class d 2 uses head ik to look at the player. SCF stands by above. Assisting scientist walks on a phone call behind SCF.
+// 4 - SCF presses a button. The doors open, playing the chamber 173 stinger. class d 2 shakes his limbs around a bit as if nervous. They are urged to enter.
+// 5 - The two ds enter at different speeds and arrive at different locations. The door closes with a box collider preventing the player from leaving once they enter.
+// 5.1 - If the player does not enter for a period of time, a random threat1 line is chosen for SCF. Same period goes by a threat2 line. Same period the player is shot.
+// 6 - SCF urges to approach 173. class d 2 does so. After d 2 reaches close to 173 a light breaks, then the door opens.
+// 7 - SCF says his line and the lights go out on queue, allowing 173 to kill a guy. Lights go on briefly and then out again allowing 173 to kill another guy.
+// Player is now possible target. (TODO: Think on whether or not making 173s AI naturally target the closest enemy in the intro as if the class ds were other players)
+// If player leaves the chamber area 173 goes up, get's shot at a bit, kill the guard, and escapes through the vent.
+// Small delay after vent breaking but will then switch the level geometry and lighting to the post breach version.
+
 public class EVNT_Intro : MonoBehaviour {
     [Header("Settings")]
-    [SerializeField] private bool developerMode; // Wheter or not setup should be performed by this script for testing
-    [SerializeField] private bool skipIntro; // The nuclear option; Skips everything and immediately triggers post breach stuff (Also changes player spawns)
-    [SerializeField] private float defTimeToOpenCell = 30; // Default time until the cell is opened
-    [SerializeField] private float paperTimeToOpenCell = 10; // Time until the cell is opened after the orentation leaflet is read
+    [SerializeField] private bool developerMode;
+    [SerializeField] private bool skipIntro;
 
-    [Header("Generic References")]
-    [SerializeField] private Transform spawnRegular;
-    [SerializeField] private Transform spawnSkipIntro; // Keep these two as children probably due to scene switching cases
+    [Header("High Priority References")]
+    [SerializeField] private GameObject preBreachEnv;
+    [SerializeField] private GameObject postBreachEnv;
 
-    [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private ItemData orientationLeaflet;
-    [SerializeField] private Animator cellDoorAnimator;
-    [SerializeField] private StudioEventEmitter doorEmitter;
-    [SerializeField] private GameObject cellLight;
-    [SerializeField] private VideoPlayer introVideoPlayer;
-    [SerializeField] private Animator brightnessFlashAnimator;
-    [SerializeField] private GameObject playerCellAmbience;
-
-    [Header("SFX References")]
-    [SerializeField] private EventReference requestDoorEvent;
-    [SerializeField] private EventReference cellExitEvent;
-    [SerializeField] private EventReference cellExitRefuseEvent;
-    [SerializeField] private EventReference escortBeginEvent;
-    [SerializeField] private EventReference ulgrinPissedLines;
-
-    [Header("NPC References")]
-    [SerializeField] private Actor_Guard agentUlgrin;
-    [SerializeField] private Animator ulgrinAnimator;
-    [SerializeField] private Actor_Guard agentThomas;
-
-    // These are normally loaded in via the loading stuff, but that's ofc not possible when starting directly from this scene
     [Header("Developer References")]
     [SerializeField] private GameObject inputManager;
-    [SerializeField] private GameObject audioManager;
-    [SerializeField] private GameObject gameManager;
-    [SerializeField] private GameObject sessionCanvas;
-    [SerializeField] private GameObject globalCanvas;
+    [SerializeField] private GameObject runtimeEngine;
+    [SerializeField] private GameObject sessionEngine;
 
-    private const float RQUEST_DOOR_OPEN_TIME = 11f;
-    private const float CHECK_IF_LEFT_CELL_TIME = 15f;
+    [Header("Audio References")]
+    [SerializeField] private Transform ulgrinVoiceSource;
+    [SerializeField] private EventReference ulgrinEscortEndA;
+    [SerializeField] private EventReference ulgrinEscortEndB;
+    [SerializeField] private EventReference ulgrinByTheWay;
 
-    private bool paperHasBeenRead;
-    private bool playerStillInCell = true;
-    private bool reusableTimerActive;
-    private float reusableTimeElapsed;
-
-    #region Unity Callbacks
+    [Header("Generic References")]
+    [SerializeField] private Animator ulgrinAnimator;
+    [SerializeField] private Door beforeChamberDoor;
+    [SerializeField] private Transform spawnRegular;
+    [SerializeField] private Transform spawnSkipIntro;
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private VideoPlayer introVideoPlayer;
+    [SerializeField] private Animator brightnessFlashAnimator;
 
     private void Awake() {
-        // Keep it persistent to work in both pre and post breach scenes
-        // Destroy later to not take up resources, likely after the ulgrin franklin post breach event
-        // As ambience and whatnot is handled by a post breach script similar to before
-        //DontDestroyOnLoad(gameObject);
-
-        // Remove that for now to prevent bugs
-
-        // Set up developer mode for direct testing within the scene
         if (developerMode) {
-            if (inputManager == null || audioManager == null || gameManager == null || sessionCanvas == null || globalCanvas == null) {
-                //Debug.LogWarning("One or more of the required dev references was not set, so something vill probably break.");
-                return;
-            }
-
-            if (InputManager.Instance == null) Instantiate(inputManager);
-            if (AudioManager.Instance == null) Instantiate(audioManager);
-            if (RevivalSessionEngine.Instance == null) Instantiate(gameManager);
-            if (CanvasInstance.Instance == null) Instantiate(sessionCanvas);
+            Instantiate(inputManager);
+            Instantiate(runtimeEngine);
+            Instantiate(sessionEngine);
         }
     }
 
     private void Start() {
-        if (MusicManager.Instance != null) MusicManager.Instance.StopAllMusic();
+        MusicManager.Instance.StopAllMusic();
 
-        // Normal setup
         if (!skipIntro) {
-            // Intro Zone
-            if (RevivalSessionEngine.Instance != null) RevivalSessionEngine.currentZone = 0;
-            if (MusicManager.Instance != null) MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror01);
+            RevivalSessionEngine.currentZone = 0;
+            //MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror01);
 
-            // Eventually make it to do this later as the waking up animation has yet to be made
-            SetupPlayer(spawnRegular);
+            Instantiate(playerPrefab, spawnRegular);
 
-            // Disable inputs and play the intro video
-            Player.Instance.disableInput = true;
-            Player.Instance.disableLooking = true;
+            //Player.Instance.disableInput = true;
+            //Player.Instance.disableLooking = true;
 
-            StartCoroutine(IntroVideoDelay());
-        }
-        // Skip intro setup
-        else {
-            SetupPlayer(spawnSkipIntro);
+            //StartCoroutine(IntroVideoDelay());
+            StartCoroutine(EscortEnd());
+        } else {
+            Instantiate(playerPrefab, spawnSkipIntro);
         }
     }
 
-    private void Update() {
-        // Handle reusable timer aspects
-        if (reusableTimerActive) {
-            reusableTimeElapsed += Time.deltaTime;
-        }
-
-        // Check if the orentation doc was read
-        if (!paperHasBeenRead && !skipIntro) {
-            if (InventorySystem.Instance != null && InventorySystem.Instance.currentlyHeldItem == orientationLeaflet) {
-                OnReadUpOriPaper();
-                paperHasBeenRead = true;
-            }
-        }
-    }
-
-    #endregion
-
-    #region Private Methods
-
+    #region Intro Video
     private void IntroVideoEndReached(VideoPlayer videoPlayer) {
         videoPlayer.transform.parent.gameObject.SetActive(false);
         brightnessFlashAnimator.SetTrigger("Flash");
         AudioManager.PlayOneShot(AudioEventsHolder.Instance.legacyLightFlicker);
-        playerCellAmbience.SetActive(true);
         Player.Instance.disableInput = false;
         Player.Instance.disableLooking = false;
-
-        StartCoroutine(OpenCellTimerDef());
-        reusableTimerActive = true;
     }
-
-    // May later move this to public methods, will be triggered doing the loading process
-    private void SetupPlayer(Transform posToSpawn) {
-        Instantiate(playerPrefab, posToSpawn);
-    }
-
-    private void ResetReusableTimer() {
-        reusableTimerActive = false;
-        reusableTimeElapsed = 0;
-    }
-
-    private void OnReadUpOriPaper() {
-        // If the paper was picked up within the range of the paperTimeToOpenCell then ignore since it would make the number bigger
-        if (reusableTimeElapsed < paperTimeToOpenCell) return;
-
-        StopAllCoroutines();
-        ResetReusableTimer();
-
-        StartCoroutine(OpenCellTimerPaper());
-    }
-
-    #endregion
-
-    #region Private Coroutines
-
-    #region Sequence 0: Intro Video
 
     private IEnumerator IntroVideoDelay() {
         yield return new WaitForSeconds(3);
@@ -168,126 +89,16 @@ public class EVNT_Intro : MonoBehaviour {
         introVideoPlayer.loopPointReached += IntroVideoEndReached;
         AudioManager.PlayOneShot(AudioEventsHolder.Instance.introVideoSound);
     }
-
     #endregion
 
-    #region Sequence 1: Cell Door
-
-    private IEnumerator OpenCellTimerDef() {
-        yield return new WaitForSeconds(defTimeToOpenCell);
-
-        AudioManager.PlayOneShot(requestDoorEvent, agentUlgrin.voiceSource.position);
-
-        yield return new WaitForSeconds(RQUEST_DOOR_OPEN_TIME);
-
-        cellDoorAnimator.Play("CellDoor_Open");
-        doorEmitter.Play();
-
-        yield return new WaitForSeconds(1f);
-
-        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Intro);
-        StartCoroutine(CheckExitCellCoroutine());
+    #region Escord End
+    private IEnumerator EscortEnd() {
+        //InventorySystem.Instance.AddItemToInventory("docori"); Uncomment this later when the intro video is back in
+        yield return new WaitForSeconds(3);
+        AudioManager.PlayOneShot(ulgrinEscortEndA, ulgrinVoiceSource.position);
+        yield return new WaitForSeconds(7);
+        AudioManager.PlayOneShot(ulgrinEscortEndB, ulgrinVoiceSource.position);
+        beforeChamberDoor.OpenDoor();
     }
-
-    private IEnumerator OpenCellTimerPaper() {
-        yield return new WaitForSeconds(paperTimeToOpenCell);
-
-        AudioManager.PlayOneShot(requestDoorEvent, agentUlgrin.voiceSource.position);
-
-        yield return new WaitForSeconds(RQUEST_DOOR_OPEN_TIME);
-
-        cellDoorAnimator.Play("CellDoor_Open");
-        doorEmitter.Play();
-
-        yield return new WaitForSeconds(1f);
-
-        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Intro);
-        StartCoroutine(CheckExitCellCoroutine());
-    }
-
-    #endregion
-
-    #region Sequence 2: Escort Begin
-
-    private IEnumerator CheckExitCellCoroutine() {
-        AudioManager.PlayOneShot(cellExitEvent, agentUlgrin.voiceSource.position);
-
-        yield return new WaitForSeconds(1);
-
-        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = false;
-        ulgrinAnimator.SetTrigger("Cocky");
-
-        yield return new WaitForSeconds(2);
-
-        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = true;
-
-        yield return new WaitForSeconds(CHECK_IF_LEFT_CELL_TIME - 4);
-
-        if (playerStillInCell) AudioManager.PlayOneShot(cellExitRefuseEvent, agentUlgrin.voiceSource.position);
-        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = false;
-        ulgrinAnimator.SetTrigger("Sigh");
-
-        yield return new WaitForSeconds(2);
-
-        ulgrinAnimator.SetTrigger("Annoyed");
-
-        yield return new WaitForSeconds(2);
-
-        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = true;
-
-        yield return new WaitForSeconds(CHECK_IF_LEFT_CELL_TIME - 4);
-
-        if (playerStillInCell) AudioManager.PlayOneShot(ulgrinPissedLines, agentUlgrin.voiceSource.position, "ulgrinPissedLevel", 0);
-
-        yield return new WaitForSeconds(CHECK_IF_LEFT_CELL_TIME - 9);
-
-        if (playerStillInCell) {
-            cellDoorAnimator.Play("CellDoor_Close");
-            doorEmitter.Play();
-
-            yield return new WaitForSeconds(1);
-
-            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_096, 0);
-            playerCellAmbience.gameObject.SetActive(false);
-            cellLight.SetActive(false);
-
-            yield return new WaitForSeconds(1);
-
-        } else {
-            AudioManager.PlayOneShot(ulgrinPissedLines, agentUlgrin.voiceSource.position, "ulgrinPissedLevel", 1);
-        }
-    }
-
-    #endregion
-
-    #region Sequence 3: Escort
-
-    private IEnumerator BeginEscortRoutine() {
-        RevivalSessionEngine.Instance.NotifyPlayer("'Just follow me, oh and by the way you should cooperate or I'll kill ya buddy.'");
-        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = false;
-        ulgrinAnimator.SetTrigger("Cocky");
-
-        yield return new WaitForSeconds(2);
-
-        agentUlgrin.GetComponent<IK_MasterComponent>().enableHeadIK = true;
-
-        yield return new WaitForSeconds(5);
-
-
-    }
-
-    #endregion
-
-    #endregion
-
-    #region public methods
-
-    public void OnPlayerExitCell() {
-        StopAllCoroutines();
-        playerStillInCell = false;
-
-        StartCoroutine(BeginEscortRoutine());
-    }
-
     #endregion
 }

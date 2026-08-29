@@ -101,7 +101,6 @@ public class PauseMenu : MonoBehaviour {
         SceneController.instance
             .NewTransition()
             .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu, setActive: true)
-            .Unload(SceneDatabase.Slots.Intro)
             .Unload(SceneDatabase.Slots.Game)
             .Unload(SceneDatabase.Slots.Session)
             .WithClearUnusedAssets()

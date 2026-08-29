@@ -22,9 +22,6 @@ public sealed class InputManager : MonoBehaviour {
         // Otherwise, if one already exists then we kill ourselves
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-
-        // Keep him with us for the journey assuming the check passes
-        DontDestroyOnLoad(gameObject);
     }
 
     // Setup and Cleanup for the input action asset
