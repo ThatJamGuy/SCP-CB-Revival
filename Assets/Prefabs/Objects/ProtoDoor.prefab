@@ -360,6 +360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorButton
+  isKeycardButton: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -375,6 +376,20 @@ MonoBehaviour:
       Data3: -739058558
       Data4: -1539697353
     Path: event:/SFX/Interact/ButtonPressLocked
+  keycardFailedEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  keycardGoodEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   linkedDoor: {fileID: 7581410477747496769}
   buttonAnimator: {fileID: 0}
 --- !u!1 &6330960877752512388
@@ -641,6 +656,7 @@ MonoBehaviour:
   startOpen: 0
   isOpen: 0
   isLocked: 0
+  isBroken: 0
   requiresKeycard: 0
   requiredKeyLevel: 0
   openSpeed: 1.4
@@ -715,6 +731,8 @@ MonoBehaviour:
   moveAxis: 0
   doorPart01: {fileID: 701660272305570502}
   doorPart02: {fileID: 4260952647071144778}
+  doorPhys01: {fileID: 0}
+  doorPhys02: {fileID: 0}
 --- !u!1 &8724587948475902159
 GameObject:
   m_ObjectHideFlags: 0
@@ -781,6 +799,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorButton
+  isKeycardButton: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -796,5 +815,19 @@ MonoBehaviour:
       Data3: -739058558
       Data4: -1539697353
     Path: event:/SFX/Interact/ButtonPressLocked
+  keycardFailedEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  keycardGoodEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   linkedDoor: {fileID: 7581410477747496769}
   buttonAnimator: {fileID: 0}
