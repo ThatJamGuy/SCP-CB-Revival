@@ -1,6 +1,7 @@
 using EditorAttributes;
 using FMODUnity;
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary>
 /// Script attached to the physical representations of items scattered around the world. Handles pickup logic
@@ -14,6 +15,8 @@ public class WorldItem : MonoBehaviour, IInteractable {
     [SerializeField] private bool giveAchievementOnPickup;
     [SerializeField, ShowField(nameof(giveAchievementOnPickup))] private string achievementId;
 
+    public UnityEvent OnItemPickedUp;
+
     public void Interact(PlayerInteraction playerInteraction) {
         if (!InventorySystem.Instance || InventorySystem.Instance.IsFull()) {
             RevivalSessionEngine.Instance.NotifyPlayer("You cannot pick up any more items.");
@@ -24,6 +27,8 @@ public class WorldItem : MonoBehaviour, IInteractable {
         AudioManager.PlayOneShot(pickupSound, transform.position);
 
         if (giveAchievementOnPickup) RevivalRuntimeEngine.Instance.GiveAchievement(achievementId);
+
+        OnItemPickedUp?.Invoke();
 
         Destroy(gameObject);
     }

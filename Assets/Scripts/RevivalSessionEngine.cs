@@ -1,4 +1,5 @@
 using EditorAttributes;
+using IngameDebugConsole;
 using PrimeTween;
 using System.Globalization;
 using TMPro;
@@ -36,6 +37,8 @@ public class RevivalSessionEngine : MonoBehaviour {
 
         currentDifficulty = CurrentSaveData.difficulty;
         currentZone = CurrentSaveData.currentZone;
+
+        DebugLogConsole.AddCommand("print_zone", "Prints the current estimated zone to the console.", DebugDispalyZone);
     }
 
     private void Start() {
@@ -104,19 +107,47 @@ public class RevivalSessionEngine : MonoBehaviour {
         Player.SetCursorState(true);
     }
 
-    public void SetTrackBasedOnZone() {
+    // For directly setting the zone and applying audio changes (Includes optional settings because of this)
+    public static void SetZone(int zone, bool setAmbience = false, bool setMusic = false) {
+        currentZone = zone;
+
+        switch (zone) {
+            case 0:
+                if (setAmbience) MusicManager.Instance.SetZoneAmbience(0);
+                if (setMusic) MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Intro, 0);
+                break;
+            case 1:
+                if (setAmbience) MusicManager.Instance.SetZoneAmbience(1);
+                if (setMusic) MusicManager.Instance.SetTrack(MusicManager.MusicTrack.LCZ, 0);
+                break;
+            case 2:
+                if (setAmbience) MusicManager.Instance.SetZoneAmbience(2);
+                if (setMusic) MusicManager.Instance.SetTrack(MusicManager.MusicTrack.HCZ, 0);
+                break;
+            case 3:
+                if (setAmbience) MusicManager.Instance.SetZoneAmbience(3);
+                //if (setMusic) MusicManager.Instance.SetTrack(MusicManager.MusicTrack.EZ, 0);
+                break;
+        }
+    }
+
+    // For getting the current zone and applying audio changes
+    public static void SetGlobalAudioBasedOnZone() {
         switch (currentZone) {
             case 0:
+                MusicManager.Instance.SetZoneAmbience(0);
                 MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Intro, 0);
                 break;
             case 1:
+                MusicManager.Instance.SetZoneAmbience(1);
                 MusicManager.Instance.SetTrack(MusicManager.MusicTrack.LCZ, 0);
                 break;
             case 2:
+                MusicManager.Instance.SetZoneAmbience(2);
                 MusicManager.Instance.SetTrack(MusicManager.MusicTrack.HCZ, 0);
                 break;
             case 3:
-                // Entrance Zone Music
+                MusicManager.Instance.SetZoneAmbience(3);
                 break;
         }
     }
@@ -128,7 +159,7 @@ public class RevivalSessionEngine : MonoBehaviour {
     /// <param name="musicTrack">The music track to play. Works the same as MusicManager.SetTrack calls (ie. MusicManager.MusicTrack.*)</param>
     /// <param name="intensity">The intensity of the track IF APPLICABLE. Works the same as MusicManager.SetTrack calls)</param>
     public void PlayChaseTrack(int priority, MusicManager.MusicTrack musicTrack, int intensity = 0) {
-        if (priority == -1) { SetTrackBasedOnZone(); return; }
+        if (priority == -1) { SetGlobalAudioBasedOnZone(); return; }
         if (currentPursuit == -1 || priority >= currentPursuit) {
             MusicManager.Instance.SetTrack(musicTrack, intensity);
         }
@@ -158,6 +189,10 @@ public class RevivalSessionEngine : MonoBehaviour {
         infoTextTween = Tween.Delay(displayDuration, () => {
             infoTextTween = Tween.Color(infoText, endColor, fadeDuration);
         });
+    }
+
+    public void DebugDispalyZone() {
+        Debug.Log("Current estimated zone: " + currentZone);
     }
 
     #endregion

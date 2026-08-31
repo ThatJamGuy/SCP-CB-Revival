@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 4988051949291053943}
   - component: {fileID: 8243362562511048876}
   - component: {fileID: 4682547671024531647}
-  - component: {fileID: -4406314081176203420}
   - component: {fileID: -567120841253737613}
+  - component: {fileID: 7607896442151878405}
   m_Layer: 5
   m_Name: INV_ItemTemplate
   m_TagString: Untagged
@@ -77,59 +77,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &-4406314081176203420
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7718882276236507219}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd592cc43ab73234e9e879aedb2f5276, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PixeLadder.EasyTooltip.TooltipTrigger
-  customPrefab: {fileID: 0}
-  title: Null
-  content: Null
-  secondaryContent: []
-  icon: {fileID: 0}
-  overrideStyle: 0
-  titleColor: {r: 1, g: 1, b: 1, a: 1}
-  iconColor: {r: 1, g: 1, b: 1, a: 1}
-  panelColor: {r: 0.15, g: 0.15, b: 0.15, a: 0.95}
-  headerColor: {r: 0, g: 0, b: 0, a: 0}
-  bodyColor: {r: 0, g: 0, b: 0, a: 0}
-  headerSprite: {fileID: 0}
-  bodySprite: {fileID: 0}
-  showOutline: 0
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  overrideSeparators: 0
-  separatorHeight: 1
-  separatorSprite: {fileID: 0}
-  separatorColor: {r: 1, g: 1, b: 1, a: 1}
-  overrideLayout: 0
-  positionMode: 0
-  continuousTracking: 0
-  anchorPosition: 0
-  overrideGap: 0
-  fixedGap: 5
-  targetOverride: {fileID: 0}
-  additionalOffset: {x: 25, y: 0}
-  overrideConstraints: 0
-  enableClamping: 1
-  smartFlipping: 1
-  overrideSize: 0
-  maxWidth: 350
-  overrideTiming: 0
-  hoverDelay: 0.1
-  fadeDuration: 0.2
-  onTooltipShow:
-    m_PersistentCalls:
-      m_Calls: []
-  onTooltipHide:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &-567120841253737613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,3 +92,56 @@ MonoBehaviour:
   itemData: {fileID: 0}
   itemRectTransform: {fileID: 4988051949291053943}
   itemImageComponent: {fileID: 4682547671024531647}
+--- !u!114 &7607896442151878405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7718882276236507219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd592cc43ab73234e9e879aedb2f5276, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PixeLadder.EasyTooltip.TooltipTrigger
+  customPrefab: {fileID: 0}
+  title: Item name here
+  content: Optional item description here
+  secondaryContent: []
+  icon: {fileID: 0}
+  overrideStyle: 0
+  titleColor: {r: 1, g: 1, b: 1, a: 1}
+  iconColor: {r: 1, g: 1, b: 1, a: 1}
+  panelColor: {r: 0.15, g: 0.15, b: 0.15, a: 0.95}
+  headerColor: {r: 0, g: 0, b: 0, a: 0}
+  bodyColor: {r: 0, g: 0, b: 0, a: 0}
+  headerSprite: {fileID: 0}
+  bodySprite: {fileID: 0}
+  showOutline: 1
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  overrideSeparators: 0
+  separatorHeight: 1
+  separatorSprite: {fileID: 0}
+  separatorColor: {r: 1, g: 1, b: 1, a: 1}
+  overrideLayout: 0
+  positionMode: 0
+  continuousTracking: 0
+  anchorPosition: 0
+  overrideGap: 0
+  fixedGap: 5
+  targetOverride: {fileID: 0}
+  additionalOffset: {x: 0, y: 0}
+  overrideConstraints: 0
+  enableClamping: 1
+  smartFlipping: 1
+  overrideSize: 0
+  maxWidth: 350
+  overrideTiming: 0
+  hoverDelay: 0.5
+  fadeDuration: 0.2
+  onTooltipShow:
+    m_PersistentCalls:
+      m_Calls: []
+  onTooltipHide:
+    m_PersistentCalls:
+      m_Calls: []

@@ -23,11 +23,6 @@ public class Actor_Generic : MonoBehaviour {
     [SerializeField, ShowField(nameof(randomAnimSpeedOnStart))] private float minAnimSpeed;
     [SerializeField, ShowField(nameof(randomAnimSpeedOnStart))] private float maxAnimSpeed;
 
-    [Header("AI Settings")]
-    [SerializeField] private bool wanderRandomly;
-    [SerializeField, ShowField(nameof(wanderRandomly))] private float wanderingRadius;
-    [SerializeField, ShowField(nameof(wanderRandomly))] private float wanderingTime;
-
     [Header("References")]
     [SerializeField] private Animator actorAnimator;
     [SerializeField] private NavMeshAgent actorAgent;
@@ -37,14 +32,8 @@ public class Actor_Generic : MonoBehaviour {
     private int rmotionStopWalkingTriggerHash;
     private bool useRootMotionNav;
     private bool isMoving;
-    private float wanderTimer;
 
-    #region Unity Callbacks
-
-    private void OnEnable() {
-        if (wanderRandomly)
-            wanderTimer = wanderingTime;
-    }
+    #region Unity Lifecycle
 
     private void Start() {
         if (useRootMotion) {
@@ -78,16 +67,6 @@ public class Actor_Generic : MonoBehaviour {
     }
 
     private void Update() {
-        if (actorAgent != null && wanderRandomly) {
-            wanderTimer += Time.deltaTime;
-
-            if (wanderTimer >= wanderingTime) {
-                Vector3 newPos = RandomNavSphere(transform.position, wanderingRadius, -1);
-                WalkTo(newPos);
-                wanderTimer = 0;
-            }
-        }
-
         // If root motion navigation is to be utilized then manage that stuff
         if (useRootMotionNav) {
             isMoving = actorAgent.remainingDistance > actorAgent.stoppingDistance;
@@ -131,18 +110,6 @@ public class Actor_Generic : MonoBehaviour {
             transform.position = pos;
             actorAgent.nextPosition = pos;
         }
-    }
-
-    #endregion
-
-    #region Private Helpers
-
-    public static Vector3 RandomNavSphere(Vector3 origin, float distance, int layerMask) {
-        Vector3 randomDirection = Random.insideUnitSphere * distance;
-        randomDirection += origin;
-        NavMeshHit navHit;
-        NavMesh.SamplePosition(randomDirection, out navHit, distance, layerMask);
-        return navHit.position;
     }
 
     #endregion

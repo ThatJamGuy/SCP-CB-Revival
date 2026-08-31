@@ -70,6 +70,7 @@ public class MusicManager : MonoBehaviour {
         DebugLogConsole.AddCommand<int, int>("play_music", "Plays the music track associated with the given integer identifier, followed by intensity from 0-1.", SetTrack);
         DebugLogConsole.AddCommand("stop_music", "Stops all currently playing music.", StopAllMusic);
         DebugLogConsole.AddCommand("stop_zone_ambience", "Stops all currently playing zone ambience.", StopAllZoneAmbience);
+        DebugLogConsole.AddCommand("print_audio_init", "Prints the state of the music and ambience init system to the console.", DebugInit);
     }
 
     private void OnDestroy() {
@@ -81,13 +82,15 @@ public class MusicManager : MonoBehaviour {
     }
 
     private void Update() {
-        // Make sure ambience for the right zone is playing; Only does it once to prevent zone ambience call spam
-        if (RevivalSessionEngine.Instance != null && currentZoneAmbience != RevivalSessionEngine.currentZone) {
-            SetZoneAmbience(RevivalSessionEngine.currentZone);
-            currentZoneAmbience = RevivalSessionEngine.currentZone;
-        }
+        if (zoneAmbienceInitialized) {
+            // Make sure ambience for the right zone is playing; Only does it once to prevent zone ambience call spam
+            if (RevivalSessionEngine.Instance != null && currentZoneAmbience != RevivalSessionEngine.currentZone) {
+                SetZoneAmbience(RevivalSessionEngine.currentZone);
+                currentZoneAmbience = RevivalSessionEngine.currentZone;
+            }
 
-        RepositionAmbienceEmitter();
+            RepositionAmbienceEmitter();
+        }
     }
 
     #endregion
@@ -164,11 +167,8 @@ public class MusicManager : MonoBehaviour {
         musicInstance.setParameterByID(trackParameterID, ((float)trackIndex)); // Play the track by setting the parameter
     }
 
-    // TODO: I maight use AI nodes or bring back the room script to tell what room/zone/etc. the script is on
     public void SetZoneAmbience(int zone = 1) {
         if (!zoneAmbienceInitialized) InitZoneAmbience();
-
-        // defaults to LCZ ambience for now
         zoneAmbienceInstance.setParameterByID(zoneAmbienceParameterID, zone);
     }
 
@@ -194,6 +194,11 @@ public class MusicManager : MonoBehaviour {
 
         zoneAmbienceInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
         zoneAmbienceInitialized = false;
+    }
+
+    public void DebugInit() {
+        Debug.Log("Music Manager initialization is currently: " + initialized + "."
+            + " Ambience initialization is currently: " + zoneAmbienceInitialized + ".");
     }
 
     #endregion

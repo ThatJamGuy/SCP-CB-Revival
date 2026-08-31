@@ -10,6 +10,11 @@ public class AudioEventsHolder : MonoBehaviour {
     [Header("Player Sounds")]
     public EventReference crouchFoley;
 
+    [Header("Stinger Sounds")]
+    public EventReference chamberStingerA;
+    public EventReference chamberStingerB;
+    public EventReference chamberStingerC;
+
     [Header("UI Sounds")]
     public EventReference quicksave01;
     public EventReference introVideoSound;

@@ -247,7 +247,7 @@ public class SCP_173 : MonoBehaviour {
             AcquireTarget(playerTransform);
 
             // Make a request for SCP-173 chase music
-            RevivalSessionEngine.Instance.PlayChaseTrack(1, MusicManager.MusicTrack.SCP_173);
+            RevivalSessionEngine.Instance.PlayChaseTrack(1, MusicManager.MusicTrack.SCP_173, 1);
 
             tensionEmitter.Play();
         }

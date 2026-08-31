@@ -19,22 +19,32 @@ using UnityEngine.Video;
 public class EVNT_Intro : MonoBehaviour {
     [Header("Settings")]
     [SerializeField] private bool developerMode;
+    [SerializeField] private bool playVideo;
     [SerializeField] private bool skipIntro;
 
     [Header("High Priority References")]
     [SerializeField] private GameObject preBreachEnv;
     [SerializeField] private GameObject postBreachEnv;
+    [SerializeField] private Door contDoor;
 
     [Header("Developer References")]
     [SerializeField] private GameObject inputManager;
     [SerializeField] private GameObject runtimeEngine;
     [SerializeField] private GameObject sessionEngine;
+    [SerializeField] private GameObject consolePrefab;
 
     [Header("Audio References")]
     [SerializeField] private Transform ulgrinVoiceSource;
-    [SerializeField] private EventReference ulgrinEscortEndA;
-    [SerializeField] private EventReference ulgrinEscortEndB;
+    [SerializeField] private EventReference ulgrinEscortEnd;
     [SerializeField] private EventReference ulgrinByTheWay;
+    [SerializeField] private EventReference franklinA;
+    [SerializeField] private EventReference franklinB;
+
+    [Header("Scripted References")]
+    [SerializeField] private Actor_Generic franklin;
+    [SerializeField] private Actor_Generic classDA;
+    [SerializeField] private Actor_Generic classDB;
+    [SerializeField] private IK_MasterComponent classDB_IK;
 
     [Header("Generic References")]
     [SerializeField] private Animator ulgrinAnimator;
@@ -44,9 +54,12 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private VideoPlayer introVideoPlayer;
     [SerializeField] private Animator brightnessFlashAnimator;
+    [SerializeField] private GameObject doc173Paper;
+    [SerializeField] private GameObject introCanvas;
 
     private void Awake() {
         if (developerMode) {
+            Instantiate(consolePrefab);
             Instantiate(inputManager);
             Instantiate(runtimeEngine);
             Instantiate(sessionEngine);
@@ -57,17 +70,23 @@ public class EVNT_Intro : MonoBehaviour {
         MusicManager.Instance.StopAllMusic();
 
         if (!skipIntro) {
-            RevivalSessionEngine.currentZone = 0;
-            //MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror01);
+            RevivalSessionEngine.SetZone(0, true);
 
             Instantiate(playerPrefab, spawnRegular);
 
-            //Player.Instance.disableInput = true;
-            //Player.Instance.disableLooking = true;
+            if (playVideo) {
+                MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror01);
 
-            //StartCoroutine(IntroVideoDelay());
-            StartCoroutine(EscortEnd());
+                Player.Instance.disableInput = true;
+                Player.Instance.disableLooking = true;
+
+                StartCoroutine(IntroVideoDelay());
+            } else {
+                introCanvas.SetActive(false);
+                StartCoroutine(EscortEnd());
+            }
         } else {
+            introCanvas.SetActive(false);
             Instantiate(playerPrefab, spawnSkipIntro);
         }
     }
@@ -79,6 +98,8 @@ public class EVNT_Intro : MonoBehaviour {
         AudioManager.PlayOneShot(AudioEventsHolder.Instance.legacyLightFlicker);
         Player.Instance.disableInput = false;
         Player.Instance.disableLooking = false;
+
+        StartCoroutine(EscortEnd());
     }
 
     private IEnumerator IntroVideoDelay() {
@@ -93,12 +114,49 @@ public class EVNT_Intro : MonoBehaviour {
 
     #region Escord End
     private IEnumerator EscortEnd() {
-        //InventorySystem.Instance.AddItemToInventory("docori"); Uncomment this later when the intro video is back in
+        RevivalSessionEngine.SetZone(0, true);
+
+        if (playVideo)
+            InventorySystem.Instance.AddItemToInventory("docori");
+
         yield return new WaitForSeconds(3);
-        AudioManager.PlayOneShot(ulgrinEscortEndA, ulgrinVoiceSource.position);
-        yield return new WaitForSeconds(7);
-        AudioManager.PlayOneShot(ulgrinEscortEndB, ulgrinVoiceSource.position);
-        beforeChamberDoor.OpenDoor();
+        ulgrinAnimator.SetTrigger("Cocky");
+        AudioManager.PlayOneShot(ulgrinEscortEnd, ulgrinVoiceSource.position);
+        yield return new WaitForSeconds(3);
+        ulgrinAnimator.SetTrigger("Sigh");
+        yield return new WaitForSeconds(4);
+        AudioManager.PlayOneShot(ulgrinByTheWay, ulgrinVoiceSource.position);
+        //ulgrinAnimator.SetTrigger("Acknowledge");
+        ulgrinAnimator.SetTrigger("Act_PaperA");
+        yield return new WaitForSeconds(1);
+        doc173Paper.SetActive(true);
     }
+    #endregion
+
+    #region Chamber Sequence Start
+
+
+    public void OnBeforeChamberEntered() {
+        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173, 0);
+        AudioManager.PlayOneShot(AudioEventsHolder.Instance.chamberStingerA);
+    }
+
+    public void OnGotCloserToChamber() {
+        classDB_IK.enableHeadIK = true;
+        StartCoroutine(IntroChamberBegin());
+    }
+
+    private IEnumerator IntroChamberBegin() {
+        yield return new WaitForSeconds(5);
+        franklin.PlayAnimation("ButtonPress");
+        yield return new WaitForSeconds(1.13f);
+        contDoor.OpenDoor();
+        classDB_IK.enableHeadIK = false;
+        yield return new WaitForSeconds(2);
+        AudioManager.PlayOneShot(AudioEventsHolder.Instance.chamberStingerB);
+        yield return new WaitForSeconds(3);
+        AudioManager.PlayOneShot(franklinA);
+    }
+
     #endregion
 }
