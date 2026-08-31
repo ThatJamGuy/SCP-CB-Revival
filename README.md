@@ -4,7 +4,7 @@
 
 <div align="center">
 
-![Unity](https://img.shields.io/badge/Unity-6000.5.8f1-black?logo=unity)
+![Unity](https://img.shields.io/badge/Unity-6000.5.10f1-black?logo=unity)
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey)
 ![Last Commit](https://img.shields.io/github/last-commit/ThatJamGuy/SCP-CB-Revival)
 ![Issues](https://img.shields.io/github/issues/ThatJamGuy/SCP-CB-Revival)
@@ -16,7 +16,7 @@
 
 # SCP - Containment Breach Revival
 
-SCP - Containment Breach Revival is an In-Development remake of [SCP - Containment Breach](https://github.com/Regalis11/scpcb) built on the [Unity Engine](https://unity.com/).\
+SCP - Containment Breach Revival is an In-Development open source remake of [SCP - Containment Breach](https://github.com/Regalis11/scpcb) built on the [Unity Engine](https://unity.com/).\
 Play the latest Windows (Linux and MacOs Coming Soon) releases [HERE ON Itch.io](https://thatjamguy.itch.io/scpcbr). \
 And check this out: [WISHLIST SCP:CBR ON STEAM TODAY!](https://store.steampowered.com/app/5033480/SCP__Containment_Breach_Revival/)
 
@@ -50,7 +50,7 @@ Before even touching this repository, you'll want to have the following programs
 - [GitHub Desktop](https://desktop.github.com/download/) (Optional but recommended unless you know how to use the Git command line)
 
 ### 2. DOWNLOADING AND OPENING THE PROJECT
-   - Install the latest version of Unity via the hub that SCP:CBR Supports (In this case `6000.5.8f1` at the time of writing)
+   - Install the latest version of Unity via the hub that SCP:CBR Supports (In this case `6000.5.10f1` at the time of writing)
    - Before you proceed with the installation, ensure the following modules are checked to be included:
      - Visual Studio 2026 (If not already installed)
      - Windows Build Support (IL2CPP)
