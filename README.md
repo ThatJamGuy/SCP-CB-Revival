@@ -16,7 +16,7 @@
 
 # SCP - Containment Breach Revival
 
-SCP - Containment Breach Revival is an In-Development remake of [SCP - Containment Breach](https://github.com/Regalis11/scpcb) built on the [Unity 6.5 Engine](https://unity.com/).\
+SCP - Containment Breach Revival is an In-Development remake of [SCP - Containment Breach](https://github.com/Regalis11/scpcb) built on the [Unity Engine](https://unity.com/).\
 Play the latest Windows (Linux and MacOs Coming Soon) releases [HERE ON Itch.io](https://thatjamguy.itch.io/scpcbr). \
 And check this out: [WISHLIST SCP:CBR ON STEAM TODAY!](https://store.steampowered.com/app/5033480/SCP__Containment_Breach_Revival/)
 
