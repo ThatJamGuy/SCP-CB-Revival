@@ -3,10 +3,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Video;
 
-// Planning (CUT DOWN VERSION FOR v0.0.6A / Itch.io Release):
-// 1 - Brightness flash introduces player into the before173 room. Ulgrin starts off with the welp we're here line.
-// 2 - Ulgrin hands the player a paper, and then if waiting long enough he urges him into the 173 room.
-// 3 - Class d 1 stands facing the chamber door. Class d 2 uses head ik to look at the player. SCF stands by above. Assisting scientist walks on a phone call behind SCF.
 // 4 - SCF presses a button. The doors open, playing the chamber 173 stinger. class d 2 shakes his limbs around a bit as if nervous. They are urged to enter.
 // 5 - The two ds enter at different speeds and arrive at different locations. The door closes with a box collider preventing the player from leaving once they enter.
 // 5.1 - If the player does not enter for a period of time, a random threat1 line is chosen for SCF. Same period goes by a threat2 line. Same period the player is shot.
@@ -45,6 +41,8 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private Actor_Generic classDA;
     [SerializeField] private Actor_Generic classDB;
     [SerializeField] private IK_MasterComponent classDB_IK;
+    [SerializeField] private Transform navPoint1_A;
+    [SerializeField] private Transform navPoint1_B;
 
     [Header("Generic References")]
     [SerializeField] private Animator ulgrinAnimator;
@@ -56,6 +54,9 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private Animator brightnessFlashAnimator;
     [SerializeField] private GameObject doc173Paper;
     [SerializeField] private GameObject introCanvas;
+
+    private bool playerNotInChamber = true;
+    private int playerBadBoyIndex = 0;
 
     private void Awake() {
         if (developerMode) {
@@ -70,6 +71,7 @@ public class EVNT_Intro : MonoBehaviour {
         MusicManager.Instance.StopAllMusic();
 
         if (!skipIntro) {
+            RevivalSessionEngine.canSave = false;
             RevivalSessionEngine.SetZone(0, true);
 
             Instantiate(playerPrefab, spawnRegular);
@@ -86,6 +88,8 @@ public class EVNT_Intro : MonoBehaviour {
                 StartCoroutine(EscortEnd());
             }
         } else {
+            RevivalSessionEngine.canSave = true;
+
             introCanvas.SetActive(false);
             Instantiate(playerPrefab, spawnSkipIntro);
         }
@@ -147,15 +151,30 @@ public class EVNT_Intro : MonoBehaviour {
     }
 
     private IEnumerator IntroChamberBegin() {
-        yield return new WaitForSeconds(5);
-        franklin.PlayAnimation("ButtonPress");
-        yield return new WaitForSeconds(1.13f);
+        yield return new WaitForSeconds(4);
+        franklin.SetAnimTrigger("PressButton");
+        yield return new WaitForSeconds(1.2f);
         contDoor.OpenDoor();
         classDB_IK.enableHeadIK = false;
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
+        classDB.SetAnimTrigger("Nervous");
+        yield return new WaitForSeconds(1);
         AudioManager.PlayOneShot(AudioEventsHolder.Instance.chamberStingerB);
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
         AudioManager.PlayOneShot(franklinA);
+        yield return new WaitForSeconds(5);
+        classDB.WalkTo(navPoint1_B.position);
+        yield return new WaitForSeconds(2f);
+        classDA.WalkTo(navPoint1_A.position);
+    }
+
+    private IEnumerator CheckPlayerInCell() {
+        yield return new WaitForSeconds(10);
+
+        if (playerNotInChamber) {
+            playerBadBoyIndex++;
+            AudioManager.PlayOneShot(franklinB);
+        }
     }
 
     #endregion

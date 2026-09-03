@@ -6835,7 +6835,7 @@ Transform:
   m_GameObject: {fileID: 170248930}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 33.3, y: 4.4, z: 27.5}
+  m_LocalPosition: {x: 28.4, y: 4.4, z: 27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6860,8 +6860,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4, y: 4, z: 7}
-  m_Center: {x: -2.5, y: 1.5, z: 0}
+  m_Size: {x: 1, y: 4, z: 6}
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!114 &170248933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9281,6 +9281,37 @@ Light:
   m_LightUnit: 0
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &231636822
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 231636823}
+  m_Layer: 0
+  m_Name: Nav_D_A_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &231636823
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231636822}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.7071065, z: -0, w: 0.7071071}
+  m_LocalPosition: {x: 44.655888, y: 4, z: 40.624447}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2076960542}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &232732344
 GameObject:
   m_ObjectHideFlags: 0
@@ -10753,7 +10784,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5359505653820605984, guid: 457b151888f8006459ad58e1aa6a145f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.92
+      value: -9.620001
       objectReference: {fileID: 0}
     - target: {fileID: 5359505653820605984, guid: 457b151888f8006459ad58e1aa6a145f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -17197,6 +17228,54 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 919132147656665495}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1681164603}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1449017450}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1114546505}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnTriggerExitEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -18475,7 +18554,7 @@ MonoBehaviour:
   m_ShadowNearPlane: 0.1
   m_BlockerSampleCount: 24
   m_FilterSampleCount: 16
-  m_MinFilterSize: 0.1
+  m_MinFilterSize: 0.3
   m_DirLightPCSSBlockerSampleCount: 24
   m_DirLightPCSSFilterSampleCount: 16
   m_DirLightPCSSMaxPenumbraSize: 0.56
@@ -18503,7 +18582,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
-  m_ShadowUpdateMode: 0
+  m_ShadowUpdateMode: 1
   m_AlwaysDrawDynamicShadows: 1
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -18588,7 +18667,7 @@ Light:
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 3.69078e+24, y: 7.037246e+22, z: 8.977283e-33, w: 1.3563156e-19}
   m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
+  m_UseViewFrustumForShadowCasterCull: 0
   m_ForceVisible: 0
   m_ShapeRadius: 0.025
   m_ShadowAngle: 0
@@ -21741,6 +21820,7 @@ Transform:
   m_Children:
   - {fileID: 1356132751}
   - {fileID: 473912302}
+  - {fileID: 1898997994}
   - {fileID: 170248931}
   - {fileID: 1977747949}
   - {fileID: 429797930}
@@ -26925,11 +27005,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -27232,11 +27307,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -29581,11 +29651,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -30055,11 +30120,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -33937,11 +33997,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -35033,6 +35088,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 234482472931560614, guid: 38b4124caa156f742af88af91cfa0517, type: 3}
   m_PrefabInstance: {fileID: 838619048}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &839827982
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 839827983}
+  m_Layer: 0
+  m_Name: Nav_D_B_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &839827983
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839827982}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.38268295, z: -0, w: 0.9238798}
+  m_LocalPosition: {x: 51.0289, y: 4, z: 40.85836}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2076960542}
+  m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
 --- !u!1 &840213920
 GameObject:
   m_ObjectHideFlags: 0
@@ -36012,7 +36098,7 @@ MonoBehaviour:
   version: 2
   globalVolume: 0
   mode: 1
-  size: {x: 51.482826, y: 34.005978, z: 35.927002}
+  size: {x: 51.482834, y: 34.005978, z: 35.927002}
   overrideRendererFilters: 0
   minRendererVolumeSize: 0.1
   objectLayerMask:
@@ -36050,7 +36136,7 @@ Transform:
   m_GameObject: {fileID: 863660156}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 37.782646, y: 6.0210714, z: 32.583496}
+  m_LocalPosition: {x: 37.782646, y: 6.0210714, z: 32.583504}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40180,11 +40266,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -44176,6 +44257,8 @@ MonoBehaviour:
   classDA: {fileID: 8764599390286949744}
   classDB: {fileID: 1378904344}
   classDB_IK: {fileID: 1378904347}
+  navPoint1_A: {fileID: 231636823}
+  navPoint1_B: {fileID: 1337456872}
   ulgrinAnimator: {fileID: 5866666020193315159}
   beforeChamberDoor: {fileID: 1268747980}
   spawnRegular: {fileID: 467534534}
@@ -47639,6 +47722,11 @@ Transform:
   - {fileID: 313013165}
   m_Father: {fileID: 1083687801}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1114546505 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 22545937952752559, guid: 58e1fca493e381c44b1736f036c99383, type: 3}
+  m_PrefabInstance: {fileID: 1218826625}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1115532904
 GameObject:
   m_ObjectHideFlags: 0
@@ -50144,11 +50232,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -57281,6 +57364,37 @@ Transform:
   - {fileID: 1364602515}
   m_Father: {fileID: 1882313956}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1337456871
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1337456872}
+  m_Layer: 0
+  m_Name: Nav_D_B_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1337456872
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1337456871}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.50000006, z: -0, w: 0.86602545}
+  m_LocalPosition: {x: 45.42383, y: 4, z: 37.791374}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2076960542}
+  m_LocalEulerAnglesHint: {x: 0, y: 60, z: 0}
 --- !u!1001 &1339985881
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -57924,7 +58038,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5359505653820605984, guid: 457b151888f8006459ad58e1aa6a145f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.92
+      value: -9.620001
       objectReference: {fileID: 0}
     - target: {fileID: 5359505653820605984, guid: 457b151888f8006459ad58e1aa6a145f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -58546,11 +58660,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -59743,7 +59852,6 @@ GameObject:
   - component: {fileID: 1378904342}
   - component: {fileID: 1378904344}
   - component: {fileID: 1378904347}
-  - component: {fileID: 1378904349}
   - component: {fileID: 1378904343}
   - component: {fileID: 1378904345}
   - component: {fileID: 1378904346}
@@ -59764,7 +59872,7 @@ Transform:
   m_GameObject: {fileID: 1378904341}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.70710576, z: -0, w: 0.70710784}
-  m_LocalPosition: {x: 34, y: 3.839, z: 36.9}
+  m_LocalPosition: {x: 33.8, y: 3.839, z: 38}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -59785,7 +59893,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 942c185b99b83654892239e40682d6c8, type: 3}
   m_Controller: {fileID: 9100000, guid: 034feb528b90f7d428b2ee0fa1873d19, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
@@ -59808,19 +59916,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 1
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 1
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 1
   playAnimOnStart: 0
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 0
   startingAnimList: []
   minAnimSpeed: 0
   maxAnimSpeed: 0
-  actorAnimator: {fileID: 3405337465405667093}
-  actorAgent: {fileID: 8764599390286949745}
+  actorAnimator: {fileID: 1378904343}
+  actorAgent: {fileID: 1378904345}
   voiceSource: {fileID: 677549843}
 --- !u!195 &1378904345
 NavMeshAgent:
@@ -59884,7 +59987,7 @@ MonoBehaviour:
   findPoisOnStart: 1
   trackingRadius: 10
   retargetSpeed: 5
-  maxAngle: 90
+  maxAngle: 100
   enableLeftArmIK: 0
   headRig: {fileID: 1382079026}
   headTransform: {fileID: 216161791}
@@ -59905,25 +60008,6 @@ MonoBehaviour:
   - m_Rig: {fileID: 1382079026}
     m_Active: 1
   m_Effectors: []
---- !u!114 &1378904349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1378904341}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0dfd0d2e2b716a5478ec44785b95fd05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NPC_StepSound
-  stepSoundSet:
-    Guid:
-      Data1: 1764315930
-      Data2: 1120703560
-      Data3: 560715176
-      Data4: -1650722396
-    Path: event:/SFX/Step/Step_Concrete_Walk
 --- !u!1 &1382079024
 GameObject:
   m_ObjectHideFlags: 0
@@ -61205,11 +61289,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -67687,11 +67766,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -74436,6 +74510,7 @@ GameObject:
   - component: {fileID: 1725626523}
   - component: {fileID: 1725626525}
   - component: {fileID: 1725626524}
+  - component: {fileID: 1725626526}
   m_Layer: 6
   m_Name: Chamber173_Spot
   m_TagString: Untagged
@@ -74664,6 +74739,25 @@ Light:
   m_LightUnit: 0
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &1725626526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1725626522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fafb817f42376349814c4bb96628512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightFlicker
+  preset: 3
+  customPattern: mmnmmommommnonmmonqnmmo
+  stepsPerSecond: 20
+  randomOffset: 1
+  startActive: 1
+  smoothTransitions: 1
+  smoothSpeed: 20
 --- !u!1 &1726339933
 GameObject:
   m_ObjectHideFlags: 0
@@ -74933,11 +75027,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -82991,6 +83080,91 @@ Transform:
   - {fileID: 718133013}
   m_Father: {fileID: 185356699}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1898997993
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1898997994}
+  - component: {fileID: 1898997996}
+  - component: {fileID: 1898997995}
+  m_Layer: 2
+  m_Name: AmbienceZoneB
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1898997994
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898997993}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 36.75, y: 4.4, z: 33.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 522264694}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1898997995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898997993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: Player
+  EventReference:
+    Guid:
+      Data1: -34110872
+      Data2: 1214422577
+      Data3: 21832854
+      Data4: 766323358
+    Path: event:/SFX/Ambience/Soundscapes/Industrial_Ambience_02
+  Event: 
+  EventPlayTrigger: 3
+  EventStopTrigger: 4
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!65 &1898997996
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898997993}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 12, y: 6.9999995, z: 25}
+  m_Center: {x: -3.5, y: 2.9999998, z: 3}
 --- !u!1 &1900599331
 GameObject:
   m_ObjectHideFlags: 0
@@ -87198,11 +87372,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -87524,7 +87693,7 @@ Transform:
   m_GameObject: {fileID: 1977747948}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 35.5, y: 4.4, z: 30.6}
+  m_LocalPosition: {x: 35.5, y: 4.4, z: 29.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -93341,6 +93510,9 @@ Transform:
   m_Children:
   - {fileID: 467534534}
   - {fileID: 101288619}
+  - {fileID: 231636823}
+  - {fileID: 1337456872}
+  - {fileID: 839827983}
   m_Father: {fileID: 1031298319}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2078374323
@@ -96828,7 +97000,7 @@ MonoBehaviour:
   m_ShadowNearPlane: 0.1
   m_BlockerSampleCount: 24
   m_FilterSampleCount: 16
-  m_MinFilterSize: 0.1
+  m_MinFilterSize: 0.3
   m_DirLightPCSSBlockerSampleCount: 24
   m_DirLightPCSSFilterSampleCount: 16
   m_DirLightPCSSMaxPenumbraSize: 0.56
@@ -96856,7 +97028,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
-  m_ShadowUpdateMode: 0
+  m_ShadowUpdateMode: 1
   m_AlwaysDrawDynamicShadows: 1
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -96941,7 +97113,7 @@ Light:
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 1.2972282e+10, y: 12.520354, z: 1.5514694e+19, w: 885908.8}
   m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
+  m_UseViewFrustumForShadowCasterCull: 0
   m_ForceVisible: 0
   m_ShapeRadius: 0.025
   m_ShadowAngle: 0
@@ -98066,11 +98238,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 1
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 1
@@ -99965,7 +100132,7 @@ Transform:
   m_GameObject: {fileID: 919132148981153411}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 53.3, y: 3.8399842, z: 41.9}
+  m_LocalPosition: {x: 53.55, y: 3.8399842, z: 42.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -101075,6 +101242,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 543450652699386937}
+  - component: {fileID: 919132148981153413}
+  - component: {fileID: 919132148981153412}
   m_Layer: 0
   m_Name: Actor_SCP_173
   m_TagString: Untagged
@@ -101082,6 +101251,49 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!95 &919132148981153412
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148981153411}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e0c824898f69a474a974a7a04beeeb5f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &919132148981153413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148981153411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
+  playAnimOnStart: 0
+  randomAnimOnStart: 0
+  randomAnimSpeedOnStart: 0
+  startingAnimList: []
+  minAnimSpeed: 0
+  maxAnimSpeed: 0
+  actorAnimator: {fileID: 0}
+  actorAgent: {fileID: 0}
+  voiceSource: {fileID: 0}
 --- !u!1 &919132149098036419
 GameObject:
   m_ObjectHideFlags: 0
@@ -107816,7 +108028,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 942c185b99b83654892239e40682d6c8, type: 3}
   m_Controller: {fileID: 9100000, guid: 034feb528b90f7d428b2ee0fa1873d19, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
@@ -112852,11 +113064,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 0
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 0
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 0
   playAnimOnStart: 0
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 0
@@ -118548,7 +118755,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8764599390286949743}
   - component: {fileID: 8764599390286949744}
-  - component: {fileID: 8764599390286949747}
   - component: {fileID: 3405337465405667093}
   - component: {fileID: 8764599390286949745}
   - component: {fileID: 8764599390286949746}
@@ -119265,8 +119471,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8280373801705338837}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.7933523, z: -0, w: 0.60876286}
-  m_LocalPosition: {x: 34.5, y: 3.839, z: 39.7}
+  m_LocalRotation: {x: -0, y: 0.86602443, z: -0, w: 0.5000018}
+  m_LocalPosition: {x: 34.600002, y: 3.839, z: 40.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -119274,7 +119480,7 @@ Transform:
   - {fileID: 1336168609647238798}
   - {fileID: 49175682}
   m_Father: {fileID: 137577229}
-  m_LocalEulerAnglesHint: {x: 0, y: 105, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 120, z: 0}
 --- !u!114 &8764599390286949744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119287,11 +119493,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d9fb99c0e28241a3af00a126a877b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Generic
-  useRootMotion: 1
-  rmotionWalkingBool: walking_rmotion
-  useStopWalkingAnim: 1
-  stopWalkingTrigger: stop_walking
-  stopWalkingDistance: 1
   playAnimOnStart: 0
   randomAnimOnStart: 0
   randomAnimSpeedOnStart: 0
@@ -119346,25 +119547,6 @@ CapsuleCollider:
   m_Height: 3
   m_Direction: 1
   m_Center: {x: 0, y: 1.5, z: 0}
---- !u!114 &8764599390286949747
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8280373801705338837}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0dfd0d2e2b716a5478ec44785b95fd05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NPC_StepSound
-  stepSoundSet:
-    Guid:
-      Data1: 1764315930
-      Data2: 1120703560
-      Data3: 560715176
-      Data4: -1650722396
-    Path: event:/SFX/Step/Step_Concrete_Walk
 --- !u!4 &8794785502980286984
 Transform:
   m_ObjectHideFlags: 0

@@ -130,7 +130,6 @@ namespace PixeLadder.EasyTooltip {
         private void Awake() {
             if (Instance == null) {
                 Instance = this;
-                //if (Application.isPlaying) DontDestroyOnLoad(gameObject);
             } else {
                 if (Application.isPlaying) Destroy(gameObject);
                 else DestroyImmediate(gameObject);
@@ -280,7 +279,8 @@ namespace PixeLadder.EasyTooltip {
             CurrentState = TooltipState.Delay;
 
             if (delay > 0) {
-                yield return new WaitForSeconds(delay);
+                // Added Realtime to this fella so it works while paused
+                yield return new WaitForSecondsRealtime(delay);
                 if (CurrentState != TooltipState.Delay) yield break;
             }
 

@@ -15,6 +15,7 @@ public class RevivalSessionEngine : MonoBehaviour {
     public static int otherDifficultyFactor;
     public static int currentZone = 1;
     public static int currentPursuit = -1;
+    public static bool canSave;
     public static bool lczLockdownLifted;
 
     [Header("Heads Up Display")]
@@ -47,7 +48,7 @@ public class RevivalSessionEngine : MonoBehaviour {
 
     private void Update() {
         // Check for quicksave action
-        if (quicksaveAction.triggered) {
+        if (quicksaveAction.triggered && canSave) {
             SaveGame(true);
         }
     }

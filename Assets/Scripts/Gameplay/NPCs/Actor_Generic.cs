@@ -3,19 +3,8 @@ using FMODUnity;
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>
-/// Master script for puppeteering fellas on the field.
-/// Yes this is an absolute mess but I have a habit of trying to future proof things.
-/// 
-/// WARNING: UNFINISHED AND BUGGY
-/// </summary>
 public class Actor_Generic : MonoBehaviour {
     [Header("Animation Settings")]
-    [SerializeField] private bool useRootMotion;
-    [SerializeField, ShowField(nameof(useRootMotion))] private string rmotionWalkingBool = "walking_rmotion";
-    [SerializeField, ShowField(nameof(useRootMotion))] private bool useStopWalkingAnim;
-    [SerializeField, ShowField(nameof(useStopWalkingAnim))] private string stopWalkingTrigger = "stop_walking";
-    [SerializeField, ShowField(nameof(useStopWalkingAnim))] private float stopWalkingDistance;
     [SerializeField] private bool playAnimOnStart;
     [SerializeField, ShowField(nameof(playAnimOnStart))] private bool randomAnimOnStart;
     [SerializeField, ShowField(nameof(playAnimOnStart))] private bool randomAnimSpeedOnStart;
@@ -28,28 +17,9 @@ public class Actor_Generic : MonoBehaviour {
     [SerializeField] private NavMeshAgent actorAgent;
     [SerializeField] private Transform voiceSource;
 
-    private int rmotionWalkingBoolHash;
-    private int rmotionStopWalkingTriggerHash;
-    private bool useRootMotionNav;
-    private bool isMoving;
-
     #region Unity Lifecycle
 
     private void Start() {
-        if (useRootMotion) {
-            actorAgent.updatePosition = false;
-            actorAgent.updateRotation = false;
-        }
-
-        useRootMotionNav = useRootMotion && actorAnimator != null && actorAgent != null && rmotionWalkingBool != null;
-
-        if (useRootMotionNav) {
-            rmotionWalkingBoolHash = Animator.StringToHash(rmotionWalkingBool);
-
-            if (useStopWalkingAnim)
-                rmotionStopWalkingTriggerHash = Animator.StringToHash(stopWalkingTrigger);
-        }
-
         // Play specific animation on start if applicable
         if (playAnimOnStart) {
             if (randomAnimSpeedOnStart) {
@@ -66,52 +36,6 @@ public class Actor_Generic : MonoBehaviour {
         }
     }
 
-    private void Update() {
-        // If root motion navigation is to be utilized then manage that stuff
-        if (useRootMotionNav) {
-            isMoving = actorAgent.remainingDistance > actorAgent.stoppingDistance;
-
-            actorAnimator.SetBool(rmotionWalkingBoolHash, isMoving);
-
-            if (!isMoving) return;
-
-            if (actorAgent.remainingDistance <= stopWalkingDistance && actorAgent.remainingDistance > actorAgent.stoppingDistance && useStopWalkingAnim) {
-                actorAnimator.SetTrigger(rmotionStopWalkingTriggerHash);
-            }
-
-            Vector3 direction = actorAgent.desiredVelocity.normalized;
-            if (direction.sqrMagnitude > 0.01f) {
-                Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
-            }
-
-            actorAgent.nextPosition = transform.position;
-        }
-    }
-
-    private void LateUpdate() {
-        // If root motion navigation is to be utilized then manage that stuff
-        if (actorAnimator != null && actorAgent != null && rmotionWalkingBool != null && useRootMotion) {
-            var targetRotation = actorAnimator.rootRotation;
-            actorAnimator.transform.rotation = targetRotation;
-        }
-    }
-
-    private void OnAnimatorMove() {
-        // If root motion navigation is to be utilized then manage that stuff
-        if (actorAnimator != null && actorAgent != null && rmotionWalkingBool != null && useRootMotion) {
-            if (!actorAgent.enabled) return;
-
-            Vector3 rootMotion = actorAnimator.deltaPosition;
-            transform.position += new Vector3(rootMotion.x, 0f, rootMotion.z);
-            var pos = transform.position;
-            pos.y = actorAgent.nextPosition.y;
-
-            transform.position = pos;
-            actorAgent.nextPosition = pos;
-        }
-    }
-
     #endregion
 
     #region Public Methods
@@ -124,6 +48,16 @@ public class Actor_Generic : MonoBehaviour {
 
         actorAnimator.speed = 1;
         actorAnimator.Play(animationName);
+    }
+
+    public void SetAnimTrigger(string animTriggerName) {
+        if (actorAnimator == null) {
+            Debug.Log("<color=red>[Actor_Generic]</color> The actorAnimator reference of this actor was left null, animation related tasks will not work.");
+            return;
+        }
+
+        actorAnimator.speed = 1;
+        actorAnimator.SetTrigger(animTriggerName);
     }
 
     public void Speak(EventReference toSpeak) {
