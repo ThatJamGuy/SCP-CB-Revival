@@ -60,6 +60,16 @@ public class Actor_Generic : MonoBehaviour {
         actorAnimator.SetTrigger(animTriggerName);
     }
 
+    public void SetAnimBool(string boolName, bool value) {
+        if (actorAnimator == null) {
+            Debug.Log("<color=red>[Actor_Generic]</color> The actorAnimator reference of this actor was left null, animation related tasks will not work.");
+            return;
+        }
+
+        actorAnimator.speed = 1;
+        actorAnimator.SetBool(boolName, value);
+    }
+
     public void Speak(EventReference toSpeak) {
         AudioManager.PlayOneShot(toSpeak, voiceSource.position);
     }

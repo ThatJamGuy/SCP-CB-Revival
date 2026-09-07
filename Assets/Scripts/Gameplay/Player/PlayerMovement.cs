@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour {
 
     #region Private Variables
     private static Player player => Player.Instance;
-    private static InputManager inputManager => InputManager.Instance;
+    private static RevivalRuntimeEngine runtimeEngine => RevivalRuntimeEngine.Instance;
 
     private InputAction moveAction;
     private InputAction sprintAction;
@@ -58,7 +58,7 @@ public class PlayerMovement : MonoBehaviour {
 
     private void Start() {
         // If there is no InputManager available at the start, disallow functionality and print a warning in console
-        if (inputManager == null) {
+        if (runtimeEngine == null) {
             cantFunction = true;
             Debug.Log("<color=red>[PlayerMovement]</color> InputManager was not found, moving will not work!");
 
@@ -66,9 +66,9 @@ public class PlayerMovement : MonoBehaviour {
         }
 
         // Retrieve the different input actions from InputManager so they can be cached
-        moveAction = inputManager.GetAction("Player", "Move");
-        sprintAction = inputManager.GetAction("Player", "Sprint");
-        crouchAction = inputManager.GetAction("Player", "Crouch");
+        moveAction = runtimeEngine.GetAction("Player", "Move");
+        sprintAction = runtimeEngine.GetAction("Player", "Sprint");
+        crouchAction = runtimeEngine.GetAction("Player", "Crouch");
 
         // Subscribe to the sprint and crouch actions so it can determine if the player is holding the right keys
         sprintAction.started += OnSprintStarted;
@@ -189,7 +189,7 @@ public class PlayerMovement : MonoBehaviour {
         isCrouching = true;
         player.isCrouching = true;
         TweenHeight(characterController.height, CROUCHING_HEIGHT);
-        AudioManager.PlayOneShot(AudioEventsHolder.Instance.crouchFoley, transform.position);
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.crouchFoley, transform.position);
     }
 
     // If not crouching already and the player cannot stand, then do nothing
@@ -200,7 +200,7 @@ public class PlayerMovement : MonoBehaviour {
         isCrouching = false;
         player.isCrouching = false;
         TweenHeight(characterController.height, STANDING_HEIGHT);
-        AudioManager.PlayOneShot(AudioEventsHolder.Instance.crouchFoley, transform.position);
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.crouchFoley, transform.position);
     }
 
     // Method that uses PrimeTween to smoothly interpolate between standing and crouching heights

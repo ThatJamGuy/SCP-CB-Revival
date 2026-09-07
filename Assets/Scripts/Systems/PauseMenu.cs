@@ -21,13 +21,7 @@ public class PauseMenu : MonoBehaviour {
     #region Unity Callbacks
 
     private void OnEnable() {
-        // So if the InputManager thinks we have a controller plugged in, then select resume button so it works
-        if (InputManager.Instance.UsingController) {
-            CanvasInstance.Instance.controllerTooltips.SetActive(true);
-            CanvasInstance.Instance.resumeButton.Select();
-        } else {
-            CanvasInstance.Instance.controllerTooltips.SetActive(false);
-        }
+        CanvasInstance.Instance.controllerTooltips.SetActive(false);
     }
 
     private void Start() {

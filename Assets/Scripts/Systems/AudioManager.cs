@@ -1,5 +1,6 @@
 using FMOD.Studio;
 using FMODUnity;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,6 +17,9 @@ public class AudioManager : MonoBehaviour {
     [Range(0, 1)] public float musicVolume = 1;
     [Range(0, 1)] public float sfxVolume = 1;
     [Range(0, 1)] public float voiceVolume = 1;
+
+    [Header("Global Audio Container")]
+    public GlobalAudioContainer globalAudioContainer;
 
     private Bus masterBus;
     private Bus musicBus;
@@ -127,4 +131,25 @@ public class AudioManager : MonoBehaviour {
     }
 
     #endregion
+}
+
+[Serializable]
+public class GlobalAudioContainer {
+    public EventReference crouchFoley;
+    public EventReference chamberStingerA;
+    public EventReference chamberStingerB;
+    public EventReference chamberStingerC;
+    public EventReference quicksave01;
+    public EventReference introVideoSound;
+    public EventReference scp096Triggered;
+    public EventReference scp096ChargeUp;
+    public EventReference scp096KillPlayer;
+    public EventReference doorOpen173;
+    public EventReference statueHorrorNear;
+    public EventReference statueHorrorFar;
+    public EventReference legacyLightFlicker;
+    public EventReference legacyTunnelBurst;
+    public EventReference p90Oneshot;
+    public EventReference doorExplode;
+    public EventReference doorBangEvent;
 }

@@ -3,6 +3,7 @@ using FMODUnity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class RevivalRuntimeEngine : MonoBehaviour {
     public static RevivalRuntimeEngine Instance { get; private set; }
@@ -11,6 +12,9 @@ public class RevivalRuntimeEngine : MonoBehaviour {
 
     public static int TotalAchievements { get; private set; }
     public static int ObtainedAchievementsCount => obtainedAchievementNames.Count;
+
+    [Header("Input")]
+    [SerializeField] private InputActionAsset inputActions;
 
     [Header("Default RPC Settings")]
     [SerializeField] private string details = "";
@@ -53,6 +57,14 @@ public class RevivalRuntimeEngine : MonoBehaviour {
         // Set the log utility to the OnLog method and set the application ID to applicationID. Then update RPC. 
         client.SetApplicationId(APPLICATION_ID);
         UpdateRichPresence();
+    }
+
+    private void OnEnable() {
+        inputActions.Enable();
+    }
+
+    private void OnDisable() {
+        inputActions.Disable();
     }
 
     private void OnDestroy() {
@@ -164,6 +176,14 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     #endregion
 
     #region Public Methods
+
+    // Gets an action for a given map. Called from external scripts
+    public InputAction GetAction(string mapName, string actionName) {
+        var action = inputActions.FindActionMap(mapName)?.FindAction(actionName);
+
+        if (action == null) Debug.LogWarning($"Action {actionName} not found in Map {mapName}.");
+        return action;
+    }
 
     public static void SaveSettingsData() => DataSaver.Save<SettingsData>(SettingsData, SETTINGS_FILE_NAME);
 

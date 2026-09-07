@@ -202,9 +202,9 @@ public class SCP_173 : MonoBehaviour {
         // Randomly be able to either open the nearest door or fail to do so and bang on it a bit
         if (nearest && Random.value < doorOpenChance && !nearest.isOpen && !nearest.requiresKeycard && !nearest.isLocked && !isVisibleByPlayer && !puppetMode) {
             nearest.OpenDoor();
-            AudioManager.PlayOneShot(AudioEventsHolder.Instance.doorOpen173, nearest.transform.position);
+            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorOpen173, nearest.transform.position);
         } else if (nearest && !nearest.isOpen && !puppetMode) {
-            AudioManager.PlayOneShot(AudioEventsHolder.Instance.doorBangEvent, nearest.transform.position);
+            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorBangEvent, nearest.transform.position);
         }
     }
 
@@ -291,7 +291,7 @@ public class SCP_173 : MonoBehaviour {
         if (dist <= 1.5f && !isVisibleByPlayer && !puppetMode) {
             Player.Instance.KillPlayer(2, 0.5f, 0, "Subject D-9341. Cause of death: Fatal cervical fracture. Assumed to be attacked by SCP-173.");
             AudioManager.PlayOneShot(neckBreakSound, transform.position);
-            AudioManager.PlayOneShot(AudioEventsHolder.Instance.statueHorrorNear, transform.position);
+            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.statueHorrorNear, transform.position);
             Destroy(gameObject);
         }
 
@@ -316,10 +316,10 @@ public class SCP_173 : MonoBehaviour {
         float dist = Vector3.Distance(transform.position, playerTransform.position);
 
         if (dist < HORROR_SOUND_DISTANCE_THRESHOLD) {
-            AudioManager.PlayOneShot(AudioEventsHolder.Instance.statueHorrorNear);
+            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.statueHorrorNear);
         } else {
             if (!hasPlayedDistanceHorrorSound) {
-                AudioManager.PlayOneShot(AudioEventsHolder.Instance.statueHorrorFar);
+                AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.statueHorrorFar);
                 hasPlayedDistanceHorrorSound = true;
             }
         }

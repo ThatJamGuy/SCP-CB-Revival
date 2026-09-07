@@ -16,7 +16,7 @@ public class PlayerBlink : MonoBehaviour {
     #region Unity Callbacks
 
     private void OnEnable() {
-        blinkAction = InputManager.Instance.GetAction("Player", "Blink");
+        blinkAction = RevivalRuntimeEngine.Instance.GetAction("Player", "Blink");
     }
 
     private void Update() {

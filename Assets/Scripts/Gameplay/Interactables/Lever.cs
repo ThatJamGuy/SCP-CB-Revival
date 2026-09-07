@@ -1,7 +1,7 @@
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
-using FMODUnity;
 
 /// <summary>
 /// Handles a draggable lever interactable using player look input.
@@ -40,12 +40,12 @@ public class Lever : MonoBehaviour, IHoldInteractable {
 
     private void Awake() {
         // Cache the starting local X rotation of the handle
-        currentHandleXRotation = NormalizeAngle(leverHandleObject.transform.localEulerAngles.x );
+        currentHandleXRotation = NormalizeAngle(leverHandleObject.transform.localEulerAngles.x);
     }
 
     private void Start() {
         // If there is no InputManager available at startup, disable lever functionality and print a warning
-        if (InputManager.Instance == null) {
+        if (RevivalRuntimeEngine.Instance == null) {
             cantFunction = true;
 
             Debug.Log(
@@ -56,7 +56,7 @@ public class Lever : MonoBehaviour, IHoldInteractable {
         }
 
         // Get the player's look action from the InputManager
-        lookAction = InputManager.Instance.GetAction("Player", "Look");
+        lookAction = RevivalRuntimeEngine.Instance.GetAction("Player", "Look");
     }
 
     private void Update() {
@@ -70,7 +70,7 @@ public class Lever : MonoBehaviour, IHoldInteractable {
 
         // Continuously check if the lever reached an ON/OFF state
         UpdateLeverState();
-        
+
         if (Player.Instance.isMoving) ForceStopInteract();
     }
 
@@ -177,7 +177,7 @@ public class Lever : MonoBehaviour, IHoldInteractable {
         hasPlayedMoveSound = false;
         isBeingUsed = false;
     }
-    
+
     public void ForceStopInteract() {
         Player.Instance.disableLooking = false;
         hasPlayedMoveSound = false;

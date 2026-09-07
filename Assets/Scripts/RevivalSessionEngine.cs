@@ -43,7 +43,7 @@ public class RevivalSessionEngine : MonoBehaviour {
     }
 
     private void Start() {
-        quicksaveAction = InputManager.Instance.GetAction("Player", "Quicksave");
+        quicksaveAction = RevivalRuntimeEngine.Instance.GetAction("Player", "Quicksave");
     }
 
     private void Update() {
@@ -81,7 +81,7 @@ public class RevivalSessionEngine : MonoBehaviour {
         DataSaver.Save(CurrentSaveData, "save.json");
 
         if (playSound) {
-            AudioManager.PlayOneShot(AudioEventsHolder.Instance.quicksave01, Player.Instance.transform.position);
+            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.quicksave01, Player.Instance.transform.position);
         }
     }
 

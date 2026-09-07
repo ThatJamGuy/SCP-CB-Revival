@@ -39,7 +39,7 @@ public class PlayerLook : MonoBehaviour {
 
     private void Start() {
         // If there is no InputManager available at the start, disallow functionality and print a warning in console
-        if (InputManager.Instance == null) {
+        if (RevivalRuntimeEngine.Instance == null) {
             cantFunction = true;
             Debug.Log("<color=red>[PlayerLook]</color> InputManager was not found, so looking will now work for now.");
 
@@ -47,8 +47,8 @@ public class PlayerLook : MonoBehaviour {
         }
 
         // If the check passes, get the look action from the available InputManager
-        lookAction = InputManager.Instance.GetAction("Player", "Look");
-        zoomAction = InputManager.Instance.GetAction("Player", "RightClick");
+        lookAction = RevivalRuntimeEngine.Instance.GetAction("Player", "Look");
+        zoomAction = RevivalRuntimeEngine.Instance.GetAction("Player", "RightClick");
 
         // Lock the cursor and set it to invisible for gameplay by default
         Player.SetCursorState(false);

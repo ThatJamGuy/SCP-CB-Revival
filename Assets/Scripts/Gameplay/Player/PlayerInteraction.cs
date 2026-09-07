@@ -41,7 +41,7 @@ public class PlayerInteraction : MonoBehaviour {
 
     private void Start() {
         // If there is no InputManager available at the start, disallow functionality and print a warning in console
-        if (InputManager.Instance == null) {
+        if (RevivalRuntimeEngine.Instance == null) {
             cantFunction = true;
             Debug.Log("<color=red>[PlayerInteraction]</color> InputManager was not found, interacting will not work!");
 
@@ -60,7 +60,7 @@ public class PlayerInteraction : MonoBehaviour {
         // Get the inputAction from the InputManager
         // Also set the interactIcon to the one defined in the CanvasInstance
         // Finally get the canvasRectTransform so the thing can know how to position the interact icon on the screen
-        interactAction = InputManager.Instance.GetAction("Player", "Interact");
+        interactAction = RevivalRuntimeEngine.Instance.GetAction("Player", "Interact");
         interactIcon = CanvasInstance.Instance.interactIcon;
         canvasRectTransform = CanvasInstance.Instance.canvasRectTransform;
     }

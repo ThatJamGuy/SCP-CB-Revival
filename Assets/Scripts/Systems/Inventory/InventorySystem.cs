@@ -46,7 +46,7 @@ public class InventorySystem : MonoBehaviour {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        unequipItemAction = InputManager.Instance.GetAction("Player", "RightClick");
+        unequipItemAction = RevivalRuntimeEngine.Instance.GetAction("Player", "RightClick");
     }
 
     private void Start() {

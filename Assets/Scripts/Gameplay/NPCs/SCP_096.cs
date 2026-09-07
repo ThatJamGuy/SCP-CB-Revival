@@ -121,8 +121,8 @@ public class SCP_096 : MonoBehaviour {
             spatialEventEmitter.Stop();
 
             MusicManager.Instance.StopAllMusic();
-            AudioManager.PlayOneShot(AudioEventsHolder.Instance.scp096Triggered);
-            AudioManager.PlayOneShot(AudioEventsHolder.Instance.scp096ChargeUp, transform.position);
+            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.scp096Triggered);
+            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.scp096ChargeUp, transform.position);
         }
     }
 
@@ -139,7 +139,7 @@ public class SCP_096 : MonoBehaviour {
 
         if (distanceToPlayer < KILL_RADIUS && !Player.Instance.isDead) {
             Player.Instance.KillPlayer(3, 0.5f, 0, "A large amount of blood found in [DATA REDACTED]. DNA indentified as Subject D-9341. Most likely [DATA REDACTED] by SCP-096.");
-            AudioManager.PlayOneShot(AudioEventsHolder.Instance.scp096KillPlayer);
+            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.scp096KillPlayer);
             Destroy(gameObject);
         }
     }
@@ -185,7 +185,7 @@ public class SCP_096 : MonoBehaviour {
                             Vector3 explosionDirection = (door.transform.position - transform.position).normalized;
                             door.EnableGravityOnDoors(explosionDirection, 50f);
 
-                            AudioManager.PlayOneShot(AudioEventsHolder.Instance.doorExplode, transform.position);
+                            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorExplode, transform.position);
                             return;
                         }
                     }

@@ -38,8 +38,6 @@ public class Player : MonoBehaviour {
 
     private static bool desiredCursorVisible { get; set; }
 
-    #region Unity Callbacks
-
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
@@ -51,20 +49,6 @@ public class Player : MonoBehaviour {
 
         RevivalRuntimeEngine.Instance.RegisterCamera(playerCamera.transform);
     }
-
-    private void OnEnable() {
-        if (InputManager.Instance != null)
-            InputManager.Instance.OnInputDeviceChanged += OnDeviceChanged;
-
-        if (InventorySystem.Instance != null) InventorySystem.Instance.SetPlayerCamera(playerCamera);
-    }
-
-    private void OnDisable() {
-        if (InputManager.Instance != null)
-            InputManager.Instance.OnInputDeviceChanged -= OnDeviceChanged;
-    }
-
-    #endregion
 
     #region Private Methods
 
@@ -122,7 +106,6 @@ public class Player : MonoBehaviour {
 
     // Apply cursor state only when on KBM; skip silently on controller
     private static void ApplyCursorState() {
-        if (InputManager.Instance.UsingController) return;
         Cursor.lockState = desiredCursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = desiredCursorVisible;
     }
