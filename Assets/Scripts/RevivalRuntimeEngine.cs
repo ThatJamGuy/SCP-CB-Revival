@@ -13,6 +13,8 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     public static int TotalAchievements { get; private set; }
     public static int ObtainedAchievementsCount => obtainedAchievementNames.Count;
 
+    [SerializeField] private bool developerMode; // Enable this if not the core scene
+
     [Header("Input")]
     [SerializeField] private InputActionAsset inputActions;
 
@@ -74,6 +76,16 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     }
 
     private void Start() {
+        // Perform CORE setup (Scene loading)
+
+        if (!developerMode) {
+            SceneController.instance
+                .NewTransition()
+                .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu)
+                .WithOverlay()
+                .Perform();
+        }
+
         // Do some black magic shit to set the timestamp to the 0:00 mark
         startTimestamp = (ulong)System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
@@ -175,8 +187,6 @@ public class RevivalRuntimeEngine : MonoBehaviour {
 
     #endregion
 
-    #region Public Methods
-
     // Gets an action for a given map. Called from external scripts
     public InputAction GetAction(string mapName, string actionName) {
         var action = inputActions.FindActionMap(mapName)?.FindAction(actionName);
@@ -193,28 +203,17 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     /// <param name="newDetails">New details the RPC will use (Subtext 1)</param>
     /// <param name="newState">New state of that detail the RPC will use (Subtext 2)</param>
     public void ChangeDiscordStatus(string newDetails, string newState = "") {
-        // Set the details and state to the new ones given through this method
         details = newDetails;
         state = newState;
 
-        // Update the rich presence so it shows properly
         UpdateRichPresence();
     }
 
-    /// <summary>
-    /// Returns a true or false value based on if the defined achievement is unlocked.
-    /// </summary>
-    /// <param name="achievementIdentifier">ID of the achievement to check</param>
-    /// <returns></returns>
     public bool AchievementUnlocked(string achievementIdentifier) {
         if (obtainedAchievementNames.Contains(achievementIdentifier)) return true;
         else return false;
     }
 
-    /// <summary>
-    /// Gives the player an achievement via that achievements identifier
-    /// </summary>
-    /// <param name="achievementIdentifier">Identifier for this achievement. (IE. "achv_914")</param>
     public void GiveAchievement(string achievementIdentifier) {
         foreach (var achievement in achievements) {
             if (SettingsData.consoleEnabled) {
@@ -266,8 +265,6 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     public static void ToggleOptionsMenu(bool active) {
         Instance.optionsScreen.SetActive(active);
     }
-
-    #endregion
 }
 
 [System.Serializable]

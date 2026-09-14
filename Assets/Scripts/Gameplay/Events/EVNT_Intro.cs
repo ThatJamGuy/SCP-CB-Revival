@@ -24,7 +24,6 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private Door contDoor;
 
     [Header("Developer References")]
-    [SerializeField] private GameObject inputManager;
     [SerializeField] private GameObject runtimeEngine;
     [SerializeField] private GameObject sessionEngine;
     [SerializeField] private GameObject consolePrefab;
@@ -44,6 +43,7 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private IK_MasterComponent classDB_IK;
     [SerializeField] private Transform navPoint1_A;
     [SerializeField] private Transform navPoint1_B;
+    [SerializeField] private Transform navPoint2_B;
     [SerializeField] private GameObject chamberEnterTrigger;
 
     [Header("Generic References")]
@@ -208,8 +208,23 @@ public class EVNT_Intro : MonoBehaviour {
     }
 
     private IEnumerator InsideChamberSequence() {
+        yield return new WaitForSeconds(3);
+        AudioManager.PlayOneShot(franklinA);
+        yield return new WaitForSeconds(5);
+        classDB.WalkTo(navPoint2_B.position);
+        yield return new WaitForSeconds(6);
+        franklin.PlayAnimation("IdleAction09");
+        contDoor.OpenDoor();
+        yield return new WaitForSeconds(0.5f);
+        classDA.SetAnimTrigger("LookBehind");
         yield return new WaitForSeconds(1);
-        Debug.Log("Player is in chamber and we are good to continue with that.");
+        AudioManager.PlayOneShot(franklinA);
+        yield return new WaitForSeconds(3);
+        // Class d1 line 1
+        yield return new WaitForSeconds(2);
+        RevivalRuntimeEngine.Instance.ShakeCamera(0, 0.1f, 10);
+        yield return new WaitForSeconds(1);
+        classDB.SetAnimTrigger("WalkBackScared");
     }
 
     #endregion

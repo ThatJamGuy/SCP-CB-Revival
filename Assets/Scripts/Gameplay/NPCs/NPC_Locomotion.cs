@@ -5,11 +5,11 @@ public class NPC_Locomotion : MonoBehaviour {
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private Animator animator;
 
-    private static readonly int IsWalking = Animator.StringToHash("isWalking");
+    private static readonly int IsWalking = Animator.StringToHash("walking_rmotion");
 
     private void Start() {
         if (navMeshAgent == null) return;
-        
+
         navMeshAgent.updatePosition = false;
         navMeshAgent.updateRotation = false;
     }
@@ -22,7 +22,7 @@ public class NPC_Locomotion : MonoBehaviour {
         animator.SetBool(IsWalking, isMoving);
 
         if (!isMoving) return;
-        
+
         var direction = navMeshAgent.desiredVelocity.normalized;
 
         if (direction.sqrMagnitude > 0.01f) {
@@ -52,26 +52,4 @@ public class NPC_Locomotion : MonoBehaviour {
         transform.position = pos;
         navMeshAgent.nextPosition = pos;
     }
-
-    // Tells the AI to relocate to a new position taking in Transform
-    public void WalkToPosition(Transform position) {
-        if (!navMeshAgent || !animator) return;
-
-        navMeshAgent.SetDestination(position.position);
-    }
-    
-    // Tells the AI to relocate to a new position taking in a Vector3 instead
-    public void WalkToPosition(Vector3 position) {
-        if (!navMeshAgent || !animator) return;
-
-        navMeshAgent.SetDestination(position);
-    }
-
-    // Warps the NPC to a given location 
-    public void Warp(Vector3 position) {
-        gameObject.transform.position = position;
-        navMeshAgent.Warp(position);
-    }
-    
-    public void ToggleAgent() => navMeshAgent.enabled = !navMeshAgent.enabled;
 }
