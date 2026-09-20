@@ -23,13 +23,16 @@ public class MainMenuController : MonoBehaviour {
 
     private SaveData currentSaveData;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Start() {
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Menu);
         RevivalRuntimeEngine.Instance.ChangeDiscordStatus("In the Main Menu");
 
-        versionText.text = Application.version;
+        // Version number (ie. Alpha v0.0.6 09202026)
+        // Don't forget to change the date manually when building!
+        // TODO: Look into a way to automate this later
+        versionText.text = "Alpha v" + Application.version + " 09202026";
 
         AutomaticallyDefineSeed();
 
@@ -91,7 +94,7 @@ public class MainMenuController : MonoBehaviour {
     /// </summary>
     private void AutomaticallyDefineSeed() {
         int seedTypeChance;
-        seedTypeChance = Random.Range(0, 2);
+        seedTypeChance = UnityEngine.Random.Range(0, 2);
 
         if (seedTypeChance != 2) {
             seedInputField.text = GenerateRandomString(5);
@@ -119,16 +122,17 @@ public class MainMenuController : MonoBehaviour {
             "scpcb",
             "scp",
             "subscribe",
-            "dzigo"
+            "dzigo",
+            "drsmokes"
         };
 
-        seedInputField.text = presetSeeds[Random.Range(0, presetSeeds.Length)];
+        seedInputField.text = presetSeeds[UnityEngine.Random.Range(0, presetSeeds.Length)];
     }
 
     private IEnumerator PeriodicMenuShake() {
         if (!enableMenuShakes) StopCoroutine(PeriodicMenuShake());
 
-        yield return new WaitForSeconds(Random.Range(minShakeTime, maxShakeTime));
+        yield return new WaitForSeconds(UnityEngine.Random.Range(minShakeTime, maxShakeTime));
 
         if (!enableMenuShakes) StopCoroutine(PeriodicMenuShake());
 
@@ -157,7 +161,7 @@ public class MainMenuController : MonoBehaviour {
         StringBuilder randomString = new StringBuilder();
 
         for (int i = 0; i < stringLength; i++) {
-            char randomChar = CHARACTERS[Random.Range(0, CHARACTERS.Length)];
+            char randomChar = CHARACTERS[UnityEngine.Random.Range(0, CHARACTERS.Length)];
             randomString.Append(randomChar);
         }
 

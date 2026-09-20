@@ -57,7 +57,7 @@ namespace IngameDebugConsole
 
         private delegate object FieldInfoGetDelegate(object obj);
         private delegate void FieldInfoSetDelegate(object obj, object value);
-        private readonly FieldInfoGetDelegate m_IsCompositionActiveGetter = typeof(TMP_InputField).GetField("m_IsCompositionActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue;
+        private readonly FieldInfoGetDelegate m_IsCompositionActiveGetter = (typeof(TMP_InputField).GetField("m_IsCompositionActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance) is FieldInfo fi) ? fi.GetValue : null;
         private readonly FieldInfoSetDelegate m_IsTextComponentUpdateRequiredSetter = typeof(TMP_InputField).GetField("m_IsTextComponentUpdateRequired", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SetValue;
         private readonly object boxedTrueValue = true;
 
@@ -148,7 +148,8 @@ namespace IngameDebugConsole
                         consumedEvent = true;
 
                         // Special handling on OSX which produces more events which need to be suppressed.
-                        if (poppedEvent.character == 0 && poppedEvent.modifiers == EventModifiers.None && caretPositionInternal == m_CaretPosition && (bool)m_IsCompositionActiveGetter(this))
+                        // This block is skipped on Unity 6.6+ because m_IsCompositionActive doesn't exist there.
+                        if (poppedEvent.character == 0 && poppedEvent.modifiers == EventModifiers.None && CompositionLength() == 0 && IsCompositionActive() == true)
                             break;
 
                         char ch = poppedEvent.keyCode switch
@@ -188,10 +189,16 @@ namespace IngameDebugConsole
                 }
             }
 
-            if (consumedEvent)
+            // We must also consume events when IME is active to prevent them from being passed to the text field. // UUM-100552
+            // IsCompositionActive() condition is skipped on Unity 6.6+'s source code (m_IsCompositionActive doesn't exist there) so it's skipped here as well.
+            if (consumedEvent || (CompositionLength() > 0 && IsCompositionActive() != false))
+            {
                 UpdateLabel();
+                eventData.Use();
+            }
 
-            eventData.Use();
+            bool? IsCompositionActive() => (m_IsCompositionActiveGetter == null) ? null : (bool)m_IsCompositionActiveGetter(this);
+            int CompositionLength() => caretPositionInternal - m_CaretPosition;
         }
 
         // Command field input is changed, check if command is submitted

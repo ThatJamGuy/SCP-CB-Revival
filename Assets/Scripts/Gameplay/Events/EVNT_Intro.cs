@@ -161,7 +161,7 @@ public class EVNT_Intro : MonoBehaviour {
         yield return new WaitForSeconds(4);
         franklin.SetAnimTrigger("PressButton");
         yield return new WaitForSeconds(1.2f);
-        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173, 0);
+        MusicManager.Instance.StopAllMusic();
         contDoor.OpenDoor();
         classDB_IK.enableHeadIK = false;
         yield return new WaitForSeconds(1);
@@ -210,7 +210,7 @@ public class EVNT_Intro : MonoBehaviour {
     private IEnumerator InsideChamberSequence() {
         yield return new WaitForSeconds(3);
         AudioManager.PlayOneShot(franklinA);
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(4);
         classDB.WalkTo(navPoint2_B.position);
         yield return new WaitForSeconds(6);
         franklin.PlayAnimation("IdleAction09");
@@ -219,7 +219,9 @@ public class EVNT_Intro : MonoBehaviour {
         classDA.SetAnimTrigger("LookBehind");
         yield return new WaitForSeconds(1);
         AudioManager.PlayOneShot(franklinA);
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
+        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173, 0);
+        yield return new WaitForSeconds(1);
         // Class d1 line 1
         yield return new WaitForSeconds(2);
         RevivalRuntimeEngine.Instance.ShakeCamera(0, 0.1f, 10);
