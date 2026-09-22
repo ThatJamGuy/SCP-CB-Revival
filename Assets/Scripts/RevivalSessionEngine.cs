@@ -7,7 +7,7 @@ using UnityEngine;
 public class RevivalSessionEngine : MonoBehaviour {
     private static readonly int Quicksave = Animator.StringToHash("Quicksave");
     public static RevivalSessionEngine Instance { get; private set; }
-    public static SaveData CurrentSaveData { get; private set; }
+    //public static SaveData CurrentSaveData { get; private set; }
 
     public static int currentDifficulty;
     public static int otherDifficultyFactor;
@@ -32,7 +32,7 @@ public class RevivalSessionEngine : MonoBehaviour {
 
         Instance = this;
 
-        CurrentSaveData = DataSaver.Load<SaveData>("save.json"); ;
+        //CurrentSaveData = DataSaver.Load<SaveData>("save.json"); ;
 
         DebugLogConsole.AddCommand("print_zone", "Prints the current estimated zone to the console.", DebugDispalyZone);
     }

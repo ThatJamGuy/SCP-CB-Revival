@@ -21,7 +21,7 @@ public class MainMenuController : MonoBehaviour {
 
     private const string CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    private SaveData currentSaveData;
+    //private SaveData currentSaveData;
 
     #region Unity Lifecycle
 
@@ -61,7 +61,7 @@ public class MainMenuController : MonoBehaviour {
 
     public void LoadPreviousGame() {
         if (DataSaver.DataFileExists("save.json")) {
-            var previousSave = DataSaver.Load<SaveData>("save.json");
+            //var previousSave = DataSaver.Load<SaveData>("save.json");
             //if (previousSave.newGame == true) return;
 
             // TODO: Implement loading of the most recent save

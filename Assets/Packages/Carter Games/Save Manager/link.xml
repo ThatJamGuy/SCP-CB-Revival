@@ -1,0 +1,19 @@
+<linker>
+    <!-- Preserve the Newtonsoft.Json assembly to ensure JSON (de)serialization works -->
+    <!-- Should already be done, but this is for safety. -->
+    <assembly fullname="Newtonsoft.Json">
+        <type fullname="Newtonsoft.Json.JsonConvert" preserve="all"/>
+        <type fullname="Newtonsoft.Json.Serialization.DefaultContractResolver" preserve="all"/>
+    </assembly>
+
+    <!-- Preserve for AES encryption stuff -->
+    <assembly fullname="mscorlib">
+        <type fullname="System.Security.Cryptography.*" preserve="all"/>
+    </assembly>
+    
+    <!-- Preserve runtime code globally -->
+    <!-- Can likely be trimmed down, but the runtime stuff isn't that big anyway. -->
+    <!-- Will revisit if needed in future releases. -->
+    <assembly fullname="CarterGames.SaveManager.Runtime" preserve="all"/>
+    <assembly fullname="CarterGames.Shared.SaveManager" preserve="all"/>
+</linker>

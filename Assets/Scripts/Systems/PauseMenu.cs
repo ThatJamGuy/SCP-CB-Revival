@@ -27,7 +27,7 @@ public class PauseMenu : MonoBehaviour {
     private void Start() {
         // If a file called savefile.json exists, load the current save name from that to display it properly
         if (DataSaver.DataFileExists("savefile.json")) {
-            var saveData = DataSaver.Load<SaveData>("savefile.json");
+            //var saveData = DataSaver.Load<SaveData>("savefile.json");
             //currentSaveNameText.text = "<color=grey>Save Name: </color>" + saveData.currentSaveName;
         }
 
