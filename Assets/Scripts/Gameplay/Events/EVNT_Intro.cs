@@ -225,7 +225,7 @@ public class EVNT_Intro : MonoBehaviour {
         // Class d1 line 1
         yield return new WaitForSeconds(2);
         RevivalRuntimeEngine.Instance.ShakeCamera(0, 0.1f, 10);
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(4);
         classDB.SetAnimTrigger("WalkBackScared");
     }
 
