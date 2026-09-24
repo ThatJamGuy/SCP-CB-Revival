@@ -5,7 +5,6 @@ using UnityEngine.Video;
 
 // Welcome to hell
 
-// 5.1 - If the player does not enter for a period of time, a random threat1 line is chosen for SCF. Same period goes by a threat2 line. Same period the player is shot.
 // 6 - SCF urges to approach 173. class d 2 does so. After d 2 reaches close to 173 a light breaks, then the door opens.
 // 7 - SCF says his line and the lights go out on queue, allowing 173 to kill a guy. Lights go on briefly and then out again allowing 173 to kill another guy.
 // Player is now possible target. (TODO: Think on whether or not making 173s AI naturally target the closest enemy in the intro as if the class ds were other players)
@@ -212,7 +211,19 @@ public class EVNT_Intro : MonoBehaviour {
         AudioManager.PlayOneShot(franklinA);
         yield return new WaitForSeconds(4);
         classDB.WalkTo(navPoint2_B.position);
-        yield return new WaitForSeconds(6);
+
+        // New event idea:
+        // The other guy is assistant researcher and speaks some additional lines to add to the scene.
+        // "Alright so the test is gonna look a little different today as events from this morning called for ALL of the cleaning utilities.
+        // Instead we'll perform a series of basic tests.
+        // D-xxxx, you will use your supplied tools and log the results of the tests as well as keep SCP-173 in your line of sight.
+        // D-xxxx and D-9341, you will alternate between keeping line of site on the object and partaking in the tests.
+        // We will now begin."
+
+        yield return new WaitForSeconds(5);
+        Debug.Log("Bang! One of the lights went out!");
+        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173, 0);
+        yield return new WaitForSeconds(1);
         franklin.PlayAnimation("IdleAction09");
         contDoor.OpenDoor();
         yield return new WaitForSeconds(0.5f);
@@ -220,7 +231,6 @@ public class EVNT_Intro : MonoBehaviour {
         yield return new WaitForSeconds(1);
         AudioManager.PlayOneShot(franklinA);
         yield return new WaitForSeconds(2);
-        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173, 0);
         yield return new WaitForSeconds(1);
         // Class d1 line 1
         yield return new WaitForSeconds(2);

@@ -1,15 +1,13 @@
 using EditorAttributes;
 using IngameDebugConsole;
 using PrimeTween;
-using System.Globalization;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class RevivalSessionEngine : MonoBehaviour {
     private static readonly int Quicksave = Animator.StringToHash("Quicksave");
     public static RevivalSessionEngine Instance { get; private set; }
-    public static SaveData CurrentSaveData { get; private set; }
+    //public static SaveData CurrentSaveData { get; private set; }
 
     public static int currentDifficulty;
     public static int otherDifficultyFactor;
@@ -24,65 +22,19 @@ public class RevivalSessionEngine : MonoBehaviour {
     [Header("Game States")]
     [ReadOnly] public bool playerNear096;
 
-    private InputAction quicksaveAction;
-
     private Tween infoTextTween;
 
-    #region Unity Callbacks
-
     private void Awake() {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance != null && Instance != this) {
+            Destroy(gameObject);
+            return;
+        }
 
-        CurrentSaveData = DataSaver.Load<SaveData>("save.json");
+        Instance = this;
 
-        currentDifficulty = CurrentSaveData.difficulty;
-        currentZone = CurrentSaveData.currentZone;
+        //CurrentSaveData = DataSaver.Load<SaveData>("save.json"); ;
 
         DebugLogConsole.AddCommand("print_zone", "Prints the current estimated zone to the console.", DebugDispalyZone);
-    }
-
-    private void Start() {
-        quicksaveAction = RevivalRuntimeEngine.Instance.GetAction("Player", "Quicksave");
-    }
-
-    private void Update() {
-        // Check for quicksave action
-        if (quicksaveAction.triggered && canSave) {
-            SaveGame(true);
-        }
-    }
-
-    #endregion
-
-    #region Public Methods
-
-    public void SaveGame(bool playSound = true) {
-        CanvasInstance.Instance.HUD_QuickSave.SetTrigger(Quicksave);
-
-        CurrentSaveData.currentDateTime = Time.time.ToString(CultureInfo.CurrentCulture);
-        CurrentSaveData.currentGameVersion = "v" + Application.version;
-        CurrentSaveData.playerPos = Player.Instance.transform.position;
-        CurrentSaveData.playerRot = Player.Instance.transform.rotation;
-        CurrentSaveData.currentZone = currentZone;
-        CurrentSaveData.lczLockdownLifted = lczLockdownLifted;
-
-        // List of things that should be saved on file for v0.0.6. Map seed & name are already saved on save creation
-        //TODO: Save player inventory
-        //TODO: Save player blink and stamina stats
-        //TODO: Save SCP-173 location
-        //TODO: Save SCP-173 state (Is he chasing the player right now?)
-        //TODO: Save SCP-106 spawn counter
-        //TODO: Save SCP-106 state (Is he chasing the player right now?)
-        //TODO: Save SCP-106 location (IF HE IS CHASING THE PLAYER OR OTHER TARGET ONLY)
-        //TODO: Save currently playing music (Even if a chase is happening, the triggers don't account for loading)
-        //TODO: Save door states. Might put this one off for now, not as important to save open/close states
-
-        DataSaver.Save(CurrentSaveData, "save.json");
-
-        if (playSound) {
-            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.quicksave01, Player.Instance.transform.position);
-        }
     }
 
     public static void PauseGame() {
@@ -195,6 +147,4 @@ public class RevivalSessionEngine : MonoBehaviour {
     public void DebugDispalyZone() {
         Debug.Log("Current estimated zone: " + currentZone);
     }
-
-    #endregion
 }

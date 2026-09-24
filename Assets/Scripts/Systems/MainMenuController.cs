@@ -21,7 +21,7 @@ public class MainMenuController : MonoBehaviour {
 
     private const string CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    private SaveData currentSaveData;
+    //private SaveData currentSaveData;
 
     #region Unity Lifecycle
 
@@ -46,7 +46,7 @@ public class MainMenuController : MonoBehaviour {
 
     public void StartGame() {
         if (string.IsNullOrEmpty(nameInputField.text)) return;
-        DataSaver.Save(new SaveData { currentSaveName = nameInputField.text, currentMapSeed = seedInputField.text }, "save.json");
+        //DataSaver.Save(new SaveData { currentSaveName = nameInputField.text, currentMapSeed = seedInputField.text }, "save.json");
         Debug.Log("Starting game with name: " + nameInputField.text + " and seed: " + seedInputField.text);
 
         SceneController.instance
@@ -61,8 +61,8 @@ public class MainMenuController : MonoBehaviour {
 
     public void LoadPreviousGame() {
         if (DataSaver.DataFileExists("save.json")) {
-            var previousSave = DataSaver.Load<SaveData>("save.json");
-            if (previousSave.newGame == true) return;
+            //var previousSave = DataSaver.Load<SaveData>("save.json");
+            //if (previousSave.newGame == true) return;
 
             // TODO: Implement loading of the most recent save
             Debug.Log("TODO: Implement loading of the most recent save");

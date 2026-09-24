@@ -67,8 +67,8 @@ public class MapGenerator : MonoBehaviour {
 
     private void Start() {
         if (DataSaver.DataFileExists("save.json")) {
-            var saveData = DataSaver.Load<SaveData>("save.json");
-            seed = saveData.currentMapSeed;
+            //var saveData = DataSaver.Load<SaveData>("save.json");
+            //seed = saveData.currentMapSeed;
 
             if (string.IsNullOrEmpty(seed))
                 useRandomSeed = true;
