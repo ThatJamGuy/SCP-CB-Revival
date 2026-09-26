@@ -12,8 +12,8 @@ public class TeslaKillZone : MonoBehaviour {
 
         if (!other.CompareTag("NPC")) return;
         
-        if (other.GetComponent<SCP_106_New>()) {
-            other.GetComponent<SCP_106_New>().DespawnTesla();
+        if (other.TryGetComponent(out SCP_106_New scp106)) {
+            scp106.DespawnTesla();
         }
     }
 }

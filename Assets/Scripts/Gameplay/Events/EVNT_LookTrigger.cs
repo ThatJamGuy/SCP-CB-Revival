@@ -30,17 +30,20 @@ public class EVNT_LookTrigger : MonoBehaviour {
     private void Update() {
         if (playerCamera == null || (triggerOnce && hasTriggered)) return;
 
-        Vector3 thisPosition = thisCollider != null ? thisCollider.bounds.center : transform.position;
-        Vector3 directionToPlayer = (thisPosition - playerCamera.transform.position).normalized;
-        float distanceToPlayer = Vector3.Distance(playerCamera.transform.position, transform.position);
+        Transform cameraTransform = playerCamera.transform;
+        Vector3 cameraPosition = cameraTransform.position;
+        float sqrDistanceToPlayer = (transform.position - cameraPosition).sqrMagnitude;
         bool lookingAtPlayer = false;
 
-        if (distanceToPlayer <= maxViewDistance) {
-            float dot = Vector3.Dot(playerCamera.transform.forward, directionToPlayer);
+        if (sqrDistanceToPlayer <= maxViewDistance * maxViewDistance) {
+            Vector3 thisPosition = thisCollider != null ? thisCollider.bounds.center : transform.position;
+            Vector3 directionToPlayer = (thisPosition - cameraPosition).normalized;
+            float dot = Vector3.Dot(cameraTransform.forward, directionToPlayer);
 
             if (dot >= 0.98f) {
                 if (useAccurateLineOfSight) {
-                    if (Physics.Raycast(playerCamera.transform.position, directionToPlayer, out RaycastHit hit, distanceToPlayer, obstructionMask))
+                    float distanceToPlayer = Mathf.Sqrt(sqrDistanceToPlayer);
+                    if (Physics.Raycast(cameraPosition, directionToPlayer, out RaycastHit hit, distanceToPlayer, obstructionMask))
                         lookingAtPlayer = hit.collider == thisCollider;
                 } else lookingAtPlayer = true;
             }

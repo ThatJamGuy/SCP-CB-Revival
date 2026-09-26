@@ -79,8 +79,9 @@ public class PlayerInteraction : MonoBehaviour {
     #region Determine Current Interactable
     private void DetermineClosestInteractable() {
         // Reuse the pre-allocated array for Physics.OverlapSphereNonAlloc.
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, interactRadius, hitColliders, interactableMask);
-        var closestDist = float.MaxValue;
+        var origin = transform.position;
+        int numColliders = Physics.OverlapSphereNonAlloc(origin, interactRadius, hitColliders, interactableMask);
+        var closestSqrDist = float.MaxValue;
         GameObject closestInteractable = null;
 
         // For every collider in the cool circle area around the player...
@@ -91,29 +92,32 @@ public class PlayerInteraction : MonoBehaviour {
             if (!hit.CompareTag(interactTag)) continue;
 
             // Create a distance variable from the component transform to the colliders in the radius
-            var distance = Vector3.Distance(transform.position, hit.transform.position);
+            var hitPosition = hit.transform.position;
+            var sqrDistance = (hitPosition - origin).sqrMagnitude;
 
             // If the distance is greater or equal to the closestDist then give up this foreach check
             // Also give up if the Linecast in the radius hits an object collider with one of the obstructionMasks
-            if (distance >= closestDist) continue;
-            if (Physics.Linecast(transform.position, hit.transform.position, obstructionMask)) continue;
+            if (sqrDistance >= closestSqrDist) continue;
+            if (Physics.Linecast(origin, hitPosition, obstructionMask)) continue;
 
             // Set closestDist to the previously provided distance variable
             // Set the closestInteractable to the gameObject that matches all checks (Uses Interact tag and in radius)
-            closestDist = distance;
+            closestSqrDist = sqrDistance;
             closestInteractable = hit.gameObject;
         }
 
         // Set the current interactable to the closest one found in the foreach method
-        currentInteractable = closestInteractable;
+        if (!ReferenceEquals(closestInteractable, currentInteractable)) {
+            currentInteractable = closestInteractable;
 
-        currentInteractablePress = closestInteractable
-            ? closestInteractable.GetComponent<IInteractable>()
-            : null;
+            currentInteractablePress = closestInteractable
+                ? closestInteractable.GetComponent<IInteractable>()
+                : null;
 
-        currentInteractableHold = closestInteractable
-            ? closestInteractable.GetComponent<IHoldInteractable>()
-            : null;
+            currentInteractableHold = closestInteractable
+                ? closestInteractable.GetComponent<IHoldInteractable>()
+                : null;
+        }
 
         // If there is a closestInteractable available, try and show the interact icon at the screen position of it
         // Otherwise set that John to be inactive
@@ -149,12 +153,6 @@ public class PlayerInteraction : MonoBehaviour {
 
     private void HandleInteraction() {
         if (!currentInteractable) return;
-
-        currentInteractablePress ??=
-            currentInteractable.GetComponent<IInteractable>();
-
-        currentInteractableHold ??=
-            currentInteractable.GetComponent<IHoldInteractable>();
 
         // Hold interactions
         if (currentInteractableHold != null) {

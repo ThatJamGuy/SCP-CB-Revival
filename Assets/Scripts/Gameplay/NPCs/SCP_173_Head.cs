@@ -31,18 +31,22 @@ public class SCP_173_Head : MonoBehaviour {
 
     #region Private Coroutines
     private IEnumerator HeadMovement() {
+        var headMovementWait = new WaitForSeconds(headMovementInterval);
+        var lookOffset = new Vector3(0f, 0.5f, 0f);
+        var headRotationOffset = Quaternion.FromToRotation(Vector3.left, Vector3.forward);
+
         // Infinite loop
         while (true) {
             // Set's the previous rotation value to the current rotation of the head
             previousRotation = transform.rotation;
             
             // Wait for as long as I or you told it to
-            yield return new WaitForSeconds(headMovementInterval);
+            yield return headMovementWait;
             
             // Look at the position of the player and add 0.5 on the y-axis to try and level it out with the camera
             // Then adjust the rotation of the head to look at the player so that he's not mogging D-9341
-            transform.LookAt(player.transform.position + new Vector3(0f, 0.5f, 0f));
-            transform.rotation *= Quaternion.FromToRotation(Vector3.left, Vector3.forward);
+            transform.LookAt(player.transform.position + lookOffset);
+            transform.rotation *= headRotationOffset;
             
             // If the current head rotation doesn't match the last one, then play the head movement sound
             if (transform.rotation != previousRotation)

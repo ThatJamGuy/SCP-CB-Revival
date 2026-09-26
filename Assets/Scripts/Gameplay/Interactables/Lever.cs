@@ -71,7 +71,7 @@ public class Lever : MonoBehaviour, IHoldInteractable {
         // Continuously check if the lever reached an ON/OFF state
         UpdateLeverState();
 
-        if (Player.Instance.isMoving) ForceStopInteract();
+        if (isBeingUsed && Player.Instance.isMoving) ForceStopInteract();
     }
 
     #endregion

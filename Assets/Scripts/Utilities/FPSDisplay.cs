@@ -34,7 +34,7 @@ public class FPSDisplay : MonoBehaviour {
         if (frameCount <= fpsBadMaxValue) fpsDisplayText.color = fpsBadColor;
 
         // Display the FPS in text and subtract the pollingTime from time as well as set frameCount to 0
-        fpsDisplayText.text = $"{Mathf.RoundToInt(frameCount / time)} FPS";
+        fpsDisplayText.SetText("{0} FPS", Mathf.RoundToInt(frameCount / time));
         time -= pollingTime;
         frameCount = 0;
     }

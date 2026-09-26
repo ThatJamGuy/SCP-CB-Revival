@@ -41,8 +41,13 @@ public class SCP_173 : MonoBehaviour {
     private const float DOOR_CHECK_RADIUS = 2f;
     private const float CHASE_SPEED = 100f;
     private const float HORROR_SOUND_DISTANCE_THRESHOLD = 5f;
+    private const float REPATH_DISTANCE_SQR = 0.25f;
+    private const int MAX_DOOR_COLLIDERS = 32;
 
     private readonly Plane[] frustumPlanes = new Plane[6];
+    private readonly Collider[] doorColliders = new Collider[MAX_DOOR_COLLIDERS];
+    private int[] poseAnimationHashes;
+    private Vector3 lastRequestedDestination;
 
     private Camera playerCamera;
     private NavMeshAgent navMeshAgent;
@@ -64,6 +69,10 @@ public class SCP_173 : MonoBehaviour {
         navMeshAgent = GetComponent<NavMeshAgent>();
         meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         animator = GetComponent<Animator>();
+
+        poseAnimationHashes = new int[poseAnimations.Length];
+        for (int i = 0; i < poseAnimations.Length; i++)
+            poseAnimationHashes[i] = Animator.StringToHash(poseAnimations[i]);
     }
 
     private void Start() {
@@ -110,7 +119,7 @@ public class SCP_173 : MonoBehaviour {
             float currentChaseSpeed = GetChaseSpeed();
             navMeshAgent.speed = currentChaseSpeed;
             navMeshAgent.acceleration = currentChaseSpeed;
-            navMeshAgent.SetDestination(target.position);
+            SetDestinationIfChanged(target.position);
         } else {
             navMeshAgent.speed = ROAM_SPEED;
             navMeshAgent.acceleration = ROAM_SPEED;
@@ -126,6 +135,14 @@ public class SCP_173 : MonoBehaviour {
             speed *= 3.5f;
         }
         return speed;
+    }
+
+    private void SetDestinationIfChanged(Vector3 destination) {
+        if ((navMeshAgent.hasPath || navMeshAgent.pathPending) &&
+            (destination - lastRequestedDestination).sqrMagnitude < REPATH_DISTANCE_SQR) return;
+
+        lastRequestedDestination = destination;
+        navMeshAgent.SetDestination(destination);
     }
 
     private void StopCompletely() {
@@ -171,7 +188,7 @@ public class SCP_173 : MonoBehaviour {
             roamDestination = GetRandomNavMeshPosition(transform.position, ROAM_RADIUS);
             roamTimer = ROAM_INTERVAL;
         }
-        navMeshAgent.SetDestination(roamDestination);
+        SetDestinationIfChanged(roamDestination);
     }
 
     private Vector3 GetRandomNavMeshPosition(Vector3 origin, float radius) {
@@ -186,15 +203,17 @@ public class SCP_173 : MonoBehaviour {
 
     //TODO: Revisit this later to optimize, might make door opening a modular component in the future
     private void CheckForDoors() {
-        var colliders = Physics.OverlapSphere(transform.position, DOOR_CHECK_RADIUS);
+        var origin = transform.position;
+        int count = Physics.OverlapSphereNonAlloc(origin, DOOR_CHECK_RADIUS, doorColliders);
         Door nearest = null;
-        float minDist = float.MaxValue;
+        float minSqrDist = float.MaxValue;
 
-        foreach (var col in colliders) {
+        for (int i = 0; i < count; i++) {
+            var col = doorColliders[i];
             if (!col.TryGetComponent(out Door door)) continue;
-            float dist = Vector3.Distance(transform.position, col.transform.position);
-            if (dist < minDist) {
-                minDist = dist;
+            float sqrDist = (col.transform.position - origin).sqrMagnitude;
+            if (sqrDist < minSqrDist) {
+                minSqrDist = sqrDist;
                 nearest = door;
             }
         }
@@ -274,11 +293,8 @@ public class SCP_173 : MonoBehaviour {
 
     public void PlayRandomPose() {
         // Use the animator to change 173 poses
-        if (poseAnimations.Length == 0 && isVisibleByPlayer) return;
-        string anim = poseAnimations[Random.Range(0, poseAnimations.Length)];
-        if (animator != null && !isVisibleByPlayer && !puppetMode) {
-            animator.Play(anim);
-        }
+        if (poseAnimationHashes.Length == 0 || isVisibleByPlayer || puppetMode || animator == null) return;
+        animator.Play(poseAnimationHashes[Random.Range(0, poseAnimationHashes.Length)]);
     }
 
     #endregion

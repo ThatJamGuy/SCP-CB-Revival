@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class IK_PointOfInterest : MonoBehaviour {
@@ -13,16 +12,7 @@ public class IK_PointOfInterest : MonoBehaviour {
     #region Unity Callbacks
 
     private void OnEnable() {
-        if (registerOnEnable) {
-            if (allActors) {
-                IK_MasterComponent[] ikSystems = FindObjectsByType<IK_MasterComponent>();
-                List<IK_MasterComponent> ikSystemsList = new List<IK_MasterComponent>(ikSystems);
-
-                foreach (IK_MasterComponent ikSystemss in ikSystemsList) {
-                    ikSystemss.pointsOfInterest.Add(this);
-                }
-            }
-        }
+        if (registerOnEnable && allActors) RegisterPOIToAllActors();
     }
 
     #endregion
@@ -32,10 +22,10 @@ public class IK_PointOfInterest : MonoBehaviour {
     // In most cases this will be for the players POI as he enters all kinds of rooms full of IK Masters yet to be activated
     public void RegisterPOIToAllActors() {
         IK_MasterComponent[] ikSystems = FindObjectsByType<IK_MasterComponent>();
-        List<IK_MasterComponent> ikSystemsList = new List<IK_MasterComponent>(ikSystems);
 
-        foreach (IK_MasterComponent ikSystemss in ikSystemsList) {
-            ikSystemss.pointsOfInterest.Add(this);
+        foreach (IK_MasterComponent ikSystem in ikSystems) {
+            if (!ikSystem.pointsOfInterest.Contains(this))
+                ikSystem.pointsOfInterest.Add(this);
         }
     }
 

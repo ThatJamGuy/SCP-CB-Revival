@@ -141,8 +141,8 @@ public class RevivalRuntimeEngine : MonoBehaviour {
 
     private void ApplyShake() {
         foreach (var cam in camTransforms) {
-            if (cam == null || !originalPositions.ContainsKey(cam)) continue;
-            cam.localPosition = originalPositions[cam] + (Vector3)Random.insideUnitCircle * shakeIntensity;
+            if (cam == null || !originalPositions.TryGetValue(cam, out var originalPosition)) continue;
+            cam.localPosition = originalPosition + (Vector3)Random.insideUnitCircle * shakeIntensity;
         }
     }
 
@@ -180,8 +180,8 @@ public class RevivalRuntimeEngine : MonoBehaviour {
         }
         shakeIntensity = 0f;
         foreach (var cam in camTransforms) {
-            if (cam != null && originalPositions.ContainsKey(cam))
-                cam.localPosition = originalPositions[cam];
+            if (cam != null && originalPositions.TryGetValue(cam, out var originalPosition))
+                cam.localPosition = originalPosition;
         }
     }
 
@@ -215,14 +215,15 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     }
 
     public void GiveAchievement(string achievementIdentifier) {
-        foreach (var achievement in achievements) {
-            if (SettingsData.consoleEnabled) {
-                Debug.Log("<color=#ff0000>Tried to give you an achievement, but it looks like you have the console enabled!");
-                return;
-            }
+        if (achievements.Length > 0 && SettingsData.consoleEnabled) {
+            Debug.Log("<color=#ff0000>Tried to give you an achievement, but it looks like you have the console enabled!");
+            return;
+        }
 
+        if (obtainedAchievementNames.Contains(achievementIdentifier)) return;
+
+        foreach (var achievement in achievements) {
             if (achievement.achievementIdentifier != achievementIdentifier) continue;
-            if (obtainedAchievementNames.Contains(achievement.achievementIdentifier)) return;
 
             obtainedAchievementNames.Add(achievement.achievementIdentifier);
             SaveAchievementsToFile();
@@ -247,10 +248,7 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     }
 
     public void UnregisterCamera(Transform cam) {
-        if (camTransforms.Contains(cam)) {
-            camTransforms.Remove(cam);
-            originalPositions.Remove(cam);
-        }
+        if (camTransforms.Remove(cam)) originalPositions.Remove(cam);
     }
 
     public void ShakeCamera(float startIntensity, float endIntensity, float duration) {

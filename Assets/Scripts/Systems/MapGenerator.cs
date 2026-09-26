@@ -249,27 +249,31 @@ public class MapGenerator : MonoBehaviour {
     private IEnumerator SpawnDoorsRoutine() {
         // Walk every placement's exits and work out where a door is actually needed,
         // same adjacency logic as before - just collecting instead of spawning immediately.
-        HashSet<string> processedEdges = new();
+        HashSet<(Vector2Int, Vector2Int)> processedEdges = new();
         List<(Vector3 position, Quaternion rotation, AssetReferenceGameObject prefab)> doorsToPlace = new();
         HashSet<AssetReferenceGameObject> prefabsToLoad = new();
 
+        Dictionary<Vector2Int, RoomPlacement> placementLookup = new(selectedMapTemplate.roomPlacements.Length);
+        foreach (var placement in selectedMapTemplate.roomPlacements) {
+            placementLookup.TryAdd(placement.gridPosition, placement);
+        }
+
         foreach (var placement in selectedMapTemplate.roomPlacements) {
             Vector2Int currentPos = placement.gridPosition;
-            List<int> currentExits = GetWorldExits(placement.requiredShape, placement.rotation);
+            if (!BaseExits.TryGetValue(placement.requiredShape, out int[] baseAngles)) continue;
 
-            foreach (int localAngle in currentExits) {
+            foreach (int baseAngle in baseAngles) {
+                int localAngle = (baseAngle + placement.rotation) % 360;
                 Vector2Int neighborPos = currentPos + AngleToDirection(localAngle);
 
-                string edgeKey = GetEdgeKey(currentPos, neighborPos);
+                var edgeKey = GetEdgeKey(currentPos, neighborPos);
                 if (processedEdges.Contains(edgeKey)) continue;
 
                 // Check if neighbor exists and has a matching exit
-                var neighborPlacement = GetPlacementAt(neighborPos);
-                if (neighborPlacement == null) continue;
+                if (!placementLookup.TryGetValue(neighborPos, out var neighborPlacement)) continue;
 
-                List<int> neighborExits = GetWorldExits(neighborPlacement.requiredShape, neighborPlacement.rotation);
                 int oppositeAngle = (localAngle + 180) % 360;
-                if (!neighborExits.Contains(oppositeAngle)) continue;
+                if (!HasWorldExit(neighborPlacement.requiredShape, neighborPlacement.rotation, oppositeAngle)) continue;
 
                 processedEdges.Add(edgeKey);
 
@@ -406,15 +410,14 @@ public class MapGenerator : MonoBehaviour {
     #endregion
 
     #region Door Helpers :)
-    private List<int> GetWorldExits(RoomData.RoomShape shape, int rotation) {
-        List<int> worldExits = new();
-        if (BaseExits.TryGetValue(shape, out int[] angles)) {
-            foreach (int angle in angles) {
-                // (Base + Object Rotation) % 360 gives world-space exit direction
-                worldExits.Add((angle + rotation) % 360);
-            }
+    private static bool HasWorldExit(RoomData.RoomShape shape, int rotation, int worldAngle) {
+        if (!BaseExits.TryGetValue(shape, out int[] angles)) return false;
+
+        foreach (int angle in angles) {
+            // (Base + Object Rotation) % 360 gives world-space exit direction
+            if ((angle + rotation) % 360 == worldAngle) return true;
         }
-        return worldExits;
+        return false;
     }
 
     private Vector2Int AngleToDirection(int angle) {
@@ -427,16 +430,9 @@ public class MapGenerator : MonoBehaviour {
         };
     }
 
-    private RoomPlacement GetPlacementAt(Vector2Int pos) {
-        foreach (var p in selectedMapTemplate.roomPlacements) {
-            if (p.gridPosition == pos) return p;
-        }
-        return null;
-    }
-
-    private string GetEdgeKey(Vector2Int a, Vector2Int b) {
-        if (a.x < b.x || (a.x == b.x && a.y < b.y)) return $"{a}:{b}";
-        return $"{b}:{a}";
+    private static (Vector2Int, Vector2Int) GetEdgeKey(Vector2Int a, Vector2Int b) {
+        if (a.x < b.x || (a.x == b.x && a.y < b.y)) return (a, b);
+        return (b, a);
     }
     #endregion
 }
