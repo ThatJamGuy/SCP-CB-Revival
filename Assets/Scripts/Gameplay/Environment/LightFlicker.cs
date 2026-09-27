@@ -170,7 +170,6 @@ public class LightFlicker : MonoBehaviour {
     }
     #endregion
 
-    #region Public Methods
     public void SetPreset(Preset newPreset) {
         preset = newPreset;
         RefreshPattern();
@@ -188,5 +187,4 @@ public class LightFlicker : MonoBehaviour {
 
         oneShotCoroutine = StartCoroutine(OneShotRoutine(duration, pattern));
     }
-    #endregion
 }

@@ -33,6 +33,10 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private EventReference ulgrinByTheWay;
     [SerializeField] private EventReference franklinA;
     [SerializeField] private EventReference franklinB;
+    [SerializeField] private EventReference surge;
+    [SerializeField] private StudioEventEmitter alarm10;
+    [SerializeField] private StudioEventEmitter lightBreak;
+    [SerializeField] private StudioEventEmitter lightObjBreak;
 
     [Header("Scripted References")]
     [SerializeField] private Actor_Generic franklin;
@@ -56,6 +60,10 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private GameObject doc173Paper;
     [SerializeField] private GameObject introCanvas;
     [SerializeField] private Transform balconyGuardGunTip;
+    [SerializeField] private ParticleSystem elecSparks;
+    [SerializeField] private GameObject lightToTurnOff;
+    [SerializeField] private LightFlicker lightToFlicker;
+    [SerializeField] private Rigidbody lightBody;
 
     private Coroutine cellCheckRoutine;
 
@@ -157,9 +165,11 @@ public class EVNT_Intro : MonoBehaviour {
     }
 
     private IEnumerator IntroChamberBegin() {
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(4.5f);
         franklin.SetAnimTrigger("PressButton");
         yield return new WaitForSeconds(1.2f);
+        alarm10.Play();
+        yield return new WaitForSeconds(3);
         MusicManager.Instance.StopAllMusic();
         contDoor.OpenDoor();
         classDB_IK.enableHeadIK = false;
@@ -167,7 +177,9 @@ public class EVNT_Intro : MonoBehaviour {
         classDB.SetAnimTrigger("Nervous");
         yield return new WaitForSeconds(1);
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.chamberStingerB);
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
+        RevivalRuntimeEngine.Instance.GiveAchievement("achv_173");
+        yield return new WaitForSeconds(1);
         AudioManager.PlayOneShot(franklinA);
         yield return new WaitForSeconds(5);
         classDB.WalkTo(navPoint1_B.position);
@@ -221,7 +233,14 @@ public class EVNT_Intro : MonoBehaviour {
         // We will now begin."
 
         yield return new WaitForSeconds(5);
-        Debug.Log("Bang! One of the lights went out!");
+        AudioManager.PlayOneShot(surge);
+        yield return new WaitForSeconds(1.1f);
+        lightBreak.Play();
+        lightBody.useGravity = true;
+        lightBody.AddForce(transform.forward * 10);
+        elecSparks.Play();
+        lightToTurnOff.SetActive(false);
+        lightToFlicker.SetActive(true);
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173, 0);
         yield return new WaitForSeconds(1);
         franklin.PlayAnimation("IdleAction09");

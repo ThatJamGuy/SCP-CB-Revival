@@ -78,6 +78,9 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     private void Start() {
         // Perform CORE setup (Scene loading)
 
+        // Safeguard because I keep forgetting to change this manually
+        if (SceneController.instance == null) developerMode = true;
+
         if (!developerMode) {
             SceneController.instance
                 .NewTransition()
