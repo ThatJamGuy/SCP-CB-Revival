@@ -52,6 +52,7 @@ public class SCP_049 : MonoBehaviour {
     private const float IK_DISTANCE_SQR = IK_DISTANCE * IK_DISTANCE;
     private const float IK_BLEND_SPEED = 5f;
     private const int MAX_COLLIDERS = 5;
+    private const float REPATH_DISTANCE_SQR = 0.25f;
 
     private Animator animator;
     private NavMeshAgent agent;
@@ -63,6 +64,7 @@ public class SCP_049 : MonoBehaviour {
     private Vector3 lastKnownTargetPos;
     private Vector3 previousTargetPos;
     private Vector3 lastKnownVelocity;
+    private Vector3 lastRequestedDestination;
 
     private bool isMoving;
     private bool predicting;
@@ -378,6 +380,10 @@ public class SCP_049 : MonoBehaviour {
     public void WalkTo(Vector3 position) {
         if (agent == null) return;
 
+        if ((agent.hasPath || agent.pathPending) &&
+            (position - lastRequestedDestination).sqrMagnitude < REPATH_DISTANCE_SQR) return;
+
+        lastRequestedDestination = position;
         agent.SetDestination(position);
     }
 

@@ -16,6 +16,7 @@ public class PlayerFootsteps : MonoBehaviour {
     [SerializeField] private CharacterController characterController;
 
     private VCA footstepVCA;
+    private float currentFootstepVolume = -1f;
 
     private bool isSprinting;
     private bool isCrouching;
@@ -38,10 +39,10 @@ public class PlayerFootsteps : MonoBehaviour {
     /// Play a footstep sound based on various factors such as the surface tag under the player and their movement state
     /// </summary>
     public void PlayFootstepAudio() {
-        var surfaceTag = GetSurfaceTagUnderPlayer();
-        if (string.IsNullOrEmpty(surfaceTag)) return;
+        var surfaceCollider = GetSurfaceColliderUnderPlayer();
+        if (!surfaceCollider) return;
 
-        var footstep = GetFootstepDataForTag(surfaceTag);
+        var footstep = GetFootstepDataForSurface(surfaceCollider);
         if (!footstep) return;
 
         var eventRef = isSprinting ? footstep.associatedRunEvent : footstep.associatedWalkEvent;
@@ -59,23 +60,27 @@ public class PlayerFootsteps : MonoBehaviour {
         isCrouching = player.isCrouching;
         if (!isMoving) return;
 
-        footstepVCA.setVolume(isCrouching ? 0.3f : 1.0f); // If crouching, set volume to 0.3, otherwise 1 (Full Volume)
+        var targetVolume = isCrouching ? 0.3f : 1.0f; // If crouching, set volume to 0.3, otherwise 1 (Full Volume)
+        if (Mathf.Approximately(targetVolume, currentFootstepVolume)) return;
+
+        footstepVCA.setVolume(targetVolume);
+        currentFootstepVolume = targetVolume;
     }
     #endregion
 
     #region Helpers :)
     // Shoots a raycast downwards to find the surface tag under the player, assuming they are grounded on something with a collider
-    private string GetSurfaceTagUnderPlayer() {
+    private Collider GetSurfaceColliderUnderPlayer() {
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, characterController.height, groundLayer)) {
-            return hit.collider.tag; // Returns the tag of the collider the raycast hit
+            return hit.collider; // Returns the collider the raycast hit
         }
         return null; // Otherwise return nothing
     }
 
-    // Returns the FootstepData associated with the given surface tag found in the previous method GetSurfaceTagUnderPlayer()
-    private FootstepData GetFootstepDataForTag(string tag) {
+    // Returns the FootstepData whose surface tag matches the collider found in GetSurfaceColliderUnderPlayer()
+    private FootstepData GetFootstepDataForSurface(Collider surface) {
         foreach (FootstepData data in footstepData) {
-            if (data.surfaceTag == tag) return data; // Returns data that matches the tag the fella is on
+            if (!string.IsNullOrEmpty(data.surfaceTag) && surface.CompareTag(data.surfaceTag)) return data; // Returns data that matches the tag the fella is on
         }
         return null; // Otherwise return nothing
     }

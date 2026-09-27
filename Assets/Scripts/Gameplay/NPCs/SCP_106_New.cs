@@ -37,9 +37,19 @@ public class SCP_106_New : MonoBehaviour {
     [Header("References")]
     [SerializeField] private GameObject despawnGoodPrefab;
 
+    private const float REPATH_DISTANCE_SQR = 0.25f;
+
+    private static readonly int WalkHash = Animator.StringToHash("Walk");
+    private static readonly int AttackHash = Animator.StringToHash("Attack");
+    private static readonly int Despawn1Hash = Animator.StringToHash("Despawn1");
+    private static readonly int ShockHash = Animator.StringToHash("Shock");
+    private static readonly int CatchUpHash = Animator.StringToHash("CatchUp");
+    private static readonly int WallTraverseHash = Animator.StringToHash("WallTraverse");
+
     private NavMeshAgent agent;
     private Animator animator;
     private Transform activeTarget;
+    private Vector3 lastRequestedDestination;
 
     private bool canWalk = false;
     private bool isAttacking = false;
@@ -67,11 +77,13 @@ public class SCP_106_New : MonoBehaviour {
 
     private void Update() {
         if (activeTarget == null || !canWalk) return;
-        agent.SetDestination(activeTarget.position);
-        if (agent.pathStatus == NavMeshPathStatus.PathPartial) {
-            agent.SetDestination(agent.pathEndPosition);
+        Vector3 targetPosition = activeTarget.position;
+        if (!(agent.hasPath || agent.pathPending) ||
+            (targetPosition - lastRequestedDestination).sqrMagnitude >= REPATH_DISTANCE_SQR) {
+            lastRequestedDestination = targetPosition;
+            agent.SetDestination(targetPosition);
         }
-        distanceToTarget = Vector3.Distance(transform.position, activeTarget.position);
+        distanceToTarget = Vector3.Distance(transform.position, targetPosition);
 
         if (wallTraverseTimer > 0f) wallTraverseTimer -= Time.deltaTime;
 
@@ -188,7 +200,7 @@ public class SCP_106_New : MonoBehaviour {
     // Start all the necessary stuff for chasing a target, mostly animation and setting some values.
     private IEnumerator BeginChaseRoutine() {
         yield return new WaitForSeconds(floorEmerge2AnimTime);
-        animator.SetTrigger("Walk");
+        animator.SetTrigger(WalkHash);
         CanWalk();
 
         if (currentTargetIsPlayer) {
@@ -210,11 +222,11 @@ public class SCP_106_New : MonoBehaviour {
     private IEnumerator AttackCoroutine() {
         CantWalk();
         isAttacking = true;
-        animator.SetTrigger("Attack");
+        animator.SetTrigger(AttackHash);
         yield return new WaitForSeconds(attackAnimTime);
         isAttacking = false;
         CanWalk();
-        animator.SetTrigger("Walk");
+        animator.SetTrigger(WalkHash);
     }
 
     // Despawn SCP-106 the regular way
@@ -222,7 +234,7 @@ public class SCP_106_New : MonoBehaviour {
         Instantiate(despawnGoodPrefab, transform.position, Quaternion.Euler(90, 0, 0));
         isDespawning = true;
         CantWalk();
-        animator.SetTrigger("Despawn1");
+        animator.SetTrigger(Despawn1Hash);
         yield return new WaitForSeconds(despawnAnimTime);
         //GameManager.instance.scp106Active = false;
         Destroy(gameObject);
@@ -240,7 +252,7 @@ public class SCP_106_New : MonoBehaviour {
         Instantiate(despawnGoodPrefab, transform.position, Quaternion.Euler(90, 0, 0));
         isDespawning = true;
         CantWalk();
-        animator.SetTrigger("Shock");
+        animator.SetTrigger(ShockHash);
         yield return new WaitForSeconds(TeslaShockAnimTime);
         //GameManager.instance.scp106Active = false;
         Destroy(gameObject);
@@ -252,7 +264,7 @@ public class SCP_106_New : MonoBehaviour {
 
         if (FindValidNavMeshPosition(targetPosition, out Vector3 validPosition)) {
             TeleportAgent(validPosition, (activeTarget.position - validPosition).normalized);
-            animator.SetTrigger("CatchUp");
+            animator.SetTrigger(CatchUpHash);
             yield return new WaitForSeconds(CatchUpAnimTime);
             //AudioManager.instance.PlaySound(CatchUpEvent, targetPosition);       
         }
@@ -322,10 +334,10 @@ public class SCP_106_New : MonoBehaviour {
         TeleportAgent(exitPosition, -exit.normal);
         //AudioManager.instance.PlaySound(WallTraverseEvent, transform.position);
 
-        animator.SetTrigger("WallTraverse");
+        animator.SetTrigger(WallTraverseHash);
         yield return new WaitForSeconds(wallTraverseAnimTime);
 
-        animator.SetTrigger("Walk");
+        animator.SetTrigger(WalkHash);
         wallTraverseTimer = wallTraverseCooldown;
         //isTraversing = false;
         CanWalk();

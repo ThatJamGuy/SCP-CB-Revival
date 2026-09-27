@@ -27,6 +27,11 @@ public class SCP_096 : MonoBehaviour {
     private RevivalSessionEngine gm;
 
     private const float KILL_RADIUS = 3;
+    private const float REPATH_DISTANCE_SQR = 0.25f;
+    private const int MAX_DOOR_COLLIDERS = 32;
+
+    private readonly Collider[] doorHitColliders = new Collider[MAX_DOOR_COLLIDERS];
+    private Vector3 lastChaseDestination;
 
     private static readonly int WalkingHash = Animator.StringToHash("walking");
     private static readonly int DistressHash = Animator.StringToHash("distress");
@@ -89,17 +94,18 @@ public class SCP_096 : MonoBehaviour {
     }
 
     private void UpdateRangeBasedMusic() {
-        float distanceToPlayer = Vector3.Distance(transform.position, Player.Instance.transform.position);
+        float sqrDistanceToPlayer = (Player.Instance.transform.position - transform.position).sqrMagnitude;
+        float sqrNearbyRadius = playerNearbyRadius * playerNearbyRadius;
 
         // Set music track based on range state
         if (!playerInRange) {
-            if (distanceToPlayer < playerNearbyRadius) {
+            if (sqrDistanceToPlayer < sqrNearbyRadius) {
                 RevivalSessionEngine.Instance.PlayChaseTrack(1, MusicManager.MusicTrack.SCP_096, 0);
                 gm.playerNear096 = true;
                 playerInRange = true;
             }
         } else if (playerInRange) {
-            if (distanceToPlayer > playerNearbyRadius) {
+            if (sqrDistanceToPlayer > sqrNearbyRadius) {
                 RevivalSessionEngine.Instance.PlayChaseTrack(-1, MusicManager.MusicTrack.SCP_096, 0);
                 gm.playerNear096 = false;
                 playerInRange = false;
@@ -127,17 +133,22 @@ public class SCP_096 : MonoBehaviour {
     }
 
     private void PerformChasingActivities() {
-        float distanceToPlayer = Vector3.Distance(transform.position, Player.Instance.transform.position);
+        Vector3 playerPosition = Player.Instance.transform.position;
+        float sqrDistanceToPlayer = (playerPosition - transform.position).sqrMagnitude;
 
         // Temp; Later set to possible NPC targets if necessary
-        agent.SetDestination(Player.Instance.transform.position);
+        if (!(agent.hasPath || agent.pathPending) ||
+            (playerPosition - lastChaseDestination).sqrMagnitude >= REPATH_DISTANCE_SQR) {
+            lastChaseDestination = playerPosition;
+            agent.SetDestination(playerPosition);
+        }
 
         if (!chaseMusicStarted) {
             RevivalSessionEngine.Instance.PlayChaseTrack(6, MusicManager.MusicTrack.SCP_096, 1);
             chaseMusicStarted = true;
         }
 
-        if (distanceToPlayer < KILL_RADIUS && !Player.Instance.isDead) {
+        if (sqrDistanceToPlayer < KILL_RADIUS * KILL_RADIUS && !Player.Instance.isDead) {
             Player.Instance.KillPlayer(3, 0.5f, 0, "A large amount of blood found in [DATA REDACTED]. DNA indentified as Subject D-9341. Most likely [DATA REDACTED] by SCP-096.");
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.scp096KillPlayer);
             Destroy(gameObject);
@@ -165,11 +176,12 @@ public class SCP_096 : MonoBehaviour {
 
         // Check for nearby doors every 3 seconds and open them if found
         if (doorCheckElapsedTime >= doorCheckInterval) {
+            doorCheckElapsedTime = 0;
 
-            Collider[] hits = Physics.OverlapSphere(transform.position, doorOpenRadius);
+            int hitCount = Physics.OverlapSphereNonAlloc(transform.position, doorOpenRadius, doorHitColliders);
 
-            foreach (Collider hit in hits) {
-                if (hit.TryGetComponent<Door>(out Door door)) {
+            for (int i = 0; i < hitCount; i++) {
+                if (doorHitColliders[i].TryGetComponent<Door>(out Door door)) {
                     if (!chaseMusicStarted) {
                         door.OpenDoor();
                         return;
@@ -191,8 +203,6 @@ public class SCP_096 : MonoBehaviour {
                     }
                 }
             }
-
-            doorCheckElapsedTime = 0;
         }
     }
 

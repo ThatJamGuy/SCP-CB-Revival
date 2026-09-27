@@ -51,8 +51,15 @@ public class Actor_Guard : MonoBehaviour {
     private WaypointMode waypointMode;
     private List<Transform> waypointPool; // working copy for RandomConsuming so the original array is never mutated
     private bool isSprinting;
+    private int walkAnimBoolHash;
+    private int sprintAnimBoolHash;
 
     #region Unity Callbacks
+
+    private void Awake() {
+        walkAnimBoolHash = Animator.StringToHash(walkAnimBoolName);
+        sprintAnimBoolHash = Animator.StringToHash(sprintAnimBoolName);
+    }
 
     private void Start() {
         if (animator != null && !string.IsNullOrEmpty(initialAnimationName))
@@ -67,8 +74,8 @@ public class Actor_Guard : MonoBehaviour {
         if (isMoving) currentState = State.Navigating;
         else if (currentState != State.Animating) currentState = State.Nothing;
 
-        if (useWalkAnim) animator.SetBool(walkAnimBoolName, isMoving && !isSprinting);
-        if (useSprintAnim) animator.SetBool(sprintAnimBoolName, isMoving && isSprinting);
+        if (useWalkAnim) animator.SetBool(walkAnimBoolHash, isMoving && !isSprinting);
+        if (useSprintAnim) animator.SetBool(sprintAnimBoolHash, isMoving && isSprinting);
 
         if (travellingWaypoints && HasArrivedAtDestination()) AdvanceWaypoint();
     }

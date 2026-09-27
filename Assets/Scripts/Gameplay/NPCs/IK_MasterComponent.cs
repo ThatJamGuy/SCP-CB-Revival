@@ -40,23 +40,27 @@ public class IK_MasterComponent : MonoBehaviour {
     private void Update() {
         Transform tracking = null;
 
+        Vector3 forward = transform.forward;
+
         if (enableHeadIK && pointsOfInterest != null) {
-            foreach (IK_PointOfInterest poi in pointsOfInterest) {
-                Vector3 delta = poi.transform.position - headTransform.position;
+            Vector3 headPos = headTransform.position;
+            float maxAngleCos = Mathf.Cos(maxAngle * Mathf.Deg2Rad);
 
-                if (delta.sqrMagnitude < trackingRadiusSqr) {
-                    float angle = Vector3.Angle(transform.forward, delta);
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                Transform poiTransform = pointsOfInterest[i].transform;
+                Vector3 delta = poiTransform.position - headPos;
+                float sqrDist = delta.sqrMagnitude;
 
-                    if (angle < maxAngle) {
-                        tracking = poi.transform;
-                        break;
-                    }
+                if (sqrDist < trackingRadiusSqr &&
+                    Vector3.Dot(forward, delta) > maxAngleCos * Mathf.Sqrt(sqrDist)) {
+                    tracking = poiTransform;
+                    break;
                 }
             }
         }
 
         float targetWeight = 0f;
-        Vector3 targetPos = transform.position + transform.forward * 2f;
+        Vector3 targetPos = transform.position + forward * 2f;
 
         if (enableHeadIK && tracking != null) {
             targetWeight = 1f;
