@@ -34,6 +34,9 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private EventReference franklinA;
     [SerializeField] private EventReference franklinB;
     [SerializeField] private EventReference surge;
+    [SerializeField] private EventReference balcGuardRadio;
+    [SerializeField] private EventReference wtf;
+    [SerializeField] private EventReference introDisposables;
     [SerializeField] private StudioEventEmitter alarm10;
     [SerializeField] private StudioEventEmitter lightBreak;
     [SerializeField] private StudioEventEmitter lightObjBreak;
@@ -43,6 +46,7 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private Actor_Generic balconyGuard;
     [SerializeField] private Actor_Generic classDA;
     [SerializeField] private Actor_Generic classDB;
+    [SerializeField] private GameObject scp173;
     [SerializeField] private IK_MasterComponent classDB_IK;
     [SerializeField] private Transform navPoint1_A;
     [SerializeField] private Transform navPoint1_B;
@@ -68,7 +72,9 @@ public class EVNT_Intro : MonoBehaviour {
     private Coroutine cellCheckRoutine;
 
     private bool playerInChamber = false;
+    private bool enableBlinkSpamming;
     private int warningIndex = 0;
+    private float spamTimeElapsed;
 
     private void Awake() {
         if (developerMode) {
@@ -103,6 +109,19 @@ public class EVNT_Intro : MonoBehaviour {
 
             introCanvas.SetActive(false);
             Instantiate(playerPrefab, spawnSkipIntro);
+        }
+    }
+
+    private void Update() {
+        // Blink spamming to emulate intense light flickers
+        // Why? Baked lighting that's why
+        if (enableBlinkSpamming) {
+            spamTimeElapsed += Time.deltaTime;
+
+            if (spamTimeElapsed >= Random.Range(0.01f, 0.1f)) {
+                Player.Instance.ForceBlink();
+                spamTimeElapsed = 0;
+            }
         }
     }
 
@@ -166,20 +185,24 @@ public class EVNT_Intro : MonoBehaviour {
 
     private IEnumerator IntroChamberBegin() {
         yield return new WaitForSeconds(4.5f);
+
+        balconyGuard.Speak(balcGuardRadio);
+
+        yield return new WaitForSeconds(4.5f);
         franklin.SetAnimTrigger("PressButton");
         yield return new WaitForSeconds(1.2f);
         alarm10.Play();
+        classDB_IK.enableHeadIK = false;
         yield return new WaitForSeconds(3);
         MusicManager.Instance.StopAllMusic();
         contDoor.OpenDoor();
-        classDB_IK.enableHeadIK = false;
         yield return new WaitForSeconds(1);
         classDB.SetAnimTrigger("Nervous");
         yield return new WaitForSeconds(1);
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.chamberStingerB);
         yield return new WaitForSeconds(1);
         RevivalRuntimeEngine.Instance.GiveAchievement("achv_173");
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.5f);
         AudioManager.PlayOneShot(franklinA);
         yield return new WaitForSeconds(5);
         classDB.WalkTo(navPoint1_B.position);
@@ -224,38 +247,104 @@ public class EVNT_Intro : MonoBehaviour {
         yield return new WaitForSeconds(4);
         classDB.WalkTo(navPoint2_B.position);
 
-        // New event idea:
-        // The other guy is assistant researcher and speaks some additional lines to add to the scene.
-        // "Alright so the test is gonna look a little different today as events from this morning called for ALL of the cleaning utilities.
-        // Instead we'll perform a series of basic tests.
-        // D-xxxx, you will use your supplied tools and log the results of the tests as well as keep SCP-173 in your line of sight.
-        // D-xxxx and D-9341, you will alternate between keeping line of site on the object and partaking in the tests.
-        // We will now begin."
-
         yield return new WaitForSeconds(5);
+
         AudioManager.PlayOneShot(surge);
+
         yield return new WaitForSeconds(1.1f);
+
+        Player.Instance.ForceBlink(); // Force a blink so 173 can change poses
+        scp173.transform.LookAt(classDB.transform.position, Vector3.up); // Rotate towards ClassD-B
+        scp173.GetComponent<Animator>().Play("Pose3");
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.legacyLightFlicker);
+
         lightBreak.Play();
         lightBody.useGravity = true;
         lightBody.AddForce(transform.forward * 10);
         elecSparks.Play();
         lightToTurnOff.SetActive(false);
         lightToFlicker.SetActive(true);
-        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173, 0);
-        yield return new WaitForSeconds(1);
+
+        //MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SCP_173, 0);
+
+        yield return new WaitForSeconds(0.5f);
+
+        classDB.SetAnimTrigger("Scared");
+
+        yield return new WaitForSeconds(0.5f);
+
         franklin.PlayAnimation("IdleAction09");
         contDoor.OpenDoor();
+
         yield return new WaitForSeconds(0.5f);
+
+        balconyGuard.Speak(balcGuardRadio);
         classDA.SetAnimTrigger("LookBehind");
+
         yield return new WaitForSeconds(1);
+
+        // Problem voice line starts here. Subsequent sequence should last 12 seconds!
         AudioManager.PlayOneShot(franklinA);
-        yield return new WaitForSeconds(2);
-        yield return new WaitForSeconds(1);
-        // Class d1 line 1
-        yield return new WaitForSeconds(2);
+
+        yield return new WaitForSeconds(5);
+
+        classDA.Speak(introDisposables);
         RevivalRuntimeEngine.Instance.ShakeCamera(0, 0.1f, 10);
+
         yield return new WaitForSeconds(4);
+
         classDB.SetAnimTrigger("WalkBackScared");
+
+        yield return new WaitForSeconds(1);
+
+        balconyGuard.Speak(wtf);
+
+        yield return new WaitForSeconds(2f);
+
+        // 12 seconds in, blackout !
+
+        RevivalRuntimeEngine.Instance.ShakeCamera(1f, 0, 4);
+        classDB.Speak(introDisposables);
+
+        yield return new WaitForSeconds(0.6f); // Death at 0.7 seconds in the sound
+
+        Player.Instance.ForceBlink();
+        scp173.transform.position = new Vector3(classDB.transform.position.x, scp173.transform.position.y, classDB.transform.position.z + 1);
+        scp173.transform.LookAt(classDB.transform.position, Vector3.up);
+        scp173.GetComponent<Animator>().Play("Pose6");
+        classDB.PlayAnimation("173Death02");
+        classDA.SetAnimTrigger("Scared");
+
+        enableBlinkSpamming = true;
+        yield return new WaitForSeconds(0.5f);
+        enableBlinkSpamming = false;
+
+        yield return new WaitForSeconds(0.5f);
+
+        Player.Instance.ForceBlink();
+        scp173.transform.position = new Vector3(classDA.transform.position.x, scp173.transform.position.y, classDA.transform.position.z + 1);
+        scp173.transform.LookAt(classDA.transform.position, Vector3.up);
+        scp173.GetComponent<Animator>().Play("Pose2");
+        classDA.PlayAnimation("173Death01");
+        classDA.Speak(AudioManager.Instance.globalAudioContainer.neckBreak);
+
+        enableBlinkSpamming = true;
+        yield return new WaitForSeconds(0.5f);
+        enableBlinkSpamming = false;
+
+        yield return new WaitForSeconds(0.5f);
+
+        Player.Instance.ForceBlink();
+        MusicManager.Instance.StopAllMusic();
+        scp173.transform.position = new Vector3(Player.Instance.transform.position.x, scp173.transform.position.y, Player.Instance.transform.position.z + 1);
+        scp173.transform.LookAt(new Vector3(Player.Instance.transform.position.x, transform.position.y, Player.Instance.transform.position.z));
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.chamberStingerC);
+
+        enableBlinkSpamming = true;
+        yield return new WaitForSeconds(0.5f);
+        enableBlinkSpamming = false;
+
+        yield return new WaitForSeconds(5);
     }
 
     #endregion

@@ -29,6 +29,7 @@ public class Player : MonoBehaviour {
 
     public GameObject cameraRoot;
     public Camera playerCamera;
+    public PlayerBlink playerBlink;
 
     private Sequence currentDeathTween;
     private Vector3 cameraStartPos;
@@ -116,6 +117,10 @@ public class Player : MonoBehaviour {
     public static void SetCursorState(bool visibleAndUnlocked) {
         desiredCursorVisible = visibleAndUnlocked;
         ApplyCursorState();
+    }
+
+    public void ForceBlink() {
+        playerBlink.currentBlink = 0;
     }
 
     public void KillPlayer(int killType, float animDuration, float deathMessageDelay, string causeOfDeath) {

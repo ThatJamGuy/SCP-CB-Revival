@@ -152,4 +152,5 @@ public class GlobalAudioContainer {
     public EventReference p90Oneshot;
     public EventReference doorExplode;
     public EventReference doorBangEvent;
+    public EventReference neckBreak;
 }

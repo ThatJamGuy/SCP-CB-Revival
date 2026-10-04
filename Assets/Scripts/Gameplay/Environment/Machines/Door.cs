@@ -1,8 +1,7 @@
+using FMODUnity;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
-using FMODUnity;
-using UnityEngine.AI;
 
 /// <summary>
 /// Script to handle doors that follow the sliding left-right movements
@@ -36,11 +35,9 @@ public class Door : MonoBehaviour {
     [Header("Door Parts")]
     public GameObject doorPart01;
     public GameObject doorPart02;
-    public GameObject doorPhys01;
-    public GameObject doorPhys02;
 
     private Coroutine moveRoutine;
-    
+
     private Vector3 door01InitialPos, door02InitialPos, door01Target, door02Target;
     private Vector3 offset;
 
@@ -51,7 +48,7 @@ public class Door : MonoBehaviour {
         // Set the initial positions for the doors so they know where to slide back to when closing
         door01InitialPos = doorPart01.transform.position;
         door02InitialPos = doorPart02.transform.position;
-        
+
         offset = GetOffset(openDistance); // Determine the offset the doors will be moved by when opening
         door01Target = door01InitialPos + offset; // Determine the target position for the first door object
         door02Target = door02InitialPos - offset; // Determine the target position for the second door object
@@ -81,7 +78,7 @@ public class Door : MonoBehaviour {
 
         // Immediately start playing the sound so it isn't delayed by the stuff below
         PlaySound();
-        
+
         // While the elapsed time is less than the calculated curation...
         while (time < duration) {
             var factor = Mathf.SmoothStep(0, 1, time / duration);
@@ -90,7 +87,7 @@ public class Door : MonoBehaviour {
             time += Time.deltaTime;
             yield return null;
         }
-        
+
         doorPart01.transform.position = target1;
         doorPart02.transform.position = target2;
         onComplete?.Invoke();
@@ -111,7 +108,7 @@ public class Door : MonoBehaviour {
         };
     }
     #endregion
-    
+
     #region Public Methods
     /// <summary>
     /// Toggle the lock state of the door to the opposite of what it currently is
@@ -135,7 +132,7 @@ public class Door : MonoBehaviour {
 
         isTransitioning = true;
         isOpen = true;
-        
+
         // Trigger the related event and start opening the door
         onDoorOpening?.Invoke();
         StartMove(door01Target, door02Target, onDoorOpened);
@@ -148,10 +145,10 @@ public class Door : MonoBehaviour {
     public void CloseDoor() {
         // If the door is not open or the move coroutine exists and is active already then do nothing
         if (!isOpen || moveRoutine != null || isTransitioning) return;
-        
+
         isTransitioning = true;
         isOpen = false;
-        
+
         // Trigger the related event and start closing the door
         onDoorClosing?.Invoke();
         StartMove(door01InitialPos, door02InitialPos, onDoorClosed);
@@ -162,20 +159,7 @@ public class Door : MonoBehaviour {
     /// Enables gravity on the physics door children and applies force in a specified direction
     /// </summary>
     public void EnableGravityOnDoors(Vector3 explosionDirection, float explosionForce = 50f) {
-        //TODO: FIX THIS (IT DOES NOT WORK RIGHT NOW BUT IT DOES ALLOW 096 RIGHT OF PASSAGE SO KEEPING IT LIKE THIS FOR NOW)
-
-        isBroken = true;
-
-        doorPart01.SetActive(false);
-        doorPart02.SetActive(false);
-        doorPhys01.SetActive(true);
-        doorPhys02.SetActive(true);
-
-        Rigidbody rbPhys01 = doorPhys01.GetComponent<Rigidbody>();
-        Rigidbody rbPhys02 = doorPhys02.GetComponent<Rigidbody>();
-
-        rbPhys01.AddForce(explosionDirection * explosionForce);
-        rbPhys02.AddForce(explosionDirection * explosionForce);
+        //TODO: do this stuff
     }
     #endregion
 }

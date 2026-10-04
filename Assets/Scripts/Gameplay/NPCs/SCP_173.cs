@@ -39,7 +39,7 @@ public class SCP_173 : MonoBehaviour {
     private const float ROAM_INTERVAL = 3f;
     private const float ROAM_RADIUS = 10f;
     private const float DOOR_CHECK_RADIUS = 2f;
-    private const float CHASE_SPEED = 100f;
+    private const float CHASE_SPEED = 200f;
     private const float HORROR_SOUND_DISTANCE_THRESHOLD = 5f;
     private const float REPATH_DISTANCE_SQR = 0.25f;
     private const int MAX_DOOR_COLLIDERS = 32;
@@ -132,7 +132,7 @@ public class SCP_173 : MonoBehaviour {
     private float GetChaseSpeed() {
         float speed = CHASE_SPEED;
         if (Player.isBlinking) {
-            speed *= 3.5f;
+            speed *= 3.4f;
         }
         return speed;
     }
@@ -166,7 +166,6 @@ public class SCP_173 : MonoBehaviour {
 
         if (alreadySeenByPlayer) {
             alreadySeenByPlayer = false;
-            //RevivalSessionEngine.Instance.PlayChaseTrack(0, MusicManager.MusicTrack.LCZ);
         }
 
         movementSource.SetActive(false);

@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerBlink : MonoBehaviour {
     [Header("Blink Status")]
-    [SerializeField, Range(0, 1)] private float currentBlink = 1f;
+    [Range(0, 1)] public float currentBlink = 1f;
 
     [Header("Blink Settings")]
     [SerializeField] private float blinkDrainRate = 0.07f;
@@ -13,7 +13,7 @@ public class PlayerBlink : MonoBehaviour {
 
     private float blinkTimeElapsed;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void OnEnable() {
         blinkAction = RevivalRuntimeEngine.Instance.GetAction("Player", "Blink");
