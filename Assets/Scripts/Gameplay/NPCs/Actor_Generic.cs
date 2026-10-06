@@ -14,7 +14,7 @@ public class Actor_Generic : MonoBehaviour {
 
     [Header("References")]
     [SerializeField] private Animator actorAnimator;
-    [SerializeField] private NavMeshAgent actorAgent;
+    public NavMeshAgent actorAgent;
     [SerializeField] private Transform voiceSource;
 
     #region Unity Lifecycle

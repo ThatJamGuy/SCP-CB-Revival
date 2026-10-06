@@ -5,8 +5,6 @@ using UnityEngine.Video;
 
 // Welcome to hell
 
-// 6 - SCF urges to approach 173. class d 2 does so. After d 2 reaches close to 173 a light breaks, then the door opens.
-// 7 - SCF says his line and the lights go out on queue, allowing 173 to kill a guy. Lights go on briefly and then out again allowing 173 to kill another guy.
 // Player is now possible target. (TODO: Think on whether or not making 173s AI naturally target the closest enemy in the intro as if the class ds were other players)
 // If player leaves the chamber area 173 goes up, get's shot at a bit, kill the guard, and escapes through the vent.
 // Small delay after vent breaking but will then switch the level geometry and lighting to the post breach version.
@@ -42,12 +40,14 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private StudioEventEmitter lightObjBreak;
 
     [Header("Scripted References")]
+    [SerializeField] private Actor_Generic researcher2;
     [SerializeField] private Actor_Generic franklin;
     [SerializeField] private Actor_Generic balconyGuard;
     [SerializeField] private Actor_Generic classDA;
     [SerializeField] private Actor_Generic classDB;
     [SerializeField] private GameObject scp173;
     [SerializeField] private IK_MasterComponent classDB_IK;
+    [SerializeField] private Transform nav_vend;
     [SerializeField] private Transform navPoint1_A;
     [SerializeField] private Transform navPoint1_B;
     [SerializeField] private Transform navPoint2_B;
@@ -71,6 +71,8 @@ public class EVNT_Intro : MonoBehaviour {
 
     private Coroutine cellCheckRoutine;
 
+    private bool researcher2Ready;
+    private bool researcher2AtVend;
     private bool playerInChamber = false;
     private bool enableBlinkSpamming;
     private int warningIndex = 0;
@@ -123,6 +125,14 @@ public class EVNT_Intro : MonoBehaviour {
                 spamTimeElapsed = 0;
             }
         }
+
+        // Set the researcher into idle when he get's to the vending machine
+        if (!researcher2AtVend && researcher2Ready) {
+            if (researcher2.actorAgent.remainingDistance < 0.1f) {
+                researcher2.SetAnimBool("Idle", true);
+                researcher2AtVend = true;
+            }
+        }
     }
 
     #region Intro Video
@@ -165,10 +175,14 @@ public class EVNT_Intro : MonoBehaviour {
         yield return new WaitForSeconds(1);
         doc173Paper.SetActive(true);
     }
+
+    public void OnPaperTaken() {
+        researcher2.WalkTo(nav_vend.position);
+        researcher2Ready = true;
+    }
     #endregion
 
     #region Chamber Sequence Start
-
 
     public void OnBeforeChamberEntered() {
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.chamberStingerA);
