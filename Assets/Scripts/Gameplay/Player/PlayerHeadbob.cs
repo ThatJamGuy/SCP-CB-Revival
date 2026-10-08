@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class PlayerHeadbob : MonoBehaviour {
@@ -13,7 +12,7 @@ public class PlayerHeadbob : MonoBehaviour {
     [SerializeField] private float maxRotationAngle = 0.7f;
     [SerializeField] private float rotationSpeed = 0.5f;
 
-    [Header("References")] 
+    [Header("References")]
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private PlayerFootsteps playerFootsteps;
 
@@ -23,39 +22,45 @@ public class PlayerHeadbob : MonoBehaviour {
     private float bobTimer;
     private float movementSpeed;
     private bool hasPlayedFootstep;
+    private Vector3 defaultPosition;
     private Vector3 defaultRotation;
+    private Quaternion defauyltRotationQuat;
 
     #region Unity Callbacks
     private void Start() {
         // Set the player variable to the Instance in the world if available, which is should be
         player = Player.Instance;
-        
+
         // Set default position and rotation for the camera so the headbob can utilize these values
         defaultYPos = transform.localPosition.y;
+        defaultPosition = transform.localPosition;
         defaultRotation = transform.localRotation.eulerAngles;
     }
 
     private void Update() {
         var bobOffset = Mathf.Sin(bobTimer) * bobAmount;
         var rotationOffset = Mathf.Sin(bobTimer * rotationSpeed) * maxRotationAngle * rotationStrength;
-        
+
         // If the player is sprinting, set the local movement speed to the sprintBobSeed value
         // If not, but the player is crouching, then set the local movements speed to the crouchBobSpeed value
         // If none of those check out, set the movementSpeed to the walkBobSpeed
         if (player.isSprinting)
             movementSpeed = sprintBobSpeed;
         else if (player.isCrouching)
-            movementSpeed =  crouchBobSpeed;
+            movementSpeed = crouchBobSpeed;
         else movementSpeed = walkBobSpeed;
-        
+
         // If the player is moving at all, then increase the bobTimer every second * the current movementSpeed
         if (player.isMoving)
             bobTimer += Time.deltaTime * movementSpeed;
-        
+
+        // Hardcoding support for camera shaking so no more need for registration calls on the player
+        Vector3 shake = RevivalRuntimeEngine.ShakeOffset;
+
         transform.localPosition = new Vector3(
-            transform.localPosition.x,
-            defaultYPos + bobOffset,
-            transform.localPosition.z
+            defaultPosition.x + shake.x,
+            defaultPosition.y + bobOffset + shake.y,
+            defaultPosition.z + shake.z
         );
 
         transform.localRotation = Quaternion.Euler(

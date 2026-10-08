@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class EVNT_PostBreach : MonoBehaviour {
-    [SerializeField] private bool devMode;
     [SerializeField] private EventReference alarm2;
+    [SerializeField] private EventReference alarm2SkipIntro;
 
     private readonly System.Collections.Generic.Queue<string> markerQueue = new System.Collections.Generic.Queue<string>();
 
@@ -40,10 +40,13 @@ public class EVNT_PostBreach : MonoBehaviour {
             markerQueue.Enqueue(marker);
     }
 
-    public void TriggerPostBreachEvent() {
+    public void TriggerPostBreachEvent(bool skipIntro = false) {
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror03);
 
-        eventInstance = FMODUnity.RuntimeManager.CreateInstance(alarm2);
+        if (!skipIntro)
+            eventInstance = RuntimeManager.CreateInstance(alarm2);
+        else
+            eventInstance = RuntimeManager.CreateInstance(alarm2SkipIntro);
 
         callbackHandle = GCHandle.Alloc(this);
         eventInstance.setUserData(GCHandle.ToIntPtr(callbackHandle));
@@ -53,15 +56,15 @@ public class EVNT_PostBreach : MonoBehaviour {
     }
 
     public void ShakeCameraLarge() {
-        RevivalRuntimeEngine.Instance.ShakeCamera(0.3f, 0, 5);
+        RevivalRuntimeEngine.Instance.ShakeCamera(0.4f, 0, 5);
     }
 
     public void ShakeCameraSmall() {
-        RevivalRuntimeEngine.Instance.ShakeCamera(0.03f, 0, 2);
+        RevivalRuntimeEngine.Instance.ShakeCamera(0.04f, 0, 2);
     }
 
     public void ChangeMusicToLCZ() {
-        //MusicManager.instance.SetMusicState(MusicState.LCZ);
+        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.LCZ);
     }
 
     private void HandleMarker(string marker) {

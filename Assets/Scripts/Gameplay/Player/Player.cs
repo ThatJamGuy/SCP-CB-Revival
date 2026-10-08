@@ -47,8 +47,6 @@ public class Player : MonoBehaviour {
 
         cameraStartPos = cameraRoot.transform.localPosition;
         cameraStartRot = cameraRoot.transform.localRotation;
-
-        RevivalRuntimeEngine.Instance.RegisterCamera(playerCamera.transform);
     }
 
     #region Private Methods

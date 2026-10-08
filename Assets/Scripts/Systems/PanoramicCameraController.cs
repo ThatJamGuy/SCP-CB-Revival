@@ -18,9 +18,6 @@ public class PanoramicCameraController : MonoBehaviour {
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-
-        if (RevivalRuntimeEngine.Instance != null)
-            RevivalRuntimeEngine.Instance.RegisterCamera(gameObject.transform);
     }
 
     private void Update() {

@@ -76,6 +76,7 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private Animator brightnessFlashAnimator;
     [SerializeField] private GameObject doc173Paper;
     [SerializeField] private GameObject introCanvas;
+    [SerializeField] private GameObject skipIntroCanvas;
     [SerializeField] private Transform balconyGuardGunTip;
     [SerializeField] private ParticleSystem elecSparks;
     [SerializeField] private GameObject lightToTurnOff;
@@ -137,9 +138,10 @@ public class EVNT_Intro : MonoBehaviour {
             postBreachEnv.SetActive(true);
 
             introCanvas.SetActive(false);
+            skipIntroCanvas.SetActive(true);
             Instantiate(playerPrefab, spawnSkipIntro);
 
-            postBreachEvent.TriggerPostBreachEvent();
+            postBreachEvent.TriggerPostBreachEvent(true);
         }
     }
 
@@ -405,7 +407,7 @@ public class EVNT_Intro : MonoBehaviour {
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.legacyLightFlicker);
 
         MusicManager.Instance.StopAllMusic();
-        scp173.transform.position = new Vector3(Player.Instance.transform.position.x, scp173.transform.position.y, Player.Instance.transform.position.z + 2);
+        scp173.transform.position = new Vector3(Player.Instance.transform.position.x, scp173.transform.position.y, Player.Instance.transform.localPosition.z + 2);
 
         // Look at the player (Via extra methods because it doesn't want to work normally for some reason)
         Transform scp173Self = scp173.transform;
@@ -453,7 +455,7 @@ public class EVNT_Intro : MonoBehaviour {
 
         yield return new WaitForSeconds(1);
 
-        balconyGuard.SetAnimBool("aiming", true);
+        balconyGuard_2.SetAnimBool("aiming", true);
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.superShoot, balconyGuard_2.transform.position);
         gunLight.SetActive(true);
 
@@ -479,10 +481,16 @@ public class EVNT_Intro : MonoBehaviour {
 
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.introBoomA);
 
+        enableBlinkSpamming = true;
+
         preBreachEnv.SetActive(false);
         postBreachEnv.SetActive(true);
 
         postBreachEvent.TriggerPostBreachEvent();
+
+        yield return new WaitForSeconds(0.5f);
+
+        enableBlinkSpamming = false;
     }
 
     #endregion

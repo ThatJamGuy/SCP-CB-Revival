@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 public class RevivalRuntimeEngine : MonoBehaviour {
     public static RevivalRuntimeEngine Instance { get; private set; }
     public static SettingsData SettingsData { get; set; }
+    public static Vector3 ShakeOffset { get; private set; }
     private static readonly HashSet<string> obtainedAchievementNames = new HashSet<string>();
 
     public static int TotalAchievements { get; private set; }
@@ -38,8 +39,8 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     private const string SETTINGS_FILE_NAME = "settings.json";
     private const string ACHIEVMENTS_FILE_NAME = "achievements.json";
 
-    private List<Transform> camTransforms = new List<Transform>();
-    private Dictionary<Transform, Vector3> originalPositions = new Dictionary<Transform, Vector3>();
+    //private List<Transform> camTransforms = new List<Transform>();
+    //private Dictionary<Transform, Vector3> originalPositions = new Dictionary<Transform, Vector3>();
     private Client client;
     private Coroutine shakeCoroutine;
     private AchievementFile achievementFileData;
@@ -142,53 +143,42 @@ public class RevivalRuntimeEngine : MonoBehaviour {
         DataSaver.Save(achievementFileData, ACHIEVMENTS_FILE_NAME);
     }
 
-    private void ApplyShake() {
-        foreach (var cam in camTransforms) {
-            if (cam == null || !originalPositions.TryGetValue(cam, out var originalPosition)) continue;
-            cam.localPosition = originalPosition + (Vector3)Random.insideUnitCircle * shakeIntensity;
-        }
+    // Generate random shake offset for the camera shake
+    private void UpdateCameraShakeOffset(float intensity) {
+        Vector2 random = Random.insideUnitCircle * intensity;
+        ShakeOffset = new Vector3(random.x, random.y, 0f);
     }
 
     #endregion
 
-    #region Private Coroutines
-
-    private IEnumerator ShakeRoutine(float startIntensity, float endIntensity, float duration) {
-        foreach (var cam in camTransforms) {
-            if (cam != null)
-                originalPositions[cam] = cam.localPosition;
-        }
+    private IEnumerator CameraShakeRoutine(float startIntensity, float endIntensity, float duration) {
         float elapsed = 0f;
+        float invDuration = duration > 0f ? 1f / duration : 0f;
 
         while (elapsed < duration) {
-            shakeIntensity = Mathf.Lerp(startIntensity, endIntensity, elapsed / duration);
-            ApplyShake();
+            shakeIntensity = Mathf.Lerp(startIntensity, endIntensity, elapsed * invDuration);
+            UpdateCameraShakeOffset(shakeIntensity);
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        StartCoroutine(FadeOutShake());
-    }
-
-    private IEnumerator FadeOutShake() {
-        float fadeDuration = 0.5f;
+        // Fade out
+        const float fadeDuration = 0.5f;
+        const float invFade = 1f / fadeDuration;
         float startShake = shakeIntensity;
-        float elapsed = 0f;
+        elapsed = 0f;
 
         while (elapsed < fadeDuration) {
-            shakeIntensity = Mathf.Lerp(startShake, 0f, elapsed / fadeDuration);
-            ApplyShake();
+            shakeIntensity = Mathf.Lerp(startShake, 0f, elapsed * invFade);
+            UpdateCameraShakeOffset(shakeIntensity);
             elapsed += Time.deltaTime;
             yield return null;
         }
-        shakeIntensity = 0f;
-        foreach (var cam in camTransforms) {
-            if (cam != null && originalPositions.TryGetValue(cam, out var originalPosition))
-                cam.localPosition = originalPosition;
-        }
-    }
 
-    #endregion
+        shakeIntensity = 0f;
+        ShakeOffset = Vector3.zero;
+        shakeCoroutine = null;
+    }
 
     // Gets an action for a given map. Called from external scripts
     public InputAction GetAction(string mapName, string actionName) {
@@ -243,20 +233,9 @@ public class RevivalRuntimeEngine : MonoBehaviour {
         Debug.LogWarning($"No achievement found with name: " + achievementIdentifier);
     }
 
-    public void RegisterCamera(Transform cam) {
-        if (!camTransforms.Contains(cam)) {
-            camTransforms.Add(cam);
-            originalPositions[cam] = cam.localPosition;
-        }
-    }
-
-    public void UnregisterCamera(Transform cam) {
-        if (camTransforms.Remove(cam)) originalPositions.Remove(cam);
-    }
-
     public void ShakeCamera(float startIntensity, float endIntensity, float duration) {
         if (shakeCoroutine != null) StopCoroutine(shakeCoroutine);
-        shakeCoroutine = StartCoroutine(ShakeRoutine(startIntensity, endIntensity, duration));
+        shakeCoroutine = StartCoroutine(CameraShakeRoutine(startIntensity, endIntensity, duration));
     }
 
     public static void ToggleAchievementsMenu(bool active) {
