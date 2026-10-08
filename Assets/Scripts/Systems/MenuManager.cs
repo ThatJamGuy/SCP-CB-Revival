@@ -3,11 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Script to handle the opening and closing of various in game menus.
-/// Now supports unregistered menus for less detailed toggling of said menus.
-/// </summary>
-
 public class MenuManager : MonoBehaviour {
     public static MenuManager Instance { get; private set; }
 

@@ -28,10 +28,6 @@ public class EVNT_PostBreach : MonoBehaviour {
             callbackHandle.Free();
     }
 
-    private void Start() {
-        if (devMode) TriggerPostBreachEvent();
-    }
-
     private void Update() {
         lock (markerQueue) {
             while (markerQueue.Count > 0)
@@ -57,7 +53,7 @@ public class EVNT_PostBreach : MonoBehaviour {
     }
 
     public void ShakeCameraLarge() {
-        RevivalRuntimeEngine.Instance.ShakeCamera(0.2f, 0, 5);
+        RevivalRuntimeEngine.Instance.ShakeCamera(0.3f, 0, 5);
     }
 
     public void ShakeCameraSmall() {

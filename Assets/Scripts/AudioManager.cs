@@ -139,6 +139,8 @@ public class GlobalAudioContainer {
     public EventReference chamberStingerA;
     public EventReference chamberStingerB;
     public EventReference chamberStingerC;
+    public EventReference introBoomA;
+    public EventReference superShoot;
     public EventReference quicksave01;
     public EventReference introVideoSound;
     public EventReference scp096Triggered;

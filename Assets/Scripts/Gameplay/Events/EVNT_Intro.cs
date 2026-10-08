@@ -19,6 +19,10 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private GameObject preBreachEnv;
     [SerializeField] private GameObject postBreachEnv;
     [SerializeField] private Door contDoor;
+    [SerializeField] private GameObject contLights;
+    [SerializeField] private GameObject outContLights;
+    [SerializeField] private EVNT_PostBreach postBreachEvent;
+    [SerializeField] private GameObject triggersParent;
 
     [Header("Developer References")]
     [SerializeField] private GameObject runtimeEngine;
@@ -35,14 +39,20 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private EventReference balcGuardRadio;
     [SerializeField] private EventReference wtf;
     [SerializeField] private EventReference introDisposables;
+    [SerializeField] private EventReference shitShit;
     [SerializeField] private StudioEventEmitter alarm10;
     [SerializeField] private StudioEventEmitter lightBreak;
     [SerializeField] private StudioEventEmitter lightObjBreak;
+    [SerializeField] private StudioEventEmitter ventBreak;
 
     [Header("Scripted References")]
+    [SerializeField] private GameObject ulgrin;
+    [SerializeField] private GameObject laptopGuy;
+    [SerializeField] private GameObject phoneGuy;
     [SerializeField] private Actor_Generic researcher2;
     [SerializeField] private Actor_Generic franklin;
     [SerializeField] private Actor_Generic balconyGuard;
+    [SerializeField] private Actor_Generic balconyGuard_2;
     [SerializeField] private Actor_Generic classDA;
     [SerializeField] private Actor_Generic classDB;
     [SerializeField] private GameObject scp173;
@@ -51,7 +61,10 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private Transform navPoint1_A;
     [SerializeField] private Transform navPoint1_B;
     [SerializeField] private Transform navPoint2_B;
+    [SerializeField] private Transform nav173_1;
+    [SerializeField] private Transform nav173_2;
     [SerializeField] private GameObject chamberEnterTrigger;
+    [SerializeField] private GameObject gunLight;
 
     [Header("Generic References")]
     [SerializeField] private Animator ulgrinAnimator;
@@ -109,8 +122,24 @@ public class EVNT_Intro : MonoBehaviour {
         } else {
             RevivalSessionEngine.canSave = true;
 
+            // Cleanup for intro skipping
+            Destroy(franklin.gameObject);
+            Destroy(classDA.gameObject);
+            Destroy(classDB.gameObject);
+            Destroy(researcher2.gameObject);
+            Destroy(balconyGuard.gameObject);
+            Destroy(triggersParent.gameObject);
+            Destroy(ulgrin.gameObject);
+            Destroy(laptopGuy.gameObject);
+            Destroy(phoneGuy.gameObject);
+
+            preBreachEnv.SetActive(false);
+            postBreachEnv.SetActive(true);
+
             introCanvas.SetActive(false);
             Instantiate(playerPrefab, spawnSkipIntro);
+
+            postBreachEvent.TriggerPostBreachEvent();
         }
     }
 
@@ -127,7 +156,7 @@ public class EVNT_Intro : MonoBehaviour {
         }
 
         // Set the researcher into idle when he get's to the vending machine
-        if (!researcher2AtVend && researcher2Ready) {
+        if (!researcher2AtVend && researcher2Ready && researcher2.gameObject.activeSelf) {
             if (researcher2.actorAgent.remainingDistance < 0.1f) {
                 researcher2.SetAnimBool("Idle", true);
                 researcher2AtVend = true;
@@ -255,9 +284,15 @@ public class EVNT_Intro : MonoBehaviour {
         cellCheckRoutine = StartCoroutine(CheckPlayerInCell());
     }
 
+    #endregion
+
+    #region Chamber Sequence Mid-End
+
     private IEnumerator InsideChamberSequence() {
         yield return new WaitForSeconds(3);
+
         AudioManager.PlayOneShot(franklinA);
+
         yield return new WaitForSeconds(4);
         classDB.WalkTo(navPoint2_B.position);
 
@@ -317,12 +352,22 @@ public class EVNT_Intro : MonoBehaviour {
 
         // 12 seconds in, blackout !
 
+        contLights.SetActive(false);
+        outContLights.SetActive(false);
+
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.introBoomA);
+
         RevivalRuntimeEngine.Instance.ShakeCamera(1f, 0, 4);
         classDB.Speak(introDisposables);
 
         yield return new WaitForSeconds(0.6f); // Death at 0.7 seconds in the sound
 
+        contLights.SetActive(true);
+        outContLights.SetActive(true);
+
         Player.Instance.ForceBlink();
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.legacyLightFlicker);
+
         scp173.transform.position = new Vector3(classDB.transform.position.x, scp173.transform.position.y, classDB.transform.position.z + 1);
         scp173.transform.LookAt(classDB.transform.position, Vector3.up);
         scp173.GetComponent<Animator>().Play("Pose6");
@@ -333,9 +378,17 @@ public class EVNT_Intro : MonoBehaviour {
         yield return new WaitForSeconds(0.5f);
         enableBlinkSpamming = false;
 
+        contLights.SetActive(false);
+        outContLights.SetActive(false);
+
         yield return new WaitForSeconds(0.5f);
 
+        contLights.SetActive(true);
+        outContLights.SetActive(true);
+
         Player.Instance.ForceBlink();
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.legacyLightFlicker);
+
         scp173.transform.position = new Vector3(classDA.transform.position.x, scp173.transform.position.y, classDA.transform.position.z + 1);
         scp173.transform.LookAt(classDA.transform.position, Vector3.up);
         scp173.GetComponent<Animator>().Play("Pose2");
@@ -349,16 +402,87 @@ public class EVNT_Intro : MonoBehaviour {
         yield return new WaitForSeconds(0.5f);
 
         Player.Instance.ForceBlink();
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.legacyLightFlicker);
+
         MusicManager.Instance.StopAllMusic();
-        scp173.transform.position = new Vector3(Player.Instance.transform.position.x, scp173.transform.position.y, Player.Instance.transform.position.z + 1);
-        scp173.transform.LookAt(new Vector3(Player.Instance.transform.position.x, transform.position.y, Player.Instance.transform.position.z));
+        scp173.transform.position = new Vector3(Player.Instance.transform.position.x, scp173.transform.position.y, Player.Instance.transform.position.z + 2);
+
+        // Look at the player (Via extra methods because it doesn't want to work normally for some reason)
+        Transform scp173Self = scp173.transform;
+        Vector3 playerPos = Player.Instance.transform.position;
+        playerPos.y = scp173Self.position.y;
+        scp173Self.LookAt(playerPos, Vector3.up);
+
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.chamberStingerC);
 
         enableBlinkSpamming = true;
         yield return new WaitForSeconds(0.5f);
         enableBlinkSpamming = false;
 
+        // Get all the main lights flickering
+        foreach (Transform child in outContLights.transform) {
+            if (child.TryGetComponent<LightFlicker>(out LightFlicker flicker))
+                flicker.enabled = true;
+        }
+
         yield return new WaitForSeconds(5);
+
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.introBoomA);
+        RevivalRuntimeEngine.Instance.ShakeCamera(0.2f, 0, 1);
+
+        contLights.SetActive(false);
+        outContLights.SetActive(false);
+
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.legacyLightFlicker);
+
+        // Put him up there with the guard
+        scp173.GetComponent<Animator>().Play("Pose6");
+        scp173.transform.position = nav173_1.transform.position;
+        scp173.transform.rotation = nav173_1.transform.rotation;
+
+        balconyGuard.gameObject.SetActive(false);
+        balconyGuard_2.gameObject.SetActive(true);
+
+        franklin.gameObject.SetActive(false);
+
+        enableBlinkSpamming = true;
+        yield return new WaitForSeconds(0.5f);
+        enableBlinkSpamming = false;
+
+        balconyGuard_2.Speak(shitShit);
+
+        yield return new WaitForSeconds(1);
+
+        balconyGuard.SetAnimBool("aiming", true);
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.superShoot, balconyGuard_2.transform.position);
+        gunLight.SetActive(true);
+
+        yield return new WaitForSeconds(3.8f);
+
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.legacyLightFlicker);
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.introBoomA);
+        RevivalRuntimeEngine.Instance.ShakeCamera(0.2f, 0, 1);
+        gunLight.SetActive(false);
+
+        scp173.transform.position = nav173_2.transform.position;
+        classDA.Speak(AudioManager.Instance.globalAudioContainer.neckBreak);
+        balconyGuard_2.SetAnimTrigger("Die");
+
+        yield return new WaitForSeconds(1);
+
+        RevivalRuntimeEngine.Instance.ShakeCamera(0.2f, 0, 1);
+        ventBreak.Play();
+
+        enableBlinkSpamming = true;
+        yield return new WaitForSeconds(0.5f);
+        enableBlinkSpamming = false;
+
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.introBoomA);
+
+        preBreachEnv.SetActive(false);
+        postBreachEnv.SetActive(true);
+
+        postBreachEvent.TriggerPostBreachEvent();
     }
 
     #endregion
