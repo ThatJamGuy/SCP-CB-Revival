@@ -106,6 +106,7 @@ public class EVNT_Intro : MonoBehaviour {
         if (!skipIntro) {
             RevivalSessionEngine.canSave = false;
             RevivalSessionEngine.SetZone(0, true);
+            RevivalRuntimeEngine.Instance.ChangeDiscordStatus("In a session", "Performing a test");
 
             Instantiate(playerPrefab, spawnRegular);
 
@@ -122,6 +123,7 @@ public class EVNT_Intro : MonoBehaviour {
             }
         } else {
             RevivalSessionEngine.canSave = true;
+            RevivalRuntimeEngine.Instance.ChangeDiscordStatus("In a session", "Roaming the facility");
 
             // Cleanup for intro skipping
             Destroy(franklin.gameObject);
