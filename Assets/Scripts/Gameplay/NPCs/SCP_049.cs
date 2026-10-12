@@ -323,7 +323,7 @@ public class SCP_049 : MonoBehaviour {
 
             for (int i = 0; i < numColliders; i++) {
                 if (hitColliders[i].TryGetComponent<Door>(out Door door)) {
-                    if (!door.isLocked && !door.isBroken) door.OpenDoor();
+                    if (!door.isLocked && !door.isBroken && door.requiredKeyLevel == 0) door.OpenDoor();
                     break;
                 }
             }

@@ -12,7 +12,6 @@ public class AudioManager : MonoBehaviour {
     private readonly List<EventInstance> activeInstances = new();
 
     [Header("Volume Sliders")]
-    public bool debugVolumes;
     [Range(0, 1)] public float masterVolume = 1;
     [Range(0, 1)] public float musicVolume = 1;
     [Range(0, 1)] public float sfxVolume = 1;
@@ -27,10 +26,9 @@ public class AudioManager : MonoBehaviour {
     private Bus UI_SFXBus;
     private Bus voiceBus;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Awake() {
-        // Ensure that only of one these exist to prevent issues
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
@@ -45,23 +43,24 @@ public class AudioManager : MonoBehaviour {
         musicVolume = RevivalRuntimeEngine.SettingsData.musicVolume;
         sfxVolume = RevivalRuntimeEngine.SettingsData.sfxVolume;
         voiceVolume = RevivalRuntimeEngine.SettingsData.voiceVolume;
+
         ApplyAllVolumes();
     }
 
     private void Update() {
-        if (debugVolumes) {
-            masterBus.setVolume(masterVolume);
-            musicBus.setVolume(musicVolume);
-            SFXBus.setVolume(sfxVolume);
-            UI_SFXBus.setVolume(sfxVolume);
-            voiceBus.setVolume(voiceVolume);
-        }
-
-        // Prune stopped or invalid instances each frame to keep the list clean
+        // For each acitive instance check if it's stopped to which it will release it from memory
         activeInstances.RemoveAll(i => {
             if (!i.isValid()) return true;
+
             i.getPlaybackState(out var state);
-            return state == PLAYBACK_STATE.STOPPED;
+
+            // Instance is stopped, release it
+            if (state == PLAYBACK_STATE.STOPPED) {
+                i.release();
+                return true;
+            }
+
+            return false;
         });
     }
 
@@ -72,12 +71,9 @@ public class AudioManager : MonoBehaviour {
     // Play a one-shot but automatically set to Player transform
     public static void PlayOneShot(EventReference soundToPlay) {
         var soundInstance = RuntimeManager.CreateInstance(soundToPlay); // Create a new sound instance
-        if (Player.Instance != null) {
-            soundInstance.set3DAttributes(Player.Instance.transform.position.To3DAttributes());
-        }
+        if (Player.Instance != null) { soundInstance.set3DAttributes(Player.Instance.transform.position.To3DAttributes()); }
         soundInstance.start(); // Play the sound
-        soundInstance.release(); // Cleanup leftovers to save memory
-        Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to keep track of it
+        Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to release it from memory when finished
     }
 
     // Play a one-shot with no parameters
@@ -85,8 +81,7 @@ public class AudioManager : MonoBehaviour {
         var soundInstance = RuntimeManager.CreateInstance(soundToPlay); // Create a new sound instance
         soundInstance.set3DAttributes(position.To3DAttributes()); // Make this sound play in 3D space
         soundInstance.start(); // Play the sound
-        soundInstance.release(); // Cleanup leftovers to save memory
-        Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to keep track of it
+        Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to release it from memory when finished
     }
 
     // Play a one-shot with a single named parameter
@@ -95,8 +90,7 @@ public class AudioManager : MonoBehaviour {
         soundInstance.set3DAttributes(position.To3DAttributes()); // Make this sound play in 3D space
         soundInstance.setParameterByName(paramName, paramValue); // Set the parameter defined while calling the method
         soundInstance.start(); // Play the sound
-        soundInstance.release(); // Cleanup leftovers to save memory
-        Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to keep track of it
+        Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to release it from memory when finished
     }
 
     // Set a parameter without doing anything else
