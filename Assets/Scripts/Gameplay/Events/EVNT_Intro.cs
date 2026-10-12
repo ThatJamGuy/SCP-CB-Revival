@@ -105,14 +105,13 @@ public class EVNT_Intro : MonoBehaviour {
 
         if (!skipIntro) {
             RevivalSessionEngine.canSave = false;
-            RevivalSessionEngine.SetZone(0, true);
+            RevivalSessionEngine.SetZone(0, true, false); // Set zone to intro, play ambience, no music for now
+            MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror01);
             RevivalRuntimeEngine.Instance.ChangeDiscordStatus("In the intro sequence");
 
             Instantiate(playerPrefab, spawnRegular);
 
             if (playVideo) {
-                MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror01);
-
                 Player.Instance.disableInput = true;
                 Player.Instance.disableLooking = true;
 
@@ -197,10 +196,10 @@ public class EVNT_Intro : MonoBehaviour {
 
     #region Escord End
     private IEnumerator EscortEnd() {
-        RevivalSessionEngine.SetZone(0, true);
+        // Force intro track now, as the generic horror was forced earlier on for the video
+        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Intro);
 
-        if (playVideo)
-            InventorySystem.Instance.AddItemToInventory("docori");
+        if (playVideo) InventorySystem.Instance.AddItemToInventory("docori");
 
         yield return new WaitForSeconds(3);
         ulgrinAnimator.SetTrigger("Cocky");
@@ -223,6 +222,7 @@ public class EVNT_Intro : MonoBehaviour {
     #region Chamber Sequence Start
 
     public void OnBeforeChamberEntered() {
+        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror04); // Currently no music there, so using it as a fade out
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.chamberStingerA);
     }
 

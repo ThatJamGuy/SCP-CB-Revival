@@ -39,8 +39,6 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     private const string SETTINGS_FILE_NAME = "settings.json";
     private const string ACHIEVMENTS_FILE_NAME = "achievements.json";
 
-    //private List<Transform> camTransforms = new List<Transform>();
-    //private Dictionary<Transform, Vector3> originalPositions = new Dictionary<Transform, Vector3>();
     private Client client;
     private Coroutine shakeCoroutine;
     private AchievementFile achievementFileData;

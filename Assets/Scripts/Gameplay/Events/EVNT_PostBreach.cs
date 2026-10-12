@@ -42,7 +42,7 @@ public class EVNT_PostBreach : MonoBehaviour {
 
     public void TriggerPostBreachEvent(bool skipIntro = false) {
         RevivalRuntimeEngine.Instance.ChangeDiscordStatus("Roaming the facility");
-        RevivalSessionEngine.currentZone = 1; // Set zone to LCZ
+        RevivalSessionEngine.SetZone(1, true, false); // Set zone to LCZ, ignoring the music because look down VVV
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror03);
 
         if (!skipIntro)
