@@ -106,7 +106,7 @@ public class EVNT_Intro : MonoBehaviour {
         if (!skipIntro) {
             RevivalSessionEngine.canSave = false;
             RevivalSessionEngine.SetZone(0, true);
-            RevivalRuntimeEngine.Instance.ChangeDiscordStatus("In a session", "Performing a test");
+            RevivalRuntimeEngine.Instance.ChangeDiscordStatus("In the intro sequence");
 
             Instantiate(playerPrefab, spawnRegular);
 
@@ -123,7 +123,6 @@ public class EVNT_Intro : MonoBehaviour {
             }
         } else {
             RevivalSessionEngine.canSave = true;
-            RevivalRuntimeEngine.Instance.ChangeDiscordStatus("In a session", "Roaming the facility");
 
             // Cleanup for intro skipping
             Destroy(franklin.gameObject);
@@ -276,7 +275,7 @@ public class EVNT_Intro : MonoBehaviour {
             balconyGuard.SetAnimBool("aiming", true);
             yield return new WaitForSeconds(4);
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.p90Oneshot, balconyGuardGunTip.position);
-            Player.Instance.KillPlayer(1, 0.4f, 0.1f, "DEBUG - Killed via gun during the intro");
+            Player.Instance.KillPlayer(1, 0.4f, 0.1f, "Subject D-9341. Cause of death: Gunshot wound to the head after failure to comply with testing procedures.");
             RevivalRuntimeEngine.Instance.GiveAchievement("achv_intro");
             yield break;
         }
@@ -408,12 +407,19 @@ public class EVNT_Intro : MonoBehaviour {
         Player.Instance.ForceBlink();
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.legacyLightFlicker);
 
-        MusicManager.Instance.StopAllMusic();
-        scp173.transform.position = new Vector3(Player.Instance.transform.position.x, scp173.transform.position.y, Player.Instance.transform.localPosition.z + 2);
+        Transform playerTransform = Player.Instance.transform;
+        Vector3 playerPos = playerTransform.position;
+        Vector3 playerForward = playerTransform.forward;
+
+        // Teleport 173 in front of the player
+        scp173.transform.position = new Vector3(
+            playerPos.x + playerForward.x * 1,
+            scp173.transform.position.y,
+            playerPos.z + playerForward.z * 1
+        );
 
         // Look at the player (Via extra methods because it doesn't want to work normally for some reason)
         Transform scp173Self = scp173.transform;
-        Vector3 playerPos = Player.Instance.transform.position;
         playerPos.y = scp173Self.position.y;
         scp173Self.LookAt(playerPos, Vector3.up);
 

@@ -32,7 +32,7 @@ public class EntitySystem : MonoBehaviour {
 
     private void Start() {
 
-        // Will later probably manually call this from the map generator for ordering reasons
+        // Kept for testing reasons, map generator automatically calls this
         if (devFindWpOnStart)
             FindWaypointsInScene();
     }

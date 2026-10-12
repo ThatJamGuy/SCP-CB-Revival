@@ -107,6 +107,9 @@ public class MapGenerator : MonoBehaviour {
         // 5. Spawn Doors and Wait
         yield return StartCoroutine(SpawnDoorsRoutine());
 
+        // 6. Find waypoints
+        EntitySystem.Instance.FindWaypointsInScene();
+
         IsGenerationComplete = true;
         Debug.Log("<color=green>Map Generation Sequence Finished!</color>");
     }

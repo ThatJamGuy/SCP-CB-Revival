@@ -906,32 +906,20 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1610338268}
-  toggleTransition: 1
+  toggleTransition: 0
   graphic: {fileID: 853468663}
-  m_Group: {fileID: 0}
+  m_Group: {fileID: 819697227}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1891519273}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
-        m_MethodName: set_isOn
-        m_Mode: 6
+      - m_Target: {fileID: 612142159}
+        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+        m_MethodName: SetDifficulty
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1835759812}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
-        m_MethodName: set_isOn
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -2017,7 +2005,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 224901095}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &493624495
 GameObject:
@@ -2827,10 +2827,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50072b153994e4b43aef1a72943dfb4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
-  versionText: {fileID: 47165548}
-  nameInputField: {fileID: 1048137074}
-  seedInputField: {fileID: 2014094994}
-  difficultyCheckboxes: []
+  modeToggles:
+  - {fileID: 1891519273}
+  - {fileID: 251153679}
+  - {fileID: 1835759812}
+  diffDesc: {fileID: 848468470}
+  safeDesc: The game can be saved any time. However, as in the case of SCP Objects, a Safe classification doesn't mean that handling it doesn't pose a threat.
+  euclidDesc: Why hello there. It appears that Euclid-based saving doesn't exist yet, so saving will default to Safe-Style.
+  keterDesc: 'Keter-class objects are considered the most dangerous ones in Foundation containment. The same can be said for this difficulty level: the SCPs are more aggressive, and you have only one life - when you die, the game is over.'
   enableMenuShakes: 1
   minShakeTime: 10
   maxShakeTime: 20
@@ -2842,6 +2846,10 @@ MonoBehaviour:
       Data4: -433256349
     Path: event:/SFX/General/One-Shots/MenuBooms
   shakeDebris: {fileID: 1012909196}
+  versionText: {fileID: 47165548}
+  nameInputField: {fileID: 1048137074}
+  seedInputField: {fileID: 2014094994}
+  menuClick: {fileID: 2126947526}
 --- !u!1 &622429100
 GameObject:
   m_ObjectHideFlags: 0
@@ -4129,7 +4137,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 350, y: -227.5}
+  m_AnchoredPosition: {x: 350, y: -337.5}
   m_SizeDelta: {x: 700, y: 55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &785547230
@@ -4513,6 +4521,7 @@ GameObject:
   m_Component:
   - component: {fileID: 819697225}
   - component: {fileID: 819697226}
+  - component: {fileID: 819697227}
   m_Layer: 5
   m_Name: Checkboxes
   m_TagString: Untagged
@@ -4568,6 +4577,19 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &819697227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819697224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ToggleGroup
+  m_AllowSwitchOff: 0
 --- !u!1 &824172524
 GameObject:
   m_ObjectHideFlags: 0
@@ -4830,7 +4852,7 @@ GameObject:
   - component: {fileID: 848468471}
   - component: {fileID: 848468470}
   m_Layer: 5
-  m_Name: DiffText_Safe
+  m_Name: DiffText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7103,7 +7125,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Skip Intro Sequence
+  m_text: Skip Intro Sequence?
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4dd87677969ad844aa78e33eb09328f2, type: 2}
   m_sharedMaterial: {fileID: -2134502159719972430, guid: 4dd87677969ad844aa78e33eb09328f2, type: 2}
@@ -10776,32 +10798,20 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 989568232}
-  toggleTransition: 1
+  toggleTransition: 0
   graphic: {fileID: 261367697}
-  m_Group: {fileID: 0}
+  m_Group: {fileID: 819697227}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1891519273}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
-        m_MethodName: set_isOn
-        m_Mode: 6
+      - m_Target: {fileID: 612142159}
+        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+        m_MethodName: SetDifficulty
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 251153679}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
-        m_MethodName: set_isOn
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -10886,28 +10896,16 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1640041421}
-  toggleTransition: 1
+  toggleTransition: 0
   graphic: {fileID: 1338342227}
-  m_Group: {fileID: 0}
+  m_Group: {fileID: 819697227}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 251153679}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
-        m_MethodName: set_isOn
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1835759812}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
-        m_MethodName: set_isOn
-        m_Mode: 6
+      - m_Target: {fileID: 612142159}
+        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+        m_MethodName: SetDifficulty
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -11935,7 +11933,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 350, y: -227.5}
+  m_AnchoredPosition: {x: 350, y: -282.5}
   m_SizeDelta: {x: 700, y: 55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2064728638

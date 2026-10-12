@@ -47,6 +47,8 @@ public class Player : MonoBehaviour {
 
         cameraStartPos = cameraRoot.transform.localPosition;
         cameraStartRot = cameraRoot.transform.localRotation;
+
+        InventorySystem.Instance.playerCamera = playerCamera;
     }
 
     #region Private Methods

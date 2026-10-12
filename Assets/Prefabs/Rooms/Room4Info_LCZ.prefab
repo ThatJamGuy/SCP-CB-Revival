@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 9214498130150804112}
   - component: {fileID: 802928565547568720}
   - component: {fileID: 5021401351860628611}
+  - component: {fileID: 8418030213543651837}
   m_Layer: 0
   m_Name: Point Light
   m_TagString: Untagged
@@ -245,8 +246,8 @@ MonoBehaviour:
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
-  m_AlwaysDrawDynamicShadows: 1
-  m_UpdateShadowOnLightMovement: 0
+  m_AlwaysDrawDynamicShadows: 0
+  m_UpdateShadowOnLightMovement: 1
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
   m_BarnDoorAngle: 90
@@ -271,6 +272,19 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
+--- !u!114 &8418030213543651837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780240030568312978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &7151901940000039514
 GameObject:
   m_ObjectHideFlags: 0
@@ -312,7 +326,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5462109127628603946}
   m_Layer: 0
-  m_Name: Room4Info_OPT
+  m_Name: Room4Info_LCZ
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

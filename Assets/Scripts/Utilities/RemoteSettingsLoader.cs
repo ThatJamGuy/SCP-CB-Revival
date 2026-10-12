@@ -26,7 +26,10 @@ public class RemoteSettingsLoader : MonoBehaviour {
                     break;
                 case SettingPreset.ShadowQuality:
                     light = GetComponent<HDAdditionalLightData>();
-                    UpdateShadowQuality(RevivalRuntimeEngine.SettingsData.shadowQualityMode);
+
+                    if (RevivalRuntimeEngine.Instance != null)
+                        UpdateShadowQuality(RevivalRuntimeEngine.SettingsData.shadowQualityMode);
+
                     break;
             }
 

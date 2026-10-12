@@ -6,18 +6,23 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour {
-    [Header("References")]
-    [SerializeField] private TextMeshProUGUI versionText;
-    [SerializeField] private TMP_InputField nameInputField;
-    [SerializeField] private TMP_InputField seedInputField;
-    [SerializeField] private Toggle[] difficultyCheckboxes;
+    [Header("Session Setup")]
+    [SerializeField] private Toggle[] modeToggles; // 0 - Safe, 1 - Euclid, 2 - Keter
+    [SerializeField] private TextMeshProUGUI diffDesc;
+    [SerializeField, TextArea] private string safeDesc, euclidDesc, keterDesc;
 
-    [Header("Other References")]
+    [Header("Menu Shakes")]
     [SerializeField] private bool enableMenuShakes;
     [SerializeField] private float minShakeTime = 25;
     [SerializeField] private float maxShakeTime = 40f;
     [SerializeField] private EventReference bigBooms;
     [SerializeField] private GameObject shakeDebris;
+
+    [Header("References")]
+    [SerializeField] private TextMeshProUGUI versionText;
+    [SerializeField] private TMP_InputField nameInputField;
+    [SerializeField] private TMP_InputField seedInputField;
+    [SerializeField] private StudioEventEmitter menuClick;
 
     private const string CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -28,13 +33,10 @@ public class MainMenuController : MonoBehaviour {
     private void Start() {
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Menu);
         RevivalRuntimeEngine.Instance.ChangeDiscordStatus("In the Main Menu");
-
-        // Version number (ie. Alpha v0.0.6 09202026)
-        // Don't forget to change the date manually when building!
-        // TODO: Look into a way to automate this later
-        versionText.text = "Alpha v" + Application.version + " 09202026";
+        versionText.text = "v" + Application.version;
 
         AutomaticallyDefineSeed();
+        SetDifficulty(0);
 
         if (enableMenuShakes)
             StartCoroutine(PeriodicMenuShake());
@@ -69,6 +71,28 @@ public class MainMenuController : MonoBehaviour {
         }
     }
 
+    public void SetDifficulty(int diff) {
+        switch (diff) {
+            case 0:
+                modeToggles[1].SetIsOnWithoutNotify(false);
+                modeToggles[2].SetIsOnWithoutNotify(false);
+                diffDesc.text = safeDesc;
+                break;
+            case 1:
+                modeToggles[0].SetIsOnWithoutNotify(false);
+                modeToggles[2].SetIsOnWithoutNotify(false);
+                diffDesc.text = euclidDesc;
+                break;
+            case 2:
+                modeToggles[0].SetIsOnWithoutNotify(false);
+                modeToggles[1].SetIsOnWithoutNotify(false);
+                diffDesc.text = keterDesc;
+                break;
+        }
+
+        menuClick.Play();
+    }
+
     public void OpenOptionsMenu() {
         RevivalRuntimeEngine.ToggleOptionsMenu(true);
     }
@@ -94,9 +118,9 @@ public class MainMenuController : MonoBehaviour {
     /// </summary>
     private void AutomaticallyDefineSeed() {
         int seedTypeChance;
-        seedTypeChance = UnityEngine.Random.Range(0, 2);
+        seedTypeChance = Random.Range(0, 10);
 
-        if (seedTypeChance != 2) {
+        if (seedTypeChance <= 7) {
             seedInputField.text = GenerateRandomString(5);
         } else {
             ProvidePresetSeed();
@@ -123,16 +147,45 @@ public class MainMenuController : MonoBehaviour {
             "scp",
             "subscribe",
             "dzigo",
-            "drsmokes"
+            "drsmokes",
+            "shadow",
+            "snoe",
+            "yomama",
+            "atotastic",
+            "mashelux",
+            "kriswithak",
+            "press2place",
+            "goboy",
+            "krimbopple",
+            "jdm",
+            "bob",
+            "brine",
+            "nikki",
+            "printer",
+            "number1clerklover",
+            "21kdark",
+            "xtrithx",
+            "snapped",
+            "poppopicard",
+            "jdk",
+            "spaghetti",
+            "leejihyeok",
+            "shahir",
+            "skev",
+            "seer",
+            "salvage",
+            "simoxus",
+            "smokes",
+            "fathergaslight"
         };
 
-        seedInputField.text = presetSeeds[UnityEngine.Random.Range(0, presetSeeds.Length)];
+        seedInputField.text = presetSeeds[Random.Range(0, presetSeeds.Length)];
     }
 
     private IEnumerator PeriodicMenuShake() {
         if (!enableMenuShakes) StopCoroutine(PeriodicMenuShake());
 
-        yield return new WaitForSeconds(UnityEngine.Random.Range(minShakeTime, maxShakeTime));
+        yield return new WaitForSeconds(Random.Range(minShakeTime, maxShakeTime));
 
         if (!enableMenuShakes) StopCoroutine(PeriodicMenuShake());
 

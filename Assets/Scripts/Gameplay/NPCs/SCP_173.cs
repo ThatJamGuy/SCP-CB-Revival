@@ -132,7 +132,7 @@ public class SCP_173 : MonoBehaviour {
     private float GetChaseSpeed() {
         float speed = CHASE_SPEED;
         if (Player.isBlinking) {
-            speed *= 3.4f;
+            speed *= 3.2f;
         }
         return speed;
     }

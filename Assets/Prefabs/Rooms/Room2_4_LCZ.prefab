@@ -77,7 +77,6 @@ GameObject:
   - component: {fileID: 5479224384073262995}
   - component: {fileID: 7130803257693675110}
   - component: {fileID: 6844642228095917412}
-  - component: {fileID: 4859125435497535091}
   m_Layer: 0
   m_Name: Screen
   m_TagString: Untagged
@@ -157,28 +156,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4859125435497535091
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4114399968185219987}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &4195137151210806163
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,7 +370,7 @@ MonoBehaviour:
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
   m_AlwaysDrawDynamicShadows: 0
-  m_UpdateShadowOnLightMovement: 0
+  m_UpdateShadowOnLightMovement: 1
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
   m_BarnDoorAngle: 90
@@ -520,7 +497,7 @@ GameObject:
   - component: {fileID: 9029546267667896367}
   - component: {fileID: 897310120905699926}
   - component: {fileID: 547348540621782949}
-  - component: {fileID: 2243133094479527757}
+  - component: {fileID: 8815677844246887593}
   m_Layer: 0
   m_Name: Point Light (3)
   m_TagString: Untagged
@@ -723,8 +700,8 @@ MonoBehaviour:
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
-  m_AlwaysDrawDynamicShadows: 0
-  m_UpdateShadowOnLightMovement: 0
+  m_AlwaysDrawDynamicShadows: 1
+  m_UpdateShadowOnLightMovement: 1
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
   m_BarnDoorAngle: 90
@@ -749,7 +726,7 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
---- !u!114 &2243133094479527757
+--- !u!114 &8815677844246887593
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -758,16 +735,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4613210118432251144}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fafb817f42376349814c4bb96628512, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LightFlicker
-  preset: 3
-  customPattern: mmnmmommommnonmmonqnmmo
-  stepsPerSecond: 20
-  randomOffset: 1
-  startActive: 0
-  smoothTransitions: 0
-  smoothSpeed: 20
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &4812672823687209488
 GameObject:
   m_ObjectHideFlags: 0
@@ -996,7 +967,7 @@ GameObject:
   - component: {fileID: 8033089020708835869}
   - component: {fileID: 4063705943106826512}
   - component: {fileID: 8023063626854785553}
-  - component: {fileID: 4693789779625210676}
+  - component: {fileID: 7881493144594093394}
   m_Layer: 0
   m_Name: Point Light (2)
   m_TagString: Untagged
@@ -1199,8 +1170,8 @@ MonoBehaviour:
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
-  m_AlwaysDrawDynamicShadows: 0
-  m_UpdateShadowOnLightMovement: 0
+  m_AlwaysDrawDynamicShadows: 1
+  m_UpdateShadowOnLightMovement: 1
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
   m_BarnDoorAngle: 90
@@ -1225,7 +1196,7 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
---- !u!114 &4693789779625210676
+--- !u!114 &7881493144594093394
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1234,16 +1205,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5902600606387865602}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fafb817f42376349814c4bb96628512, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LightFlicker
-  preset: 3
-  customPattern: mmnmmommommnonmmonqnmmo
-  stepsPerSecond: 20
-  randomOffset: 1
-  startActive: 0
-  smoothTransitions: 0
-  smoothSpeed: 20
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &6551881667982917626
 GameObject:
   m_ObjectHideFlags: 0
@@ -1512,7 +1477,7 @@ GameObject:
   - component: {fileID: 1794633911194308601}
   - component: {fileID: 2978187980602843288}
   - component: {fileID: 6123289414437057190}
-  - component: {fileID: 7793361924696975618}
+  - component: {fileID: 5807305146768531846}
   m_Layer: 0
   m_Name: Point Light (4)
   m_TagString: Untagged
@@ -1715,8 +1680,8 @@ MonoBehaviour:
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
-  m_AlwaysDrawDynamicShadows: 0
-  m_UpdateShadowOnLightMovement: 0
+  m_AlwaysDrawDynamicShadows: 1
+  m_UpdateShadowOnLightMovement: 1
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
   m_BarnDoorAngle: 90
@@ -1741,7 +1706,7 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
---- !u!114 &7793361924696975618
+--- !u!114 &5807305146768531846
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1750,16 +1715,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7804140202768273317}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fafb817f42376349814c4bb96628512, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LightFlicker
-  preset: 3
-  customPattern: mmnmmommommnonmmonqnmmo
-  stepsPerSecond: 20
-  randomOffset: 1
-  startActive: 0
-  smoothTransitions: 0
-  smoothSpeed: 20
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &8938653225070229425
 GameObject:
   m_ObjectHideFlags: 0

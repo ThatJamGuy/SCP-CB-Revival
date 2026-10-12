@@ -81,7 +81,7 @@ public class SCP_049 : MonoBehaviour {
     private float plagueDoctoringRangeSqr;
     private float visibilityConeHalfAngleCos;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Awake() {
         hitColliders = new Collider[MAX_COLLIDERS];
@@ -323,7 +323,7 @@ public class SCP_049 : MonoBehaviour {
 
             for (int i = 0; i < numColliders; i++) {
                 if (hitColliders[i].TryGetComponent<Door>(out Door door)) {
-                    door.OpenDoor();
+                    if (!door.isLocked && !door.isBroken) door.OpenDoor();
                     break;
                 }
             }

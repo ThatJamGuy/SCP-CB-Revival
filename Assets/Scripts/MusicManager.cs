@@ -74,10 +74,10 @@ public class MusicManager : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        musicInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        musicInstance.stop(STOP_MODE.IMMEDIATE);
         musicInstance.release();
 
-        zoneAmbienceInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        zoneAmbienceInstance.stop(STOP_MODE.IMMEDIATE);
         zoneAmbienceInstance.release();
     }
 
@@ -185,14 +185,14 @@ public class MusicManager : MonoBehaviour {
     public void StopAllMusic() {
         if (!initialized) return; // If the MusicManager isn't ready yet do nothing
 
-        musicInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT); // Stop all music using a fade out by default but It no work :(
+        musicInstance.stop(STOP_MODE.ALLOWFADEOUT); // Stop all music using a fade out by default but It no work :(
         initialized = false; // No longer initialized, trigger another Init() on next track played
     }
 
     public void StopAllZoneAmbience() {
         if (!zoneAmbienceInitialized) return;
 
-        zoneAmbienceInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+        zoneAmbienceInstance.stop(STOP_MODE.ALLOWFADEOUT);
         zoneAmbienceInitialized = false;
     }
 

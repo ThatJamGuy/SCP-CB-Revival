@@ -28,7 +28,7 @@ public class InventorySystem : MonoBehaviour {
     [Header("Debug")]
     public ItemData[] itemDataList;
 
-    private Camera playerCamera;
+    public Camera playerCamera;
 
     // Tracks all the items in the itemDataList for referencing when needed, like spawning/adding items
     private Dictionary<string, ItemData> itemDataLookup;
@@ -56,8 +56,8 @@ public class InventorySystem : MonoBehaviour {
             itemDataLookup.Add(item.itemIdentifier, item);
         }
 
-        if (playerCamera == null && Player.Instance != null)
-            playerCamera = Player.Instance.playerCamera;
+        //if (playerCamera == null && Player.Instance != null)
+        //    playerCamera = Player.Instance.playerCamera;
 
         DebugLogConsole.AddCommand<string>("spawn_item", "Spawns an item in front of the player with the given identifier.", DebugSpawnItem);
         DebugLogConsole.AddCommand("print_item_identifiers", "Prints the string identifiers of available items into the console.", DebugListItems);
