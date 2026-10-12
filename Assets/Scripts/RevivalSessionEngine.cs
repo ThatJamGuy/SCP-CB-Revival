@@ -60,11 +60,14 @@ public class RevivalSessionEngine : MonoBehaviour {
         Player.SetCursorState(true);
     }
 
-    // For directly setting the zone and applying audio changes (Includes optional settings because of this)
-    public static void SetZone(int zone, bool setAmbience = false, bool setMusic = false) {
-        currentZone = zone;
+    // for getting the current zone and applying audio changes
+    // Automatically called by SetZone()
+    public static void SetGlobalAudioBasedOnZone(int zone = -1, bool setAmbience = true, bool setMusic = true) {
+        int targetZone = zone == -1 ? currentZone : zone;
 
-        switch (zone) {
+        if (zone != -1) currentZone = targetZone; // only update if explicitly setting
+
+        switch (targetZone) {
             case 0:
                 if (setAmbience) MusicManager.Instance.SetZoneAmbience(0);
                 if (setMusic) MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Intro, 0);
@@ -79,30 +82,23 @@ public class RevivalSessionEngine : MonoBehaviour {
                 break;
             case 3:
                 if (setAmbience) MusicManager.Instance.SetZoneAmbience(3);
-                //if (setMusic) MusicManager.Instance.SetTrack(MusicManager.MusicTrack.EZ, 0);
                 break;
         }
     }
 
-    // For getting the current zone and applying audio changes
-    public static void SetGlobalAudioBasedOnZone() {
-        switch (currentZone) {
-            case 0:
-                MusicManager.Instance.SetZoneAmbience(0);
-                MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Intro, 0);
-                break;
-            case 1:
-                MusicManager.Instance.SetZoneAmbience(1);
-                MusicManager.Instance.SetTrack(MusicManager.MusicTrack.LCZ, 0);
-                break;
-            case 2:
-                MusicManager.Instance.SetZoneAmbience(2);
-                MusicManager.Instance.SetTrack(MusicManager.MusicTrack.HCZ, 0);
-                break;
-            case 3:
-                MusicManager.Instance.SetZoneAmbience(3);
-                break;
-        }
+    /// <summary>
+    /// Sets the global audio state for the specified zone and updates ambience and music based on the provided flags.
+    /// </summary>
+    /// <remarks>Delegates to SetGlobalAudioBasedOnZone. Default values: setAmbience and setMusic are
+    /// true.</remarks>
+    /// <param name="zone">Identifier of the zone to apply.</param>
+    /// <param name="setAmbience">Whether to update ambience audio when changing the zone.</param>
+    /// <param name="setMusic">Whether to update music playback when changing the zone.</param>
+    public static void SetZone(int zone, bool setAmbience = true, bool setMusic = true) {
+        // Manually set currentZone to the zone parameter that was passed through,
+        // as calling this likely means we want it something really specific anyway
+        currentZone = zone;
+        SetGlobalAudioBasedOnZone(zone, setAmbience, setMusic);
     }
 
     /// <summary>

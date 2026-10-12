@@ -168,6 +168,7 @@ public class EVNT_Intro : MonoBehaviour {
     }
 
     #region Intro Video
+
     private void IntroVideoEndReached(VideoPlayer videoPlayer) {
         videoPlayer.loopPointReached -= IntroVideoEndReached;
         videoPlayer.transform.parent.gameObject.SetActive(false);
@@ -183,10 +184,15 @@ public class EVNT_Intro : MonoBehaviour {
         yield return new WaitForSeconds(3);
 
         introVideoPlayer.Prepare();
+
+        // little safeguard to make sure audio/video syncs up
+        while (!introVideoPlayer.isPrepared) yield return null;
+
         introVideoPlayer.Play();
         introVideoPlayer.loopPointReached += IntroVideoEndReached;
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.introVideoSound);
     }
+
     #endregion
 
     #region Escord End
