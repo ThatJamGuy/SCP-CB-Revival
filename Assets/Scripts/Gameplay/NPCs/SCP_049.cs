@@ -223,6 +223,8 @@ public class SCP_049 : MonoBehaviour {
                 return;
             }
 
+            if (Player.wearing714) return;
+
             state = State.None;
             AudioManager.PlayOneShot(killedPlayerStinger);
             Player.Instance.KillPlayer(1, 0.3f, 0, "An active instance of SCP-049-2 was discovered in [REDACTED]. Terminated by Nine-Tailed Fox.");

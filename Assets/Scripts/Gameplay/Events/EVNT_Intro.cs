@@ -101,7 +101,7 @@ public class EVNT_Intro : MonoBehaviour {
     }
 
     private void Start() {
-        MusicManager.Instance.StopAllMusic();
+        //MusicManager.Instance.StopAllMusic();
 
         if (!skipIntro) {
             RevivalSessionEngine.canSave = false;

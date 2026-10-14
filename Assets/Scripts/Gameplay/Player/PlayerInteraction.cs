@@ -14,6 +14,11 @@ public class PlayerInteraction : MonoBehaviour {
     [SerializeField] private float interactRadius = 2.2f;
     [SerializeField] private float interactIconScreenPadding = 20f;
 
+    // New stuff to prioritize objects the player is looking at.
+    [Header("Look Priority Things")]
+    [SerializeField] private float lookWeight = 0.5f; // 0 - closest obj chosen, 1 - looked at object chosen
+    [SerializeField] private float minLookDot = -1;
+
     [Header("References")]
     [SerializeField] private Camera playerCamera;
 
@@ -30,6 +35,7 @@ public class PlayerInteraction : MonoBehaviour {
     private RectTransform canvasRectTransform;
     private Image interactIcon;
     private Collider[] hitColliders; // Declare hitColliders as a reusable field.
+    private Transform cameraTransform;
 
     private bool cantFunction;
 
@@ -37,6 +43,7 @@ public class PlayerInteraction : MonoBehaviour {
     private void Awake() {
         // Initialize the colliders once
         hitColliders = new Collider[MAX_COLLIDERS];
+        cameraTransform = playerCamera.transform;
     }
 
     private void Start() {
@@ -77,11 +84,23 @@ public class PlayerInteraction : MonoBehaviour {
     #region Private Methods
 
     #region Determine Current Interactable
+
+    /// <summary>
+    /// Determines the closest interactable to the player.
+    /// Recent changes allow this method to prioritize the object the player is looking at.
+    /// </summary>
     private void DetermineClosestInteractable() {
         // Reuse the pre-allocated array for Physics.OverlapSphereNonAlloc.
         var origin = transform.position;
         int numColliders = Physics.OverlapSphereNonAlloc(origin, interactRadius, hitColliders, interactableMask);
-        var closestSqrDist = float.MaxValue;
+
+        // Cache what we need for scoring outside the loop
+        var camPos = cameraTransform.position;
+        var camForward = cameraTransform.forward;
+        float distWeight = 1f - lookWeight;
+        float invRadius = 1f / interactRadius;
+
+        var bestScore = float.MinValue;
         GameObject closestInteractable = null;
 
         // For every collider in the cool circle area around the player...
@@ -91,18 +110,30 @@ public class PlayerInteraction : MonoBehaviour {
             // Check if it uses the interactTag. If not, give up this foreach check
             if (!hit.CompareTag(interactTag)) continue;
 
-            // Create a distance variable from the component transform to the colliders in the radius
             var hitPosition = hit.transform.position;
-            var sqrDistance = (hitPosition - origin).sqrMagnitude;
 
-            // If the distance is greater or equal to the closestDist then give up this foreach check
-            // Also give up if the Linecast in the radius hits an object collider with one of the obstructionMasks
-            if (sqrDistance >= closestSqrDist) continue;
+            // Distance from the player to the collider, normalized to 0..1 by the radius
+            var toHit = hitPosition - origin;
+            float dist = Mathf.Sqrt(toHit.sqrMagnitude);
+            float distScore = 1f - Mathf.Min(dist * invRadius, 1f);
+
+            // How directly the camera is aimed at the collider. 1 = dead center, -1 = directly behind
+            var toHitFromCam = hitPosition - camPos;
+            float camSqr = toHitFromCam.sqrMagnitude;
+            float lookDot = camSqr > 0.0001f
+                ? Vector3.Dot(camForward, toHitFromCam) / Mathf.Sqrt(camSqr)
+                : 1f;
+
+            if (lookDot < minLookDot) continue;
+
+            // Blend the two. Remap the dot from -1..1 to 0..1 so both parts share the same scale
+            float score = (lookDot * 0.5f + 0.5f) * lookWeight + distScore * distWeight;
+
+            // Cheap math first, expensive Linecast only if this could actually win
+            if (score <= bestScore) continue;
             if (Physics.Linecast(origin, hitPosition, obstructionMask)) continue;
 
-            // Set closestDist to the previously provided distance variable
-            // Set the closestInteractable to the gameObject that matches all checks (Uses Interact tag and in radius)
-            closestSqrDist = sqrDistance;
+            bestScore = score;
             closestInteractable = hit.gameObject;
         }
 
@@ -123,6 +154,8 @@ public class PlayerInteraction : MonoBehaviour {
         // Otherwise set that John to be inactive
         if (closestInteractable) TryToShowInteractIcon(closestInteractable.transform.position);
         else if (interactIcon.gameObject != null) interactIcon.gameObject.SetActive(false);
+
+
     }
 
     private void TryToShowInteractIcon(Vector3 worldPos) {

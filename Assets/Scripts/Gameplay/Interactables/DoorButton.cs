@@ -36,7 +36,7 @@ public class DoorButton : MonoBehaviour, IInteractable {
 
         // Player has key, but it's not high enough
         if (InventorySystem.Instance.currentlyHeldItem.chosenBehavior == PresetBehavior.Key
-            && InventorySystem.Instance.currentlyHeldItem.clearance < linkedDoor.requiredKeyLevel) {
+            && InventorySystem.Instance.currentlyHeldItem.clearance < linkedDoor.requiredKeyLevel && !InventorySystem.Instance.currentlyHeldItem.openAllCardDoors) {
             RevivalSessionEngine.Instance.NotifyPlayer("A keycard with security clearance " + linkedDoor.requiredKeyLevel + " or higher is required to operate this door.");
             AudioManager.PlayOneShot(keycardFailedEvent, transform.position);
 
@@ -47,7 +47,7 @@ public class DoorButton : MonoBehaviour, IInteractable {
 
         // Player has key and it's all good, so open the door
         if (InventorySystem.Instance.currentlyHeldItem.chosenBehavior == PresetBehavior.Key
-            && InventorySystem.Instance.currentlyHeldItem.clearance >= linkedDoor.requiredKeyLevel) {
+            && (InventorySystem.Instance.currentlyHeldItem.clearance >= linkedDoor.requiredKeyLevel || InventorySystem.Instance.currentlyHeldItem.openAllCardDoors)) {
             RevivalSessionEngine.Instance.NotifyPlayer("The keycard was inserted into the slot.");
             AudioManager.PlayOneShot(keycardGoodEvent, transform.position);
 

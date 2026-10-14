@@ -25,8 +25,6 @@ public class SCP_914_Knob : MonoBehaviour, IHoldInteractable {
 
     private InputAction lookAction;
 
-    private Quaternion oldRotation;
-
     private bool inUsage;
     private float currentZAngle;
     private float lastClickAngle;

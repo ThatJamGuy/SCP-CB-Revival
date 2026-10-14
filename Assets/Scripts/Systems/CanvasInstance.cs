@@ -19,6 +19,7 @@ public class CanvasInstance : MonoBehaviour {
     public GameObject deathMenu;
     public TextMeshProUGUI deathMenuDeathCauseText;
     public GameObject blinkOverlay;
+    public GameObject gasMaskOverlay;
 
     [Header("Pause Menu")]
     public GameObject controllerTooltips;

@@ -24,8 +24,11 @@ public class Player : MonoBehaviour {
     public bool isMoving;
     public bool isSprinting;
     public bool isCrouching;
-    public static bool isBlinking { get; set; }
     public bool isDead;
+
+    public static bool isBlinking { get; set; }
+    public static bool wearingGasMask;
+    public static bool wearing714;
 
     public GameObject cameraRoot;
     public Camera playerCamera;

@@ -2000,6 +2000,7 @@ GameObject:
   - component: {fileID: 8145868673853627392}
   - component: {fileID: 583779609030517368}
   - component: {fileID: 7991262862983978088}
+  - component: {fileID: 8384625613664965131}
   m_Layer: 0
   m_Name: Point Light
   m_TagString: Untagged
@@ -2082,7 +2083,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShapeRadius: 0.025
   m_ShadowAngle: 0
   m_LightUnit: 0
   m_LuxAtDistance: 1
@@ -2110,8 +2111,8 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: -1
-  m_ShapeRadius: 0.025
-  m_Version: 14
+  m_ShapeRadius: -1
+  m_Version: 15
   m_ObsoleteShadowResolutionTier: 1
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
@@ -2188,7 +2189,7 @@ MonoBehaviour:
   m_ShadowResolution:
     m_Override: 512
     m_UseOverride: 0
-    m_Level: 1
+    m_Level: 0
   m_ShadowDimmer: 0.7
   m_VolumetricShadowDimmer: 1
   m_ShadowFadeDistance: 20
@@ -2247,6 +2248,19 @@ MonoBehaviour:
   startActive: 0
   smoothTransitions: 1
   smoothSpeed: 50
+--- !u!114 &8384625613664965131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3168757902426020668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &3293822967989938429
 GameObject:
   m_ObjectHideFlags: 0
@@ -2493,6 +2507,7 @@ GameObject:
   - component: {fileID: 4128982412050442363}
   - component: {fileID: 7848253386347366518}
   - component: {fileID: 594281651762392814}
+  - component: {fileID: 5965764510136223737}
   m_Layer: 0
   m_Name: Point Light (1)
   m_TagString: Untagged
@@ -2575,7 +2590,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShapeRadius: 0.025
   m_ShadowAngle: 0
   m_LightUnit: 0
   m_LuxAtDistance: 1
@@ -2603,8 +2618,8 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: -1
-  m_ShapeRadius: 0.025
-  m_Version: 14
+  m_ShapeRadius: -1
+  m_Version: 15
   m_ObsoleteShadowResolutionTier: 1
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
@@ -2680,7 +2695,7 @@ MonoBehaviour:
   m_MaxDepthBias: 0.001
   m_ShadowResolution:
     m_Override: 512
-    m_UseOverride: 1
+    m_UseOverride: 0
     m_Level: 0
   m_ShadowDimmer: 0.7
   m_VolumetricShadowDimmer: 1
@@ -2740,6 +2755,19 @@ MonoBehaviour:
   startActive: 0
   smoothTransitions: 1
   smoothSpeed: 50
+--- !u!114 &5965764510136223737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3550852130190181382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &3840498787120379933
 GameObject:
   m_ObjectHideFlags: 0
@@ -2861,8 +2889,8 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: 1
-  m_ShapeRadius: 0.025
-  m_Version: 14
+  m_ShapeRadius: -1
+  m_Version: 15
   m_ObsoleteShadowResolutionTier: 1
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
@@ -3812,6 +3840,7 @@ GameObject:
   - component: {fileID: 4246918152427845602}
   - component: {fileID: 7771279834661853177}
   - component: {fileID: 6412099696571051100}
+  - component: {fileID: 1544603835534632666}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -3922,8 +3951,8 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: -1
-  m_ShapeRadius: 0.025
-  m_Version: 14
+  m_ShapeRadius: -1
+  m_Version: 15
   m_ObsoleteShadowResolutionTier: 1
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
@@ -4059,6 +4088,19 @@ MonoBehaviour:
   startActive: 0
   smoothTransitions: 1
   smoothSpeed: 50
+--- !u!114 &1544603835534632666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5397172740239706282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &5405865625621557711
 GameObject:
   m_ObjectHideFlags: 0
@@ -6099,6 +6141,7 @@ GameObject:
   - component: {fileID: 7658159085042713849}
   - component: {fileID: 4365809240767131617}
   - component: {fileID: 2751889710957836462}
+  - component: {fileID: 6764647287631867747}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -6209,8 +6252,8 @@ MonoBehaviour:
   m_ShapeWidth: -1
   m_ShapeHeight: -1
   m_AspectRatio: -1
-  m_ShapeRadius: 0.025
-  m_Version: 14
+  m_ShapeRadius: -1
+  m_Version: 15
   m_ObsoleteShadowResolutionTier: 1
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
@@ -6346,6 +6389,19 @@ MonoBehaviour:
   startActive: 0
   smoothTransitions: 1
   smoothSpeed: 50
+--- !u!114 &6764647287631867747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7647435497711930601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &8067134868947568224
 GameObject:
   m_ObjectHideFlags: 0
@@ -7869,6 +7925,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4578751525423696977, guid: ba5a12694293f7d41b8ce8c4c0f8cf4f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7394781821538798714, guid: ba5a12694293f7d41b8ce8c4c0f8cf4f, type: 3}
       propertyPath: m_Name
       value: Monitor2
@@ -8519,7 +8579,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_Version
-      value: 14
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_ShapeWidth
@@ -8527,6 +8587,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_ShapeHeight
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
+      propertyPath: m_ShapeRadius
       value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
@@ -8693,6 +8757,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2060651650297655083, guid: ba5a12694293f7d41b8ce8c4c0f8cf4f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4578751525423696977, guid: ba5a12694293f7d41b8ce8c4c0f8cf4f, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7394781821538798714, guid: ba5a12694293f7d41b8ce8c4c0f8cf4f, type: 3}
@@ -9981,6 +10049,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4578751525423696977, guid: ba5a12694293f7d41b8ce8c4c0f8cf4f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7394781821538798714, guid: ba5a12694293f7d41b8ce8c4c0f8cf4f, type: 3}
       propertyPath: m_Name
       value: Monitor2 (2)
@@ -10731,6 +10803,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2060651650297655083, guid: ba5a12694293f7d41b8ce8c4c0f8cf4f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4578751525423696977, guid: ba5a12694293f7d41b8ce8c4c0f8cf4f, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7394781821538798714, guid: ba5a12694293f7d41b8ce8c4c0f8cf4f, type: 3}
