@@ -127,11 +127,15 @@ public class SCP_173 : MonoBehaviour {
         }
 
         movementSource.SetActive(alreadySeenByPlayer && navMeshAgent.velocity.sqrMagnitude > 0.1f);
+
+        // Force a pose change now so that if the player blinks or something the pose will always be different (In Theory)
+        if (poseAnimationHashes.Length == 0 || isVisibleByPlayer || puppetMode || animator == null) return;
+        animator.Play(poseAnimationHashes[Random.Range(0, poseAnimationHashes.Length)]);
     }
 
     private float GetChaseSpeed() {
         float speed = CHASE_SPEED;
-        if (Player.isBlinking) speed *= 3;
+        if (Player.isBlinking) speed *= 2.7f;
         return speed;
     }
 

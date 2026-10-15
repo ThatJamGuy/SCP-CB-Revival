@@ -1030,6 +1030,7 @@ GameObject:
   - component: {fileID: 3030243865904161943}
   - component: {fileID: 2961746807720320479}
   - component: {fileID: 5922173613880274376}
+  - component: {fileID: 857989268276821664}
   m_Layer: 0
   m_Name: ElevatorCeilingLight_1
   m_TagString: Untagged
@@ -1110,7 +1111,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 11.600781}
   m_UseBoundingSphereOverride: 1
-  m_UseViewFrustumForShadowCasterCull: 1
+  m_UseViewFrustumForShadowCasterCull: 0
   m_ForceVisible: 0
   m_ShapeRadius: 0.025
   m_ShadowAngle: 0
@@ -1218,7 +1219,7 @@ MonoBehaviour:
   m_ShadowResolution:
     m_Override: 512
     m_UseOverride: 0
-    m_Level: 1
+    m_Level: 0
   m_ShadowDimmer: 1
   m_VolumetricShadowDimmer: 1
   m_ShadowFadeDistance: 20
@@ -1231,7 +1232,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
-  m_ShadowUpdateMode: 0
+  m_ShadowUpdateMode: 1
   m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -1258,6 +1259,19 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
+--- !u!114 &857989268276821664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2252232820576420664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &2281227277058064168
 GameObject:
   m_ObjectHideFlags: 0
@@ -1333,6 +1347,7 @@ GameObject:
   - component: {fileID: 1288260648490370530}
   - component: {fileID: 4513970452866259015}
   - component: {fileID: 7950467702503762301}
+  - component: {fileID: 2704189476142180549}
   m_Layer: 0
   m_Name: ElevatorCeilingLight_2
   m_TagString: Untagged
@@ -1413,7 +1428,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 11.414213}
   m_UseBoundingSphereOverride: 1
-  m_UseViewFrustumForShadowCasterCull: 1
+  m_UseViewFrustumForShadowCasterCull: 0
   m_ForceVisible: 0
   m_ShapeRadius: 0.025
   m_ShadowAngle: 0
@@ -1521,7 +1536,7 @@ MonoBehaviour:
   m_ShadowResolution:
     m_Override: 512
     m_UseOverride: 0
-    m_Level: 1
+    m_Level: 0
   m_ShadowDimmer: 1
   m_VolumetricShadowDimmer: 1
   m_ShadowFadeDistance: 20
@@ -1534,7 +1549,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
-  m_ShadowUpdateMode: 0
+  m_ShadowUpdateMode: 1
   m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -1561,6 +1576,19 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
+--- !u!114 &2704189476142180549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2381438806926512097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &2387476166086348362
 GameObject:
   m_ObjectHideFlags: 0
@@ -2476,6 +2504,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6245194254371125500}
+  - component: {fileID: 5390358576181766752}
   m_Layer: 0
   m_Name: Room2_Elevator_A
   m_TagString: Untagged
@@ -2502,6 +2531,24 @@ Transform:
   - {fileID: 2046201947295026069}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5390358576181766752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4713725917338803087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 248c7f6a56bd88c4197e3f1a5d2de6de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
+  roomLights:
+  - {fileID: 648582913259318827}
+  - {fileID: 8392010647677672828}
+  - {fileID: 2961746807720320479}
+  - {fileID: 4513970452866259015}
+  activateDistance: 25
 --- !u!1 &4789836288960106779
 GameObject:
   m_ObjectHideFlags: 0
@@ -3262,6 +3309,7 @@ GameObject:
   - component: {fileID: 1653009388482580361}
   - component: {fileID: 648582913259318827}
   - component: {fileID: 4254937347301285270}
+  - component: {fileID: 4063983351108605112}
   m_Layer: 0
   m_Name: HallLight01
   m_TagString: Untagged
@@ -3464,7 +3512,7 @@ MonoBehaviour:
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
-  m_AlwaysDrawDynamicShadows: 1
+  m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
@@ -3490,6 +3538,19 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
+--- !u!114 &4063983351108605112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5711841469482735923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &5728070799989181417
 GameObject:
   m_ObjectHideFlags: 0
@@ -3533,6 +3594,7 @@ GameObject:
   - component: {fileID: 1528921453788888555}
   - component: {fileID: 8392010647677672828}
   - component: {fileID: 940214556422640711}
+  - component: {fileID: 5498799105295367962}
   m_Layer: 0
   m_Name: HallLight02
   m_TagString: Untagged
@@ -3735,7 +3797,7 @@ MonoBehaviour:
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
-  m_AlwaysDrawDynamicShadows: 1
+  m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
@@ -3761,6 +3823,19 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
+--- !u!114 &5498799105295367962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5742848397475514651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &5887115566173763079
 GameObject:
   m_ObjectHideFlags: 0

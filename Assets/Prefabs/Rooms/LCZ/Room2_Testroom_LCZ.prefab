@@ -541,6 +541,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6233121335303549480}
+  - component: {fileID: 8599891703895640926}
   m_Layer: 0
   m_Name: Room2_Testroom_LCZ
   m_TagString: Untagged
@@ -567,6 +568,25 @@ Transform:
   - {fileID: 3962658714801122372}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8599891703895640926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2393673980757517271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 248c7f6a56bd88c4197e3f1a5d2de6de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
+  roomLights:
+  - {fileID: 3597607753541051045}
+  - {fileID: 3792154752605554049}
+  - {fileID: 307384973230394650}
+  - {fileID: 6749322004834413212}
+  - {fileID: 8317924547953883778}
+  activateDistance: 25
 --- !u!1 &2506779736490440152
 GameObject:
   m_ObjectHideFlags: 0
@@ -676,6 +696,7 @@ GameObject:
   - component: {fileID: 3438745690926697219}
   - component: {fileID: 3597607753541051045}
   - component: {fileID: 3987593018385849347}
+  - component: {fileID: 4568969728617880187}
   m_Layer: 0
   m_Name: Point Light (1)
   m_TagString: Untagged
@@ -878,7 +899,7 @@ MonoBehaviour:
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
-  m_AlwaysDrawDynamicShadows: 1
+  m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
@@ -904,6 +925,19 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
+--- !u!114 &4568969728617880187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2864381596320557851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &2970047713463962679
 GameObject:
   m_ObjectHideFlags: 0
@@ -1679,6 +1713,7 @@ GameObject:
   - component: {fileID: 1696299052422821558}
   - component: {fileID: 3792154752605554049}
   - component: {fileID: 2786422765063197976}
+  - component: {fileID: 1134829049103638035}
   m_Layer: 0
   m_Name: Point Light (2)
   m_TagString: Untagged
@@ -1881,7 +1916,7 @@ MonoBehaviour:
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
-  m_AlwaysDrawDynamicShadows: 1
+  m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
@@ -1907,6 +1942,19 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
+--- !u!114 &1134829049103638035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4803193181693286522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &5084255393151276221
 GameObject:
   m_ObjectHideFlags: 0
@@ -1987,7 +2035,7 @@ GameObject:
   - component: {fileID: 5771048113339058200}
   - component: {fileID: 8317924547953883778}
   - component: {fileID: 4194675432695986114}
-  - component: {fileID: 7179129182393539560}
+  - component: {fileID: 4100644546965767049}
   m_Layer: 0
   m_Name: Spot Light (1)
   m_TagString: Untagged
@@ -2190,7 +2238,7 @@ MonoBehaviour:
   m_NormalBias: 0
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
-  m_AlwaysDrawDynamicShadows: 1
+  m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
@@ -2216,7 +2264,7 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
---- !u!114 &7179129182393539560
+--- !u!114 &4100644546965767049
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2225,124 +2273,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5390275546839288826}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc4d76f733087744991913c9d19d5274, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.LensFlareComponentSRP
-  m_LensFlareData: {fileID: 11400000, guid: 5b35fe89bae4c4a4dbeeb444af73f62e, type: 2}
-  version: 0
-  intensity: 1
-  maxAttenuationDistance: 100
-  maxAttenuationScale: 100
-  distanceAttenuationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  scaleByDistanceCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  attenuationByLightShape: 1
-  radialScreenAttenuationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  useOcclusion: 1
-  environmentOcclusion: 0
-  occlusionRadius: 0.1
-  sampleCount: 32
-  occlusionOffset: 0.05
-  scale: 1
-  allowOffScreen: 0
-  occlusionRemapCurve:
-    <length>k__BackingField: 2
-    m_Loop: 0
-    m_ZeroValue: 1
-    m_Range: 1
-    m_Curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 1
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 1
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  lightOverride: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &5394293084794133366
 GameObject:
   m_ObjectHideFlags: 0
@@ -2662,6 +2596,7 @@ GameObject:
   - component: {fileID: 2340925169597955467}
   - component: {fileID: 307384973230394650}
   - component: {fileID: 8003256826905721762}
+  - component: {fileID: 1037353965324444570}
   m_Layer: 0
   m_Name: Point Light (3)
   m_TagString: Untagged
@@ -2864,7 +2799,7 @@ MonoBehaviour:
   m_NormalBias: 0.75
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
-  m_AlwaysDrawDynamicShadows: 1
+  m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
@@ -2890,6 +2825,19 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
+--- !u!114 &1037353965324444570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6211911682513326729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &6219547787645408394
 GameObject:
   m_ObjectHideFlags: 0
@@ -3587,6 +3535,7 @@ GameObject:
   - component: {fileID: 8128839823709917973}
   - component: {fileID: 6784408128206252909}
   - component: {fileID: 5099090167180207947}
+  - component: {fileID: 217416444075790383}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -3789,7 +3738,7 @@ MonoBehaviour:
   m_NormalBias: 0
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 1
-  m_AlwaysDrawDynamicShadows: 1
+  m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
   m_CachedShadowAngularThreshold: 0.5
@@ -3865,6 +3814,19 @@ MonoBehaviour:
   OverrideAttenuation: 0
   OverrideMinDistance: 1
   OverrideMaxDistance: 8
+--- !u!114 &217416444075790383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8207625722610815776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 01000000i
 --- !u!1 &8351797567241931830
 GameObject:
   m_ObjectHideFlags: 0
