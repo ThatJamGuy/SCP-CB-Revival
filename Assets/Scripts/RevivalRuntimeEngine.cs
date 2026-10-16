@@ -5,6 +5,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// PURPOSE: Main runtime script for the game. It persists throughout the ENTIRE lifecycle of the game and is responsible
+// for various reusable functions across scenes. This includes high priority functions like Discord RPC, achievement handling, etc.
+
+// I'm writing code comments at 3:22 in the morning and I have class at 11 what am I doing with my life
+
 public class RevivalRuntimeEngine : MonoBehaviour {
     public static RevivalRuntimeEngine Instance { get; private set; }
     public static SettingsData SettingsData { get; set; }
@@ -13,8 +18,6 @@ public class RevivalRuntimeEngine : MonoBehaviour {
 
     public static int TotalAchievements { get; private set; }
     public static int ObtainedAchievementsCount => obtainedAchievementNames.Count;
-
-    [SerializeField] private bool developerMode; // Enable this if not the core scene
 
     [Header("Input")]
     [SerializeField] private InputActionAsset inputActions;
@@ -33,27 +36,31 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     public GameObject achievementsScreen;
     public GameObject optionsScreen;
 
-    private ulong startTimestamp;
+    private const ulong APPLICATION_ID = 1450277986178830448; // Discord app token. Hopefully leaving this here isn't a security vulernability :)
+    private const string SETTINGS_FILE_NAME = "settings.json"; // File name for the JSON settings file. This is where the settings are saved and loaded from.
+    private const string ACHIEVMENTS_FILE_NAME = "achievements.json"; // Similar to the settings, but housng a list of achievement identifiers the player has unlocked.
 
-    private const ulong APPLICATION_ID = 1450277986178830448;
-    private const string SETTINGS_FILE_NAME = "settings.json";
-    private const string ACHIEVMENTS_FILE_NAME = "achievements.json";
+    private ulong startTimestamp;
 
     private Client client;
     private Coroutine shakeCoroutine;
     private AchievementFile achievementFileData;
     private GameObject currentAchievementItem = null;
 
+    private bool developerMode;
     private float shakeIntensity;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Awake() {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else { Destroy(gameObject); return; }
 
         SettingsData = DataSaver.Load<SettingsData>(SETTINGS_FILE_NAME);
         client = new Client();
+
+        // Do some black magic shit to set the RPC timestamp to the 0:00 mark
+        startTimestamp = (ulong)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
         // Set the log utility to the OnLog method and set the application ID to applicationID. Then update RPC. 
         client.SetApplicationId(APPLICATION_ID);
@@ -69,6 +76,8 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     }
 
     private void OnDestroy() {
+        if (Instance != this || client == null) return;
+
         // Cleanup
         client.ClearRichPresence();
         client.Disconnect();
@@ -87,9 +96,6 @@ public class RevivalRuntimeEngine : MonoBehaviour {
                 .WithOverlay()
                 .Perform();
         }
-
-        // Do some black magic shit to set the timestamp to the 0:00 mark
-        startTimestamp = (ulong)System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         achievementFileData = DataSaver.Load<AchievementFile>(ACHIEVMENTS_FILE_NAME);
         TotalAchievements = achievements.Length;
@@ -112,8 +118,9 @@ public class RevivalRuntimeEngine : MonoBehaviour {
 
     #region Private Methods
 
+    // Purely for result logging. Recently added stuff back in here because RPC doesn't want to work anymore.
     private static void OnUpdateRichPresence(ClientResult result) {
-        return;
+        if (!result.Successful()) Debug.LogError("Rich presence failed: " + result.Error());
     }
 
     private void UpdateRichPresence() {
@@ -149,10 +156,14 @@ public class RevivalRuntimeEngine : MonoBehaviour {
 
     #endregion
 
+    #region Private Coroutines
+
     private IEnumerator CameraShakeRoutine(float startIntensity, float endIntensity, float duration) {
         float elapsed = 0f;
         float invDuration = duration > 0f ? 1f / duration : 0f;
 
+        // While elapsed time is less than the duration, 
+        // lerp the shake intensity from start to end and update the camera shake offset
         while (elapsed < duration) {
             shakeIntensity = Mathf.Lerp(startIntensity, endIntensity, elapsed * invDuration);
             UpdateCameraShakeOffset(shakeIntensity);
@@ -166,6 +177,8 @@ public class RevivalRuntimeEngine : MonoBehaviour {
         float startShake = shakeIntensity;
         elapsed = 0f;
 
+        // While elapsed time is less than the fade duration,
+        // lerp the shake intensity from the current shake intensity to 0 and update the camera shake offset
         while (elapsed < fadeDuration) {
             shakeIntensity = Mathf.Lerp(startShake, 0f, elapsed * invFade);
             UpdateCameraShakeOffset(shakeIntensity);
@@ -173,10 +186,13 @@ public class RevivalRuntimeEngine : MonoBehaviour {
             yield return null;
         }
 
+        // Reset these Johns
         shakeIntensity = 0f;
         ShakeOffset = Vector3.zero;
         shakeCoroutine = null;
     }
+
+    #endregion
 
     // Gets an action for a given map. Called from external scripts
     public InputAction GetAction(string mapName, string actionName) {
@@ -200,6 +216,11 @@ public class RevivalRuntimeEngine : MonoBehaviour {
         UpdateRichPresence();
     }
 
+    /// <summary>
+    /// Is the achievement associated with the provided identifier unlocked? Returns true or false based on this question.
+    /// </summary>
+    /// <param name="achievementIdentifier">The identifier of the achievement to check (IE. achv_173).</param>
+    /// <returns>True if the achievement is unlocked, false otherwise.</returns>
     public bool AchievementUnlocked(string achievementIdentifier) {
         if (obtainedAchievementNames.Contains(achievementIdentifier)) return true;
         else return false;
@@ -236,6 +257,7 @@ public class RevivalRuntimeEngine : MonoBehaviour {
         shakeCoroutine = StartCoroutine(CameraShakeRoutine(startIntensity, endIntensity, duration));
     }
 
+    //TODO: Maybe change the name of these laters since it's not actually toggling anything
     public static void ToggleAchievementsMenu(bool active) {
         Instance.achievementsScreen.SetActive(active);
     }
@@ -245,6 +267,7 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     }
 }
 
+// If only this outcast knew how important he is right now 
 [System.Serializable]
 public class AchievementFile {
     public string[] obtainedAchievementIDs;
