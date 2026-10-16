@@ -75,6 +75,19 @@ public class SCP_173 : MonoBehaviour {
             poseAnimationHashes[i] = Animator.StringToHash(poseAnimations[i]);
     }
 
+    private void OnDestroy() {
+        // Cleanup, not super necessary since once the player dies the game is over but good to have generally
+        // (SCP-173 for now is destroyed when killing the player so he's not emoting on the player upon death)
+        EntitySystem system = EntitySystem.Instance;
+        if (system == null) return;
+
+        Entity entity = system.cached173Entity;
+        if (entity == null) return;
+
+        if (hasTarget) entity.chasingPlayer = false;
+        system.UnregisterEntity(entity, gameObject);
+    }
+
     private void Start() {
         playerCamera = Player.Instance.playerCamera;
         playerTransform = Player.Instance.transform;
@@ -169,8 +182,11 @@ public class SCP_173 : MonoBehaviour {
         movementSource.SetActive(false);
         hasPlayedDistanceHorrorSound = false;
 
-        // Play the current zones music
-        RevivalSessionEngine.Instance.PlayChaseTrack(0, MusicManager.MusicTrack.LCZ);
+        // Tell the entity system the entity is no longer chasing the player, allowing teleports and stuff again
+        EntitySystem.Instance.cached173Entity.chasingPlayer = false;
+
+        // Play the current zones music and ambient sounds
+        RevivalSessionEngine.SetGlobalAudioBasedOnZone();
 
         tensionEmitter.Stop();
     }
@@ -219,7 +235,7 @@ public class SCP_173 : MonoBehaviour {
         if (nearest && Random.value < doorOpenChance && !nearest.isOpen && !nearest.requiresKeycard && !nearest.isLocked && !isVisibleByPlayer && !puppetMode) {
             nearest.OpenDoor();
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorOpen173, nearest.transform.position);
-        } else if (nearest && !nearest.isOpen && !puppetMode) {
+        } else if (nearest && !nearest.isOpen && !puppetMode && EntitySystem.Instance.cached173Entity.chasingPlayer) {
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorBangEvent, nearest.transform.position);
         }
     }
@@ -261,6 +277,9 @@ public class SCP_173 : MonoBehaviour {
             alreadySeenByPlayer = true;
             //GameManager.Instance.scp173pursuing = true;
             AcquireTarget(playerTransform);
+
+            // Let the entity system know that 173 is now actively chasing the player and shouldn't be messed with
+            EntitySystem.Instance.cached173Entity.chasingPlayer = true;
 
             // Make a request for SCP-173 chase music
             RevivalSessionEngine.Instance.PlayChaseTrack(1, MusicManager.MusicTrack.SCP_173, 1);

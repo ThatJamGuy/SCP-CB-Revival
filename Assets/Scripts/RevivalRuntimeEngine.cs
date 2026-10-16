@@ -23,8 +23,8 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     [SerializeField] private InputActionAsset inputActions;
 
     [Header("Default RPC Settings")]
-    [SerializeField] private string details = "";
-    [SerializeField] private string state = "";
+    public string details = "";
+    public string state = "";
 
     [Header("Achievement Settings")]
     [SerializeField] private AchievementData[] achievements;
@@ -128,8 +128,8 @@ public class RevivalRuntimeEngine : MonoBehaviour {
 
         // Set the state to something like "Playing SCP - CB Revival, details, state"
         activity.SetType(ActivityTypes.Playing);
-        activity.SetDetails(details);
-        activity.SetState(state);
+        if (!string.IsNullOrEmpty(details)) activity.SetDetails(details);
+        if (!string.IsNullOrEmpty(state)) activity.SetState(state);
 
         // Set the timestamp back to 0:00 since we changed stuff
         var activityTimestamp = new ActivityTimestamps();

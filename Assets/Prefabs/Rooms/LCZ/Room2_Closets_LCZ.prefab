@@ -494,7 +494,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: c07e036020cc43c40983b02a9d1f5cd1, type: 2}
   - {fileID: 2100000, guid: 5928233ba5f503d4784b28ff76a64829, type: 2}
   - {fileID: 2100000, guid: d79e541e29b18084098c5d63605454d7, type: 2}
-  - {fileID: 2100000, guid: a438fb3b6e602f644a884619fc58aee8, type: 2}
+  - {fileID: 2100000, guid: 78a48c2ade50a50499ca476e28cc1e60, type: 2}
   - {fileID: 2100000, guid: 034a8c6225775a7459e94b053c88a7a5, type: 2}
   - {fileID: 2100000, guid: 78a48c2ade50a50499ca476e28cc1e60, type: 2}
   - {fileID: 2100000, guid: f8d7202c98308a44991bbd2f9f20b789, type: 2}
@@ -677,6 +677,7 @@ Transform:
   - {fileID: 1635452873506731440}
   - {fileID: 359839094759679392}
   - {fileID: 1705077821018648049}
+  - {fileID: 8512357901044197941}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5022357455126259976
@@ -730,6 +731,37 @@ Transform:
   - {fileID: 3838460223826127558}
   - {fileID: 6226815667950588649}
   m_Father: {fileID: 5932145232886072969}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2493287711548877085
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8512357901044197941}
+  m_Layer: 0
+  m_Name: AI_WAYPOINT
+  m_TagString: Respawn
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &8512357901044197941
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2493287711548877085}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.6, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1403530963879594022}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2504795267703512843
 GameObject:
@@ -4112,6 +4144,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FakeDoor_Locked (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 5074114962319822359, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4247,6 +4283,10 @@ PrefabInstance:
     - target: {fileID: 5074114962319822359, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
       propertyPath: m_Name
       value: FakeDoor_Locked (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074114962319822359, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5158,14 +5198,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cabinet_B
       objectReference: {fileID: 0}
-    - target: {fileID: 502738894947023559, guid: 531fd00ea0f2686449af3e2eda50fbf7, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 502738894947023559, guid: 531fd00ea0f2686449af3e2eda50fbf7, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 5652266624707223425, guid: 531fd00ea0f2686449af3e2eda50fbf7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.381
@@ -5528,6 +5560,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FakeDoor_Locked
       objectReference: {fileID: 0}
+    - target: {fileID: 5074114962319822359, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5549,6 +5585,10 @@ PrefabInstance:
     - target: {fileID: 8163147128012679104, guid: da5ebfc91cd7bb3448782fd78ad237aa, type: 3}
       propertyPath: m_Name
       value: Fire_Extinguisher
+      objectReference: {fileID: 0}
+    - target: {fileID: 8163147128012679104, guid: da5ebfc91cd7bb3448782fd78ad237aa, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8163147128012679104, guid: da5ebfc91cd7bb3448782fd78ad237aa, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -5685,6 +5725,10 @@ PrefabInstance:
     - target: {fileID: 150500, guid: a099324e8369338448eeda8e277b651b, type: 3}
       propertyPath: m_Name
       value: FloorPlant
+      objectReference: {fileID: 0}
+    - target: {fileID: 150500, guid: a099324e8369338448eeda8e277b651b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 150500, guid: a099324e8369338448eeda8e277b651b, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -6113,14 +6157,6 @@ PrefabInstance:
     - target: {fileID: 502738894947023559, guid: 531fd00ea0f2686449af3e2eda50fbf7, type: 3}
       propertyPath: m_Name
       value: Cabinet_B (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 502738894947023559, guid: 531fd00ea0f2686449af3e2eda50fbf7, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 502738894947023559, guid: 531fd00ea0f2686449af3e2eda50fbf7, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5652266624707223425, guid: 531fd00ea0f2686449af3e2eda50fbf7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6577,6 +6613,10 @@ PrefabInstance:
     - target: {fileID: 5074114962319822359, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
       propertyPath: m_Name
       value: FakeDoor_Locked (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074114962319822359, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
