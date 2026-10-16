@@ -81,7 +81,7 @@ public class SCP_173 : MonoBehaviour {
         roamTimer = ROAM_INTERVAL;
 
         InvokeRepeating(nameof(CheckForDoors), doorCheckInterval, doorCheckInterval);
-        InvokeRepeating(nameof(PlayRandomPose), 0.1f, 0.1f);
+        InvokeRepeating(nameof(PlayRandomPose), 0.05f, 0.05f);
     }
 
     private void Update() {
@@ -127,10 +127,6 @@ public class SCP_173 : MonoBehaviour {
         }
 
         movementSource.SetActive(alreadySeenByPlayer && navMeshAgent.velocity.sqrMagnitude > 0.1f);
-
-        // Force a pose change now so that if the player blinks or something the pose will always be different (In Theory)
-        if (poseAnimationHashes.Length == 0 || isVisibleByPlayer || puppetMode || animator == null) return;
-        animator.Play(poseAnimationHashes[Random.Range(0, poseAnimationHashes.Length)]);
     }
 
     private float GetChaseSpeed() {
