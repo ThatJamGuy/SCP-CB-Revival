@@ -185,8 +185,9 @@ public class SCP_173 : MonoBehaviour {
         // Tell the entity system the entity is no longer chasing the player, allowing teleports and stuff again
         EntitySystem.Instance.cached173Entity.chasingPlayer = false;
 
-        // Play the current zones music and ambient sounds
-        RevivalSessionEngine.SetGlobalAudioBasedOnZone();
+        // Play the current zones music
+        // Reminder to myself that setting PlayChaseTrack to -1 does a SetGlobalAudioBasedOnZone call since I previously replaced this with that
+        RevivalSessionEngine.Instance.PlayChaseTrack(-1, MusicManager.MusicTrack.LCZ, 0);
 
         tensionEmitter.Stop();
     }

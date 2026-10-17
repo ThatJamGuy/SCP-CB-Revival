@@ -148,8 +148,15 @@ public class MapGenerator : MonoBehaviour {
         // synchronous Instantiate - no need to spread it across frames like InstantiateAsync does.
         foreach (var (placement, room) in placementRooms) {
             AsyncOperationHandle<GameObject> handle = loadedRoomAssets[room.roomPrefab];
+            if (!handle.IsValid()) {
+                Debug.LogError($"Invalid room load handle: {room.roomPrefab.RuntimeKey}");
+                continue;
+            }
+
             if (handle.Status != AsyncOperationStatus.Succeeded) {
-                Debug.LogWarning($"Failed to load addressable prefab for room: {room.name}");
+                Debug.LogError(
+                    $"Room load failed: {room.roomPrefab.RuntimeKey}. " +
+                    $"{handle.OperationException}");
                 continue;
             }
 
@@ -174,13 +181,13 @@ public class MapGenerator : MonoBehaviour {
 
         // Release every addressable load handle now that its instances are gone -
         // this is what actually decrements Addressables' ref count for the bundle.
-        foreach (var handle in loadedRoomAssets.Values) {
-            Addressables.Release(handle);
+        foreach (var prefabRef in loadedRoomAssets.Keys) {
+            prefabRef.ReleaseAsset();
         }
         loadedRoomAssets.Clear();
 
-        foreach (var handle in loadedDoorAssets.Values) {
-            Addressables.Release(handle);
+        foreach (var prefabRef in loadedDoorAssets.Keys) {
+            prefabRef.ReleaseAsset();
         }
         loadedDoorAssets.Clear();
 
@@ -409,6 +416,11 @@ public class MapGenerator : MonoBehaviour {
         foreach (var kvp in placedMandatoryRooms) {
             Gizmos.DrawCube(GridToWorld(kvp.Key), new Vector3(cellSize * 0.5f, 0.5f, cellSize * 0.5f));
         }
+    }
+
+    private void OnDestroy() {
+        if (Instance == this) Instance = null;
+        Cleanup();
     }
     #endregion
 

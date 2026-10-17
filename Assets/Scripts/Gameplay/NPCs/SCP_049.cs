@@ -248,6 +248,9 @@ public class SCP_049 : MonoBehaviour {
             animator.SetBool(checkingBoolHash, false);
             wanderTimer = 0;
             state = State.Roaming;
+
+            EntitySystem.Instance.cached049Entity.chasingPlayer = false;
+
             return;
         }
 
@@ -341,6 +344,7 @@ public class SCP_049 : MonoBehaviour {
         predictionElapsedTime = 0;
 
         AudioManager.PlayOneShot(spottedPlayerStinger);
+        EntitySystem.Instance.cached049Entity.chasingPlayer = true;
         RevivalSessionEngine.Instance.PlayChaseTrack(2, MusicManager.MusicTrack.SCP_049, 1);
         RevivalRuntimeEngine.Instance.GiveAchievement("achv_049");
     }

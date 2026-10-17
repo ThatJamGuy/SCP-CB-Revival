@@ -144,7 +144,7 @@ public class Door : MonoBehaviour {
     /// </summary>
     public void CloseDoor() {
         // If the door is not open or the move coroutine exists and is active already then do nothing
-        if (!isOpen || moveRoutine != null || isTransitioning) return;
+        if (!isOpen || isLocked || isBroken || moveRoutine != null || isTransitioning) return;
 
         isTransitioning = true;
         isOpen = false;

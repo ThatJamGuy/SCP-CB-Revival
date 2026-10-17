@@ -23,12 +23,13 @@ public class EntitySystem : MonoBehaviour {
     public static EntitySystem Instance { get; private set; }
 
     [SerializeField] private bool devFindWpOnStart;
-    [SerializeField] private Entity[] entities;
+    public Entity[] entities;
     [ReadOnly] public List<Transform> cachedWaypoints = new List<Transform>();
     [ReadOnly] public Entity cached173Entity;
+    [ReadOnly] public Entity cached049Entity;
 
-    private const float SPAWN_MIN_SQR = 10 * 10;
-    private const float SPAWN_MAX_SQR = 40 * 40;
+    private const float SPAWN_MIN_SQR = 15 * 15;
+    private const float SPAWN_MAX_SQR = 50 * 50;
 
     private float spawn173Timer;
 
@@ -45,6 +46,9 @@ public class EntitySystem : MonoBehaviour {
         foreach (Entity entity in entities) {
             if (entity.entityIdentifier == "scp173") {
                 cached173Entity = entity;
+            }
+            if (entity.entityIdentifier == "scp049") {
+                cached049Entity = entity;
             }
         }
     }
@@ -70,7 +74,7 @@ public class EntitySystem : MonoBehaviour {
         spawn173Timer += Time.deltaTime;
 
         // Handle the finding of valid waypoints for 173 spawning if the timer reaches over the spawnRate minus other difficulty factors
-        // (IE. on Keter for 173 it would be 10 (def spawnRate) - 3 (Keter ODF) = 7 Final spawnRate)
+        // (IE. on Keter for 173 it would be 15 (def spawnRate) - 3 (Keter ODF) = 12 Final spawnRate)
         if (spawn173Timer < (cached173Entity.spawnRate - RevivalSessionEngine.otherDifficultyFactor)) return;
 
         spawn173Timer = 0f;

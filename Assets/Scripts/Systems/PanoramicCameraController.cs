@@ -10,11 +10,13 @@ public class PanoramicCameraController : MonoBehaviour {
 
     private Vector2 velocity, mouseInput, smoothInput;
     private Vector3 initialRotation;
+    private Vector3 defaultPosition;
 
     #region Unity Callbacks
 
     private void Start() {
         initialRotation = transform.eulerAngles;
+        defaultPosition = transform.localPosition;
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -34,6 +36,17 @@ public class PanoramicCameraController : MonoBehaviour {
 
         // Return to default position if the mouse stops moving
         if (mouseInput.sqrMagnitude < 0.0001f) smoothInput = Vector2.Lerp(smoothInput, Vector2.zero, Time.deltaTime * returnSpeed);
+
+        // New method for implementing camera shake to cameras is now in here too
+        // Define a Vector3 for the shake offest, constantly updates itself via RevivalRuntimeEngine
+        Vector3 shake = RevivalRuntimeEngine.ShakeOffset;
+
+        // Apply shake offset on all the axes
+        transform.localPosition = new Vector3(
+            defaultPosition.x + shake.x,
+            defaultPosition.y + shake.y,
+            defaultPosition.z + shake.z
+        );
     }
 
     #endregion

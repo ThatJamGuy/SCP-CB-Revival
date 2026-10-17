@@ -10865,6 +10865,7 @@ Transform:
   m_Children:
   - {fileID: 2099261149}
   - {fileID: 851159234}
+  - {fileID: 619567044}
   m_Father: {fileID: 1246792607}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &239428886
@@ -29332,15 +29333,27 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1929471622}
+    m_TransformParent: {fileID: 237654298}
     m_Modifications:
     - target: {fileID: 588580506693918042, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.100000024
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.100000024
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.100000024
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -39.03
+      value: 39.03
       objectReference: {fileID: 0}
     - target: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -29348,23 +29361,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -17.25
+      value: 37.73
       objectReference: {fileID: 0}
     - target: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.7071068
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7071068
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -47793,6 +47806,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -88136,6 +88150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -93401,7 +93416,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 118356573}
-  - {fileID: 619567044}
   - {fileID: 1025714619}
   m_Father: {fileID: 1112889701}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -713,7 +713,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 0
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.7882353, b: 0.7882353, a: 1}
   m_Intensity: 6.7267675
   m_Range: 15
   m_SpotAngle: 116.42085
@@ -757,7 +757,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 0
-  m_ColorTemperature: 1500
+  m_ColorTemperature: 6570
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -1816,6 +1816,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: b201f8b67261e934e8d5b87ae07ce0bd, type: 2}
     - target: {fileID: -3782136977091647557, guid: 28551c3828fcdad4eb5ba5b61339a954, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -3782136977091647557, guid: 28551c3828fcdad4eb5ba5b61339a954, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -1889,10 +1893,40 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3782756009204458100, guid: 28551c3828fcdad4eb5ba5b61339a954, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3141920988913371178}
+    - targetCorrespondingSourceObject: {fileID: -3782136977091647557, guid: 28551c3828fcdad4eb5ba5b61339a954, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4089743128670665222}
     - targetCorrespondingSourceObject: {fileID: 1579162949035260749, guid: 28551c3828fcdad4eb5ba5b61339a954, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6931605578118000000}
   m_SourcePrefab: {fileID: 100100000, guid: 28551c3828fcdad4eb5ba5b61339a954, type: 3}
+--- !u!1 &676916225590989050 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3782136977091647557, guid: 28551c3828fcdad4eb5ba5b61339a954, type: 3}
+  m_PrefabInstance: {fileID: 4821039413563340609}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &4089743128670665222
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 676916225590989050}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 781751156838215017, guid: 28551c3828fcdad4eb5ba5b61339a954, type: 3}
 --- !u!4 &5002791859708547242 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 28551c3828fcdad4eb5ba5b61339a954, type: 3}

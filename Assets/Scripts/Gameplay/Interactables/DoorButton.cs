@@ -9,6 +9,7 @@ using UnityEngine;
 public class DoorButton : MonoBehaviour, IInteractable {
     [Header("Button Settings")]
     [SerializeField] private bool isKeycardButton;
+    [SerializeField] private bool requireLCZLockLift;
     [SerializeField] private float interactionCooldown = 0.2f;
 
     [Header("Audio References")]
@@ -31,6 +32,16 @@ public class DoorButton : MonoBehaviour, IInteractable {
         // Player not holding anything
         if (InventorySystem.Instance.currentlyHeldItem == null || InventorySystem.Instance.currentlyHeldItem.chosenBehavior != PresetBehavior.Key) {
             RevivalSessionEngine.Instance.NotifyPlayer("A keycard is required to operate this door.");
+            return;
+        }
+
+        // Player uses any keycard, but LCZ is on lockdown so it won't work regardless
+        if (InventorySystem.Instance.currentlyHeldItem.chosenBehavior == PresetBehavior.Key && requireLCZLockLift && RevivalSessionEngine.lczInLockdown) {
+            RevivalSessionEngine.Instance.NotifyPlayer("The keycard was inserted into the slot, but nothing happend. The checkpoint monitor implies a lockdown is in effect.");
+            AudioManager.PlayOneShot(keycardFailedEvent, transform.position);
+
+            InventorySystem.Instance.UnequipCurrentItem();
+
             return;
         }
 

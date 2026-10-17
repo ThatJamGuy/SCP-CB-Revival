@@ -5,16 +5,14 @@ using TMPro;
 using UnityEngine;
 
 public class RevivalSessionEngine : MonoBehaviour {
-    private static readonly int Quicksave = Animator.StringToHash("Quicksave");
     public static RevivalSessionEngine Instance { get; private set; }
-    //public static SaveData CurrentSaveData { get; private set; }
 
     public static int currentDifficulty;
     public static int otherDifficultyFactor;
     public static int currentZone = 1;
     public static int currentPursuit = -1;
     public static bool canSave;
-    public static bool lczLockdownLifted;
+    public static bool lczInLockdown = true;
 
     [Header("Heads Up Display")]
     [SerializeField] private TextMeshProUGUI infoText;
@@ -31,8 +29,6 @@ public class RevivalSessionEngine : MonoBehaviour {
         }
 
         Instance = this;
-
-        //CurrentSaveData = DataSaver.Load<SaveData>("save.json"); ;
 
         DebugLogConsole.AddCommand("print_zone", "Prints the current estimated zone to the console.", DebugDispalyZone);
     }
