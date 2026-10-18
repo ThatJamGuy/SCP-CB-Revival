@@ -22,6 +22,8 @@ public class RevivalSessionEngine : MonoBehaviour {
 
     private Tween infoTextTween;
 
+    #region Unity Lifecycle
+
     private void Awake() {
         if (Instance != null && Instance != this) {
             Destroy(gameObject);
@@ -32,6 +34,8 @@ public class RevivalSessionEngine : MonoBehaviour {
 
         DebugLogConsole.AddCommand("print_zone", "Prints the current estimated zone to the console.", DebugDispalyZone);
     }
+
+    #endregion
 
     public static void PauseGame() {
         // Set the game's timescale to 0 (Pausing Time.deltaTime) and pause FMOD via the AudioManager
@@ -58,10 +62,14 @@ public class RevivalSessionEngine : MonoBehaviour {
 
     // for getting the current zone and applying audio changes
     // Automatically called by SetZone()
-    public static void SetGlobalAudioBasedOnZone(int zone = -1, bool setAmbience = true, bool setMusic = true) {
+    public static void SetGlobalAudioBasedOnZone(int zone = -1, bool setAmbience = true, bool setMusic = true, bool bypassChaseCheck = false) {
         int targetZone = zone == -1 ? currentZone : zone;
 
         if (zone != -1) currentZone = targetZone; // only update if explicitly setting
+
+        // Skip the scan entirely when music is already off or the check is bypassed
+        if (setMusic && !bypassChaseCheck && EntitySystem.AnyEntityChasingPlayer()) setMusic = false;
+
 
         switch (targetZone) {
             case 0:

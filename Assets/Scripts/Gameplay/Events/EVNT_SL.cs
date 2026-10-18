@@ -18,15 +18,7 @@ public class EVNT_SL : MonoBehaviour {
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SL);
     }
 
-    // Only change back to LCZ music if nobody is chasing the player
-    // Including this because the flow would be interrupted if the dramatic chase changed to general ambience
     public void ChangeMusicToLCZ() {
-        foreach (Entity entity in EntitySystem.Instance.entities) {
-            if (entity.chasingPlayer) {
-                return;
-            }
-        }
-
         RevivalSessionEngine.SetGlobalAudioBasedOnZone();
     }
 

@@ -28,6 +28,9 @@ public class SCP_173 : MonoBehaviour {
     [SerializeField] private LayerMask obstructionMask;
     [SerializeField] private float visibilityCheckInterval = 0.1f;
     [SerializeField] private Vector3 eyeOffset = new Vector3(0, 1.5f, 0);
+    [SerializeField] private float frustumPadding = 0.3f;      // widens the "seen" area on screen
+    [SerializeField] private float lateralSampleRadius = 0.35f; // how far left/right of the body to sample
+    [SerializeField] private float lowSampleHeight = 0.3f;      // lower body sample height
 
     [Header("Audio")]
     [SerializeField] private GameObject movementSource;
@@ -43,9 +46,11 @@ public class SCP_173 : MonoBehaviour {
     private const float HORROR_SOUND_DISTANCE_THRESHOLD = 5f;
     private const float REPATH_DISTANCE_SQR = 0.25f;
     private const int MAX_DOOR_COLLIDERS = 32;
+    private const int SAMPLE_COUNT = 5;
 
     private readonly Plane[] frustumPlanes = new Plane[6];
     private readonly Collider[] doorColliders = new Collider[MAX_DOOR_COLLIDERS];
+    private readonly Vector3[] samplePoints = new Vector3[SAMPLE_COUNT];
     private int[] poseAnimationHashes;
     private Vector3 lastRequestedDestination;
 
@@ -249,26 +254,44 @@ public class SCP_173 : MonoBehaviour {
         bool wasVisible = isVisibleByPlayer;
         isVisibleByPlayer = false;
 
-        if (meshRenderer.isVisible && !Player.isBlinking) {
+        if (!Player.isBlinking) {
+            Bounds bounds = meshRenderer.bounds;
+            bounds.Expand(frustumPadding);
+
             Matrix4x4 worldToProjectionMatrix = playerCamera.projectionMatrix * playerCamera.worldToCameraMatrix;
             GeometryUtility.CalculateFrustumPlanes(worldToProjectionMatrix, frustumPlanes);
 
-            if (GeometryUtility.TestPlanesAABB(frustumPlanes, meshRenderer.bounds)) {
-                Vector3 origin = playerCamera.transform.position;
-                Vector3 targetPoint = transform.position + eyeOffset;
-                Vector3 dir = targetPoint - origin;
-                float dist = dir.magnitude;
+            if (GeometryUtility.TestPlanesAABB(frustumPlanes, bounds)) {
+                Transform camTransform = playerCamera.transform;
+                Vector3 origin = camTransform.position;
+                Vector3 pos = transform.position;
 
-                if (dist > maxVisibilityRange) return;
+                // Range check using squared distance (no sqrt)
+                Vector3 toCenter = pos + eyeOffset - origin;
+                if (toCenter.sqrMagnitude > maxVisibilityRange * maxVisibilityRange) return;
 
-                if (!Physics.Raycast(origin, dir.normalized, out var hit, dist, obstructionMask) ||
-                    hit.transform == transform || hit.transform.IsChildOf(transform)) {
-                    isVisibleByPlayer = true;
+                // Sample points: head, body center, low body, and left/right relative to the viewer
+                Vector3 right = camTransform.right * lateralSampleRadius;
+                Vector3 mid = pos + eyeOffset * 0.5f;
+                samplePoints[0] = pos + eyeOffset;
+                samplePoints[1] = mid;
+                samplePoints[2] = pos + new Vector3(0f, lowSampleHeight, 0f);
+                samplePoints[3] = mid + right;
+                samplePoints[4] = mid - right;
+
+                for (int i = 0; i < SAMPLE_COUNT; i++) {
+                    Vector3 dir = samplePoints[i] - origin;
+                    float dist = dir.magnitude;
+                    if (dist < 0.0001f) { isVisibleByPlayer = true; break; }
+
+                    if (!Physics.Raycast(origin, dir / dist, out RaycastHit hit, dist, obstructionMask) ||
+                        hit.transform.IsChildOf(transform)) {
+                        isVisibleByPlayer = true;
+                        break; // first clear line of sight is enough
+                    }
                 }
             }
         }
-
-        //if (Player.isBlinking) isVisibleByPlayer = false;
 
         if (isVisibleByPlayer && !wasVisible) OnBecameVisibleToPlayer();
     }

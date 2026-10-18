@@ -9,10 +9,12 @@ public class Actor_Generic : MonoBehaviour {
     [SerializeField, ShowField(nameof(playAnimOnStart))] private bool randomAnimOnStart;
     [SerializeField, ShowField(nameof(playAnimOnStart))] private bool randomAnimSpeedOnStart;
     [SerializeField, ShowField(nameof(playAnimOnStart))] private string[] startingAnimList;
+    [SerializeField, ShowField(nameof(playAnimOnStart))] private bool startWithRootMotion;
     [SerializeField, ShowField(nameof(randomAnimSpeedOnStart))] private float minAnimSpeed;
     [SerializeField, ShowField(nameof(randomAnimSpeedOnStart))] private float maxAnimSpeed;
 
     [Header("References")]
+    [SerializeField] private NPC_Locomotion locomotion;
     [SerializeField] private Animator actorAnimator;
     public NavMeshAgent actorAgent;
     [SerializeField] private Transform voiceSource;
@@ -20,52 +22,57 @@ public class Actor_Generic : MonoBehaviour {
     #region Unity Lifecycle
 
     private void Start() {
-        // Play specific animation on start if applicable
-        if (playAnimOnStart) {
-            if (randomAnimSpeedOnStart) {
-                actorAnimator.speed = Random.Range(minAnimSpeed, maxAnimSpeed);
-            }
+        if (!playAnimOnStart) return;
 
-            if (randomAnimOnStart) {
-                PlayAnimation(startingAnimList[Random.Range(0, startingAnimList.Length)]);
-                return;
-            }
-
-            // Random anims off so play the first one
-            PlayAnimation(startingAnimList[0]);
+        if (randomAnimSpeedOnStart) {
+            actorAnimator.speed = Random.Range(minAnimSpeed, maxAnimSpeed);
         }
+
+        string animName = randomAnimOnStart
+            ? startingAnimList[Random.Range(0, startingAnimList.Length)]
+            : startingAnimList[0];
+
+        PlayAnimation(animName, startWithRootMotion);
     }
 
     #endregion
 
+    private void ApplyRootMotion(bool enabled) {
+        if (locomotion != null) locomotion.SetScriptedRootMotion(enabled);
+    }
+
     #region Public Methods
 
-    public void PlayAnimation(string animationName) {
+    public void PlayAnimation(string animationName, bool rootMotion = false) {
         if (actorAnimator == null) {
             Debug.Log("<color=red>[Actor_Generic]</color> The actorAnimator reference of this actor was left null, animation related tasks will not work.");
             return;
         }
 
+        ApplyRootMotion(rootMotion);
         actorAnimator.speed = 1;
         actorAnimator.Play(animationName);
     }
 
-    public void SetAnimTrigger(string animTriggerName) {
+
+    public void SetAnimTrigger(string animTriggerName, bool rootMotion = false) {
         if (actorAnimator == null) {
             Debug.Log("<color=red>[Actor_Generic]</color> The actorAnimator reference of this actor was left null, animation related tasks will not work.");
             return;
         }
 
+        ApplyRootMotion(rootMotion);
         actorAnimator.speed = 1;
         actorAnimator.SetTrigger(animTriggerName);
     }
 
-    public void SetAnimBool(string boolName, bool value) {
+    public void SetAnimBool(string boolName, bool value, bool rootMotion = false) {
         if (actorAnimator == null) {
             Debug.Log("<color=red>[Actor_Generic]</color> The actorAnimator reference of this actor was left null, animation related tasks will not work.");
             return;
         }
 
+        ApplyRootMotion(rootMotion);
         actorAnimator.speed = 1;
         actorAnimator.SetBool(boolName, value);
     }
@@ -87,6 +94,8 @@ public class Actor_Generic : MonoBehaviour {
     }
 
     public void StopCurrentTask() {
+        ApplyRootMotion(false);
+
         if (actorAgent != null && actorAgent.hasPath)
             actorAgent.SetDestination(transform.position);
     }

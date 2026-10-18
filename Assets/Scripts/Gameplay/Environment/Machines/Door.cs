@@ -35,6 +35,7 @@ public class Door : MonoBehaviour {
     [Header("Door Parts")]
     public GameObject doorPart01;
     public GameObject doorPart02;
+    public OcclusionPortal occlusionPortal;
 
     private Coroutine moveRoutine;
 
@@ -91,6 +92,11 @@ public class Door : MonoBehaviour {
         doorPart01.transform.position = target1;
         doorPart02.transform.position = target2;
         onComplete?.Invoke();
+
+        // Modify the occlusion portal to start culling stuff behind the door upon fully closing
+        // Edit: This method seems to only work on baked occ data which proc gen doesn't have, but I'm keeping this anyway
+        if (occlusionPortal != null) occlusionPortal.open = isOpen;
+
         moveRoutine = null;
     }
 

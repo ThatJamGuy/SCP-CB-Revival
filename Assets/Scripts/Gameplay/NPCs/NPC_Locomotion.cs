@@ -7,6 +7,19 @@ public class NPC_Locomotion : MonoBehaviour {
 
     private static readonly int IsWalking = Animator.StringToHash("walking_rmotion");
 
+    private Transform cachedTransform;
+    private Transform agentTransform;
+    private bool isNavMoving;
+    private bool scriptedRootMotion;
+
+    /// <summary>Allows animation root motion to move the NPC without a nav path (e.g. scripted walks, turns, steps).</summary>
+    public void SetScriptedRootMotion(bool enabled) => scriptedRootMotion = enabled;
+
+    private void Awake() {
+        cachedTransform = transform;
+        if (navMeshAgent != null) agentTransform = navMeshAgent.transform;
+    }
+
     private void Start() {
         if (navMeshAgent == null) return;
 
@@ -17,39 +30,48 @@ public class NPC_Locomotion : MonoBehaviour {
     private void Update() {
         if (!navMeshAgent || !animator) return;
 
-        var isMoving = navMeshAgent.remainingDistance > navMeshAgent.stoppingDistance;
+        isNavMoving = navMeshAgent.enabled
+            && !navMeshAgent.pathPending
+            && navMeshAgent.hasPath
+            && navMeshAgent.remainingDistance > navMeshAgent.stoppingDistance;
 
-        animator.SetBool(IsWalking, isMoving);
+        animator.SetBool(IsWalking, isNavMoving);
 
-        if (!isMoving) return;
+        if (!isNavMoving) return;
 
-        var direction = navMeshAgent.desiredVelocity.normalized;
+        Vector3 direction = navMeshAgent.desiredVelocity;
 
+        // sqrMagnitude check on the raw vector avoids the normalize sqrt
         if (direction.sqrMagnitude > 0.01f) {
-            var targetRotation = Quaternion.LookRotation(direction, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+            Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+            cachedTransform.rotation = Quaternion.Slerp(cachedTransform.rotation, targetRotation, Time.deltaTime * 10f);
         }
 
-        navMeshAgent.nextPosition = transform.position;
+        navMeshAgent.nextPosition = cachedTransform.position;
     }
 
     private void LateUpdate() {
-        var targetRotation = animator.rootRotation;
-        navMeshAgent.transform.rotation = targetRotation;
+        if (!animator || agentTransform == null) return;
+
+        agentTransform.rotation = animator.rootRotation;
     }
 
     private void OnAnimatorMove() {
-        if (navMeshAgent == null || !navMeshAgent.enabled)
-            return;
+        // Gate: only the nav path or an explicit script opt-in may apply root motion
+        if (!isNavMoving && !scriptedRootMotion) return;
 
-        Vector3 rootMotion = animator.deltaPosition;
+        Vector3 delta = animator.deltaPosition;
+        Vector3 pos = cachedTransform.position;
+        pos.x += delta.x;
+        pos.z += delta.z;
 
-        transform.position += new Vector3(rootMotion.x, 0f, rootMotion.z);
-
-        var pos = transform.position;
-        pos.y = navMeshAgent.nextPosition.y;
-
-        transform.position = pos;
-        navMeshAgent.nextPosition = pos;
+        if (navMeshAgent != null && navMeshAgent.enabled) {
+            pos.y = navMeshAgent.nextPosition.y;
+            cachedTransform.position = pos;
+            navMeshAgent.nextPosition = pos;
+        } else {
+            // Agent toggled off (ToggleAgent): still honor scripted root motion
+            cachedTransform.position = pos;
+        }
     }
 }

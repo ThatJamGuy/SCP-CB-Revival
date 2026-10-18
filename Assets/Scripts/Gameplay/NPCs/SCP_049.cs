@@ -345,7 +345,7 @@ public class SCP_049 : MonoBehaviour {
 
         AudioManager.PlayOneShot(spottedPlayerStinger);
         EntitySystem.Instance.cached049Entity.chasingPlayer = true;
-        RevivalSessionEngine.Instance.PlayChaseTrack(2, MusicManager.MusicTrack.SCP_049, 1);
+        RevivalSessionEngine.Instance.PlayChaseTrack(2, MusicManager.MusicTrack.SCP_049, 2);
         RevivalRuntimeEngine.Instance.GiveAchievement("achv_049");
     }
 

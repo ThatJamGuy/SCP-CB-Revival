@@ -1334,13 +1334,26 @@ MonoBehaviour:
         m_CallState: 2
   onDoorOpened:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6142198968002757365}
+        m_TargetAssemblyTypeName: EVNT_Checkpoint, Assembly-CSharp
+        m_MethodName: StartAutoCloseCountdown
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 6
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onDoorClosed:
     m_PersistentCalls:
       m_Calls: []
   moveAxis: 0
   doorPart01: {fileID: 2337223692683351332}
   doorPart02: {fileID: 1703477539537140532}
+  occlusionPortal: {fileID: 0}
 --- !u!65 &5944999616368861457
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3768,7 +3781,7 @@ Transform:
   m_GameObject: {fileID: 4897594702689073170}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 1.938, y: 6.689, z: 4.343}
+  m_LocalPosition: {x: 1.938, y: 6.939, z: 4.343}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3870,7 +3883,7 @@ MonoBehaviour:
   m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
-  m_VolumetricDimmer: 4
+  m_VolumetricDimmer: 3
   m_FadeDistance: 20
   m_VolumetricFadeDistance: 20
   m_AffectDiffuse: 1
@@ -4794,6 +4807,7 @@ MonoBehaviour:
   moveAxis: 0
   doorPart01: {fileID: 8283340995675483992}
   doorPart02: {fileID: 4987980562415862088}
+  occlusionPortal: {fileID: 0}
 --- !u!65 &7823610032003949
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6140,7 +6154,7 @@ Transform:
   m_GameObject: {fileID: 7221571208782585919}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -1.906, y: 6.689, z: 4.343}
+  m_LocalPosition: {x: -1.906, y: 6.939, z: 4.343}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6242,7 +6256,7 @@ MonoBehaviour:
   m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
-  m_VolumetricDimmer: 4
+  m_VolumetricDimmer: 3
   m_FadeDistance: 20
   m_VolumetricFadeDistance: 20
   m_AffectDiffuse: 1

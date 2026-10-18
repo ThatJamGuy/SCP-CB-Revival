@@ -112,7 +112,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3923034241963341724, guid: 2ac8c2b78f325154db82b290b7e51752, type: 3}
 --- !u!208 &6077424531376500768
@@ -460,6 +460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 0
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -568,8 +569,6 @@ MonoBehaviour:
   moveAxis: 0
   doorPart01: {fileID: 2835984700542900279}
   doorPart02: {fileID: 379043150808977083}
-  doorPhys01: {fileID: 0}
-  doorPhys02: {fileID: 0}
 --- !u!65 &8563172039320174319
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -971,6 +970,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 0
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:

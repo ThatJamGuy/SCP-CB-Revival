@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6803418808038968126}
   - component: {fileID: 2288957728804104833}
   - component: {fileID: 4713644608390504420}
+  - component: {fileID: 580206023136962052}
   m_Layer: 7
   m_Name: Regular Door
   m_TagString: Room
@@ -77,8 +78,6 @@ MonoBehaviour:
   moveAxis: 0
   doorPart01: {fileID: 5807936867464339508}
   doorPart02: {fileID: 1897530882449971958}
-  doorPhys01: {fileID: 2471014052020985323}
-  doorPhys02: {fileID: 5877077993430300763}
 --- !u!65 &4713644608390504420
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -100,6 +99,16 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!41 &580206023136962052
+OcclusionPortal:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22545937952752559}
+  m_Open: 1
+  m_Center: {x: 0, y: 1.5, z: 0}
+  m_Size: {x: 2.13, y: 3.6, z: 0.5}
 --- !u!1 &340003224064398240
 GameObject:
   m_ObjectHideFlags: 0
@@ -518,6 +527,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
+  isKeycardButton: 0
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -533,6 +544,20 @@ MonoBehaviour:
       Data3: -739058558
       Data4: -1539697353
     Path: event:/SFX/Interact/ButtonPressLocked
+  keycardFailedEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  keycardGoodEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   linkedDoor: {fileID: 2288957728804104833}
   buttonAnimator: {fileID: 8115102916579988058}
 --- !u!1 &2261267099822938109
@@ -1318,6 +1343,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
+  isKeycardButton: 0
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -1333,6 +1360,20 @@ MonoBehaviour:
       Data3: -739058558
       Data4: -1539697353
     Path: event:/SFX/Interact/ButtonPressLocked
+  keycardFailedEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  keycardGoodEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   linkedDoor: {fileID: 2288957728804104833}
   buttonAnimator: {fileID: 6232956219378441257}
 --- !u!1 &8856700925445647793

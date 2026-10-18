@@ -170,9 +170,13 @@ public class EntitySystem : MonoBehaviour {
         return instance;
     }
 
-    #endregion
-
-    #region Public Utilities
+    public static bool AnyEntityChasingPlayer() {
+        var entities = EntitySystem.Instance.entities;
+        for (int i = 0; i < entities.Length; i++) {
+            if (entities[i].chasingPlayer) return true;
+        }
+        return false;
+    }
 
     public Transform GetClosestWaypointToPlayer() {
         Transform contendingWaypoint = null;

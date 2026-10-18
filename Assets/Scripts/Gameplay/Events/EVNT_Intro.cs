@@ -351,7 +351,7 @@ public class EVNT_Intro : MonoBehaviour {
 
         yield return new WaitForSeconds(4);
 
-        classDB.SetAnimTrigger("WalkBackScared");
+        classDB.SetAnimTrigger("WalkBackScared", true);
 
         yield return new WaitForSeconds(1);
 
@@ -487,6 +487,7 @@ public class EVNT_Intro : MonoBehaviour {
         yield return new WaitForSeconds(1);
 
         RevivalRuntimeEngine.Instance.ShakeCamera(0.2f, 0, 1);
+        Destroy(scp173);
         ventBreak.Play();
 
         enableBlinkSpamming = true;
