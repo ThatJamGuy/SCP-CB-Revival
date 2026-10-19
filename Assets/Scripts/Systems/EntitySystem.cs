@@ -28,28 +28,32 @@ public class EntitySystem : MonoBehaviour {
     [ReadOnly] public Entity cached173Entity;
     [ReadOnly] public Entity cached049Entity;
 
-    private const float SPAWN_MIN_SQR = 15 * 15;
-    private const float SPAWN_MAX_SQR = 50 * 50;
+    // SCP 173 range config: Closer and more frequent encounters
+    private const float SPAWN_173_MIN_SQR = 15 * 15;
+    private const float SPAWN_173_MAX_SQR = 50 * 50;
 
+    // SCP 049 range config: Further and less frequent.
+    // spawnRate should also be higher so he can freeroam more
+    private const float SPAWN_049_MIN_SQR = 30 * 30;
+    private const float SPAWN_049_MAX_SQR = 80 * 80;
+
+    private float spawn049Timer;
     private float spawn173Timer;
 
     #region Unity Callbacks
 
     private void Awake() {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else { Destroy(gameObject); return; }
 
         DebugLogConsole.AddCommand("print_closest_waypoint", "Prints the Vector3 location of the closest AI waypoint to the player into the console.", DebugPrintClosestWaypoint);
         DebugLogConsole.AddCommand<string>("spawn_entity", "Spawns an entity at the closest waypoint to the player.", DebugSpawnEntity);
 
         // Cache some entities for the spawning systems to prevent repeated foreach checks
-        foreach (Entity entity in entities) {
-            if (entity.entityIdentifier == "scp173") {
-                cached173Entity = entity;
-            }
-            if (entity.entityIdentifier == "scp049") {
-                cached049Entity = entity;
-            }
+        for (int i = 0; i < entities.Length; i++) {
+            Entity entity = entities[i];
+            if (entity.entityIdentifier == "scp173") cached173Entity = entity;
+            else if (entity.entityIdentifier == "scp049") cached049Entity = entity;
         }
     }
 
@@ -61,41 +65,28 @@ public class EntitySystem : MonoBehaviour {
     }
 
     private void Update() {
-        if (cached173Entity != null && !cached173Entity.chasingPlayer && !cached173Entity.disabled) {
-            Entity173Spawner();
-        }
+        if (CanAutoSpawn(cached173Entity))
+            HandleAutoSpawning(cached173Entity, ref spawn173Timer, SPAWN_173_MIN_SQR, SPAWN_173_MAX_SQR);
+
+        if (CanAutoSpawn(cached049Entity))
+            HandleAutoSpawning(cached049Entity, ref spawn049Timer, SPAWN_049_MIN_SQR, SPAWN_049_MAX_SQR);
     }
 
     #endregion
 
     #region Private Methods
 
-    private void Entity173Spawner() {
-        spawn173Timer += Time.deltaTime;
+    // Shared spawn/relocation loop for entities driven by a timer
+    // Once the timer passes the spawnRate minus other difficulty factors, a random valid waypoint is picked and the entity is moved/spawned there
+    // (IE. on Keter for 173 it would be 15 (def spawnRate) - 3 (Keter ODF) = 12 Final spawnRate)
+    private void HandleAutoSpawning(Entity entity, ref float timer, float minSqr, float maxSqr) {
+        timer += Time.deltaTime;
+        if (timer < (entity.spawnRate - RevivalSessionEngine.otherDifficultyFactor)) return;
 
-        // Handle the finding of valid waypoints for 173 spawning if the timer reaches over the spawnRate minus other difficulty factors
-        // (IE. on Keter for 173 it would be 15 (def spawnRate) - 3 (Keter ODF) = 12 Final spawnRate)
-        if (spawn173Timer < (cached173Entity.spawnRate - RevivalSessionEngine.otherDifficultyFactor)) return;
+        timer = 0f;
 
-        spawn173Timer = 0f;
-
-        Vector3 playerPos = Player.Instance.transform.position;
-        Transform chosen = null;
-        int candidates = 0;
-
-        // Compare the distance of every waypoint to the player
-        // If it's min 10m and max 30m from the player it's a valid candidate for spawning
-        for (int i = 0; i < cachedWaypoints.Count; i++) {
-            Transform wp = cachedWaypoints[i];
-            float sqr = (wp.position - playerPos).sqrMagnitude;
-            if (sqr <= SPAWN_MIN_SQR || sqr >= SPAWN_MAX_SQR) continue;
-
-            candidates++;
-            if (Random.Range(0, candidates) == 0) chosen = wp;
-        }
-
-        // Move/spawn 173 at the chosen waypoint
-        if (chosen != null) MoveEntity(cached173Entity, chosen);
+        if (TryPickRandomWaypoint(minSqr, maxSqr, out Transform chosen))
+            MoveEntity(entity, chosen);
     }
 
     private void DebugPrintClosestWaypoint() {
@@ -155,6 +146,32 @@ public class EntitySystem : MonoBehaviour {
             entity.latestActiveInstance = null;
             entity.latestAgent = null;
         }
+    }
+
+    #endregion
+
+    #region Private Extras
+
+    private static bool CanAutoSpawn(Entity entity) {
+        return entity != null && !entity.chasingPlayer && !entity.disabled;
+    }
+
+    // Picks a uniformly random waypoint whose squared distance to the player is within (minSqr, maxSqr)
+    private bool TryPickRandomWaypoint(float minSqr, float maxSqr, out Transform chosen) {
+        Vector3 playerPos = Player.Instance.transform.position;
+        chosen = null;
+        int candidates = 0;
+
+        for (int i = 0; i < cachedWaypoints.Count; i++) {
+            Transform wp = cachedWaypoints[i];
+            float sqr = (wp.position - playerPos).sqrMagnitude;
+            if (sqr <= minSqr || sqr >= maxSqr) continue;
+
+            candidates++;
+            if (Random.Range(0, candidates) == 0) chosen = wp;
+        }
+
+        return chosen != null;
     }
 
     #endregion

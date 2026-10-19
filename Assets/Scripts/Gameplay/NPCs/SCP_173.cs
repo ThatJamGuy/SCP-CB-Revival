@@ -265,12 +265,9 @@ public class SCP_173 : MonoBehaviour {
                 Transform camTransform = playerCamera.transform;
                 Vector3 origin = camTransform.position;
                 Vector3 pos = transform.position;
-
-                // Range check using squared distance (no sqrt)
                 Vector3 toCenter = pos + eyeOffset - origin;
                 if (toCenter.sqrMagnitude > maxVisibilityRange * maxVisibilityRange) return;
 
-                // Sample points: head, body center, low body, and left/right relative to the viewer
                 Vector3 right = camTransform.right * lateralSampleRadius;
                 Vector3 mid = pos + eyeOffset * 0.5f;
                 samplePoints[0] = pos + eyeOffset;
@@ -287,7 +284,7 @@ public class SCP_173 : MonoBehaviour {
                     if (!Physics.Raycast(origin, dir / dist, out RaycastHit hit, dist, obstructionMask) ||
                         hit.transform.IsChildOf(transform)) {
                         isVisibleByPlayer = true;
-                        break; // first clear line of sight is enough
+                        break;
                     }
                 }
             }
@@ -299,7 +296,6 @@ public class SCP_173 : MonoBehaviour {
     private void OnBecameVisibleToPlayer() {
         if (!alreadySeenByPlayer && !puppetMode) {
             alreadySeenByPlayer = true;
-            //GameManager.Instance.scp173pursuing = true;
             AcquireTarget(playerTransform);
 
             // Let the entity system know that 173 is now actively chasing the player and shouldn't be messed with

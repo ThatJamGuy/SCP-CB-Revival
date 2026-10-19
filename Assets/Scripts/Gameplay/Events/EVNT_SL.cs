@@ -2,10 +2,8 @@ using IngameDebugConsole;
 using UnityEngine;
 
 public class EVNT_SL : MonoBehaviour {
-    //[SerializeField] private GameObject[] musicChangeTriggers;
     [SerializeField] private Door downDoor;
     [SerializeField] private Door upDoor;
-    [SerializeField] private Door upDoorNew;
     [SerializeField] private Transform temp049Spawn;
 
     private bool triggeredSpawn;
@@ -31,13 +29,7 @@ public class EVNT_SL : MonoBehaviour {
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror04); // Fade out to silence
 
         downDoor.OpenDoor();
-
-        if (upDoor.isOpen)
-            upDoor.CloseDoor();
-        else {
-            upDoor.gameObject.SetActive(false);
-            upDoorNew.gameObject.SetActive(true);
-        }
+        upDoor.CloseDoor();
 
         // TODO: SCP-049 scene (Using trimmed down version for now)
 
@@ -49,9 +41,14 @@ public class EVNT_SL : MonoBehaviour {
 
     // To be called via OnOpening on upDoorNew for the temp 049 spawn scare
     public void TempSpawn049() {
-        if (triggeredSpawn) return;
+        if (triggeredSpawn || RevivalSessionEngine.lczInLockdown) return;
+
         EntitySystem.Instance.SpawnEntity(EntitySystem.Instance.cached049Entity, temp049Spawn);
         EntitySystem.Instance.cached049Entity.disabled = false; // Alow 049 to be spawned/moved around now
+
+        upDoor.isBroken = true;
+        downDoor.isBroken = true;
+
         triggeredSpawn = true;
     }
 }

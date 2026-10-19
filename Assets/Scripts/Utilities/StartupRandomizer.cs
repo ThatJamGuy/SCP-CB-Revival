@@ -5,18 +5,22 @@ using UnityEngine;
 /// Script that can be attatched to various objects that allow for multiple possible starting values.
 /// </summary>
 public class StartupRandomizer : MonoBehaviour {
-    private enum RandomizerType { RandomAnimatorSpeed, RandomAnimation }
+    private enum RandomizerType { RandomAnimatorSpeed, RandomAnimation, StartDisabled }
 
     [Header("Randomizer Settings")]
     [SerializeField] private RandomizerType type;
-    
+
     [Header("Random Animator Speed Settings")]
     [SerializeField] private float minSpeed = 0.5f;
     [SerializeField] private float maxSpeed = 1.5f;
-    
+
     [Header("Random Animation Settings")]
     public AnimationClip[] animations;
     public string[] animationNames;
+
+    [Header("Start Disabled Settings")]
+    [SerializeField] private int disableMaxRange = 3;
+    [SerializeField] private int disableChance = 1;
 
     #region Unity Callbacks
     private void Start() {
@@ -28,6 +32,9 @@ public class StartupRandomizer : MonoBehaviour {
             case RandomizerType.RandomAnimation:
                 RandomizeAnimation();
                 break;
+            case RandomizerType.StartDisabled:
+                RandomizeDisabled();
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -38,10 +45,10 @@ public class StartupRandomizer : MonoBehaviour {
     private void RandomizeAnimatorSpeed() {
         // Grab the animator attached to this object
         var animator = GetComponent<Animator>();
-        
+
         // If the animator doesn't exist then do nothing
         if (animator == null) return;
-        
+
         // Set a random speed float value to a random number between the defined minSpeed and maxSpeed
         // Then set the speed of the animator to that random value
         var randomSpeed = UnityEngine.Random.Range(minSpeed, maxSpeed);
@@ -51,20 +58,25 @@ public class StartupRandomizer : MonoBehaviour {
     private void RandomizeAnimation() {
         // Grab the animator attached to this object
         var animator = GetComponent<Animator>();
-        
+
         // Play a random animation via direct .anim files in the animations array, assuming the animator exists
         if (animator != null && animations.Length > 0) {
             var randomAnimation = animations[UnityEngine.Random.Range(0, animations.Length)];
             animator.Play(randomAnimation.name);
             return;
         }
-        
+
         // Play a random animation via animation names in the animations array, assuming the animator exists
         if (animator != null && animationNames.Length > 0) {
             var randomName = animationNames[UnityEngine.Random.Range(0, animationNames.Length)];
             animator.Play(randomName);
             return;
         }
+    }
+
+    private void RandomizeDisabled() {
+        int randomNum = UnityEngine.Random.Range(0, disableMaxRange);
+        if (randomNum <= disableChance) gameObject.SetActive(false);
     }
     #endregion
 }
