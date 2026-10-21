@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour {
     private const float MAX_STAMINA = 1;
     #endregion
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void OnDisable() {
         // Cleanup to make sure we unsubscribe to the sprint and crouch actions
@@ -104,8 +104,8 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void HandleMovement() {
-        var input = moveAction.ReadValue<Vector2>();
-        var move = transform.right * input.x + transform.forward * input.y;
+        Vector2 input = moveAction.ReadValue<Vector2>();
+        Vector3 move = transform.right * input.x + transform.forward * input.y;
 
         // Move the character controller in the proper Vector3 direction at the currentSpeed
         characterController.Move(move * (currentSpeed * Time.deltaTime));
@@ -132,7 +132,7 @@ public class PlayerMovement : MonoBehaviour {
         if (isSprinting && !sprintLocked && player.isMoving) {
             // Determine the total drain rate based on the default drain rate * the depletion modifier if applicable
             // Then subtract the current stamina based on this determined drain rate
-            var finalDrainRate = staminaDrainRate * (1f + player.staminaDepletionModifier);
+            float finalDrainRate = staminaDrainRate * (1f + player.staminaDepletionModifier);
             currentStamina = Mathf.Max(currentStamina - finalDrainRate * Time.deltaTime, 0f);
 
             // Is the stamina more than 0? Too bad, go away
@@ -150,14 +150,12 @@ public class PlayerMovement : MonoBehaviour {
             currentStamina = Mathf.Min(currentStamina + staminaRegenRate * Time.deltaTime, MAX_STAMINA);
 
             // Wait until stamina is greater than 0.1 before player can sprint again. Presents sprint tapping
-            if (currentStamina > 0.1f)
-                sprintLocked = false;
+            if (currentStamina > 0.1f) sprintLocked = false;
         }
-
-        //temporaryStaminaSlider.value = currentStamina / MAX_STAMINA;
     }
 
     #region Input Callbacks
+
     private void OnSprintStarted(InputAction.CallbackContext ctx) {
         if (isCrouching || sprintLocked) return;
         isSprinting = true;
@@ -170,6 +168,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void OnCrouchPerformed(InputAction.CallbackContext ctx) => AttemptToToggleCrouch();
+
     #endregion
 
     #region Crouching

@@ -9,14 +9,16 @@ public class Player : MonoBehaviour {
     public static Player Instance { get; private set; }
 
     [Header("Movements Settings")]
-    public float walkSpeed = 3f;
-    public float sprintSpeed = 7f;
-    public float crouchSpeed = 1f;
+    public float walkSpeed = 3;
+    public float sprintSpeed = 7;
+    public float crouchSpeed = 1;
+    public float noclipSpeed = 5;
 
     [Header("Player Modifiers")]
     public float staminaDepletionModifier;
     public float blinkDepletionModifier;
     public float bloodLossModifier;
+    public float noclipSprintModifier = 2;
 
     [Header("Player States")]
     public bool disableInput;
@@ -36,7 +38,7 @@ public class Player : MonoBehaviour {
 
     private Sequence currentDeathTween;
     private Vector3 cameraStartPos;
-    private Quaternion cameraStartRot;
+    //private Quaternion cameraStartRot;
 
     [HideInInspector] public SettingsData settingsData;
 
@@ -49,7 +51,7 @@ public class Player : MonoBehaviour {
         settingsData = RevivalRuntimeEngine.SettingsData;
 
         cameraStartPos = cameraRoot.transform.localPosition;
-        cameraStartRot = cameraRoot.transform.localRotation;
+        //cameraStartRot = cameraRoot.transform.localRotation;
 
         InventorySystem.Instance.playerCamera = playerCamera;
     }

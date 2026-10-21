@@ -23,7 +23,7 @@ public class MenuManager : MonoBehaviour {
 
     private bool cantFunction;
     private bool unregisteredMenuOpen;
-    private bool anyMenuCurrentlyOpen => unregisteredMenuOpen || System.Array.Exists(menuList, m => m.isOpen);
+    public bool anyMenuCurrentlyOpen => unregisteredMenuOpen || System.Array.Exists(menuList, m => m.isOpen);
     private int currentDifficulty;
 
     #region Unity Callbacks

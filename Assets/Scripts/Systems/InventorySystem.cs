@@ -1,4 +1,3 @@
-using IngameDebugConsole;
 using PixeLadder.EasyTooltip;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,15 +51,9 @@ public class InventorySystem : MonoBehaviour {
     private void Start() {
         itemDataLookup = new Dictionary<string, ItemData>();
 
-        foreach (var item in itemDataList) {
+        foreach (ItemData item in itemDataList) {
             itemDataLookup.Add(item.itemIdentifier, item);
         }
-
-        //if (playerCamera == null && Player.Instance != null)
-        //    playerCamera = Player.Instance.playerCamera;
-
-        DebugLogConsole.AddCommand<string>("spawn_item", "Spawns an item in front of the player with the given identifier.", DebugSpawnItem);
-        DebugLogConsole.AddCommand("print_item_identifiers", "Prints the string identifiers of available items into the console.", DebugListItems);
     }
 
     private void OnEnable() {
@@ -185,10 +178,13 @@ public class InventorySystem : MonoBehaviour {
 
     #region Debug Methods
 
-    private void DebugListItems() => Debug.Log(string.Join(", ", itemDataLookup.Keys));
+    public void DebugListItems() => Debug.Log(string.Join(", ", itemDataLookup.Keys));
 
-    private void DebugSpawnItem(string itemIdentifier) {
-        if (!itemDataLookup.TryGetValue(itemIdentifier, out var item)) return;
+    public void DebugSpawnItem(string itemIdentifier) {
+        if (!itemDataLookup.TryGetValue(itemIdentifier, out var item)) {
+            Debug.LogWarning("An item with that identifier was not found.");
+            return;
+        }
 
         var spawnPos = playerCamera.transform.position + playerCamera.transform.forward * 0.7f;
         var randomRot = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);

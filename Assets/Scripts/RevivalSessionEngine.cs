@@ -33,6 +33,11 @@ public class RevivalSessionEngine : MonoBehaviour {
         DebugLogConsole.AddCommand("print_zone", "Prints the current estimated zone to the console.", DebugDispalyZone);
     }
 
+    private void Start() {
+        // Ensure this john is in lockdown every session because it didn't reset when testing the build
+        lczInLockdown = true;
+    }
+
     #endregion
 
     public static void PauseGame() {

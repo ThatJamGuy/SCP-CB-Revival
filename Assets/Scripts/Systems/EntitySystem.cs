@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-// Key:
-// 173, not disabled, spawnrate 7
-
 [System.Serializable]
 public class Entity {
     public string entityIdentifier; // Console identifier, ie. scp173
@@ -22,7 +19,6 @@ public class Entity {
 public class EntitySystem : MonoBehaviour {
     public static EntitySystem Instance { get; private set; }
 
-    [SerializeField] private bool devFindWpOnStart;
     public Entity[] entities;
     [ReadOnly] public List<Transform> cachedWaypoints = new List<Transform>();
     [ReadOnly] public Entity cached173Entity;
@@ -40,7 +36,7 @@ public class EntitySystem : MonoBehaviour {
     private float spawn049Timer;
     private float spawn173Timer;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Awake() {
         if (Instance == null) Instance = this;
@@ -55,13 +51,6 @@ public class EntitySystem : MonoBehaviour {
             if (entity.entityIdentifier == "scp173") cached173Entity = entity;
             else if (entity.entityIdentifier == "scp049") cached049Entity = entity;
         }
-    }
-
-    private void Start() {
-
-        // Kept for testing reasons, map generator automatically calls this
-        if (devFindWpOnStart)
-            FindWaypointsInScene();
     }
 
     private void Update() {

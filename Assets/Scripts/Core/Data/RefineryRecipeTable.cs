@@ -1,11 +1,9 @@
-using EditorAttributes;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 //TODO: Rewrite some of this later to output prefabs instead of item data prefabs because I forgot it could do that
 
-[CreateAssetMenu(fileName = "RefineryRecipeData", menuName = "SCP:CBR/914 Recipe Data")]
+[CreateAssetMenu(fileName = "RefineryRecipeTable", menuName = "SCP:CBR/914 Recipe Table")]
 public class RefineryRecipeTable : ScriptableObject {
     public readonly struct RefinementResult {
         public readonly ItemData Item;
@@ -15,105 +13,11 @@ public class RefineryRecipeTable : ScriptableObject {
         }
     }
 
-    public enum RefinementMode { Rough, Coarse, OneToOne, Fine, VeryFine }
+    private readonly Dictionary<ItemData, SCP_914_Recipe> recipeLookup = new();
 
-    [Serializable]
-    public class Output {
-        public ItemData outputItem; // Leave this blank to destroy the item instead of returning something
+    public SCP_914_Recipe[] recipes;
 
-        // Setup for the chance system, item WILL return this output chanceMin out of chanceMax times
-        [Min(0)] public int chanceMin;
-        [Min(1)] public int chanceMax;
-
-        // These values are to be used in tandem with otherDifficultyFactors reading off of GameManager to determine
-        // the chances of the output based on the current difficulty factor from 0-2
-        public bool useOtherDiffFactors;
-        [ShowField(nameof(useOtherDiffFactors)), Min(0)] public int chanceMinEuclid;
-        [ShowField(nameof(useOtherDiffFactors)), Min(1)] public int chanceMaxEuclid;
-        [ShowField(nameof(useOtherDiffFactors)), Min(0)] public int chanceMinKeter;
-        [ShowField(nameof(useOtherDiffFactors)), Min(1)] public int chanceMaxKeter;
-
-        // If any of the chances given don't meet the given range then spit out a random item listed below
-        public bool useFailureItems;
-        [ShowField(nameof(useFailureItems))] public ItemData[] possibleFailureItems;
-
-        // Do some math stuff that took me and Buck 10 minutes to calculate to change odds based on achievements too
-        public bool useAchievementStats;
-        private const int AchievementOffsetMultiplier = 3;
-        private static readonly int[] DifficultyBaseMultipliers = { 3, 4, 5 }; // HARDCODED PROBABLY FOREVER
-
-        private static int ComputeAchievementRange(int difficultyFactor, int maxAchievements, int currentAchievements) {
-            var clampedFactor = Mathf.Clamp(difficultyFactor, 0, DifficultyBaseMultipliers.Length - 1);
-            var baseRange = (maxAchievements - 1) * DifficultyBaseMultipliers[clampedFactor];
-            var achievementOffset = (currentAchievements - 1) * AchievementOffsetMultiplier;
-
-            return Mathf.Max(1, baseRange - achievementOffset);
-        }
-
-        // Returns true if this output succeeds its chance roll.
-        public bool RollChance(int difficultyFactor) {
-            if (useAchievementStats) {
-                var maxAchievements = RevivalRuntimeEngine.TotalAchievements;
-                var currAchievements = RevivalRuntimeEngine.ObtainedAchievementsCount;
-
-                var range = ComputeAchievementRange(difficultyFactor, maxAchievements, currAchievements);
-                return UnityEngine.Random.Range(0, range) == 0;
-            }
-
-            var min = chanceMin;
-            var max = chanceMax;
-
-            if (useOtherDiffFactors) {
-                switch (difficultyFactor) {
-                    case 1:
-                        min = chanceMinEuclid;
-                        max = chanceMaxEuclid;
-                        break;
-
-                    case 2:
-                        min = chanceMinKeter;
-                        max = chanceMaxKeter;
-                        break;
-                }
-            }
-
-            min = Mathf.Max(0, min);
-            max = Mathf.Max(1, max);
-
-            if (min >= max) return true;
-
-            return UnityEngine.Random.Range(0, max) < min;
-        }
-
-        public ItemData ResolveItem(int difficultyFactor) {
-            if (RollChance(difficultyFactor)) return outputItem;
-
-            if (!useFailureItems ||
-                possibleFailureItems == null ||
-                possibleFailureItems.Length == 0)
-                return null;
-
-            return possibleFailureItems[UnityEngine.Random.Range(0, possibleFailureItems.Length)];
-        }
-    }
-
-    [Serializable]
-    public class ModeRecipe {
-        public RefinementMode mode;
-        public Output[] possibleOutputs;
-    }
-
-    [Serializable]
-    public class Recipe {
-        public ItemData inputItem;
-        public ModeRecipe[] perModeRecipes;
-    }
-
-    public Recipe[] recipes;
-
-    private readonly Dictionary<(ItemData, RefinementMode), ModeRecipe> recipeLookup = new();
-
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void OnEnable() {
         BuildRecipeLookup();
@@ -134,20 +38,12 @@ public class RefineryRecipeTable : ScriptableObject {
 
         if (recipes == null) return;
 
-        foreach (var recipe in recipes) {
+        for (var i = 0; i < recipes.Length; i++) {
+            SCP_914_Recipe recipe = recipes[i];
             if (recipe == null || recipe.inputItem == null) continue;
-            if (recipe.perModeRecipes == null) continue;
 
-            foreach (var modeRecipe in recipe.perModeRecipes) {
-                if (modeRecipe == null) continue;
-
-                var key = (recipe.inputItem, modeRecipe.mode);
-
-                if (!recipeLookup.TryAdd(key, modeRecipe)) {
-                    Debug.LogWarning(
-                        $"Duplicate refinery recipe found for {recipe.inputItem.name} ({modeRecipe.mode})", this
-                    );
-                }
+            if (!recipeLookup.TryAdd(recipe.inputItem, recipe)) {
+                Debug.LogWarning($"Duplicate refinery recipe found for {recipe.inputItem.name}", this);
             }
         }
     }
@@ -155,25 +51,24 @@ public class RefineryRecipeTable : ScriptableObject {
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Method called by the SCP-914 script to figure out the output for a given item dropped into the input area.
     /// </summary>
     /// <param name="inputItem">The ItemData SCP-914 needs to get the output for</param>
     /// <param name="mode">What mode of refinement the item is getting passed through</param>
-    /// <returns></returns>
-    public ItemData GetOutput(ItemData inputItem, RefinementMode mode) {
-        if (!recipeLookup.TryGetValue((inputItem, mode), out var modeRecipe)) return inputItem;
-        if (modeRecipe.possibleOutputs == null || modeRecipe.possibleOutputs.Length == 0) return null;
+    /// <returns>The resulting item, the input item if no recipe exists, or null if the item is destroyed.</returns>
+    public ItemData GetOutput(ItemData inputItem, SCP_914_Recipe.RefinementMode mode) {
+        bool found = recipeLookup.TryGetValue(inputItem, out var recipe);
 
-        var difficultyFactor = RevivalSessionEngine.otherDifficultyFactor;
+        Debug.Log(
+            $"914 lookup: table={name}, recipes={(recipes == null ? -1 : recipes.Length)}, " +
+            $"input={(inputItem ? inputItem.name : "NULL")}, " +
+            $"cachedEntries={recipeLookup.Count}, found={found}, mode={mode}");
 
-        foreach (var output in modeRecipe.possibleOutputs) {
-            if (output == null) continue;
-            var result = output.ResolveItem(difficultyFactor);
-            if (result) return result;
-        }
-
-        return null;
+        if (!found) return inputItem;
+        return recipe.GetOutput(mode, RevivalSessionEngine.otherDifficultyFactor);
     }
+
     #endregion
 }

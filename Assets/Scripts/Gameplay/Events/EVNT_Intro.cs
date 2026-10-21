@@ -94,7 +94,7 @@ public class EVNT_Intro : MonoBehaviour {
 
     private void Awake() {
         if (developerMode) {
-            Instantiate(consolePrefab);
+            //Instantiate(consolePrefab);
             Instantiate(runtimeEngine);
             Instantiate(sessionEngine);
         }

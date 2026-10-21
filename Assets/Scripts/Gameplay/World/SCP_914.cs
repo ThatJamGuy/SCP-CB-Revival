@@ -8,7 +8,7 @@ public class SCP_914 : MonoBehaviour {
     [SerializeField] private RefineryRecipeTable recipeTable;
 
     [Header("Refinery Settings")]
-    public RefineryRecipeTable.RefinementMode currentRefinementMode;
+    public SCP_914_Recipe.RefinementMode currentRefinementMode;
     [SerializeField] private float refinementTime = 13.6f;
 
     [Header("References")]
@@ -20,32 +20,39 @@ public class SCP_914 : MonoBehaviour {
     #region Private Methods
 
     private void RefineItem(WorldItem item) {
-        var outputItem = recipeTable.GetOutput(item.associatedItemData, currentRefinementMode);
+        Debug.Log($"914 refining {item.associatedItemData.name} in mode {currentRefinementMode}");
+
+        ItemData outputItem = recipeTable.GetOutput(item.associatedItemData, currentRefinementMode);
         Destroy(item.gameObject);
         if (!outputItem) return;
 
         Instantiate(outputItem.itemWorldPrefab, GetRandomOutputPosition(), Quaternion.identity);
     }
 
+    #endregion
+
+    #region Private IENumerators
+
     private IEnumerator RefinementProcess() {
         var itemsToRefine = GetItemsInInputArea();
 
-        foreach (var machineLight in machineLights) machineLight.PlayPatternForDuration(1.7f);
-        foreach (var door in machineDoors) door.CloseDoor();
+        foreach (LightFlicker machineLight in machineLights) machineLight.PlayPatternForDuration(1.7f);
+        foreach (Door door in machineDoors) door.CloseDoor();
 
         yield return new WaitForSeconds(refinementTime);
 
-        foreach (var item in itemsToRefine)
-            if (item) RefineItem(item);
-
-        foreach (var door in machineDoors)
-            door.OpenDoor();
+        foreach (WorldItem item in itemsToRefine) if (item) RefineItem(item);
+        foreach (var door in machineDoors) door.OpenDoor();
     }
 
+    #endregion
+
+    #region Private Utilities
+
     private List<WorldItem> GetItemsInInputArea() {
-        var bounds = inputArea.bounds;
-        var colliders = Physics.OverlapBox(bounds.center, bounds.extents, inputArea.transform.rotation);
-        var items = new List<WorldItem>();
+        Bounds bounds = inputArea.bounds;
+        Collider[] colliders = Physics.OverlapBox(bounds.center, bounds.extents, inputArea.transform.rotation);
+        List<WorldItem> items = new List<WorldItem>();
 
         foreach (var collider in colliders)
             if (collider.TryGetComponent(out WorldItem item)) items.Add(item);

@@ -55,7 +55,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SCP_914
   recipeTable: {fileID: 11400000, guid: d2d41042fc8ce8f47a7293709c2711b9, type: 2}
-  currentRefinementMode: 3
+  currentRefinementMode: 2
   refinementTime: 13.6
   inputArea: {fileID: 7557570507310365738}
   outputArea: {fileID: 5554033969315086791}
@@ -743,6 +743,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SCP_914_Knob
   knobRotationSpeed: 100
   knobClickDistance: 10
+  minAngle: -90
+  maxAngle: 90
   knobSelectAngles:
   - angle: -82.6
     associatedRefinementMode: 0
@@ -1975,6 +1977,7 @@ MonoBehaviour:
   moveAxis: 0
   doorPart01: {fileID: 4653462005821015546}
   doorPart02: {fileID: 1672203223936951911}
+  occlusionPortal: {fileID: 0}
 --- !u!1 &3743119809300012433
 GameObject:
   m_ObjectHideFlags: 0
@@ -4428,6 +4431,7 @@ MonoBehaviour:
   moveAxis: 0
   doorPart01: {fileID: 9208899930675717829}
   doorPart02: {fileID: 5372959398360649729}
+  occlusionPortal: {fileID: 0}
 --- !u!1 &8718238019115497955
 GameObject:
   m_ObjectHideFlags: 0
@@ -4721,6 +4725,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: OfficeChair
       objectReference: {fileID: 0}
+    - target: {fileID: 6957741529127582126, guid: 67313381cd1c410488743d3e0b3bec1d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4967,6 +4975,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rug
       objectReference: {fileID: 0}
+    - target: {fileID: 5125121614432054733, guid: 742282669610cae4791a85f9cf148900, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5050,6 +5062,10 @@ PrefabInstance:
     - target: {fileID: 3166472800010794087, guid: 66c5185f4b7adef408f839edfb32b4bd, type: 3}
       propertyPath: m_Name
       value: CB_Shelves_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 3166472800010794087, guid: 66c5185f4b7adef408f839edfb32b4bd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7014223366620738590, guid: 66c5185f4b7adef408f839edfb32b4bd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5152,6 +5168,10 @@ PrefabInstance:
     - target: {fileID: 8429976087823645195, guid: 27ae58ab2dc95b845ba748e0f36b0cb3, type: 3}
       propertyPath: m_Name
       value: Keyboard
+      objectReference: {fileID: 0}
+    - target: {fileID: 8429976087823645195, guid: 27ae58ab2dc95b845ba748e0f36b0cb3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5563,6 +5583,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Objects_1
       objectReference: {fileID: 0}
+    - target: {fileID: 189592, guid: b39af83ea51e1f74fa9441c571c84b2d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 407020, guid: b39af83ea51e1f74fa9441c571c84b2d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6.655709
@@ -5729,6 +5753,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4869086906608007772, guid: 347392f0d947e654780f1d73331902db, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413636682288299358, guid: 347392f0d947e654780f1d73331902db, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -5967,6 +5995,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CB_ComputerTower
       objectReference: {fileID: 0}
+    - target: {fileID: 6163757526193665375, guid: eea9b0346369a5b499e750a00196f1a8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7312785678596782168, guid: eea9b0346369a5b499e750a00196f1a8, type: 3}
       propertyPath: m_LocalScale.y
       value: 1
@@ -6098,6 +6130,10 @@ PrefabInstance:
     - target: {fileID: 3627975360329148968, guid: 2e6d576aba6bc4f46a0c41c69694e94c, type: 3}
       propertyPath: m_Name
       value: CB_TableA
+      objectReference: {fileID: 0}
+    - target: {fileID: 3627975360329148968, guid: 2e6d576aba6bc4f46a0c41c69694e94c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4040054319598950342, guid: 2e6d576aba6bc4f46a0c41c69694e94c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6345,6 +6381,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CB_Monitor
       objectReference: {fileID: 0}
+    - target: {fileID: 4035556519452400851, guid: 791523705e03c1e4c908e3a7529ebffe, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7307020256806371181, guid: 791523705e03c1e4c908e3a7529ebffe, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -6370,6 +6410,10 @@ PrefabInstance:
     - target: {fileID: 3627975360329148968, guid: 2e6d576aba6bc4f46a0c41c69694e94c, type: 3}
       propertyPath: m_Name
       value: CB_TableA (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3627975360329148968, guid: 2e6d576aba6bc4f46a0c41c69694e94c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4040054319598950342, guid: 2e6d576aba6bc4f46a0c41c69694e94c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6600,6 +6644,10 @@ PrefabInstance:
     - target: {fileID: 6957741529127582126, guid: 67313381cd1c410488743d3e0b3bec1d, type: 3}
       propertyPath: m_Name
       value: OfficeChair (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6957741529127582126, guid: 67313381cd1c410488743d3e0b3bec1d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

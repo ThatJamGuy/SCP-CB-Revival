@@ -20,6 +20,9 @@ public class PlayerBlink : MonoBehaviour {
     }
 
     private void Update() {
+        // Adding this to finally fix blinking when a menu is open
+        if (MenuManager.Instance.anyMenuCurrentlyOpen) return;
+
         // Detect manual blink
         if (blinkAction.WasPressedThisFrame()) {
             currentBlink = 0;
