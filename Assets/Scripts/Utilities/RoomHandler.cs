@@ -5,6 +5,11 @@ using UnityEngine;
 /// What zone is it in? How should it handle player teleports?
 /// </summary>
 public class RoomHandler : MonoBehaviour {
+    [Header("Room Settings")]
+    public string roomName;
+    public Transform teleportLocation;
+
+    [Header("Optimization")]
     [SerializeField] private Light[] roomLights;
     [SerializeField] private float activateDistance = 25;
 
@@ -19,5 +24,9 @@ public class RoomHandler : MonoBehaviour {
             if (distanceToPlayer <= activateDistance) light.gameObject.SetActive(true);
             else light.gameObject.SetActive(false);
         }
+    }
+
+    public void TeleportPlayerHere() {
+        Player.Instance.transform.position = teleportLocation.position;
     }
 }

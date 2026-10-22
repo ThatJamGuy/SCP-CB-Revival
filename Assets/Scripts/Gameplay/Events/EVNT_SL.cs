@@ -1,4 +1,3 @@
-using IngameDebugConsole;
 using UnityEngine;
 
 public class EVNT_SL : MonoBehaviour {
@@ -8,10 +7,6 @@ public class EVNT_SL : MonoBehaviour {
 
     private bool triggeredSpawn;
 
-    private void Awake() {
-        DebugLogConsole.AddCommand("disable_lockdown", "Disables the LCZ lockdown.", () => DisableLCZLockdown(true));
-    }
-
     public void ChangeMusicToSL() {
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SL);
     }
@@ -20,11 +15,9 @@ public class EVNT_SL : MonoBehaviour {
         RevivalSessionEngine.SetGlobalAudioBasedOnZone();
     }
 
-    public void DisableLCZLockdown(bool doneViaConsole) {
+    public void DisableLCZLockdown() {
         // Adding this check so that if lockdown is disabled via console (Or early HCZ entrance) it won't trigger the 049 scene
         RevivalSessionEngine.lczInLockdown = false;
-
-        if (doneViaConsole) return;
 
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror04); // Fade out to silence
 
@@ -50,5 +43,13 @@ public class EVNT_SL : MonoBehaviour {
         downDoor.isBroken = true;
 
         triggeredSpawn = true;
+    }
+
+    public static void DisableLCZLockdownViaCMD() {
+        if (RevivalSessionEngine.lczInLockdown == true) {
+            RevivalSessionEngine.lczInLockdown = false;
+            Debug.Log("<color=#00ffff>Light Containment Zone lockdown has been lifted.</color>");
+        }
+
     }
 }

@@ -6866,16 +6866,19 @@ MonoBehaviour:
     associatedMenuScreen: {fileID: 3974262925553878348}
     pausesOnSafe: 1
     pausesOnEuclid: 1
+    requireConsoleToggle: 0
     isOpen: 0
   - openCloseKey: {fileID: -749504798336481602, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
     associatedMenuScreen: {fileID: 6042981493803406477}
     pausesOnSafe: 1
     pausesOnEuclid: 0
+    requireConsoleToggle: 0
     isOpen: 0
   - openCloseKey: {fileID: 2826055423122125811, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
     associatedMenuScreen: {fileID: 3835723352160773738}
     pausesOnSafe: 1
     pausesOnEuclid: 1
+    requireConsoleToggle: 1
     isOpen: 0
 --- !u!114 &1976986676757264774
 MonoBehaviour:
@@ -7630,6 +7633,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DevelopmentConsole
   maxLogHistory: 100
+  historyPrevious:
+    m_Name: History Previous
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 059ebd58-d08c-4eb8-9a0c-ab553b363094
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 9364299b-d8c6-449c-83a5-a41bf73bac98
+      m_Path: <Keyboard>/upArrow
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: History Previous
+      m_Flags: 0
+    m_Flags: 0
+    m_Priority: 0
+  historyNext:
+    m_Name: History Next
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 62e0170c-9b4e-4484-9683-eda6d262692a
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: b0dce07f-b346-4a49-8343-153916f88668
+      m_Path: <Keyboard>/downArrow
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: History Next
+      m_Flags: 0
+    m_Flags: 0
+    m_Priority: 0
   logItemPrefab: {fileID: 9000375817297441325, guid: 28af10b7a2f0dd046b81f0c67a51ed3e, type: 3}
   consoleInput: {fileID: 4619985144749072065}
   scrollViewContent: {fileID: 1510199822852867046}

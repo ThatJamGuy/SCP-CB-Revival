@@ -12,6 +12,7 @@ public class MenuManager : MonoBehaviour {
         public GameObject associatedMenuScreen; // The parent gameObject for the screen to open, leave empty for dummy menu
         public bool pausesOnSafe; // Should this menu pause the game on Safe mode?
         public bool pausesOnEuclid; // Should this menu pause the game on Euclid mode?
+        public bool requireConsoleToggle; // Hard coded value for the console window where it can only be opened if console is enabled
 
         [HideInInspector] public bool isOpen;
     }
@@ -35,8 +36,8 @@ public class MenuManager : MonoBehaviour {
 
     private void OnEnable() {
         // For every menu in the list, register each action callback to the ToggleMenu method
-        foreach (var menu in menuList) {
-            var action = menu.openCloseKey?.action;
+        foreach (Menu menu in menuList) {
+            InputAction action = menu.openCloseKey?.action;
             if (action == null) continue;
 
             void Callback(InputAction.CallbackContext ctx) => ToggleMenu(menu);
@@ -70,9 +71,10 @@ public class MenuManager : MonoBehaviour {
     #region Private Methods
     private void ToggleMenu(Menu menu, bool? forceState = null) {
         // Allow closing an open menu, but block opening when another is already open
-        var open = forceState ?? !menu.isOpen;
+        bool open = forceState ?? !menu.isOpen;
         if (open == menu.isOpen || cantFunction) return;
         if (open && anyMenuCurrentlyOpen) return;
+        if (menu.requireConsoleToggle && !RevivalRuntimeEngine.SettingsData.consoleEnabled) return; // Prevent menu from opening if "Enable Console" is disabled
 
         // Set the menus local isOpen value to the opposite itself for toggling
         // Then set its screen to enabled or disabled based on that isOpen value
@@ -88,7 +90,7 @@ public class MenuManager : MonoBehaviour {
     private void RefreshPauseState() {
         if (cantFunction) return;
 
-        var shouldPause = unregisteredMenuOpen;
+        bool shouldPause = unregisteredMenuOpen;
 
         foreach (var menu in menuList) {
             if (!menu.isOpen) continue;

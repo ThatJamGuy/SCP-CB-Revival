@@ -27,7 +27,7 @@ public class EVNT_Intro : MonoBehaviour {
     [Header("Developer References")]
     [SerializeField] private GameObject runtimeEngine;
     [SerializeField] private GameObject sessionEngine;
-    [SerializeField] private GameObject consolePrefab;
+    //[SerializeField] private GameObject consolePrefab;
 
     [Header("Audio References")]
     [SerializeField] private Transform ulgrinVoiceSource;

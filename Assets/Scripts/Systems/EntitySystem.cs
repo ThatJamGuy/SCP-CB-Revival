@@ -1,5 +1,4 @@
 using EditorAttributes;
-using IngameDebugConsole;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -42,9 +41,6 @@ public class EntitySystem : MonoBehaviour {
         if (Instance == null) Instance = this;
         else { Destroy(gameObject); return; }
 
-        DebugLogConsole.AddCommand("print_closest_waypoint", "Prints the Vector3 location of the closest AI waypoint to the player into the console.", DebugPrintClosestWaypoint);
-        DebugLogConsole.AddCommand<string>("spawn_entity", "Spawns an entity at the closest waypoint to the player.", DebugSpawnEntity);
-
         // Cache some entities for the spawning systems to prevent repeated foreach checks
         for (int i = 0; i < entities.Length; i++) {
             Entity entity = entities[i];
@@ -82,10 +78,6 @@ public class EntitySystem : MonoBehaviour {
         Debug.Log(GetClosestWaypointToPlayer().position);
     }
 
-    private void DebugSpawnEntity(string entityIdentifier) {
-        SpawnEntity(entityIdentifier, GetClosestWaypointToPlayer());
-    }
-
     #endregion
 
     #region Public Methods
@@ -98,11 +90,19 @@ public class EntitySystem : MonoBehaviour {
         }
     }
 
+    public void DebugSpawnEntity(string entityIdentifier) {
+        Debug.Log($"<color=#00ffff>Spawned entity: {entityIdentifier}</color>");
+        SpawnEntity(entityIdentifier, GetClosestWaypointToPlayer());
+    }
+
     // Spawn an entity passing in a string id and spawnpoint transform
     public void SpawnEntity(string entityIdentifier, Transform spawnPoint) {
         for (int i = 0; i < entities.Length; i++) {
             if (entities[i].entityIdentifier == entityIdentifier) {
                 SpawnEntity(entities[i], spawnPoint);
+                return;
+            } else {
+                Debug.LogWarning("An entity with that identifier was not found.");
                 return;
             }
         }

@@ -180,11 +180,13 @@ public class InventorySystem : MonoBehaviour {
 
     public void DebugListItems() => Debug.Log(string.Join(", ", itemDataLookup.Keys));
 
-    public void DebugSpawnItem(string itemIdentifier) {
+    public void DebugSpawnItem(string itemIdentifier, bool viaConsole = false) {
         if (!itemDataLookup.TryGetValue(itemIdentifier, out var item)) {
             Debug.LogWarning("An item with that identifier was not found.");
             return;
         }
+
+        if (viaConsole) Debug.Log($"<color=#00ffff>Spawned item: {itemIdentifier}</color>");
 
         var spawnPos = playerCamera.transform.position + playerCamera.transform.forward * 0.7f;
         var randomRot = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);

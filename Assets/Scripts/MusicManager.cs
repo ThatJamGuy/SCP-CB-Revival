@@ -1,6 +1,5 @@
 using FMOD.Studio;
 using FMODUnity;
-using IngameDebugConsole;
 using UnityEngine;
 
 public class MusicManager : MonoBehaviour {
@@ -64,13 +63,6 @@ public class MusicManager : MonoBehaviour {
         else Destroy(gameObject);
 
         settingsData = DataSaver.Load<SettingsData>("settings.json");
-    }
-
-    private void Start() {
-        DebugLogConsole.AddCommand<int, int>("play_music", "Plays the music track associated with the given integer identifier, followed by intensity from 0-1.", SetTrack);
-        DebugLogConsole.AddCommand("stop_music", "Stops all currently playing music.", StopAllMusic);
-        DebugLogConsole.AddCommand("stop_zone_ambience", "Stops all currently playing zone ambience.", StopAllZoneAmbience);
-        DebugLogConsole.AddCommand("print_audio_init", "Prints the state of the music and ambience init system to the console.", DebugInit);
     }
 
     private void OnDestroy() {

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class DevelopmentConsole : MonoBehaviour {
@@ -8,6 +9,8 @@ public class DevelopmentConsole : MonoBehaviour {
     [SerializeField] private int maxLogHistory = 100;
 
     [Header("High Priority")]
+    [SerializeField] private InputAction historyPrevious;
+    [SerializeField] private InputAction historyNext;
     [SerializeField] private GameObject logItemPrefab;
 
     [Header("References")]
@@ -24,11 +27,14 @@ public class DevelopmentConsole : MonoBehaviour {
     private static readonly char[] Separators = { ' ' };
     private struct CommandInfo { public CommandHandler Handler; public string Description; }
     private readonly Dictionary<string, CommandInfo> commands = new Dictionary<string, CommandInfo>(16, System.StringComparer.OrdinalIgnoreCase);
+    private readonly List<string> commandHistory = new List<string>();
 
     private TextMeshProUGUI[] logPool;
 
     private int poolCount;
     private int poolHead;
+    private int historyBrowseIndex = -1;
+    private string historyDraft = string.Empty;
 
     #region Unity Lifecycle
 
@@ -40,12 +46,17 @@ public class DevelopmentConsole : MonoBehaviour {
     private void OnEnable() {
         consoleInput.ActivateInputField();
         consoleInput.Select();
-
         consoleInput.onSubmit.AddListener(SubmitCommand);
+
+        historyPrevious?.Enable();
+        historyNext?.Enable();
     }
 
     private void OnDisable() {
         consoleInput.onSubmit.RemoveListener(SubmitCommand);
+
+        historyPrevious?.Disable();
+        historyNext?.Disable();
     }
 
     private void LateUpdate() {
@@ -57,6 +68,14 @@ public class DevelopmentConsole : MonoBehaviour {
             }
             AddLine(line);
         }
+
+        if (historyPrevious != null && historyPrevious.WasPressedThisFrame()) {
+            NavigateCommandHistory(-1);
+        }
+
+        if (historyNext != null && historyNext.WasPressedThisFrame()) {
+            NavigateCommandHistory(1);
+        }
     }
 
     #endregion
@@ -66,7 +85,11 @@ public class DevelopmentConsole : MonoBehaviour {
     private void RegisterCommands() {
         Register("help", "Lists all available commands.", CMD_Help);
         Register("clear", "Clear all console outputs.", CMD_Clear);
-        Register("spawnitem", "Spawn an item in front of the player taking in an <itemid> argument.", CMD_SpawnItem);
+        Register("teleport", "Teleport the player to a room, taking in a <roomid> argument.", CMD_TeleportPlayer);
+        Register("spawnitem", "Spawn an item in front of the player, taking in an <itemid> argument.", CMD_SpawnItem);
+        Register("spawnentity", "Spawn an entity at the closest waypoint to the player, taking in <entityid>.", CMD_SpawnEntity);
+        Register("settrack", "Set the music track, taking in <trackindex> and optinally <intensity>.", CMD_SetTrack);
+        Register("disablelockdown", "Disabled the lockdown on the Light Containment Zone.", CMD_DisableLockdown);
     }
 
     private void Register(string name, string desc, CommandHandler handler) {
@@ -90,6 +113,11 @@ public class DevelopmentConsole : MonoBehaviour {
             }
         }
 
+        // Add the command just entered into the history for easy reuse
+        commandHistory.Add(command);
+        historyBrowseIndex = -1;
+        historyDraft = string.Empty;
+
         consoleInput.text = string.Empty;
         consoleInput.ActivateInputField();
         consoleInput.Select();
@@ -110,7 +138,7 @@ public class DevelopmentConsole : MonoBehaviour {
 
         item.SetText(text);
 
-        Canvas.ForceUpdateCanvases();
+        UnityEngine.Canvas.ForceUpdateCanvases();
         scrollRect.verticalNormalizedPosition = 0f;
     }
 
@@ -144,6 +172,29 @@ public class DevelopmentConsole : MonoBehaviour {
         }
     }
 
+    private void NavigateCommandHistory(int direction) {
+        if (commandHistory.Count == 0) return;
+        if (historyBrowseIndex == -1) {
+            if (direction > 0) return;
+
+            historyDraft = consoleInput.text;
+            historyBrowseIndex = commandHistory.Count;
+        }
+
+        int nextIndex = historyBrowseIndex + direction;
+
+        if (nextIndex < 0) nextIndex = 0;
+        if (nextIndex >= commandHistory.Count) {
+            historyBrowseIndex = -1;
+            consoleInput.text = historyDraft;
+        } else {
+            historyBrowseIndex = nextIndex;
+            consoleInput.text = commandHistory[historyBrowseIndex];
+        }
+
+        consoleInput.caretPosition = consoleInput.text.Length;
+    }
+
     #endregion
 
     #region Console Commands
@@ -170,8 +221,51 @@ public class DevelopmentConsole : MonoBehaviour {
             return;
         }
 
-        InventorySystem.Instance.DebugSpawnItem(args[0]);
-        Debug.Log($"<color=#00ffff>Spawned item: {args[0]}</color>");
+        InventorySystem.Instance.DebugSpawnItem(args[0], true);
+    }
+
+    private void CMD_SpawnEntity(string[] args) {
+        if (args.Length < 1) {
+            AddLine("<color=yellow>Usage: spawnentity <entityid>");
+            return;
+        }
+
+        EntitySystem.Instance.DebugSpawnEntity(args[0]);
+    }
+
+    private void CMD_SetTrack(string[] args) {
+        if (args.Length < 1 || !int.TryParse(args[0], out int trackIndex) || !int.TryParse(args[1], out int intensity)) {
+            AddLine("<color=yellow>Usage: settrack <trackindex> <intensity>");
+            return;
+        }
+
+        MusicManager.Instance.SetTrack(trackIndex, intensity);
+        Debug.Log($"<color=#00ffff>Attempting to change the currently playing track to {trackIndex} with an intensity of {intensity}.</color>");
+    }
+
+    private void CMD_DisableLockdown(string[] args) {
+        EVNT_SL.DisableLCZLockdownViaCMD();
+    }
+
+    private void CMD_TeleportPlayer(string[] args) {
+        if (args.Length < 1) {
+            AddLine("<color=yellow>Usage: teleport <roomname>");
+            return;
+        }
+
+        // Not usually a good idea to do this upon executing the command but it will pass for now since the only people that will complain about suttering from this
+        // are those that are using it to cheat lol (at least until the project get's bigger and there are more legit uses for it in which case I'll fix this later)
+        RoomHandler[] rooms = FindObjectsByType<RoomHandler>();
+
+        foreach (RoomHandler room in rooms) {
+            if (room.roomName == args[0] && room.teleportLocation != null) {
+                room.TeleportPlayerHere();
+                Debug.Log($"<color=#00ffff>Teleporting player to room: '{room.roomName}'</color>");
+                return;
+            }
+        }
+
+        Debug.Log("Could not find a room with that ID, or the room is not configured for teleporting.");
     }
 
     #endregion

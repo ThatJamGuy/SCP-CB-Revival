@@ -1,5 +1,4 @@
 using EditorAttributes;
-using IngameDebugConsole;
 using PrimeTween;
 using TMPro;
 using UnityEngine;
@@ -29,11 +28,22 @@ public class RevivalSessionEngine : MonoBehaviour {
         else { Destroy(gameObject); return; }
 
         Instance = this;
-
-        DebugLogConsole.AddCommand("print_zone", "Prints the current estimated zone to the console.", DebugDispalyZone);
     }
 
     private void Start() {
+        // Set other difficulty factor value based on the current session difficulty
+        switch (currentDifficulty) {
+            case 0:
+                otherDifficultyFactor = 0;
+                break;
+            case 1:
+                otherDifficultyFactor = 1;
+                break;
+            case 2:
+                otherDifficultyFactor = 2;
+                break;
+        }
+
         // Ensure this john is in lockdown every session because it didn't reset when testing the build
         lczInLockdown = true;
     }
