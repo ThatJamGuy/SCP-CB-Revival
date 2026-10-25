@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using EditorAttributes;
 
 [CreateAssetMenu(fileName = "RoomData", menuName = "SCP:CBR/Room Data")]
 public class RoomData : ScriptableObject {
@@ -16,5 +14,5 @@ public class RoomData : ScriptableObject {
     public bool largeRoom;
 
     [Header("Room References")]
-    public AssetReferenceGameObject roomPrefab;
+    public GameObject roomPrefab;
 }

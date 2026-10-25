@@ -19,6 +19,8 @@ public class MenuManager : MonoBehaviour {
 
     [SerializeField] private Menu[] menuList;
 
+    public bool disableMenuToggling;
+
     private readonly Dictionary<InputAction, System.Action<InputAction.CallbackContext>> callbacks = new();
     private RevivalSessionEngine gameManager;
 
@@ -27,7 +29,7 @@ public class MenuManager : MonoBehaviour {
     public bool anyMenuCurrentlyOpen => unregisteredMenuOpen || System.Array.Exists(menuList, m => m.isOpen);
     private int currentDifficulty;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Awake() {
         if (Instance == null) Instance = this;
@@ -75,6 +77,12 @@ public class MenuManager : MonoBehaviour {
         if (open == menu.isOpen || cantFunction) return;
         if (open && anyMenuCurrentlyOpen) return;
         if (menu.requireConsoleToggle && !RevivalRuntimeEngine.SettingsData.consoleEnabled) return; // Prevent menu from opening if "Enable Console" is disabled
+
+        // Hardcoded gate to prevent the player from closing the pause menu if the options or achievements menu is open
+        // Hopefully will not have any unintended side effects later
+        if (RevivalRuntimeEngine.Instance.anyMenuOpen) return;
+
+        if (disableMenuToggling) return;
 
         // Set the menus local isOpen value to the opposite itself for toggling
         // Then set its screen to enabled or disabled based on that isOpen value

@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 [System.Serializable]
 public class RoomSet {
@@ -47,18 +45,20 @@ public class MapGenerator : MonoBehaviour {
     [Header("Status")]
     public bool IsGenerationComplete = false;
 
-    // Internal State
     private MapTemplate selectedMapTemplate;
+
     private readonly List<GameObject> spawnedRooms = new();
-    private readonly Dictionary<AssetReferenceGameObject, AsyncOperationHandle<GameObject>> loadedRoomAssets = new();
     private readonly List<GameObject> spawnedDoors = new();
-    private readonly Dictionary<AssetReferenceGameObject, AsyncOperationHandle<GameObject>> loadedDoorAssets = new();
     private readonly Dictionary<Vector2Int, RoomData.Zone> zoneLookup = new();
     private readonly Dictionary<Vector2Int, RoomData> placedMandatoryRooms = new();
     private readonly HashSet<RoomData> usedUniqueRooms = new();
-
-    // Debug Data
+    private readonly List<RoomData> validPoolBuffer = new();
+    private readonly List<Vector2Int> validPositionsBuffer = new();
+    private readonly Dictionary<Vector2Int, RoomPlacement> placementLookup = new();
+    private readonly HashSet<(Vector2Int, Vector2Int)> processedEdges = new();
     private readonly List<(Vector2Int pos, Color color)> gizmoCells = new();
+
+    #region Unity Lifecycle
 
     private void Awake() {
         if (Instance == null) Instance = this;
@@ -70,14 +70,34 @@ public class MapGenerator : MonoBehaviour {
             //var saveData = DataSaver.Load<SaveData>("save.json");
             //seed = saveData.currentMapSeed;
 
-            if (string.IsNullOrEmpty(seed))
-                useRandomSeed = true;
-            else
-                useRandomSeed = false;
+            useRandomSeed = string.IsNullOrEmpty(seed);
         }
 
         StartCoroutine(GenerateMapSequence());
     }
+
+    private void OnDrawGizmos() {
+        // Draw Layout Grid
+        Vector3 cellVolume = new Vector3(cellSize, 0.1f, cellSize);
+        for (int i = 0; i < gizmoCells.Count; i++) {
+            Gizmos.color = gizmoCells[i].color;
+            Gizmos.DrawWireCube(GridToWorld(gizmoCells[i].pos), cellVolume);
+        }
+
+        // Draw Mandatory Reservations (Solid Cubes)
+        Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f); // Semi-transparent Orange
+        Vector3 reservedVolume = new Vector3(cellSize * 0.5f, 0.5f, cellSize * 0.5f);
+        foreach (KeyValuePair<Vector2Int, RoomData> kvp in placedMandatoryRooms) {
+            Gizmos.DrawCube(GridToWorld(kvp.Key), reservedVolume);
+        }
+    }
+
+    private void OnDestroy() {
+        if (Instance == this) Instance = null;
+        Cleanup();
+    }
+
+    #endregion
 
     public IEnumerator GenerateMapSequence() {
         IsGenerationComplete = false;
@@ -94,8 +114,8 @@ public class MapGenerator : MonoBehaviour {
         BuildGridData();
         PlaceMandatoryRooms();
 
-        // 3. Spawn Rooms and Wait
-        yield return StartCoroutine(SpawnPlacedRoomsRoutine());
+        // 3. Spawn Rooms (fully synchronous now)
+        SpawnPlacedRooms();
 
         // 4. Bake NavMesh
         if (navMeshSurface != null) {
@@ -104,92 +124,59 @@ public class MapGenerator : MonoBehaviour {
             yield return null;
         }
 
-        // 5. Spawn Doors and Wait
-        yield return StartCoroutine(SpawnDoorsRoutine());
+        // 5. Spawn Doors (fully synchronous now)
+        SpawnDoors();
 
-        // 6. Find waypoints
-        EntitySystem.Instance.FindWaypointsInScene();
+        // 6. Find waypoints if applicable
+        if (EntitySystem.Instance != null)
+            EntitySystem.Instance.FindWaypointsInScene();
 
         IsGenerationComplete = true;
         Debug.Log("<color=green>Map Generation Sequence Finished!</color>");
     }
 
-    private IEnumerator SpawnPlacedRoomsRoutine() {
-        // Decide which room goes in each placement up front, so we know exactly
-        // which addressable prefabs actually need to be loaded.
-        List<(RoomPlacement placement, RoomData room)> placementRooms = new();
-        HashSet<AssetReferenceGameObject> prefabsToLoad = new();
+    private void SpawnPlacedRooms() {
+        RoomPlacement[] placements = selectedMapTemplate.roomPlacements;
+        spawnedRooms.Capacity = Mathf.Max(spawnedRooms.Capacity, placements.Length);
 
-        foreach (var placement in selectedMapTemplate.roomPlacements) {
+        for (int i = 0; i < placements.Length; i++) {
+            RoomPlacement placement = placements[i];
+
             RoomData roomToSpawn = placedMandatoryRooms.TryGetValue(placement.gridPosition, out RoomData mandatory)
                 ? mandatory
                 : GetRandomValidRoom(placement.requiredShape, GetZoneAtPosition(placement.gridPosition));
 
-            if (roomToSpawn == null || !roomToSpawn.roomPrefab.RuntimeKeyIsValid()) continue;
-
-            placementRooms.Add((placement, roomToSpawn));
-            prefabsToLoad.Add(roomToSpawn.roomPrefab);
-        }
-
-        // Load every distinct prefab once - this is the only part that stays async,
-        // since Addressables may need to pull the bundle from disk or network.
-        List<AsyncOperationHandle<GameObject>> loadHandles = new(prefabsToLoad.Count);
-        foreach (var prefabRef in prefabsToLoad) {
-            var handle = prefabRef.LoadAssetAsync();
-            loadedRoomAssets[prefabRef] = handle;
-            loadHandles.Add(handle);
-        }
-
-        foreach (var handle in loadHandles) {
-            yield return handle;
-        }
-
-        // Every prefab is resident in memory now, so placing a room is just a plain,
-        // synchronous Instantiate - no need to spread it across frames like InstantiateAsync does.
-        foreach (var (placement, room) in placementRooms) {
-            AsyncOperationHandle<GameObject> handle = loadedRoomAssets[room.roomPrefab];
-            if (!handle.IsValid()) {
-                Debug.LogError($"Invalid room load handle: {room.roomPrefab.RuntimeKey}");
-                continue;
-            }
-
-            if (handle.Status != AsyncOperationStatus.Succeeded) {
-                Debug.LogError(
-                    $"Room load failed: {room.roomPrefab.RuntimeKey}. " +
-                    $"{handle.OperationException}");
-                continue;
-            }
+            if (roomToSpawn == null || roomToSpawn.roomPrefab == null) continue;
 
             Vector3 worldPos = GridToWorld(placement.gridPosition);
-            Quaternion rotation = Quaternion.Euler(0f, placement.rotation, 0f);
+            float yRotation = placement.rotation;
 
-            GameObject instance = Instantiate(handle.Result, worldPos, rotation, generatedMapParent);
-            spawnedRooms.Add(instance);
+            // New feature: adding some rotation variation to 2way and 4way rooms for extra cool
+            switch (roomToSpawn.roomShape) {
+                case RoomData.RoomShape.TwoWay:
+                    yRotation += Random.Range(0, 2) * 180f;
+                    break;
+                case RoomData.RoomShape.FourWay:
+                    yRotation += Random.Range(0, 4) * 90f;
+                    break;
+            }
+
+            Quaternion rotation = Quaternion.Euler(0f, yRotation, 0f);
+
+            spawnedRooms.Add(Instantiate(roomToSpawn.roomPrefab, worldPos, rotation, generatedMapParent));
         }
     }
 
     private void Cleanup() {
-        foreach (var room in spawnedRooms) {
-            if (room != null) Destroy(room);
+        for (int i = 0; i < spawnedRooms.Count; i++) {
+            if (spawnedRooms[i] != null) Destroy(spawnedRooms[i]);
         }
         spawnedRooms.Clear();
 
-        foreach (var door in spawnedDoors) {
-            if (door != null) Destroy(door);
+        for (int i = 0; i < spawnedDoors.Count; i++) {
+            if (spawnedDoors[i] != null) Destroy(spawnedDoors[i]);
         }
         spawnedDoors.Clear();
-
-        // Release every addressable load handle now that its instances are gone -
-        // this is what actually decrements Addressables' ref count for the bundle.
-        foreach (var prefabRef in loadedRoomAssets.Keys) {
-            prefabRef.ReleaseAsset();
-        }
-        loadedRoomAssets.Clear();
-
-        foreach (var prefabRef in loadedDoorAssets.Keys) {
-            prefabRef.ReleaseAsset();
-        }
-        loadedDoorAssets.Clear();
 
         placedMandatoryRooms.Clear();
         usedUniqueRooms.Clear();
@@ -198,11 +185,15 @@ public class MapGenerator : MonoBehaviour {
     }
 
     #region PHASE 1: Grid Mapping
+
     private void BuildGridData() {
         if (selectedMapTemplate == null) return;
 
         int currentY = 0;
-        foreach (var zone in selectedMapTemplate.zones) {
+        ZoneTemplate[] zones = selectedMapTemplate.zones;
+        for (int z = 0; z < zones.Length; z++) {
+            ZoneTemplate zone = zones[z];
+
             // Map Standard Zone Rows
             for (int y = 0; y < zone.zoneHeight; y++) {
                 for (int x = 0; x < zone.zoneWidth; x++) {
@@ -224,29 +215,45 @@ public class MapGenerator : MonoBehaviour {
             }
         }
     }
+
     #endregion
 
     #region PHASE 2: Logic Stuff
+
     private void PlaceMandatoryRooms() {
-        List<RoomData> mandatoryRooms = GetAllRooms().FindAll(r => r.mustSpawn);
+        // Same iteration order as before so seeds keep producing the same maps.
+        PlaceMandatoryFromArray(roomSet.twoWayRooms);
+        PlaceMandatoryFromArray(roomSet.cornerRooms);
+        PlaceMandatoryFromArray(roomSet.threeWayRooms);
+        PlaceMandatoryFromArray(roomSet.fourWayRooms);
+        PlaceMandatoryFromArray(roomSet.deadEndRooms);
+    }
 
-        foreach (var room in mandatoryRooms) {
-            var validPositions = GetValidPositionsForRoom(room);
+    private void PlaceMandatoryFromArray(RoomData[] rooms) {
+        if (rooms == null) return;
 
-            if (validPositions.Count == 0) {
+        for (int i = 0; i < rooms.Length; i++) {
+            RoomData room = rooms[i];
+            if (room == null || !room.mustSpawn) continue;
+
+            FillValidPositionsForRoom(room);
+
+            if (validPositionsBuffer.Count == 0) {
                 Debug.LogWarning($"Could not find valid placement for mandatory room: {room.name}");
                 continue;
             }
 
-            Vector2Int selectedPos = validPositions[Random.Range(0, validPositions.Count)];
+            Vector2Int selectedPos = validPositionsBuffer[Random.Range(0, validPositionsBuffer.Count)];
             placedMandatoryRooms[selectedPos] = room;
 
             if (room.isUnique) usedUniqueRooms.Add(room);
         }
     }
+
     #endregion
 
     #region PHASE 3: Spawn the doors
+
     private static readonly Dictionary<RoomData.RoomShape, int[]> BaseExits = new() {
         { RoomData.RoomShape.TwoWay, new[] { 0, 180 } },
         { RoomData.RoomShape.ThreeWay, new[] { 270, 180, 90 } },
@@ -256,123 +263,100 @@ public class MapGenerator : MonoBehaviour {
         { RoomData.RoomShape.Checkpoint, new[] { 0, 180 } }
     };
 
-    private IEnumerator SpawnDoorsRoutine() {
-        // Walk every placement's exits and work out where a door is actually needed,
-        // same adjacency logic as before - just collecting instead of spawning immediately.
-        HashSet<(Vector2Int, Vector2Int)> processedEdges = new();
-        List<(Vector3 position, Quaternion rotation, AssetReferenceGameObject prefab)> doorsToPlace = new();
-        HashSet<AssetReferenceGameObject> prefabsToLoad = new();
+    private void SpawnDoors() {
+        RoomPlacement[] placements = selectedMapTemplate.roomPlacements;
 
-        Dictionary<Vector2Int, RoomPlacement> placementLookup = new(selectedMapTemplate.roomPlacements.Length);
-        foreach (var placement in selectedMapTemplate.roomPlacements) {
-            placementLookup.TryAdd(placement.gridPosition, placement);
+        processedEdges.Clear();
+        placementLookup.Clear();
+
+        for (int i = 0; i < placements.Length; i++) {
+            placementLookup.TryAdd(placements[i].gridPosition, placements[i]);
         }
 
-        foreach (var placement in selectedMapTemplate.roomPlacements) {
+        for (int i = 0; i < placements.Length; i++) {
+            RoomPlacement placement = placements[i];
             Vector2Int currentPos = placement.gridPosition;
             if (!BaseExits.TryGetValue(placement.requiredShape, out int[] baseAngles)) continue;
 
-            foreach (int baseAngle in baseAngles) {
-                int localAngle = (baseAngle + placement.rotation) % 360;
+            for (int a = 0; a < baseAngles.Length; a++) {
+                int localAngle = (baseAngles[a] + placement.rotation) % 360;
                 Vector2Int neighborPos = currentPos + AngleToDirection(localAngle);
 
                 var edgeKey = GetEdgeKey(currentPos, neighborPos);
                 if (processedEdges.Contains(edgeKey)) continue;
 
                 // Check if neighbor exists and has a matching exit
-                if (!placementLookup.TryGetValue(neighborPos, out var neighborPlacement)) continue;
+                if (!placementLookup.TryGetValue(neighborPos, out RoomPlacement neighborPlacement)) continue;
 
                 int oppositeAngle = (localAngle + 180) % 360;
                 if (!HasWorldExit(neighborPlacement.requiredShape, neighborPlacement.rotation, oppositeAngle)) continue;
 
                 processedEdges.Add(edgeKey);
 
-                AssetReferenceGameObject doorPrefab = GetDoorPrefabForZone(GetZoneAtPosition(currentPos));
-                if (doorPrefab == null || !doorPrefab.RuntimeKeyIsValid()) continue;
+                GameObject doorPrefab = GetDoorPrefabForZone(GetZoneAtPosition(currentPos));
+                if (doorPrefab == null) continue;
 
                 // Midpoint between the two rooms, rotated to point along the exit axis
-                Vector3 doorPosition = (GridToWorld(currentPos) + GridToWorld(neighborPos)) / 2f;
+                Vector3 doorPosition = (GridToWorld(currentPos) + GridToWorld(neighborPos)) * 0.5f;
                 Quaternion doorRotation = Quaternion.Euler(0f, localAngle, 0f);
 
-                doorsToPlace.Add((doorPosition, doorRotation, doorPrefab));
-                prefabsToLoad.Add(doorPrefab);
+                spawnedDoors.Add(Instantiate(doorPrefab, doorPosition, doorRotation, generatedDoorParent));
             }
-        }
-
-        // Load every distinct door prefab once - the only async part.
-        List<AsyncOperationHandle<GameObject>> loadHandles = new(prefabsToLoad.Count);
-        foreach (var prefabRef in prefabsToLoad) {
-            var handle = prefabRef.LoadAssetAsync();
-            loadedDoorAssets[prefabRef] = handle;
-            loadHandles.Add(handle);
-        }
-
-        foreach (var handle in loadHandles) {
-            yield return handle;
-        }
-
-        // Every door prefab is resident in memory now, so place them with plain,
-        // synchronous Instantiate calls.
-        foreach (var (position, rotation, prefab) in doorsToPlace) {
-            AsyncOperationHandle<GameObject> handle = loadedDoorAssets[prefab];
-            if (handle.Status != AsyncOperationStatus.Succeeded) {
-                Debug.LogWarning("Failed to load addressable door prefab.");
-                continue;
-            }
-
-            GameObject instance = Instantiate(handle.Result, position, rotation, generatedDoorParent);
-            spawnedDoors.Add(instance);
         }
     }
 
-    private AssetReferenceGameObject GetDoorPrefabForZone(RoomData.Zone zone) {
-        foreach (var zT in selectedMapTemplate.zones) {
-            if (zT.zoneType == zone) return zT.zoneDoor;
+    private GameObject GetDoorPrefabForZone(RoomData.Zone zone) {
+        var zones = selectedMapTemplate.zones;
+        for (int i = 0; i < zones.Length; i++) {
+            if (zones[i].zoneType == zone) return zones[i].zoneDoor;
         }
         return null;
     }
     #endregion
 
     #region Helpers :)
+
     private RoomData GetRandomValidRoom(RoomData.RoomShape shape, RoomData.Zone zone) {
-        if (shape == RoomData.RoomShape.Checkpoint) {
-            return GetCheckpointForZone(zone);
-        }
+        if (shape == RoomData.RoomShape.Checkpoint) return GetCheckpointForZone(zone);
 
         RoomData[] candidates = roomSet.GetRoomsByShape(shape);
         if (candidates == null) return null;
 
-        List<RoomData> validPool = new();
-        foreach (var r in candidates) {
+        validPoolBuffer.Clear();
+        for (int i = 0; i < candidates.Length; i++) {
+            RoomData r = candidates[i];
             if (r == null) continue;
             if (r.roomZone != zone) continue;
             if (r.isUnique && usedUniqueRooms.Contains(r)) continue;
-            validPool.Add(r);
+            validPoolBuffer.Add(r);
         }
 
-        if (validPool.Count == 0) return null;
+        if (validPoolBuffer.Count == 0) return null;
 
-        RoomData selected = validPool[Random.Range(0, validPool.Count)];
+        RoomData selected = validPoolBuffer[Random.Range(0, validPoolBuffer.Count)];
         if (selected.isUnique) usedUniqueRooms.Add(selected);
 
         return selected;
     }
 
-    private List<Vector2Int> GetValidPositionsForRoom(RoomData room) {
-        List<Vector2Int> valid = new();
-        foreach (var p in selectedMapTemplate.roomPlacements) {
+    private void FillValidPositionsForRoom(RoomData room) {
+        validPositionsBuffer.Clear();
+
+        RoomPlacement[] placements = selectedMapTemplate.roomPlacements;
+        for (int i = 0; i < placements.Length; i++) {
+            RoomPlacement p = placements[i];
             if (p.requiredShape != room.roomShape) continue;
             if (GetZoneAtPosition(p.gridPosition) != room.roomZone) continue;
             if (placedMandatoryRooms.ContainsKey(p.gridPosition)) continue;
 
-            valid.Add(p.gridPosition);
+            validPositionsBuffer.Add(p.gridPosition);
         }
-        return valid;
     }
 
     private RoomData GetCheckpointForZone(RoomData.Zone zone) {
-        foreach (var zT in selectedMapTemplate.zones) {
-            if (zT.zoneType == zone) return zT.checkpointRoomVariant;
+        ZoneTemplate[] zones = selectedMapTemplate.zones;
+        for (int i = 0; i < zones.Length; i++) {
+            if (zones[i].zoneType == zone) return zones[i].checkpointRoomVariant;
         }
         return null;
     }
@@ -381,61 +365,25 @@ public class MapGenerator : MonoBehaviour {
         return zoneLookup.TryGetValue(pos, out var zone) ? zone : RoomData.Zone.LCZ;
     }
 
-    private List<RoomData> GetAllRooms() {
-        List<RoomData> all = new();
-
-        void AddValidRooms(RoomData[] arr) {
-            if (arr == null) return;
-            foreach (var room in arr) {
-                if (room != null) all.Add(room);
-            }
-        }
-
-        AddValidRooms(roomSet.twoWayRooms);
-        AddValidRooms(roomSet.cornerRooms);
-        AddValidRooms(roomSet.threeWayRooms);
-        AddValidRooms(roomSet.fourWayRooms);
-        AddValidRooms(roomSet.deadEndRooms);
-        return all;
-    }
-
     private Vector3 GridToWorld(Vector2Int gridPos) {
         return new Vector3(gridPos.x * cellSize + gridOffsetX, 0f, gridPos.y * cellSize);
     }
 
-    private void OnDrawGizmos() {
-        // Draw Layout Grid
-        foreach (var cell in gizmoCells) {
-            Gizmos.color = cell.color;
-            Vector3 worldPos = GridToWorld(cell.pos);
-            Gizmos.DrawWireCube(worldPos, new Vector3(cellSize, 0.1f, cellSize));
-        }
-
-        // Draw Mandatory Reservations (Solid Cubes)
-        Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f); // Semi-transparent Orange
-        foreach (var kvp in placedMandatoryRooms) {
-            Gizmos.DrawCube(GridToWorld(kvp.Key), new Vector3(cellSize * 0.5f, 0.5f, cellSize * 0.5f));
-        }
-    }
-
-    private void OnDestroy() {
-        if (Instance == this) Instance = null;
-        Cleanup();
-    }
     #endregion
 
     #region Door Helpers :)
+
     private static bool HasWorldExit(RoomData.RoomShape shape, int rotation, int worldAngle) {
         if (!BaseExits.TryGetValue(shape, out int[] angles)) return false;
 
-        foreach (int angle in angles) {
+        for (int i = 0; i < angles.Length; i++) {
             // (Base + Object Rotation) % 360 gives world-space exit direction
-            if ((angle + rotation) % 360 == worldAngle) return true;
+            if ((angles[i] + rotation) % 360 == worldAngle) return true;
         }
         return false;
     }
 
-    private Vector2Int AngleToDirection(int angle) {
+    private static Vector2Int AngleToDirection(int angle) {
         return angle switch {
             0 => new Vector2Int(0, 1),    // North
             90 => new Vector2Int(1, 0),   // East
@@ -449,5 +397,6 @@ public class MapGenerator : MonoBehaviour {
         if (a.x < b.x || (a.x == b.x && a.y < b.y)) return (a, b);
         return (b, a);
     }
+
     #endregion
 }

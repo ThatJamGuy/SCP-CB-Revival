@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 [CreateAssetMenu(fileName = "NewMapTemplate", menuName = "SCP:CBR/Map Template")]
 public class MapTemplate : ScriptableObject {
@@ -10,7 +9,7 @@ public class MapTemplate : ScriptableObject {
 [System.Serializable]
 public class ZoneTemplate {
     public RoomData.Zone zoneType;
-    public AssetReferenceGameObject zoneDoor;
+    public GameObject zoneDoor;
     public int zoneWidth = 7;
     public int zoneHeight = 3;
     public RoomData checkpointRoomVariant;

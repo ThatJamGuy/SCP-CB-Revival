@@ -36,6 +36,8 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     public GameObject achievementsScreen;
     public GameObject optionsScreen;
 
+    public bool anyMenuOpen { get; private set; }
+
     private const ulong APPLICATION_ID = 1450277986178830448; // Discord app token. Hopefully leaving this here isn't a security vulernability :)
     private const string SETTINGS_FILE_NAME = "settings.json"; // File name for the JSON settings file. This is where the settings are saved and loaded from.
     private const string ACHIEVMENTS_FILE_NAME = "achievements.json"; // Similar to the settings, but housng a list of achievement identifiers the player has unlocked.
@@ -92,7 +94,7 @@ public class RevivalRuntimeEngine : MonoBehaviour {
         if (!developerMode) {
             SceneController.instance
                 .NewTransition()
-                .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu)
+                .Load(SceneDatabase.Slots.MENU, SceneDatabase.Scenes.MENU)
                 .WithOverlay()
                 .Perform();
         }
@@ -260,10 +262,12 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     //TODO: Maybe change the name of these laters since it's not actually toggling anything
     public static void ToggleAchievementsMenu(bool active) {
         Instance.achievementsScreen.SetActive(active);
+        Instance.anyMenuOpen = active;
     }
 
     public static void ToggleOptionsMenu(bool active) {
         Instance.optionsScreen.SetActive(active);
+        Instance.anyMenuOpen = active;
     }
 }
 

@@ -1,6 +1,7 @@
 using FMODUnity;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 
 // Welcome to hell
@@ -27,7 +28,6 @@ public class EVNT_Intro : MonoBehaviour {
     [Header("Developer References")]
     [SerializeField] private GameObject runtimeEngine;
     [SerializeField] private GameObject sessionEngine;
-    //[SerializeField] private GameObject consolePrefab;
 
     [Header("Audio References")]
     [SerializeField] private Transform ulgrinVoiceSource;
@@ -83,8 +83,6 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private LightFlicker lightToFlicker;
     [SerializeField] private Rigidbody lightBody;
 
-    private Coroutine cellCheckRoutine;
-
     private bool researcher2Ready;
     private bool researcher2AtVend;
     private bool playerInChamber = false;
@@ -92,24 +90,24 @@ public class EVNT_Intro : MonoBehaviour {
     private int warningIndex = 0;
     private float spamTimeElapsed;
 
+    #region Unity Lifecycle
+
     private void Awake() {
         if (developerMode) {
-            //Instantiate(consolePrefab);
             Instantiate(runtimeEngine);
             Instantiate(sessionEngine);
         }
     }
 
     private void Start() {
-        //MusicManager.Instance.StopAllMusic();
-
         if (!skipIntro) {
-            RevivalSessionEngine.canSave = false;
             RevivalSessionEngine.SetZone(0, true, false); // Set zone to intro, play ambience, no music for now
             MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror01);
             RevivalRuntimeEngine.Instance.ChangeDiscordStatus("In the intro sequence");
+            MenuManager.Instance.disableMenuToggling = true;
 
-            Instantiate(playerPrefab, spawnRegular);
+            GameObject player = Instantiate(playerPrefab, spawnRegular.position, Quaternion.identity);
+            SceneManager.MoveGameObjectToScene(player, spawnRegular.gameObject.scene);
 
             if (playVideo) {
                 Player.Instance.disableInput = true;
@@ -121,8 +119,6 @@ public class EVNT_Intro : MonoBehaviour {
                 StartCoroutine(EscortEnd());
             }
         } else {
-            RevivalSessionEngine.canSave = true;
-
             // Cleanup for intro skipping
             Destroy(franklin.gameObject);
             Destroy(classDA.gameObject);
@@ -139,7 +135,9 @@ public class EVNT_Intro : MonoBehaviour {
 
             introCanvas.SetActive(false);
             skipIntroCanvas.SetActive(true);
-            Instantiate(playerPrefab, spawnSkipIntro);
+
+            GameObject player = Instantiate(playerPrefab, spawnSkipIntro.position, Quaternion.identity);
+            SceneManager.MoveGameObjectToScene(player, spawnSkipIntro.gameObject.scene);
 
             postBreachEvent.TriggerPostBreachEvent(true);
         }
@@ -148,6 +146,7 @@ public class EVNT_Intro : MonoBehaviour {
     private void Update() {
         // Blink spamming to emulate intense light flickers
         // Why? Baked lighting that's why
+        // EDIT: No longer using baked lighting for the part where this is used... so change this later???...
         if (enableBlinkSpamming) {
             spamTimeElapsed += Time.deltaTime;
 
@@ -166,6 +165,8 @@ public class EVNT_Intro : MonoBehaviour {
         }
     }
 
+    #endregion
+
     #region Intro Video
 
     private void IntroVideoEndReached(VideoPlayer videoPlayer) {
@@ -175,6 +176,7 @@ public class EVNT_Intro : MonoBehaviour {
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.legacyLightFlicker);
         Player.Instance.disableInput = false;
         Player.Instance.disableLooking = false;
+        MenuManager.Instance.disableMenuToggling = false;
 
         StartCoroutine(EscortEnd());
     }
@@ -195,11 +197,14 @@ public class EVNT_Intro : MonoBehaviour {
     #endregion
 
     #region Escord End
+
     private IEnumerator EscortEnd() {
         // Force intro track now, as the generic horror was forced earlier on for the video
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.Intro);
 
         if (playVideo) InventorySystem.Instance.AddItemToInventory("docori");
+
+        MenuManager.Instance.disableMenuToggling = false;
 
         yield return new WaitForSeconds(3);
         ulgrinAnimator.SetTrigger("Cocky");
@@ -217,6 +222,7 @@ public class EVNT_Intro : MonoBehaviour {
         researcher2.WalkTo(nav_vend.position);
         researcher2Ready = true;
     }
+
     #endregion
 
     #region Chamber Sequence Start
@@ -238,7 +244,7 @@ public class EVNT_Intro : MonoBehaviour {
     private IEnumerator IntroChamberBegin() {
         yield return new WaitForSeconds(4.5f);
 
-        balconyGuard.Speak(balcGuardRadio);
+        balconyGuard.SpeakWithParameter(balcGuardRadio, "LocalEventInfex", 0);
 
         yield return new WaitForSeconds(4.5f);
         franklin.SetAnimTrigger("PressButton");
@@ -255,7 +261,7 @@ public class EVNT_Intro : MonoBehaviour {
         yield return new WaitForSeconds(1);
         RevivalRuntimeEngine.Instance.GiveAchievement("achv_173");
         yield return new WaitForSeconds(1.5f);
-        AudioManager.PlayOneShot(franklinA);
+        AudioManager.PlayOneShot(franklinA, "LocalEventIndex", 0);
         yield return new WaitForSeconds(5);
         classDB.WalkTo(navPoint1_B.position);
         yield return new WaitForSeconds(1.5f);
@@ -265,33 +271,46 @@ public class EVNT_Intro : MonoBehaviour {
         StartCoroutine(CheckPlayerInCell());
     }
 
+    #region Check if the player is in the cell
+
     private IEnumerator CheckPlayerInCell() {
         yield return new WaitForSeconds(5);
 
+        // If the player is in the chamber regardless warning index, cancel this check and start the inside chamber sequnce
         if (playerInChamber) {
             contDoor.CloseDoor();
             StartCoroutine(InsideChamberSequence());
             yield break;
         }
 
+        // If it's the THIRD warning from franklin, that's the one that states our termination
+        // Set up all the different parts, wait a little bit and deliver the fatal blow (Which also cancels the rest of the check)
         if (warningIndex == 2) {
             contDoor.CloseDoor();
-            AudioManager.PlayOneShot(franklinB);
+            AudioManager.PlayOneShot(franklinB, "LocalEventIndex", 2); // Third voice line because of 0 indexing
+
             yield return new WaitForSeconds(3);
+
             balconyGuard.SetAnimBool("aiming", true);
+
             yield return new WaitForSeconds(4);
+
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.p90Oneshot, balconyGuardGunTip.position);
             Player.Instance.KillPlayer(1, 0.4f, 0.1f, "Subject D-9341. Cause of death: Gunshot wound to the head after failure to comply with testing procedures.");
             RevivalRuntimeEngine.Instance.GiveAchievement("achv_intro");
             yield break;
         }
 
+        // Play a franklin warning line based on the current warningIndex (STARTS at 0 and adds 1 AFTER playing the line now)
+        AudioManager.PlayOneShot(franklinB, "LocalEventIndex", warningIndex);
         warningIndex++;
-        AudioManager.PlayOneShot(franklinB);
 
+        // Start again if it's not the round where we kill the player
         yield return new WaitForSeconds(5);
-        cellCheckRoutine = StartCoroutine(CheckPlayerInCell());
+        StartCoroutine(CheckPlayerInCell());
     }
+
+    #endregion
 
     #endregion
 
@@ -300,7 +319,7 @@ public class EVNT_Intro : MonoBehaviour {
     private IEnumerator InsideChamberSequence() {
         yield return new WaitForSeconds(3);
 
-        AudioManager.PlayOneShot(franklinA);
+        AudioManager.PlayOneShot(franklinA, "LocalEventIndex", 1);
 
         yield return new WaitForSeconds(4);
         classDB.WalkTo(navPoint2_B.position);
@@ -336,13 +355,13 @@ public class EVNT_Intro : MonoBehaviour {
 
         yield return new WaitForSeconds(0.5f);
 
-        balconyGuard.Speak(balcGuardRadio);
+        balconyGuard.SpeakWithParameter(balcGuardRadio, "LocalEventInfex", 1);
         classDA.SetAnimTrigger("LookBehind");
 
         yield return new WaitForSeconds(1);
 
         // Problem voice line starts here. Subsequent sequence should last 12 seconds!
-        AudioManager.PlayOneShot(franklinA);
+        AudioManager.PlayOneShot(franklinA, "LocalEventIndex", 2);
 
         yield return new WaitForSeconds(5);
 

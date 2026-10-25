@@ -17,6 +17,7 @@ public class SCP_049 : MonoBehaviour {
     [SerializeField] private float maxPredictionLookahead = 2f;
     [SerializeField] private float maxPredictedSpeed = 8f;
     [SerializeField] private float killRadius;
+    [SerializeField] private float maxSearchTime;
     [SerializeField] private int minVoiceTime;
     [SerializeField] private int maxVoiceTime;
 
@@ -69,6 +70,7 @@ public class SCP_049 : MonoBehaviour {
     private bool isMoving;
     private bool predicting;
     private bool hasRootMotionBinding;
+    private bool searchMusicActive;
     private int rmotionWalkingBoolHash;
     private int checkingBoolHash;
     private float doorCheckElapsedTime;
@@ -80,6 +82,7 @@ public class SCP_049 : MonoBehaviour {
     private float visibilityRangeSqr;
     private float plagueDoctoringRangeSqr;
     private float visibilityConeHalfAngleCos;
+    private float searchElapsedTime;
 
     #region Unity Lifecycle
 
@@ -174,6 +177,17 @@ public class SCP_049 : MonoBehaviour {
         }
     }
 
+    private void OnDestroy() {
+        if (!searchMusicActive) return;
+        searchMusicActive = false;
+
+        if (EntitySystem.Instance != null)
+            EntitySystem.Instance.cached049Entity.chasingPlayer = false;
+
+        if (Player.Instance == null || !Player.Instance.isDead)
+            RevivalSessionEngine.Instance.PlayChaseTrack(-1, MusicManager.MusicTrack.LCZ, 0);
+    }
+
     #endregion
 
     #region Private Methods
@@ -235,31 +249,35 @@ public class SCP_049 : MonoBehaviour {
     private void EnterCheckingState() {
         state = State.Checking;
         predicting = true;
-        predictionElapsedTime = 0;
+        predictionElapsedTime = 0f;
+        searchElapsedTime = 0f;
+        checkElapsedTime = 0f;
 
-        RevivalSessionEngine.Instance.PlayChaseTrack(1, MusicManager.MusicTrack.SCP_049, 0);
+        if (!searchMusicActive) {
+            searchMusicActive = true;
+            RevivalSessionEngine.Instance.PlayChaseTrack(1, MusicManager.MusicTrack.SCP_049, 0);
+        }
     }
 
     private void CheckingState() {
+        // Too far away: give up immediately
         if (sqrDistanceToPlayer > plagueDoctoringRangeSqr) {
-            RevivalSessionEngine.Instance.PlayChaseTrack(-1, MusicManager.MusicTrack.LCZ, 0);
-
-            predicting = false;
-            animator.SetBool(checkingBoolHash, false);
-            wanderTimer = 0;
-            state = State.Roaming;
-
-            EntitySystem.Instance.cached049Entity.chasingPlayer = false;
-
+            LeaveSearching(State.Roaming);
             return;
         }
 
         if (CanSeePlayer()) {
-            predicting = false;
-            animator.SetBool(checkingBoolHash, false);
-            lostSightTime = 0;
-            state = State.Chasing;
+            lostSightTime = 0f;
+            LeaveSearching(State.Chasing);
+            searchMusicActive = false; // chase track takes over below
             On049SawPlayer();
+            return;
+        }
+
+        // Hard cap so the search can never persist indefinitely
+        searchElapsedTime += Time.deltaTime;
+        if (searchElapsedTime >= maxSearchTime) {
+            LeaveSearching(State.Roaming);
             return;
         }
 
@@ -269,12 +287,31 @@ public class SCP_049 : MonoBehaviour {
         }
 
         checkElapsedTime += Time.deltaTime;
-
         if (checkElapsedTime >= checkAnimationTimer) {
-            animator.SetBool(checkingBoolHash, false);
-            wanderTimer = 0;
-            state = State.Roaming;
+            LeaveSearching(State.Roaming); // now resets music + chasingPlayer
         }
+    }
+
+    private void LeaveSearching(State nextState) {
+        predicting = false;
+        animator.SetBool(checkingBoolHash, false);
+
+        if (nextState == State.Roaming) {
+            wanderTimer = 0f;
+            EndSearchAudio();
+        }
+
+        state = nextState;
+    }
+
+    private void EndSearchAudio() {
+        EntitySystem entitySystem = EntitySystem.Instance;
+        if (entitySystem != null) entitySystem.cached049Entity.chasingPlayer = false;
+
+        if (!searchMusicActive) return;
+        searchMusicActive = false;
+
+        RevivalSessionEngine.Instance.PlayChaseTrack(-1, MusicManager.MusicTrack.LCZ, 0);
     }
 
     private void PredictTargetPosition() {

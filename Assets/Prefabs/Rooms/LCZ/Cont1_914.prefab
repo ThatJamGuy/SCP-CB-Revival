@@ -26,8 +26,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 28449914304916022}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.16, y: 2.3, z: -5.200001}
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalPosition: {x: -4.16, y: 2.3, z: 5.200001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -40,7 +40,7 @@ Transform:
   - {fileID: 1167531743031339159}
   - {fileID: 9036678480038687900}
   - {fileID: 7389937929193362137}
-  m_Father: {fileID: 3361448691234976421}
+  m_Father: {fileID: 1678851173916523391}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3578391957307327967
 MonoBehaviour:
@@ -54,9 +54,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c75c1164dfdfde944833d24b7365cd4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SCP_914
-  recipeTable: {fileID: 11400000, guid: d2d41042fc8ce8f47a7293709c2711b9, type: 2}
   currentRefinementMode: 2
-  refinementTime: 13.6
+  recipes:
+  - {fileID: 11400000, guid: bdf773f25f7c163448efcb19e0d8e0c7, type: 2}
+  - {fileID: 11400000, guid: 0a800928940ad164ba3004c47e0551a6, type: 2}
+  - {fileID: 11400000, guid: f664b53df412a844a9b28e346c9bbd18, type: 2}
+  - {fileID: 11400000, guid: 66f166832b15dd6459366abea22bd997, type: 2}
+  - {fileID: 11400000, guid: 348bb51fef3d63f42b796694c45f49b5, type: 2}
+  - {fileID: 11400000, guid: 9b3225db06d1eca4aa359bd6ff5b4ebd, type: 2}
+  - {fileID: 11400000, guid: 7b43913974941e8449d3a8e57b06a358, type: 2}
+  - {fileID: 11400000, guid: 1e662cd5db7150a4baf188d8b18fbe7e, type: 2}
+  itemLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  verboseLogging: 1
   inputArea: {fileID: 7557570507310365738}
   outputArea: {fileID: 5554033969315086791}
   machineDoors:
@@ -4010,7 +4021,6 @@ Transform:
   - {fileID: 7001417929887991833}
   - {fileID: 1782851021609472694}
   - {fileID: 5025199865537606108}
-  - {fileID: 1268644210504676841}
   m_Father: {fileID: 1678851173916523391}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &8024628392165832563
@@ -4176,6 +4186,7 @@ Transform:
   - {fileID: 6190194386803844223}
   - {fileID: 3954825193784954819}
   - {fileID: 3361448691234976421}
+  - {fileID: 1268644210504676841}
   - {fileID: 3182383599460133974}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4898,7 +4909,7 @@ NavMeshObstacle:
   m_Carve: 1
   m_CarveOnlyStationary: 1
   m_Center: {x: -1.0630001, y: 1.4820001, z: 0}
-  m_TimeToStationary: 0.5
+  m_TimeToStationary: 0.3
 --- !u!1 &5295940376001691150 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6596141033809774981, guid: 92eefdd4a88c3434db6720f823e62eb9, type: 3}
@@ -4919,7 +4930,7 @@ NavMeshObstacle:
   m_Carve: 1
   m_CarveOnlyStationary: 1
   m_Center: {x: 1.1140001, y: 1.4820001, z: 0}
-  m_TimeToStationary: 0.5
+  m_TimeToStationary: 0.3
 --- !u!4 &5496055896331206315 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6823286944259475744, guid: 92eefdd4a88c3434db6720f823e62eb9, type: 3}

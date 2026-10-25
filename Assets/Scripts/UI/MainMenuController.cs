@@ -53,22 +53,12 @@ public class MainMenuController : MonoBehaviour {
 
         SceneController.instance
             .NewTransition()
-            .Load(SceneDatabase.Slots.Session, SceneDatabase.Scenes.Session)
-            .Load(SceneDatabase.Slots.Game, SceneDatabase.Scenes.Game, setActive: true)
-            .Unload(SceneDatabase.Slots.Menu)
+            .Load(SceneDatabase.Slots.SESSION, SceneDatabase.Scenes.SESSION)
+            .Load(SceneDatabase.Slots.GAME, SceneDatabase.Scenes.GAME, setActive: true)
+            .Unload(SceneDatabase.Slots.MENU)
             .WithOverlay()
             .WithClearUnusedAssets()
             .Perform();
-    }
-
-    public void LoadPreviousGame() {
-        if (DataSaver.DataFileExists("save.json")) {
-            //var previousSave = DataSaver.Load<SaveData>("save.json");
-            //if (previousSave.newGame == true) return;
-
-            // TODO: Implement loading of the most recent save
-            Debug.Log("TODO: Implement loading of the most recent save");
-        }
     }
 
     public void SetDifficulty(int diff) {

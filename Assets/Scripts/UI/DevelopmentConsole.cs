@@ -89,6 +89,7 @@ public class DevelopmentConsole : MonoBehaviour {
         Register("spawnitem", "Spawn an item in front of the player, taking in an <itemid> argument.", CMD_SpawnItem);
         Register("spawnentity", "Spawn an entity at the closest waypoint to the player, taking in <entityid>.", CMD_SpawnEntity);
         Register("settrack", "Set the music track, taking in <trackindex> and optinally <intensity>.", CMD_SetTrack);
+        Register("printlockdown", "Prints the current state of the LCZ lockdown.", CMD_PrintLockdown);
         Register("disablelockdown", "Disabled the lockdown on the Light Containment Zone.", CMD_DisableLockdown);
     }
 
@@ -243,6 +244,10 @@ public class DevelopmentConsole : MonoBehaviour {
         Debug.Log($"<color=#00ffff>Attempting to change the currently playing track to {trackIndex} with an intensity of {intensity}.</color>");
     }
 
+    private void CMD_PrintLockdown(string[] args) {
+        Debug.Log($"<color=#00ffff>Current LCZ lockdown state: {RevivalSessionEngine.lczInLockdown}</color>");
+    }
+
     private void CMD_DisableLockdown(string[] args) {
         EVNT_SL.DisableLCZLockdownViaCMD();
     }
@@ -265,7 +270,7 @@ public class DevelopmentConsole : MonoBehaviour {
             }
         }
 
-        Debug.Log("Could not find a room with that ID, or the room is not configured for teleporting.");
+        Debug.LogWarning("Could not find a room with that ID, or the room is not configured for teleporting.");
     }
 
     #endregion

@@ -81,6 +81,10 @@ public class Actor_Generic : MonoBehaviour {
         AudioManager.PlayOneShot(toSpeak, voiceSource.position);
     }
 
+    public void SpeakWithParameter(EventReference toSpeak, string paramName, float paramValue) {
+        AudioManager.PlayOneShot(toSpeak, voiceSource.position, paramName, paramValue);
+    }
+
     public void WalkTo(Vector3 position) {
         if (actorAgent == null || actorAnimator == null) return;
 

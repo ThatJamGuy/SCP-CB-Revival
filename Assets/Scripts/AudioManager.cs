@@ -70,23 +70,31 @@ public class AudioManager : MonoBehaviour {
 
     // Play a one-shot but automatically set to Player transform
     public static void PlayOneShot(EventReference soundToPlay) {
-        var soundInstance = RuntimeManager.CreateInstance(soundToPlay); // Create a new sound instance
+        EventInstance soundInstance = RuntimeManager.CreateInstance(soundToPlay); // Create a new sound instance
         if (Player.Instance != null) { soundInstance.set3DAttributes(Player.Instance.transform.position.To3DAttributes()); }
         soundInstance.start(); // Play the sound
         Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to release it from memory when finished
     }
 
-    // Play a one-shot with no parameters
+    // Play a one-shot with a single named parameter
+    public static void PlayOneShot(EventReference sound, string paramName, float paramValue) {
+        EventInstance soundInstance = RuntimeManager.CreateInstance(sound); // Create a new sound instance
+        soundInstance.setParameterByName(paramName, paramValue); // Set the parameter defined while calling the method
+        soundInstance.start(); // Play the sound
+        Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to release it from memory when finished
+    }
+
+    // Play a one-shot in 3D space with no parameters
     public static void PlayOneShot(EventReference soundToPlay, Vector3 position) {
-        var soundInstance = RuntimeManager.CreateInstance(soundToPlay); // Create a new sound instance
+        EventInstance soundInstance = RuntimeManager.CreateInstance(soundToPlay); // Create a new sound instance
         soundInstance.set3DAttributes(position.To3DAttributes()); // Make this sound play in 3D space
         soundInstance.start(); // Play the sound
         Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to release it from memory when finished
     }
 
-    // Play a one-shot with a single named parameter
+    // Play a one-shot in 3D space with a single named parameter
     public static void PlayOneShot(EventReference sound, Vector3 position, string paramName, float paramValue) {
-        var soundInstance = RuntimeManager.CreateInstance(sound); // Create a new sound instance
+        EventInstance soundInstance = RuntimeManager.CreateInstance(sound); // Create a new sound instance
         soundInstance.set3DAttributes(position.To3DAttributes()); // Make this sound play in 3D space
         soundInstance.setParameterByName(paramName, paramValue); // Set the parameter defined while calling the method
         soundInstance.start(); // Play the sound

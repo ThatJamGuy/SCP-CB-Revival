@@ -105,20 +105,16 @@ public class PlayerMovement : MonoBehaviour {
 
     private void HandleMovement() {
         Vector2 input = moveAction.ReadValue<Vector2>();
-        Vector3 move = transform.right * input.x + transform.forward * input.y;
 
-        // Move the character controller in the proper Vector3 direction at the currentSpeed
-        characterController.Move(move * (currentSpeed * Time.deltaTime));
-
-        // If the player is not on the ground, set the up-down velocity to -2 so they go down
         if (characterController.isGrounded && velocity.y < 0f) velocity.y = -2f;
-
-        // Set the velocity to the gravity value
-        // Then move the character controller by the velocity alongside the previous Vector3 movement
         velocity.y += GRAVITY * Time.deltaTime;
-        characterController.Move(velocity * Time.deltaTime);
 
-        player.isMoving = input.sqrMagnitude > 0;
+        Vector3 move = (transform.right * input.x + transform.forward * input.y) * currentSpeed;
+        move.y = velocity.y;
+
+        characterController.Move(move * Time.deltaTime);
+
+        player.isMoving = input.sqrMagnitude > 0f;
     }
 
     private void HandleStamina() {

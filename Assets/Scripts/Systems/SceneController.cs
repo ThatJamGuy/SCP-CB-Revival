@@ -9,7 +9,7 @@ public class SceneController : MonoBehaviour {
 
     private void Awake() {
         if (instance != null && instance != this) {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
             return;
         }
         instance = this;

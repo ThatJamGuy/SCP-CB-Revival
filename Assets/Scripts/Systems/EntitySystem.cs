@@ -24,8 +24,8 @@ public class EntitySystem : MonoBehaviour {
     [ReadOnly] public Entity cached049Entity;
 
     // SCP 173 range config: Closer and more frequent encounters
-    private const float SPAWN_173_MIN_SQR = 15 * 15;
-    private const float SPAWN_173_MAX_SQR = 50 * 50;
+    private const float SPAWN_173_MIN_SQR = 20 * 20;
+    private const float SPAWN_173_MAX_SQR = 60 * 60;
 
     // SCP 049 range config: Further and less frequent.
     // spawnRate should also be higher so he can freeroam more

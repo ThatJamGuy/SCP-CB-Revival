@@ -88,15 +88,18 @@ public class PauseMenu : MonoBehaviour {
         AudioManager.Instance.ResumeAllSFX();
 
         // Prevents sounds from bleeding into the main menu
+        // FIXME: Has been show to not work
         RuntimeManager.GetBus("bus:/SFX").stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
 
         // If available, use the SceneController instance to load the menu scene and unload Session and Game scenes
         if (SceneController.instance == null) return;
+
+        // FIXME: Some session value seems to not unload correctly
         SceneController.instance
             .NewTransition()
-            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu, setActive: true)
-            .Unload(SceneDatabase.Slots.Game)
-            .Unload(SceneDatabase.Slots.Session)
+            .Load(SceneDatabase.Slots.MENU, SceneDatabase.Scenes.MENU, setActive: true)
+            .Unload(SceneDatabase.Slots.GAME)
+            .Unload(SceneDatabase.Slots.SESSION)
             .WithClearUnusedAssets()
             .WithOverlay()
             .Perform();

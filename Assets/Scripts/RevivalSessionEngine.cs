@@ -10,7 +10,6 @@ public class RevivalSessionEngine : MonoBehaviour {
     public static int otherDifficultyFactor;
     public static int currentZone = 1;
     public static int currentPursuit = -1;
-    public static bool canSave;
     public static bool lczInLockdown = true;
 
     [Header("Heads Up Display")]
