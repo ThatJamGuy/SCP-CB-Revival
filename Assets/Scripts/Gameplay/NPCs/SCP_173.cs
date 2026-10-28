@@ -11,6 +11,8 @@ public class SCP_173 : MonoBehaviour {
     [Header("Status")]
     public bool puppetMode;
     public bool isVisibleByPlayer;
+    public bool disableKilling;
+
     [SerializeField] private bool isVisibleByAnyNPC;
     [SerializeField] private bool alreadySeenByPlayer;
     [SerializeField] private bool hasTarget;
@@ -189,10 +191,7 @@ public class SCP_173 : MonoBehaviour {
 
         // Tell the entity system the entity is no longer chasing the player, allowing teleports and stuff again
         EntitySystem.Instance.cached173Entity.chasingPlayer = false;
-
-        // Play the current zones music
-        // Reminder to myself that setting PlayChaseTrack to -1 does a SetGlobalAudioBasedOnZone call since I previously replaced this with that
-        RevivalSessionEngine.Instance.PlayChaseTrack(-1, MusicManager.MusicTrack.LCZ, 0);
+        RevivalSessionEngine.Instance.ReleaseChaseTrack(this);
 
         tensionEmitter.Stop();
     }
@@ -302,7 +301,7 @@ public class SCP_173 : MonoBehaviour {
             EntitySystem.Instance.cached173Entity.chasingPlayer = true;
 
             // Make a request for SCP-173 chase music
-            RevivalSessionEngine.Instance.PlayChaseTrack(1, MusicManager.MusicTrack.SCP_173, 1);
+            RevivalSessionEngine.Instance.RequestChaseTrack(this, 1, MusicManager.MusicTrack.SCP_173, 1);
 
             tensionEmitter.Play();
         }
@@ -338,7 +337,7 @@ public class SCP_173 : MonoBehaviour {
     #region Target Killing
 
     private void AttemptToKillPlayer() {
-        if (!hasTarget || target == null) return;
+        if (!hasTarget || target == null || disableKilling) return;
         float dist = Vector3.Distance(transform.position, target.position);
         if (dist <= 1.5f && !isVisibleByPlayer && !puppetMode) {
             Player.Instance.KillPlayer(2, 0.5f, 0, "Subject D-9341. Cause of death: Fatal cervical fracture. Assumed to be attacked by SCP-173.");

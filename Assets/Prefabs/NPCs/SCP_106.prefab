@@ -1422,11 +1422,11 @@ MonoBehaviour:
   CollisionTag: 
   EventReference:
     Guid:
-      Data1: -68193659
-      Data2: 1270740902
-      Data3: 459029418
-      Data4: 1657867202
-    Path: event:/SFX/SCP/106/Breathing
+      Data1: -1443094481
+      Data2: 1337701932
+      Data3: -1070926700
+      Data4: 119537598
+    Path: event:/SFX/SCP/106/106_Breathing
   Event: 
   EventPlayTrigger: 11
   EventStopTrigger: 12
@@ -3592,9 +3592,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daa89401b2b0e3b4a8f394cc3f71a91f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPC_106_New
-  targetPlayerOnStart: 1
   chaseDuration: 60
   catchUpDistance: 30
+  catchUpBehindDistance: 2
+  catchUpRetryDelay: 1
+  attackRange: 2
   wallLayerMask:
     serializedVersion: 2
     m_Bits: 192
@@ -3602,61 +3604,57 @@ MonoBehaviour:
   maxWallThickness: 2.5
   wallTraverseCooldown: 5
   minDistanceForTraverse: 1
+  wallRayHeight: 0.5
+  exitOffset: 0.5
+  minDetourRatio: 1.5
   floorEmerge2AnimTime: 2.4
   attackAnimTime: 1
   despawnAnimTime: 2.6
-  TeslaShockAnimTime: 5
-  CatchUpAnimTime: 1.25
+  teslaShockAnimTime: 5
+  catchUpAnimTime: 1.25
   wallTraverseAnimTime: 1
   targetHitEvent:
     Guid:
-      Data1: 1076846084
-      Data2: 1171937474
-      Data3: 365304989
-      Data4: -1237277168
+      Data1: 380688891
+      Data2: 1134013643
+      Data3: 1122793659
+      Data4: -1742623799
     Path: event:/SFX/Character/D9341/Damage2
-  chaseStartEvent:
+  horror106Event:
     Guid:
-      Data1: -649879821
-      Data2: 1322978923
-      Data3: 1766169495
-      Data4: 830156678
-    Path: event:/SFX/SCP/106/ChaseStart
-  chaseEndEvent:
-    Guid:
-      Data1: -938646294
-      Data2: 1176687656
-      Data3: -1324709187
-      Data4: -41629306
-    Path: event:/SFX/SCP/106/ChaseEnd
+      Data1: 1980879857
+      Data2: 1134000678
+      Data3: 1944681660
+      Data4: -10796165
+    Path: event:/SFX/Horror/Horror_106
   randomLaughEvent:
     Guid:
-      Data1: 1674383387
-      Data2: 1273298255
-      Data3: 673550731
-      Data4: -1672530284
-    Path: event:/SFX/SCP/106/RandomLaugh
+      Data1: 1133901950
+      Data2: 1195403690
+      Data3: -434452047
+      Data4: 365586645
+    Path: event:/SFX/SCP/106/106_Laugh
   teslaRetreatSound:
     Guid:
-      Data1: -1209830070
-      Data2: 1114730426
-      Data3: 1751244463
-      Data4: -752901963
-    Path: event:/SFX/SCP/106/106TeslaRetreat
-  CatchUpEvent:
+      Data1: 1036347559
+      Data2: 1219949360
+      Data3: -1706645075
+      Data4: 1717296686
+    Path: event:/SFX/SCP/106/106_TeslaRetreat
+  catchUpEvent:
     Guid:
-      Data1: -227237232
-      Data2: 1317562508
-      Data3: -915725894
-      Data4: -1903365245
-    Path: event:/SFX/SCP/106/CatchUp
-  WallTraverseEvent:
+      Data1: -1346495076
+      Data2: 1095763576
+      Data3: 810100145
+      Data4: -809981230
+    Path: event:/SFX/SCP/106/106_CatchUp
+  wallTraverseEvent:
     Guid:
-      Data1: 1396851636
-      Data2: 1205609762
-      Data3: -316319579
-      Data4: 264609373
-    Path: event:/SFX/SCP/106/WallTraverse
+      Data1: 344721728
+      Data2: 1311130073
+      Data3: 547597492
+      Data4: 53283566
+    Path: event:/SFX/SCP/106/106_WallTraverse
   despawnGoodPrefab: {fileID: 6306790722705746932, guid: fed38209cac7888408194dd9299af1ae, type: 3}
 --- !u!114 &1020326238107506825
 MonoBehaviour:
@@ -3672,11 +3670,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPC_StepSound
   stepSoundSet:
     Guid:
-      Data1: -298754590
-      Data2: 1082502928
-      Data3: -1675828554
-      Data4: 83580539
-    Path: event:/SFX/Step/StepsPocketDimension
+      Data1: -1299982113
+      Data2: 1207312104
+      Data3: -587596414
+      Data4: 1162931327
+    Path: event:/SFX/Step/Step_PD
 --- !u!95 &7237120973052982779
 Animator:
   serializedVersion: 7
@@ -3709,14 +3707,14 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 2.5
+  m_Speed: 2.6
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 360
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 0
-  m_AutoRepath: 1
+  m_AutoRepath: 0
   m_Height: 2.5
   m_BaseOffset: 0
   m_WalkableMask: 4294967295

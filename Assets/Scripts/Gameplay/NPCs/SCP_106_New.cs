@@ -1,43 +1,61 @@
 using FMODUnity;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
+[RequireComponent(typeof(NavMeshAgent), typeof(Animator))]
 public class SCP_106_New : MonoBehaviour {
+    private enum State : byte {
+        Idle,        // Spawned, ChaseTarget() not called yet
+        Emerging,       // Emerging from the floor
+        Chasing,
+        Attacking,
+        CatchingUp,
+        Traversing,  // Passing through a wall / door
+        Despawning
+    }
 
     [Header("Behavior")]
-    [SerializeField] private bool targetPlayerOnStart = true;
     [SerializeField] private float chaseDuration = 63f;
     [SerializeField] private float catchUpDistance = 15f;
+    [SerializeField] private float catchUpBehindDistance = 2f;
+    [SerializeField] private float catchUpRetryDelay = 1f;
+    [SerializeField] private float attackRange = 2f;
 
     [Header("Wall Traverse")]
     [SerializeField] private LayerMask wallLayerMask;
-    //[SerializeField] private float wallCheckDistance = 5f;
-    //[SerializeField] private float maxWallThickness = 2.5f;
+    [SerializeField] private float wallCheckDistance = 5f;
+    [SerializeField] private float maxWallThickness = 2.5f;
     [SerializeField] private float wallTraverseCooldown = 5f;
     [SerializeField] private float minDistanceForTraverse = 1f;
+    [SerializeField] private float wallRayHeight = 0.5f;
+    [SerializeField] private float exitOffset = 0.5f;
+    [Tooltip("Only traverse when the NavMesh route is this many times longer than the straight line (or doesn't exist). 0 = traverse whenever a wall is in the way.")]
+    [SerializeField] private float minDetourRatio = 1.5f;
 
     [Header("Animation Timing")]
     [SerializeField] private float floorEmerge2AnimTime = 2.5f;
     [SerializeField] private float attackAnimTime = 2f;
     [SerializeField] private float despawnAnimTime = 2.6f;
-    [SerializeField] private float TeslaShockAnimTime = 5f;
-    [SerializeField] private float CatchUpAnimTime = 1.25f;
+    [FormerlySerializedAs("TeslaShockAnimTime")]
+    [SerializeField] private float teslaShockAnimTime = 5f;
+    [FormerlySerializedAs("CatchUpAnimTime")]
+    [SerializeField] private float catchUpAnimTime = 1.25f;
     [SerializeField] private float wallTraverseAnimTime = 1f;
 
     [Header("FMOD Audio")]
     [SerializeField] private EventReference targetHitEvent;
-    [SerializeField] private EventReference chaseStartEvent;
-    [SerializeField] private EventReference chaseEndEvent;
+    [FormerlySerializedAs("horror_106")]
+    [SerializeField] private EventReference horror106Event;
     [SerializeField] private EventReference randomLaughEvent;
     [SerializeField] private EventReference teslaRetreatSound;
-    [SerializeField] private EventReference CatchUpEvent;
-    [SerializeField] private EventReference WallTraverseEvent;
+    [FormerlySerializedAs("CatchUpEvent")]
+    [SerializeField] private EventReference catchUpEvent;
+    [FormerlySerializedAs("WallTraverseEvent")]
+    [SerializeField] private EventReference wallTraverseEvent;
 
     [Header("References")]
     [SerializeField] private GameObject despawnGoodPrefab;
-
-    private const float REPATH_DISTANCE_SQR = 0.25f;
 
     private static readonly int WalkHash = Animator.StringToHash("Walk");
     private static readonly int AttackHash = Animator.StringToHash("Attack");
@@ -46,241 +64,282 @@ public class SCP_106_New : MonoBehaviour {
     private static readonly int CatchUpHash = Animator.StringToHash("CatchUp");
     private static readonly int WallTraverseHash = Animator.StringToHash("WallTraverse");
 
+    private const string LOCAL_EVENT_PARAM = "LocalEventIndex";
+    private const float REPATH_DISTANCE_SQR = 0.25f;
+    private const float REPATH_RETRY_INTERVAL = 0.5f;
+    private const float NAV_SAMPLE_RADIUS = 15f;
+    private const float LANDING_SAMPLE_RADIUS = 2f;
+    private const float MIN_WALL_THICKNESS = 0.05f;
+    private const float LAUGH_MIN_INTERVAL = 10f;
+    private const float LAUGH_MAX_INTERVAL = 20f;
+
     private NavMeshAgent agent;
     private Animator animator;
     private Transform activeTarget;
+
+    private State state = State.Idle;
+    private bool walkingAllowed = true;
+    private bool currentTargetCaptured;
+    private bool needsRepath;
+
+    private float stateEndTime;
+    private float chaseEndTime;
+    private float nextLaughTime;
+    private float nextTraverseTime;
+    private float nextCatchUpTime;
+    private float nextRepathTime;
+
+    private float catchUpDistanceSqr;
+    private float attackRangeSqr;
+    private float sqrDistanceToTarget;
+
     private Vector3 lastRequestedDestination;
+    private Vector3 catchUpSoundPosition;
 
-    private bool canWalk = false;
-    private bool isAttacking = false;
-    private bool currentTargetCaptured = false;
-    private bool currentTargetIsPlayer = false;
-    private bool isDespawning = false;
-    //private bool isTraversing = false;
-    private float distanceToTarget;
-    private float wallTraverseTimer = 0f;
+    #region Unity Lifecycle
 
-    #region Unity Callbacks
     private void Awake() {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+
+        catchUpDistanceSqr = catchUpDistance * catchUpDistance;
+        attackRangeSqr = attackRange * attackRange;
     }
 
     private void Start() {
-        // If that one little checkbox is ticked about, then SCP-106 will immediately target the player and start chasing them. This is true in most cases.
-        if (targetPlayerOnStart) {
-            currentTargetIsPlayer = true;
-            //SetTarget(PlayerAccessor.instance.transform);
-            ChaseTarget();
-        }
+        // Automatically set the target to the player upon spawning for now, come back later when other targets are allowed
+        SetTarget(Player.Instance.transform);
+        ChaseTarget();
     }
 
     private void Update() {
-        if (activeTarget == null || !canWalk) return;
-        Vector3 targetPosition = activeTarget.position;
-        if (!(agent.hasPath || agent.pathPending) ||
-            (targetPosition - lastRequestedDestination).sqrMagnitude >= REPATH_DISTANCE_SQR) {
-            lastRequestedDestination = targetPosition;
-            agent.SetDestination(targetPosition);
+        float now = Time.time;
+
+        switch (state) {
+            case State.Idle:
+            case State.Despawning:
+                return;
+            case State.Emerging:
+                if (now >= stateEndTime) StartChasing(now);
+                return;
         }
-        distanceToTarget = Vector3.Distance(transform.position, targetPosition);
 
-        if (wallTraverseTimer > 0f) wallTraverseTimer -= Time.deltaTime;
-
-        if (wallTraverseTimer <= 0f && TryWallTraverse()) return;
-
-        if (distanceToTarget > catchUpDistance) {
-            StartCoroutine(CatchUpRoutine());
+        // Timers that run for the whole chase regardless of sub-state
+        if (now >= chaseEndTime) {
+            Despawn();
             return;
         }
 
-        if (distanceToTarget <= 2 && !isAttacking && !currentTargetCaptured) {
-            StartCoroutine(AttackCoroutine());
+        UpdateLaugh(now);
+
+        switch (state) {
+            case State.Chasing:
+                UpdateChasing(now);
+                break;
+            case State.Attacking:
+                if (now >= stateEndTime) ResumeChasing();
+                break;
+            case State.CatchingUp:
+                if (now >= stateEndTime) {
+                    AudioManager.PlayOneShot(catchUpEvent, catchUpSoundPosition);
+                    ResumeChasing();
+                }
+                break;
+            case State.Traversing:
+                if (now >= stateEndTime) {
+                    nextTraverseTime = now + wallTraverseCooldown;
+                    ResumeChasing();
+                }
+                break;
         }
     }
+
+    private void OnDestroy() {
+        EntitySystem.Instance.UnregisterEntity(EntitySystem.Instance.cached106Entity, gameObject);
+    }
+
     #endregion
 
-    #region Public Methods
-    /// <summary>
-    /// Give SCP-106 something to target. Player, other npcs, etc.
-    /// </summary>
-    /// <param name="target"></param>
-    public void SetTarget(Transform target) {
-        activeTarget = target;
+    #region State Logic
+
+    private void StartChasing(float now) {
+        chaseEndTime = now + chaseDuration;
+        nextLaughTime = now;
+
+        AudioManager.PlayOneShot(horror106Event, LOCAL_EVENT_PARAM, 0);
+        RevivalSessionEngine.Instance.RequestChaseTrack(this, 10, MusicManager.MusicTrack.SCP_106);
+
+        EntitySystem.Instance.cached106Entity.chasingPlayer = true;
+
+        ResumeChasing();
     }
 
-    /// <summary>
-    /// Actually start chasing the set target
-    /// </summary>
-    public void ChaseTarget() {
-        if (activeTarget == null) return;
-        StartCoroutine(BeginChaseRoutine());
-
-        //GameManager.instance.scp106Active = true;
+    private void ResumeChasing() {
+        state = State.Chasing;
+        agent.isStopped = !walkingAllowed;
+        needsRepath = true; // Path was cleared by a warp / agent was halted
+        animator.SetTrigger(WalkHash);
     }
 
-    /// <summary>
-    /// Call this guy to stop allowing SCP-106 to move. Useful for animations where agent movement shouldnt happen.
-    /// </summary>
-    public void CantWalk() {
-        canWalk = false;
-        agent.isStopped = true;
-    }
+    private void UpdateChasing(float now) {
+        if (activeTarget == null || !walkingAllowed) return;
 
-    /// <summary>
-    /// Similar to CanWalk() but for allowing SCP-106 to move again.
-    /// </summary>
-    public void CanWalk() {
-        canWalk = true;
-        agent.isStopped = false;
-    }
+        Vector3 targetPosition = activeTarget.position;
+        Vector3 toTarget = targetPosition - transform.position;
+        sqrDistanceToTarget = toTarget.sqrMagnitude;
 
-    /// <summary>
-    /// Triggered via animation event, checks if the target is STILL in range by the time the attack hits and then if so do that stuff.
-    /// </summary>
-    public void AttackTargetCheck() {
-        if (activeTarget == null) return;
-        if (distanceToTarget <= 2 && isAttacking) {
-            if (currentTargetIsPlayer) {
-                /*if (PlayerAccessor.instance.isDead) {
-                    currentTargetCaptured = true;
-                    return;
-                }*/
+        UpdateDestination(now, targetPosition);
 
-                //AudioManager.instance.PlaySound(targetHitEvent, transform.position);
-                //GameManager.instance.ShowDeathScreen("Subject D-9341. Body partially decomposed by what is assumed to be SCP-106's \"corrosion\" effect. Body disposed of via incineration.");
-                //PlayerAccessor.instance.isDead = true;
-            }
+        if (TryWallTraverse(now, toTarget, sqrDistanceToTarget)) return;
 
-            currentTargetCaptured = true;
-            Despawn();
-        }
-    }
-
-    /// <summary>
-    /// Depsawns SCP-106 the normal way, via simply getting bored and walking into the floor.
-    /// </summary>
-    public void Despawn() {
-        if (isDespawning) return;
-
-        if (currentTargetIsPlayer) {
-            //AudioManager.instance.PlaySound(chaseEndEvent, transform.position);
-            //MusicManager.instance.SetMusicState(MusicState.LCZ);
+        if (sqrDistanceToTarget > catchUpDistanceSqr) {
+            if (now >= nextCatchUpTime) TryStartCatchUp(now);
+            return;
         }
 
-        if (activeTarget != null) activeTarget = null;
-        StartCoroutine(DespawnCoroutine());
+        if (sqrDistanceToTarget <= attackRangeSqr && !currentTargetCaptured) StartAttack(now);
     }
 
-    public void DespawnTesla() {
-        if (isDespawning) return;
+    private void UpdateDestination(float now, Vector3 targetPosition) {
+        bool targetMoved = (targetPosition - lastRequestedDestination).sqrMagnitude >= REPATH_DISTANCE_SQR;
+        bool pathLost = !agent.hasPath && !agent.pathPending && now >= nextRepathTime;
 
-        //AudioManager.instance.PlaySound(teslaRetreatSound, transform.position);
-        if (currentTargetIsPlayer) {
-            //AudioManager.instance.PlaySound(chaseEndEvent, transform.position);
-            //MusicManager.instance.SetMusicState(MusicState.LCZ);
+        if (!needsRepath && !targetMoved && !pathLost) return;
+
+        needsRepath = false;
+        lastRequestedDestination = targetPosition;
+        nextRepathTime = now + REPATH_RETRY_INTERVAL;
+        agent.SetDestination(targetPosition);
+    }
+
+    private void UpdateLaugh(float now) {
+        if (currentTargetCaptured || now < nextLaughTime) return;
+
+        AudioManager.PlayOneShot(randomLaughEvent);
+        nextLaughTime = now + Random.Range(LAUGH_MIN_INTERVAL, LAUGH_MAX_INTERVAL);
+    }
+
+    private void StartAttack(float now) {
+        state = State.Attacking;
+        stateEndTime = now + attackAnimTime;
+        HaltAgent();
+        animator.SetTrigger(AttackHash);
+    }
+
+    private void TryStartCatchUp(float now) {
+        Vector3 targetPosition = activeTarget.position;
+        Vector3 desiredPosition = targetPosition - activeTarget.forward * catchUpBehindDistance;
+
+        if (!TryFindNavMeshPosition(desiredPosition, targetPosition, out Vector3 validPosition) ||
+            !TeleportAgent(validPosition, targetPosition - validPosition)) {
+            nextCatchUpTime = now + catchUpRetryDelay;
+            return;
         }
 
-        if (activeTarget != null) activeTarget = null;
-        StartCoroutine(DespawnTeslaCoroutine());
+        catchUpSoundPosition = desiredPosition;
+        state = State.CatchingUp;
+        stateEndTime = now + catchUpAnimTime;
+        animator.SetTrigger(CatchUpHash);
     }
+
+    private void BeginDespawn(int animHash, float duration, bool tesla) {
+        if (state == State.Despawning) return;
+        state = State.Despawning;
+
+        if (tesla) AudioManager.PlayOneShot(teslaRetreatSound, transform.position);
+        AudioManager.PlayOneShot(horror106Event, LOCAL_EVENT_PARAM, 1);
+        RevivalSessionEngine.Instance.ReleaseChaseTrack(this);
+
+        activeTarget = null;
+
+        Instantiate(despawnGoodPrefab, transform.position, Quaternion.Euler(90f, 0f, 0f));
+        HaltAgent();
+        animator.SetTrigger(animHash);
+
+        Destroy(gameObject, duration);
+    }
+
     #endregion
 
-    #region Private Methods
-    private void TeleportAgent(Vector3 position, Vector3 forward) {
+    #region Wall Traverse
+
+    private bool TryWallTraverse(float now, Vector3 toTarget, float sqrDistance) {
+        if (now < nextTraverseTime) return false;
+        if (sqrDistance < minDistanceForTraverse * minDistanceForTraverse) return false;
+        if (minDetourRatio > 0f && !IsPathObstructed(Mathf.Sqrt(sqrDistance))) return false;
+
+        // Horizontal only, so a target on a different height doesn't tilt the ray into floors/ceilings
+        toTarget.y = 0f;
+        float flatDistance = toTarget.magnitude;
+        if (flatDistance < 0.01f) return false;
+
+        Vector3 direction = toTarget / flatDistance;
+        Vector3 origin = transform.position;
+        origin.y += wallRayHeight;
+
+        if (!Physics.Raycast(origin, direction, out RaycastHit entry, Mathf.Min(flatDistance, wallCheckDistance),
+                wallLayerMask, QueryTriggerInteraction.Ignore)) return false;
+
+        // If the wall is thicker than maxWallThickness the back ray starts inside it and finds nothing
+        float backStart = entry.distance + maxWallThickness;
+        if (!Physics.Raycast(origin + direction * backStart, -direction, out RaycastHit exit, maxWallThickness,
+                wallLayerMask, QueryTriggerInteraction.Ignore)) return false;
+
+        float exitDistance = backStart - exit.distance;
+        if (exitDistance - entry.distance < MIN_WALL_THICKNESS) return false;
+
+        Vector3 landing = origin + direction * (exitDistance + exitOffset);
+        if (!NavMesh.SamplePosition(landing, out NavMeshHit navHit, LANDING_SAMPLE_RADIUS, NavMesh.AllAreas)) return false;
+
+        // Reject samples that snapped back to the near side of the wall
+        if (Vector3.Dot(navHit.position - origin, direction) < exitDistance) return false;
+
+        return StartTraverse(now, navHit.position, direction);
+    }
+
+    private bool StartTraverse(float now, Vector3 exitPosition, Vector3 forward) {
+        if (!TeleportAgent(exitPosition, forward)) return false;
+
+        state = State.Traversing;
+        stateEndTime = now + wallTraverseAnimTime;
+
+        AudioManager.PlayOneShot(wallTraverseEvent, transform.position);
+        animator.SetTrigger(WallTraverseHash);
+        return true;
+    }
+
+    // True when the agent has no route, or the route is a big detour compared to the straight line
+    private bool IsPathObstructed(float straightDistance) {
+        if (agent.pathPending) return false;
+        if (!agent.hasPath || agent.pathStatus != NavMeshPathStatus.PathComplete) return true;
+        return agent.remainingDistance > straightDistance * minDetourRatio;
+    }
+
+    #endregion
+
+    #region Private Utilities
+
+    private bool TeleportAgent(Vector3 position, Vector3 forward) {
         agent.ResetPath();
         agent.velocity = Vector3.zero;
-        agent.Warp(position);
-        transform.rotation = Quaternion.LookRotation(forward);
+
+        if (!agent.Warp(position)) return false;
+
+        forward.y = 0f; // Keep the model upright
+        if (forward.sqrMagnitude > 0.0001f) transform.rotation = Quaternion.LookRotation(forward);
+
         agent.isStopped = true;
-    }
-    #endregion
-
-    #region Coroutines
-    // Start all the necessary stuff for chasing a target, mostly animation and setting some values.
-    private IEnumerator BeginChaseRoutine() {
-        yield return new WaitForSeconds(floorEmerge2AnimTime);
-        animator.SetTrigger(WalkHash);
-        CanWalk();
-
-        if (currentTargetIsPlayer) {
-            //AudioManager.instance.PlaySound(chaseStartEvent, transform.position);
-            //MusicManager.instance.SetMusicState(MusicState.scp106);
-
-            StartCoroutine(LaughCoroutine());
-        }
-
-        StartCoroutine(WaitForChaseDurationCoroutine());
+        return true;
     }
 
-    private IEnumerator WaitForChaseDurationCoroutine() {
-        yield return new WaitForSeconds(chaseDuration);
-        Despawn();
+    private void HaltAgent() {
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
     }
 
-    // Start the animation to attack the target
-    private IEnumerator AttackCoroutine() {
-        CantWalk();
-        isAttacking = true;
-        animator.SetTrigger(AttackHash);
-        yield return new WaitForSeconds(attackAnimTime);
-        isAttacking = false;
-        CanWalk();
-        animator.SetTrigger(WalkHash);
-    }
-
-    // Despawn SCP-106 the regular way
-    private IEnumerator DespawnCoroutine() {
-        Instantiate(despawnGoodPrefab, transform.position, Quaternion.Euler(90, 0, 0));
-        isDespawning = true;
-        CantWalk();
-        animator.SetTrigger(Despawn1Hash);
-        yield return new WaitForSeconds(despawnAnimTime);
-        //GameManager.instance.scp106Active = false;
-        Destroy(gameObject);
-    }
-
-    // Make this man do some hefty laughing from time to time HAHAHAHAHAHAHA
-    private IEnumerator LaughCoroutine() {
-        while (currentTargetIsPlayer && !currentTargetCaptured) {
-            //AudioManager.instance.PlaySound(randomLaughEvent, transform.position);
-            yield return new WaitForSeconds(Random.Range(10, 20));
-        }
-    }
-
-    private IEnumerator DespawnTeslaCoroutine() {
-        Instantiate(despawnGoodPrefab, transform.position, Quaternion.Euler(90, 0, 0));
-        isDespawning = true;
-        CantWalk();
-        animator.SetTrigger(ShockHash);
-        yield return new WaitForSeconds(TeslaShockAnimTime);
-        //GameManager.instance.scp106Active = false;
-        Destroy(gameObject);
-    }
-
-    private IEnumerator CatchUpRoutine() {
-        CantWalk();
-        Vector3 targetPosition = activeTarget.position - activeTarget.forward * 2f;
-
-        if (FindValidNavMeshPosition(targetPosition, out Vector3 validPosition)) {
-            TeleportAgent(validPosition, (activeTarget.position - validPosition).normalized);
-            animator.SetTrigger(CatchUpHash);
-            yield return new WaitForSeconds(CatchUpAnimTime);
-            //AudioManager.instance.PlaySound(CatchUpEvent, targetPosition);       
-        }
-
-        CanWalk();
-    }
-    #endregion
-
-    #region Complex Variables
-    private bool FindValidNavMeshPosition(Vector3 target, out Vector3 validPosition) {
-        if (NavMesh.SamplePosition(target, out NavMeshHit hit, 15, NavMesh.AllAreas)) {
-            validPosition = hit.position;
-            return true;
-        }
-
-        if (activeTarget && NavMesh.SamplePosition(activeTarget.position, out hit, 15, NavMesh.AllAreas)) {
+    private static bool TryFindNavMeshPosition(Vector3 desired, Vector3 fallback, out Vector3 validPosition) {
+        if (NavMesh.SamplePosition(desired, out NavMeshHit hit, NAV_SAMPLE_RADIUS, NavMesh.AllAreas) ||
+            NavMesh.SamplePosition(fallback, out hit, NAV_SAMPLE_RADIUS, NavMesh.AllAreas)) {
             validPosition = hit.position;
             return true;
         }
@@ -288,59 +347,44 @@ public class SCP_106_New : MonoBehaviour {
         validPosition = Vector3.zero;
         return false;
     }
+
     #endregion
 
-    #region Wall Traverse
-    private bool TryWallTraverse() {
-        if (activeTarget == null || distanceToTarget < minDistanceForTraverse) return false;
+    #region Public Methods
 
-        Vector3 directionToTarget = (activeTarget.position - transform.position).normalized;
-        Vector3 checkOrigin = transform.position + Vector3.up * 0.5f;
+    public void SetTarget(Transform target) { activeTarget = target; }
 
-        /*RaycastHit[] hits = Physics.RaycastAll(checkOrigin, directionToTarget,
-            Mathf.Min(distanceToTarget, wallCheckDistance), wallLayerMask);*/
+    public void ChaseTarget() {
+        if (activeTarget == null || state != State.Idle) return;
 
-        //if (hits.Length < 2) return false;
-
-        //System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-
-        //RaycastHit entryHit = hits[0];
-        //RaycastHit exitHit = hits[1];
-
-        //float wallThickness = Vector3.Distance(entryHit.point, exitHit.point);
-        //if (wallThickness > maxWallThickness) return false;
-
-        //bool oppositeSides = Vector3.Dot(entryHit.normal, exitHit.normal) < -0.5f;
-        //bool differentColliders = entryHit.collider != exitHit.collider;
-
-        //if (oppositeSides || differentColliders) {
-        //StartCoroutine(TraverseWallRoutine(entryHit, exitHit));
-        //return true;
-        //}
-
-        return false;
+        state = State.Emerging;
+        stateEndTime = Time.time + floorEmerge2AnimTime;
     }
 
-    private IEnumerator TraverseWallRoutine(RaycastHit entry, RaycastHit exit) {
-        //isTraversing = true;
-        CantWalk();
+    public void AllowWalking(bool allowWalking) {
+        walkingAllowed = allowWalking;
+        if (state == State.Chasing) agent.isStopped = !allowWalking;
+    }
 
-        Vector3 exitPosition = exit.point + (exit.point - entry.point).normalized * 0.5f;
+    // Triggered via the animation event on the SCP-106 model
+    public void AttackTargetCheck() {
+        if (activeTarget == null || state != State.Attacking) return;
+        if (sqrDistanceToTarget > attackRangeSqr) return;
 
-        if (NavMesh.SamplePosition(exitPosition, out NavMeshHit navHit, 2f, NavMesh.AllAreas)) {
-            exitPosition = navHit.position;
+        if (Player.Instance.isDead) {
+            currentTargetCaptured = true;
+            return;
         }
 
-        TeleportAgent(exitPosition, -exit.normal);
-        //AudioManager.instance.PlaySound(WallTraverseEvent, transform.position);
+        AudioManager.PlayOneShot(targetHitEvent, transform.position);
+        Player.Instance.KillPlayer(3, 0.2f, 0, "Subject D-9341. Body partially decomposed by what is assumed to be SCP-106's \"corrosion\" effect. Body disposed of via incineration.");
 
-        animator.SetTrigger(WallTraverseHash);
-        yield return new WaitForSeconds(wallTraverseAnimTime);
-
-        animator.SetTrigger(WalkHash);
-        wallTraverseTimer = wallTraverseCooldown;
-        //isTraversing = false;
-        CanWalk();
+        currentTargetCaptured = true;
+        Despawn();
     }
+
+    public void Despawn() { BeginDespawn(Despawn1Hash, despawnAnimTime, false); }
+    public void DespawnTesla() { BeginDespawn(ShockHash, teslaShockAnimTime, true); }
+
     #endregion
 }

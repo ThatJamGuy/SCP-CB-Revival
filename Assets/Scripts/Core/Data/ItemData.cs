@@ -1,6 +1,6 @@
+using EditorAttributes;
 using FMODUnity;
 using UnityEngine;
-using EditorAttributes;
 
 public enum PresetBehavior {
     None, // Generic item that does nothing on use, such as batteries
@@ -11,13 +11,13 @@ public enum PresetBehavior {
 
 [CreateAssetMenu(fileName = "ItemData", menuName = "SCP:CBR/Item Data")]
 public class ItemData : ScriptableObject {
-    [Header("Basic Info")] 
+    [Header("Basic Info")]
     public string itemName = "NullItemName";
     public string itemDescription = "NullItemDescription";
     public string itemIdentifier = "NullItemID";
 
     public Sprite itemInventoryIcon;
-    [AssetPreview] public GameObject itemWorldPrefab;
+    public GameObject itemWorldPrefab;
 
     [Header("Chosen Behavior")]
     public PresetBehavior chosenBehavior;
@@ -29,6 +29,6 @@ public class ItemData : ScriptableObject {
     [ShowField(nameof(chosenBehavior), PresetBehavior.Document)] public Sprite documentDisplaySprite;
     [ShowField(nameof(chosenBehavior), PresetBehavior.Custom)] public ItemBehavior itemBehavior;
 
-    [Header("Audio")] 
+    [Header("Audio")]
     public EventReference useItemSound;
 }

@@ -12,16 +12,24 @@ public class Entity {
     public float spawnRate; // How many seconds until the initial spawn / relocation
     [ReadOnly] public int activeInstances = 0; // Int instead of bool in case player decides to do some funny business in the console, so just check for more than zero isntead
     [ReadOnly] public GameObject latestActiveInstance; // The latest active instance. Used to get the entity when requesting it for scripted sequences and stuff
-    [ReadOnly] public NavMeshAgent latestAgent;
+    [ReadOnly] public NavMeshAgent latestAgent; // Similar to lastActiveInstance but specifically for the navigation agent
 }
 
+// PURPOSE: Handle the spawning and management of entities that free roam randomly
+// This will NOT be used for entities in later planned areas as they are not so random like these
 public class EntitySystem : MonoBehaviour {
     public static EntitySystem Instance { get; private set; }
 
     public Entity[] entities;
-    [ReadOnly] public List<Transform> cachedWaypoints = new List<Transform>();
-    [ReadOnly] public Entity cached173Entity;
-    [ReadOnly] public Entity cached049Entity;
+
+    [Header("SCP Specific Settings")]
+    [SerializeField] private LayerMask groundMask;
+    [SerializeField] private GameObject scp106_SpawnedEffect;
+
+    [HideInInspector] public List<Transform> cachedWaypoints = new List<Transform>();
+    [HideInInspector] public Entity cached173Entity;
+    [HideInInspector] public Entity cached106Entity;
+    [HideInInspector] public Entity cached049Entity;
 
     // SCP 173 range config: Closer and more frequent encounters
     private const float SPAWN_173_MIN_SQR = 20 * 20;
@@ -32,8 +40,21 @@ public class EntitySystem : MonoBehaviour {
     private const float SPAWN_049_MIN_SQR = 30 * 30;
     private const float SPAWN_049_MAX_SQR = 80 * 80;
 
+    // SCP 106 everything config: Specific to this guy since he works very different
+    // Mostly just copied and pasted from the old system rn, so may not integrate the best with new EntitySystem features
+    private const float SPAWN_106_RADIUS = 3;
+    private const float SPAWN_106_EFFECT_DURATION = 10;
+
+    private GameObject pending106Effect;
+
+    private Vector3 pending106Position;
+
     private float spawn049Timer;
+    private float spawn106Timer;
+    private float spawn106EffectTimer;
     private float spawn173Timer;
+
+    private bool is106Spawning;
 
     #region Unity Lifecycle
 
@@ -45,6 +66,7 @@ public class EntitySystem : MonoBehaviour {
         for (int i = 0; i < entities.Length; i++) {
             Entity entity = entities[i];
             if (entity.entityIdentifier == "scp173") cached173Entity = entity;
+            else if (entity.entityIdentifier == "scp106") cached106Entity = entity;
             else if (entity.entityIdentifier == "scp049") cached049Entity = entity;
         }
     }
@@ -55,6 +77,13 @@ public class EntitySystem : MonoBehaviour {
 
         if (CanAutoSpawn(cached049Entity))
             HandleAutoSpawning(cached049Entity, ref spawn049Timer, SPAWN_049_MIN_SQR, SPAWN_049_MAX_SQR);
+
+        if (cached106Entity != null)
+            Handle106Spawning(cached106Entity);
+    }
+
+    private void OnDestroy() {
+        Cancel106Spawn();
     }
 
     #endregion
@@ -68,14 +97,55 @@ public class EntitySystem : MonoBehaviour {
         timer += Time.deltaTime;
         if (timer < (entity.spawnRate - RevivalSessionEngine.otherDifficultyFactor)) return;
 
-        timer = 0f;
+        timer = 0;
 
         if (TryPickRandomWaypoint(minSqr, maxSqr, out Transform chosen))
             MoveEntity(entity, chosen);
     }
 
-    private void DebugPrintClosestWaypoint() {
-        Debug.Log(GetClosestWaypointToPlayer().position);
+    // SCP 106 gets his own spawning method because he uses the old spawning system to find a valid floor point near the player
+    private void Handle106Spawning(Entity entity) {
+        // 106 is already out (or disabled): abort any half finished spawn and don't count up
+        if (entity.disabled || entity.activeInstances > 0) {
+            if (is106Spawning) Cancel106Spawn();
+            return;
+        }
+
+        // Effect is playing, wait for it to finish, then spawn 106 at the SAME position
+        if (is106Spawning) {
+            if (Player.Instance.isDead) { Cancel106Spawn(); return; }
+
+            spawn106EffectTimer += Time.deltaTime;
+            if (spawn106EffectTimer < SPAWN_106_EFFECT_DURATION) return;
+
+            SpawnEntity(entity, pending106Position, Player.Instance.transform.rotation);
+
+            // Effect prefab is left to clean itself up, same as the old spawner
+            pending106Effect = null;
+            is106Spawning = false;
+            spawn106EffectTimer = 0f;
+            return;
+        }
+
+        // Wait for the spawn interval
+        spawn106Timer += Time.deltaTime;
+        if (spawn106Timer < entity.spawnRate) return;
+
+        spawn106Timer = 0f; // Reset regardless, so a failed check waits a full interval like the old coroutine
+
+        if (Player.Instance.isDead) return;
+        if (!TryGetRandomGroundPosition(out pending106Position)) return;
+
+        pending106Effect = Instantiate(scp106_SpawnedEffect, pending106Position, Quaternion.identity);
+        is106Spawning = true;
+        spawn106EffectTimer = 0f;
+    }
+
+    private void Cancel106Spawn() {
+        if (pending106Effect != null) Destroy(pending106Effect);
+        pending106Effect = null;
+        is106Spawning = false;
+        spawn106EffectTimer = 0f;
     }
 
     #endregion
@@ -101,11 +171,10 @@ public class EntitySystem : MonoBehaviour {
             if (entities[i].entityIdentifier == entityIdentifier) {
                 SpawnEntity(entities[i], spawnPoint);
                 return;
-            } else {
-                Debug.LogWarning("An entity with that identifier was not found.");
-                return;
             }
         }
+
+        Debug.LogWarning("An entity with that identifier was not found.");
     }
 
     // Move an entity passing in a string id and spawnpoint transform
@@ -119,12 +188,17 @@ public class EntitySystem : MonoBehaviour {
     }
 
     // Move an entity passing in an entity reference and spawnpoint transform
-    public void MoveEntity(Entity entity, Transform spawnPoint) {
-        if (entity.chasingPlayer || entity.disabled) return;
+    public void MoveEntity(Entity entity, Transform spawnPoint, bool overrideCaseCheck = false) {
+        if (entity.disabled) return;
+        if (!overrideCaseCheck && entity.chasingPlayer) return;
 
         if (entity.latestActiveInstance != null) {
             if (entity.latestAgent != null) entity.latestAgent.Warp(spawnPoint.position);
         } else SpawnEntity(entity, spawnPoint);
+
+        // Mild safeguard so that the scp can't leave an event area before the player encounters the scp
+        spawn049Timer = 0;
+        spawn173Timer = 0;
     }
 
     // Call this from any entity that get's destroyed, just to keep things clean
@@ -134,6 +208,7 @@ public class EntitySystem : MonoBehaviour {
         if (entity.latestActiveInstance == instance) {
             entity.latestActiveInstance = null;
             entity.latestAgent = null;
+            entity.chasingPlayer = false;
         }
     }
 
@@ -163,13 +238,50 @@ public class EntitySystem : MonoBehaviour {
         return chosen != null;
     }
 
+    private bool TryGetRandomGroundPosition(out Vector3 groundPos) {
+        groundPos = Player.Instance.transform.position;
+
+        for (int i = 0; i < 10; i++) {
+            Vector3 randomOffset = Random.insideUnitCircle * SPAWN_106_RADIUS;
+            Vector3 candidate = Player.Instance.transform.position + new Vector3(randomOffset.x, 0, randomOffset.y);
+            Vector3 rayStart = candidate + Vector3.up * 1f;
+
+            if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, 1f + 50f, groundMask)) {
+                Vector3 validPoint = hit.point;
+                if (ValidSpawnRadiusOnNav(validPoint, 5f)) {
+                    groundPos = validPoint;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private bool ValidSpawnRadiusOnNav(Vector3 position, float radius) {
+        int samples = 8;
+        float angleStep = 360 / samples;
+
+        for (int i = 0; i < samples; i++) {
+            float angle = i * angleStep * Mathf.Deg2Rad;
+            Vector3 checkPos = position + new Vector3(Mathf.Cos(angle) * radius, 0, Mathf.Sin(angle) * radius);
+
+            if (!NavMesh.SamplePosition(checkPos, out NavMeshHit hit, 0.5f, NavMesh.AllAreas)) return false;
+        }
+
+        return NavMesh.SamplePosition(position, out NavMeshHit centerHit, 0.5f, NavMesh.AllAreas);
+    }
+
     #endregion
 
     #region Public Extras
 
-    // Moved this to an extra helper thing for a cleaner reusable setup
     public GameObject SpawnEntity(Entity entity, Transform spawnPoint) {
-        GameObject instance = Instantiate(entity.entityPrefab, spawnPoint.position, spawnPoint.rotation);
+        return SpawnEntity(entity, spawnPoint.position, spawnPoint.rotation);
+    }
+
+    public GameObject SpawnEntity(Entity entity, Vector3 position, Quaternion rotation) {
+        GameObject instance = Instantiate(entity.entityPrefab, position, rotation);
         entity.activeInstances++;
         entity.latestActiveInstance = instance;
         entity.latestAgent = instance.GetComponent<NavMeshAgent>();
@@ -177,7 +289,7 @@ public class EntitySystem : MonoBehaviour {
     }
 
     public static bool AnyEntityChasingPlayer() {
-        var entities = EntitySystem.Instance.entities;
+        var entities = Instance.entities;
         for (int i = 0; i < entities.Length; i++) {
             if (entities[i].chasingPlayer) return true;
         }
@@ -185,23 +297,17 @@ public class EntitySystem : MonoBehaviour {
     }
 
     public Transform GetClosestWaypointToPlayer() {
-        Transform contendingWaypoint = null;
+        Vector3 playerPos = Player.Instance.transform.position;
         Transform closestWaypoint = null;
-        float contendingDistance = -1;
-        float currentDistance = -1;
+        float closestSqr = float.MaxValue;
 
-        // For each cached waypoint get it's distance to the player.
-        // If contendingDistance is -1 set contendingDistance to the determined distance and contendeingWaypoint to that waypoint
-        foreach (Transform waypoint in cachedWaypoints) {
-            currentDistance = Vector3.Distance(waypoint.position, Player.Instance.transform.position);
-
-            if (currentDistance < contendingDistance || contendingDistance == -1) {
-                contendingDistance = currentDistance;
-                contendingWaypoint = waypoint;
+        for (int i = 0; i < cachedWaypoints.Count; i++) {
+            float sqr = (cachedWaypoints[i].position - playerPos).sqrMagnitude;
+            if (sqr < closestSqr) {
+                closestSqr = sqr;
+                closestWaypoint = cachedWaypoints[i];
             }
         }
-
-        closestWaypoint = contendingWaypoint;
 
         return closestWaypoint;
     }

@@ -185,7 +185,7 @@ public class SCP_049 : MonoBehaviour {
             EntitySystem.Instance.cached049Entity.chasingPlayer = false;
 
         if (Player.Instance == null || !Player.Instance.isDead)
-            RevivalSessionEngine.Instance.PlayChaseTrack(-1, MusicManager.MusicTrack.LCZ, 0);
+            RevivalSessionEngine.Instance.ReleaseChaseTrack(this);
     }
 
     #endregion
@@ -255,7 +255,7 @@ public class SCP_049 : MonoBehaviour {
 
         if (!searchMusicActive) {
             searchMusicActive = true;
-            RevivalSessionEngine.Instance.PlayChaseTrack(1, MusicManager.MusicTrack.SCP_049, 0);
+            RevivalSessionEngine.Instance.RequestChaseTrack(this, 1, MusicManager.MusicTrack.SCP_049);
         }
     }
 
@@ -311,7 +311,7 @@ public class SCP_049 : MonoBehaviour {
         if (!searchMusicActive) return;
         searchMusicActive = false;
 
-        RevivalSessionEngine.Instance.PlayChaseTrack(-1, MusicManager.MusicTrack.LCZ, 0);
+        RevivalSessionEngine.Instance.ReleaseChaseTrack(this);
     }
 
     private void PredictTargetPosition() {
@@ -382,7 +382,7 @@ public class SCP_049 : MonoBehaviour {
 
         AudioManager.PlayOneShot(spottedPlayerStinger);
         EntitySystem.Instance.cached049Entity.chasingPlayer = true;
-        RevivalSessionEngine.Instance.PlayChaseTrack(2, MusicManager.MusicTrack.SCP_049, 2);
+        RevivalSessionEngine.Instance.RequestChaseTrack(this, 2, MusicManager.MusicTrack.SCP_049, 1);
         RevivalRuntimeEngine.Instance.GiveAchievement("achv_049");
     }
 

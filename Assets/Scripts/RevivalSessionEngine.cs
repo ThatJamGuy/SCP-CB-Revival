@@ -1,10 +1,19 @@
 using EditorAttributes;
 using PrimeTween;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class RevivalSessionEngine : MonoBehaviour {
     public static RevivalSessionEngine Instance { get; private set; }
+
+    private struct ChaseRequest {
+        public EntityId sourceId; // FIX: Use EntityId, not int
+        public int priority;
+        public int intensity;
+        public int order; // Lower number means older
+        public MusicManager.MusicTrack track;
+    }
 
     public static int currentDifficulty;
     public static int otherDifficultyFactor;
@@ -18,36 +27,78 @@ public class RevivalSessionEngine : MonoBehaviour {
     [Header("Game States")]
     [ReadOnly] public bool playerNear096;
 
+    private readonly List<ChaseRequest> chaseRequests = new List<ChaseRequest>(5);
+
+    private MusicManager.MusicTrack activeTrack;
+
     private Tween infoTextTween;
+
+    private bool hasActiveChase;
+    private int requestCounter;
+    private int activeIntensity;
 
     #region Unity Lifecycle
 
     private void Awake() {
-        if (Instance == null) Instance = this;
-        else { Destroy(gameObject); return; }
-
+        if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
+
+        chaseRequests.Clear();
+        currentPursuit = -1;
     }
 
     private void Start() {
         // Set other difficulty factor value based on the current session difficulty
-        switch (currentDifficulty) {
-            case 0:
-                otherDifficultyFactor = 0;
-                break;
-            case 1:
-                otherDifficultyFactor = 1;
-                break;
-            case 2:
-                otherDifficultyFactor = 2;
-                break;
-        }
+        otherDifficultyFactor = currentDifficulty;
 
         // Ensure this john is in lockdown every session because it didn't reset when testing the build
         lczInLockdown = true;
     }
 
     #endregion
+
+    private void ApplyTopChaseRequest() {
+        int best = -1;
+        int count = chaseRequests.Count;
+
+        for (int i = 0; i < count; i++) {
+            if (best == -1) { best = i; continue; }
+            ChaseRequest candidate = chaseRequests[i];
+            ChaseRequest current = chaseRequests[best];
+            if (candidate.priority > current.priority ||
+                (candidate.priority == current.priority && candidate.order < current.order)) {
+                best = i;
+            }
+        }
+
+        // No requests left: fall back to zone music
+        if (best == -1) {
+            if (!hasActiveChase) return;
+            hasActiveChase = false;
+            currentPursuit = -1;
+            SetGlobalAudioBasedOnZone(bypassChaseCheck: true);
+            return;
+        }
+
+        ChaseRequest top = chaseRequests[best];
+        currentPursuit = top.priority;
+
+        // Winner's track unchanged, so don't retrigger
+        if (hasActiveChase && activeTrack == top.track && activeIntensity == top.intensity) return;
+
+        hasActiveChase = true;
+        activeTrack = top.track;
+        activeIntensity = top.intensity;
+        MusicManager.Instance.SetTrack(top.track, top.intensity);
+    }
+
+    private int IndexOfSource(EntityId id) {
+        for (int i = 0; i < chaseRequests.Count; i++) {
+            if (chaseRequests[i].sourceId == id) return i;
+        }
+
+        return -1;
+    }
 
     public static void PauseGame() {
         // Set the game's timescale to 0 (Pausing Time.deltaTime) and pause FMOD via the AudioManager
@@ -118,19 +169,42 @@ public class RevivalSessionEngine : MonoBehaviour {
     }
 
     /// <summary>
-    /// Call this to make a chase music request and determine if it's all good to go through with it.
+    /// Registers or updates a chase music request from a source. The highest priority active request plays.
+    /// Safe to call repeatedly; the track is only changed when the winning request changes.
     /// </summary>
-    /// <param name="priority">A higher number prioritizes this music over other chase music. Set it to -1 to play the current zones music.</param>
-    /// <param name="musicTrack">The music track to play. Works the same as MusicManager.SetTrack calls (ie. MusicManager.MusicTrack.*)</param>
-    /// <param name="intensity">The intensity of the track IF APPLICABLE. Works the same as MusicManager.SetTrack calls)</param>
-    public void PlayChaseTrack(int priority, MusicManager.MusicTrack musicTrack, int intensity = 0) {
-        if (priority == -1) { SetGlobalAudioBasedOnZone(); return; }
-        if (currentPursuit == -1 || priority >= currentPursuit) {
-            MusicManager.Instance.SetTrack(musicTrack, intensity);
-        }
+    public void RequestChaseTrack(Object source, int priority, MusicManager.MusicTrack track, int intensity = 0) {
+        if (priority < 0) { ReleaseChaseTrack(source); return; }
 
-        // TODO: Add a list of requests that works with the NPCs so if under chase by 2 guys and 1 leaves
-        // then it wont forget about the other guy that had already made a music call, as right now it'll set it to the zone music.
+        EntityId id = source.GetEntityId();
+        int index = IndexOfSource(id);
+
+        ChaseRequest request;
+        request.sourceId = id;
+        request.priority = priority;
+        request.track = track;
+        request.intensity = intensity;
+        request.order = index >= 0 ? chaseRequests[index].order : requestCounter++;
+
+        if (index >= 0) chaseRequests[index] = request;
+        else chaseRequests.Add(request);
+
+        ApplyTopChaseRequest();
+    }
+
+    /// <summary>
+    /// Call when a source stops chasing (lost the player, died, disabled, destroyed).
+    /// </summary>
+    public void ReleaseChaseTrack(Object source) {
+        EntityId id = source.GetEntityId();
+        int index = IndexOfSource(id);
+        if (index < 0) return;
+
+        // Swap-remove: O(1), order is stored per request so list order doesn't matter
+        int last = chaseRequests.Count - 1;
+        chaseRequests[index] = chaseRequests[last];
+        chaseRequests.RemoveAt(last);
+
+        ApplyTopChaseRequest();
     }
 
     /// <summary>

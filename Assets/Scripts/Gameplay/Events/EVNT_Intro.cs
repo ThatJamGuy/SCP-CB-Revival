@@ -5,11 +5,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 
 // Welcome to hell
-
-// Player is now possible target. (TODO: Think on whether or not making 173s AI naturally target the closest enemy in the intro as if the class ds were other players)
-// If player leaves the chamber area 173 goes up, get's shot at a bit, kill the guard, and escapes through the vent.
-// Small delay after vent breaking but will then switch the level geometry and lighting to the post breach version.
-
 public class EVNT_Intro : MonoBehaviour {
     [Header("Settings")]
     [SerializeField] private bool developerMode;
@@ -101,10 +96,11 @@ public class EVNT_Intro : MonoBehaviour {
 
     private void Start() {
         if (!skipIntro) {
-            RevivalSessionEngine.SetZone(0, true, false); // Set zone to intro, play ambience, no music for now
+            RevivalSessionEngine.SetZone(0, true, false);
             MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror01);
             RevivalRuntimeEngine.Instance.ChangeDiscordStatus("In the intro sequence");
             MenuManager.Instance.disableMenuToggling = true;
+            EntitySystem.Instance.cached106Entity.disabled = true;
 
             GameObject player = Instantiate(playerPrefab, spawnRegular.position, Quaternion.identity);
             SceneManager.MoveGameObjectToScene(player, spawnRegular.gameObject.scene);
@@ -138,6 +134,8 @@ public class EVNT_Intro : MonoBehaviour {
 
             GameObject player = Instantiate(playerPrefab, spawnSkipIntro.position, Quaternion.identity);
             SceneManager.MoveGameObjectToScene(player, spawnSkipIntro.gameObject.scene);
+
+            StartCoroutine(PlayerInputRoutine());
 
             postBreachEvent.TriggerPostBreachEvent(true);
         }
@@ -192,6 +190,16 @@ public class EVNT_Intro : MonoBehaviour {
         introVideoPlayer.Play();
         introVideoPlayer.loopPointReached += IntroVideoEndReached;
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.introVideoSound);
+    }
+
+    private IEnumerator PlayerInputRoutine() {
+        Player.Instance.disableInput = true;
+        Player.Instance.disableLooking = true;
+
+        yield return new WaitForSeconds(4f);
+
+        Player.Instance.disableInput = false;
+        Player.Instance.disableLooking = false;
     }
 
     #endregion
@@ -525,6 +533,8 @@ public class EVNT_Intro : MonoBehaviour {
         yield return new WaitForSeconds(0.5f);
 
         enableBlinkSpamming = false;
+
+        EntitySystem.Instance.cached106Entity.disabled = false;
     }
 
     #endregion
