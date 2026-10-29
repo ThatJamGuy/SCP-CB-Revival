@@ -7,8 +7,8 @@ using UnityEngine;
 public static class DataSaver {
     // Saves data to a file
     public static void Save<T>(T data, string fileName) {
-        var fullPath = Path.Combine(Application.persistentDataPath, fileName);
-        var json = JsonUtility.ToJson(data, true);
+        string fullPath = Path.Combine(Application.persistentDataPath, fileName);
+        string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(fullPath, json);
 
         Debug.Log("Saved data to " + fullPath);
@@ -16,13 +16,13 @@ public static class DataSaver {
 
     // Loads data from a file
     public static T Load<T>(string fileName) where T : new() {
-        var fullPath = Path.Combine(Application.persistentDataPath, fileName);
+        string fullPath = Path.Combine(Application.persistentDataPath, fileName);
 
         if (File.Exists(fullPath))
             return JsonUtility.FromJson<T>(File.ReadAllText(fullPath));
 
         Debug.LogWarning("No existing file could be found to load this data from, creating one now...");
-        var defaultData = new T();
+        T defaultData = new T();
         Save(defaultData, fileName);
         return defaultData;
     }

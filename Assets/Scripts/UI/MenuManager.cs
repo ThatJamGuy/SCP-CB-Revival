@@ -12,6 +12,7 @@ public class MenuManager : MonoBehaviour {
         public GameObject associatedMenuScreen; // The parent gameObject for the screen to open, leave empty for dummy menu
         public bool pausesOnSafe; // Should this menu pause the game on Safe mode?
         public bool pausesOnEuclid; // Should this menu pause the game on Euclid mode?
+        public bool pausesOnKeter; // Should this menu pause the game on Keter mode?
         public bool requireConsoleToggle; // Hard coded value for the console window where it can only be opened if console is enabled
 
         [HideInInspector] public bool isOpen;
@@ -102,7 +103,7 @@ public class MenuManager : MonoBehaviour {
 
         foreach (var menu in menuList) {
             if (!menu.isOpen) continue;
-            if ((menu.pausesOnSafe && currentDifficulty == 0) || (menu.pausesOnEuclid && currentDifficulty == 1)) {
+            if ((menu.pausesOnSafe && currentDifficulty == 0) || (menu.pausesOnEuclid && currentDifficulty == 1) || (menu.pausesOnKeter && currentDifficulty == 2)) {
                 shouldPause = true;
                 break;
             }

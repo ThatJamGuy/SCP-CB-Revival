@@ -168,8 +168,8 @@ public class SCP_106_New : MonoBehaviour {
 
         AudioManager.PlayOneShot(horror106Event, LOCAL_EVENT_PARAM, 0);
         RevivalSessionEngine.Instance.RequestChaseTrack(this, 10, MusicManager.MusicTrack.SCP_106);
-
         EntitySystem.Instance.cached106Entity.chasingPlayer = true;
+        RevivalRuntimeEngine.Instance.GiveAchievement("achv_106");
 
         ResumeChasing();
     }

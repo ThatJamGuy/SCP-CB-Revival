@@ -92,6 +92,8 @@ public class EVNT_Intro : MonoBehaviour {
             Instantiate(runtimeEngine);
             Instantiate(sessionEngine);
         }
+
+        if (RevivalSessionEngine.Instance != null) skipIntro = RevivalSessionEngine.skipIntro;
     }
 
     private void Start() {

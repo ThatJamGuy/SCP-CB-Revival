@@ -8,13 +8,14 @@ public class EVNT_Trigger : MonoBehaviour {
     [SerializeField] private bool triggerOnce;
     [SerializeField] private bool useOnTriggerExit;
     [SerializeField] private bool allowNPCTrigger = false;
-    
+
     public UnityEvent OnTriggerEnterEvent;
     public UnityEvent OnTriggerExitEvent;
 
     private bool hasBeenTriggered = false;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
+
     private void OnTriggerEnter(Collider other) {
         // Is the tag that just collided with the trigger the Player? If so continue on.
         if (other.CompareTag("Player")) {
@@ -33,7 +34,7 @@ public class EVNT_Trigger : MonoBehaviour {
             // If the OnTrigger event is all set then invoke, and it set hasBeenTriggered to true 
             if (triggerOnce && hasBeenTriggered) return;
             if (OnTriggerEnterEvent == null) return;
-            
+
             OnTriggerEnterEvent.Invoke();
             hasBeenTriggered = true;
         }
@@ -46,5 +47,6 @@ public class EVNT_Trigger : MonoBehaviour {
             OnTriggerExitEvent.Invoke();
         }
     }
+
     #endregion
 }

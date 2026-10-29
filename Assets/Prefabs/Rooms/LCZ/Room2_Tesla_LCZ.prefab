@@ -467,13 +467,14 @@ GameObject:
   m_Component:
   - component: {fileID: 9216755873308706463}
   - component: {fileID: 6374599721163876158}
+  - component: {fileID: 331811117982827745}
   - component: {fileID: 2407058939717015191}
   m_Layer: 2
   m_Name: TeslaTriggerZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &9216755873308706463
 Transform:
@@ -511,6 +512,33 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5, y: 7, z: 5}
   m_Center: {x: 0, y: 3, z: 0}
+--- !u!54 &331811117982827745
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830413419293546532}
+  serializedVersion: 5
+  m_Mass: 0.0000001
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!114 &2407058939717015191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1543,7 +1571,10 @@ Transform:
   m_Children:
   - {fileID: 5791535661709002549}
   - {fileID: 3644019042337010177}
+  - {fileID: 1937344573192962509}
+  - {fileID: 3045710193300223377}
   - {fileID: 5089427231841180006}
+  - {fileID: 4651845819259191486}
   - {fileID: 7301749318800122698}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1841,7 +1872,7 @@ Transform:
   - {fileID: 7585210683769983292}
   - {fileID: 5041647982200335637}
   - {fileID: 1352473614918503179}
-  m_Father: {fileID: 5089427231841180006}
+  m_Father: {fileID: 353368671289568238}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8020682790885680589
 MonoBehaviour:
@@ -1872,6 +1903,8 @@ MonoBehaviour:
   - {fileID: 594281651762392814}
   - {fileID: 2751889710957836462}
   - {fileID: 6412099696571051100}
+  - {fileID: 1585189683645702126}
+  - {fileID: 9218003288299651826}
 --- !u!1 &2857126523901274507
 GameObject:
   m_ObjectHideFlags: 0
@@ -1919,7 +1952,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &7929240256307206961
 Transform:
@@ -2025,7 +2058,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &3619164590485540754
 Transform:
@@ -2290,11 +2323,11 @@ GameObject:
   m_Component:
   - component: {fileID: 3045710193300223377}
   m_Layer: 0
-  m_Name: SoundEmitters
+  m_Name: Sound Emitters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &3045710193300223377
 Transform:
@@ -2311,7 +2344,7 @@ Transform:
   m_Children:
   - {fileID: 5549693645697664046}
   - {fileID: 7929240256307206961}
-  m_Father: {fileID: 5089427231841180006}
+  m_Father: {fileID: 353368671289568238}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3303430380167278193
 GameObject:
@@ -2532,7 +2565,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2714952034553673234
 Transform:
@@ -2798,6 +2831,7 @@ GameObject:
   - component: {fileID: 4001436813752430852}
   - component: {fileID: 3958939249924476054}
   - component: {fileID: 4015774582335199254}
+  - component: {fileID: 9218003288299651826}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -3026,6 +3060,25 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
+--- !u!114 &9218003288299651826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3840498787120379933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fafb817f42376349814c4bb96628512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightFlicker
+  preset: 3
+  customPattern: mmnmmommommnonmmonqnmmo
+  stepsPerSecond: 20
+  randomOffset: 1
+  startActive: 0
+  smoothTransitions: 1
+  smoothSpeed: 50
 --- !u!1 &3989537431847983127
 GameObject:
   m_ObjectHideFlags: 0
@@ -3481,12 +3534,13 @@ GameObject:
   - component: {fileID: 2427426234462028728}
   - component: {fileID: 485221943635485713}
   - component: {fileID: 3275679050260747688}
+  - component: {fileID: 4308551507327747059}
   m_Layer: 2
   m_Name: TeslaKillZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 126
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &2427426234462028728
 Transform:
@@ -3537,6 +3591,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeslaKillZone
   teslaController: {fileID: 8020682790885680589}
+--- !u!54 &4308551507327747059
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4370096586095703601}
+  serializedVersion: 5
+  m_Mass: 0.0000001
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &4388933989229467133
 GameObject:
   m_ObjectHideFlags: 0
@@ -4589,12 +4670,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1937344573192962509}
   - {fileID: 4107817553547104}
-  - {fileID: 4651845819259191486}
   - {fileID: 6414354519030634273}
   - {fileID: 7027876147525921005}
-  - {fileID: 3045710193300223377}
   m_Father: {fileID: 353368671289568238}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5651638063410417578
@@ -5080,7 +5158,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1937344573192962509}
   m_Layer: 0
-  m_Name: Props_Static
+  m_Name: Static Props
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5094,7 +5172,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5898659768678386814}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5153,7 +5231,7 @@ Transform:
   - {fileID: 3255027494547530420}
   - {fileID: 7739784746825679752}
   - {fileID: 6857352176176001025}
-  m_Father: {fileID: 5089427231841180006}
+  m_Father: {fileID: 353368671289568238}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6155800609819780935
 GameObject:
@@ -5638,7 +5716,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 126
+  m_StaticEditorFlags: 0
   m_IsActive: 0
 --- !u!4 &7585210683769983292
 Transform:
@@ -6478,7 +6556,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
+  m_RayTracingMode: 1
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
@@ -6492,7 +6570,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: b4741aaf38d2789419a5b189889d52ee, type: 2}
   - {fileID: 2100000, guid: d79e541e29b18084098c5d63605454d7, type: 2}
   - {fileID: 2100000, guid: b201f8b67261e934e8d5b87ae07ce0bd, type: 2}
-  - {fileID: 2100000, guid: 961b3314ec52cca429ce6f1f9af009ce, type: 2}
+  - {fileID: 2100000, guid: c07e036020cc43c40983b02a9d1f5cd1, type: 2}
   - {fileID: 2100000, guid: 638059035ce45bf4599a789c5cee1d11, type: 2}
   - {fileID: 2100000, guid: f8d7202c98308a44991bbd2f9f20b789, type: 2}
   - {fileID: 2100000, guid: 5358abe1db652dc408d88fd6e66b5a22, type: 2}
@@ -8635,7 +8713,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 588580506693918042, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1585189683645702126}
   m_SourcePrefab: {fileID: 100100000, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
 --- !u!95 &517600688447681998 stripped
 Animator:
@@ -8647,6 +8728,25 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 588580506693918042, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
   m_PrefabInstance: {fileID: 5285985480263747099}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1585189683645702126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4715437118917942081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fafb817f42376349814c4bb96628512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightFlicker
+  preset: 3
+  customPattern: mmnmmommommnonmmonqnmmo
+  stepsPerSecond: 20
+  randomOffset: 1
+  startActive: 0
+  smoothTransitions: 1
+  smoothSpeed: 50
 --- !u!4 &6682849926158894672 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1577903983212363851, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}

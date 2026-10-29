@@ -13970,7 +13970,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 02200588052ad77439653573bc8f1a11, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -14086,6 +14086,7 @@ GameObject:
   - component: {fileID: 8129274581839206593}
   - component: {fileID: 1437879785432951423}
   - component: {fileID: 7919723700531492109}
+  - component: {fileID: 5503859094746248231}
   m_Layer: 6
   m_Name: 106GooProjector
   m_TagString: Floor_PD
@@ -14136,7 +14137,7 @@ MonoBehaviour:
   m_DecalLayerMask: 1
   m_ScaleMode: 0
   m_Offset: {x: 0, y: 0, z: 0}
-  m_Size: {x: 5, y: 5, z: 0.1}
+  m_Size: {x: 4, y: 4, z: 0.1}
   m_FadeFactor: 1
 --- !u!65 &7919723700531492109
 BoxCollider:
@@ -14159,6 +14160,45 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3, y: 3, z: 0.1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5503859094746248231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8757182321524479271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e39750e685935f641bde2ec1f2816652, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DecalScaler
+  startSize: {x: 0, y: 0, z: 1}
+  targetSize: {x: 4, y: 4, z: 4}
+  easing:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  duration: 6.5
 --- !u!1 &8872277188032812787
 GameObject:
   m_ObjectHideFlags: 0

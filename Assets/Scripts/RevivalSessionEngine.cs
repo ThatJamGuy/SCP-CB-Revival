@@ -15,11 +15,14 @@ public class RevivalSessionEngine : MonoBehaviour {
         public MusicManager.MusicTrack track;
     }
 
-    public static int currentDifficulty;
-    public static int otherDifficultyFactor;
+    public static string saveName = "DefaultSaveName";
+    public static string mapSeed = "DefaultSeed";
+    public static int currentDifficulty = 0;
+    public static int otherDifficultyFactor = 0;
     public static int currentZone = 1;
     public static int currentPursuit = -1;
     public static bool lczInLockdown = true;
+    public static bool skipIntro = false;
 
     [Header("Heads Up Display")]
     [SerializeField] private TextMeshProUGUI infoText;
@@ -43,14 +46,26 @@ public class RevivalSessionEngine : MonoBehaviour {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
 
+        // Safeguard for direct testing from 3_Game because I can't live with it. Keeps the seed random still and diff on Safe
+#if UNITY_EDITOR
+        if (!SavegameEngine.HasActiveSave && !SavegameEngine.LoadGame())
+            SavegameEngine.NewGame("EditorTest", "", 0, true);
+#endif
+
+        SessionData session = SavegameEngine.Session;
+
+        saveName = session.saveName;
+        mapSeed = session.mapSeed;
+        currentDifficulty = session.difficulty;
+        skipIntro = session.skipIntro;
+
+        otherDifficultyFactor = currentDifficulty;
+
         chaseRequests.Clear();
         currentPursuit = -1;
     }
 
     private void Start() {
-        // Set other difficulty factor value based on the current session difficulty
-        otherDifficultyFactor = currentDifficulty;
-
         // Ensure this john is in lockdown every session because it didn't reset when testing the build
         lczInLockdown = true;
     }

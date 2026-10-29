@@ -38,7 +38,6 @@ public class Player : MonoBehaviour {
 
     private Sequence currentDeathTween;
     private Vector3 cameraStartPos;
-    //private Quaternion cameraStartRot;
 
     [HideInInspector] public SettingsData settingsData;
 
@@ -49,9 +48,7 @@ public class Player : MonoBehaviour {
         else Destroy(gameObject);
 
         settingsData = RevivalRuntimeEngine.SettingsData;
-
         cameraStartPos = cameraRoot.transform.localPosition;
-        //cameraStartRot = cameraRoot.transform.localRotation;
 
         InventorySystem.Instance.playerCamera = playerCamera;
     }
@@ -103,11 +100,6 @@ public class Player : MonoBehaviour {
     private IEnumerator DisplayDeathMessageCoroutine(float delayTime, string causeOfDeath) {
         yield return new WaitForSeconds(delayTime);
         RevivalSessionEngine.Instance.ShowDeathScreen(causeOfDeath);
-    }
-
-    // Re-apply cursor state when switching back to KBM so menus restore correctly
-    private static void OnDeviceChanged(bool usingController) {
-        if (!usingController) ApplyCursorState();
     }
 
     // Apply cursor state only when on KBM; skip silently on controller

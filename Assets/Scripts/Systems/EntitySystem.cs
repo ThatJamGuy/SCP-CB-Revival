@@ -43,7 +43,7 @@ public class EntitySystem : MonoBehaviour {
     // SCP 106 everything config: Specific to this guy since he works very different
     // Mostly just copied and pasted from the old system rn, so may not integrate the best with new EntitySystem features
     private const float SPAWN_106_RADIUS = 3;
-    private const float SPAWN_106_EFFECT_DURATION = 10;
+    private const float SPAWN_106_EFFECT_DURATION = 7;
 
     private GameObject pending106Effect;
 

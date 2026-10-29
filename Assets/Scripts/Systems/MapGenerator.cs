@@ -66,10 +66,9 @@ public class MapGenerator : MonoBehaviour {
     }
 
     private void Start() {
-        if (DataSaver.DataFileExists("save.json")) {
-            //var saveData = DataSaver.Load<SaveData>("save.json");
-            //seed = saveData.currentMapSeed;
-
+        // Request the current map seed from RevivalSessionEngine, but generate a random one if that doesn't work
+        if (RevivalSessionEngine.Instance != null) {
+            seed = RevivalSessionEngine.mapSeed;
             useRandomSeed = string.IsNullOrEmpty(seed);
         }
 
