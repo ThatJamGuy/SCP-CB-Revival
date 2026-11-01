@@ -97,6 +97,18 @@ public class EVNT_Intro : MonoBehaviour {
     }
 
     private void Start() {
+        GameStateData state = SavegameEngine.Get<GameStateData>();
+
+        // Loaded a save from after the intro: rebuild the post-breach world and put the player at the saved checkpoint.
+        // TriggerPostBreachEvent is deliberately NOT called here, it's the alarm cinematic and would replay on every load
+        if (state.introCompleted) {
+            SetupPostBreach();
+            SpawnPlayerFromSave();
+            RevivalRuntimeEngine.Instance.ChangeDiscordStatus("Roaming the facility");
+            RevivalSessionEngine.SetGlobalAudioBasedOnZone(); // Restores ambience + music for the saved zone
+            return;
+        }
+
         if (!skipIntro) {
             RevivalSessionEngine.SetZone(0, true, false);
             MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror01);
@@ -104,8 +116,7 @@ public class EVNT_Intro : MonoBehaviour {
             MenuManager.Instance.disableMenuToggling = true;
             EntitySystem.Instance.cached106Entity.disabled = true;
 
-            GameObject player = Instantiate(playerPrefab, spawnRegular.position, Quaternion.identity);
-            SceneManager.MoveGameObjectToScene(player, spawnRegular.gameObject.scene);
+            SpawnPlayer(spawnRegular);
 
             if (playVideo) {
                 Player.Instance.disableInput = true;
@@ -117,29 +128,15 @@ public class EVNT_Intro : MonoBehaviour {
                 StartCoroutine(EscortEnd());
             }
         } else {
-            // Cleanup for intro skipping
-            Destroy(franklin.gameObject);
-            Destroy(classDA.gameObject);
-            Destroy(classDB.gameObject);
-            Destroy(researcher2.gameObject);
-            Destroy(balconyGuard.gameObject);
-            Destroy(triggersParent.gameObject);
-            Destroy(ulgrin.gameObject);
-            Destroy(laptopGuy.gameObject);
-            Destroy(phoneGuy.gameObject);
-
-            preBreachEnv.SetActive(false);
-            postBreachEnv.SetActive(true);
-
-            introCanvas.SetActive(false);
+            // Intro skipping on a new game
+            SetupPostBreach();
             skipIntroCanvas.SetActive(true);
-
-            GameObject player = Instantiate(playerPrefab, spawnSkipIntro.position, Quaternion.identity);
-            SceneManager.MoveGameObjectToScene(player, spawnSkipIntro.gameObject.scene);
+            SpawnPlayer(spawnSkipIntro);
 
             StartCoroutine(PlayerInputRoutine());
 
             postBreachEvent.TriggerPostBreachEvent(true);
+            MarkIntroCompleted();
         }
     }
 
@@ -166,6 +163,56 @@ public class EVNT_Intro : MonoBehaviour {
     }
 
     #endregion
+
+    // Removes everything that only exists during the intro and swaps to the post-breach environment.
+    // Shared by intro skipping and loading a save from after the intro
+    private void SetupPostBreach() {
+        Destroy(franklin.gameObject);
+        Destroy(classDA.gameObject);
+        Destroy(classDB.gameObject);
+        Destroy(researcher2.gameObject);
+        Destroy(balconyGuard.gameObject);
+        Destroy(triggersParent.gameObject);
+        Destroy(ulgrin.gameObject);
+        Destroy(laptopGuy.gameObject);
+        Destroy(phoneGuy.gameObject);
+
+        preBreachEnv.SetActive(false);
+        postBreachEnv.SetActive(true);
+
+        introCanvas.SetActive(false);
+    }
+
+    private void SpawnPlayer(Transform spawn) {
+        GameObject player = Instantiate(playerPrefab, spawn.position, Quaternion.identity);
+        SceneManager.MoveGameObjectToScene(player, spawn.gameObject.scene);
+    }
+
+    // Spawns at the last saved position, or at the skip intro spawn if no checkpoint has been reached yet
+    private void SpawnPlayerFromSave() {
+        PlayerData data = SavegameEngine.Get<PlayerData>();
+        Vector3 position = data.hasPosition ? data.position : spawnSkipIntro.position;
+
+        GameObject player = Instantiate(playerPrefab, position, Quaternion.identity);
+        SceneManager.MoveGameObjectToScene(player, spawnSkipIntro.gameObject.scene);
+    }
+
+    // Written to disk immediately so quitting right after the intro still continues in the post-breach state
+    private static void MarkIntroCompleted() {
+        GameStateData state = SavegameEngine.Get<GameStateData>();
+        state.introCompleted = true;
+        state.currentZone = RevivalSessionEngine.currentZone;
+        state.lczInLockdown = RevivalSessionEngine.lczInLockdown;
+        SavegameEngine.Save<GameStateData>();
+
+        // Establish a usable fallback checkpoint immediately after the intro
+        if (Player.Instance != null) {
+            PlayerData playerData = SavegameEngine.Get<PlayerData>();
+            playerData.position = Player.Instance.transform.position;
+            playerData.hasPosition = true;
+            SavegameEngine.Save<PlayerData>();
+        }
+    }
 
     #region Intro Video
 
@@ -197,11 +244,13 @@ public class EVNT_Intro : MonoBehaviour {
     private IEnumerator PlayerInputRoutine() {
         Player.Instance.disableInput = true;
         Player.Instance.disableLooking = true;
+        MenuManager.Instance.disableMenuToggling = true;
 
         yield return new WaitForSeconds(4f);
 
         Player.Instance.disableInput = false;
         Player.Instance.disableLooking = false;
+        MenuManager.Instance.disableMenuToggling = false;
     }
 
     #endregion
@@ -221,14 +270,20 @@ public class EVNT_Intro : MonoBehaviour {
         AudioManager.PlayOneShot(ulgrinEscortEnd, ulgrinVoiceSource.position);
         yield return new WaitForSeconds(3);
         ulgrinAnimator.SetTrigger("Sigh");
+        RevivalSessionEngine.Instance.NotifyPlayer("Use the mouse to look around and [WASD] to move.", 5);
         yield return new WaitForSeconds(4);
         AudioManager.PlayOneShot(ulgrinByTheWay, ulgrinVoiceSource.position);
+        ulgrin.GetComponent<IK_MasterComponent>().SetLeftHandIK(false);
         ulgrinAnimator.SetTrigger("Act_PaperA");
         yield return new WaitForSeconds(1);
         doc173Paper.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        RevivalSessionEngine.Instance.NotifyPlayer("Click [LMB] to interact with objects and items.", 5);
     }
 
     public void OnPaperTaken() {
+        RevivalSessionEngine.Instance.NotifyPlayer("Press [TAB] to open the inventory. Double click an item to use it, and click [RMB] to stop using it.", 10);
+        ulgrin.GetComponent<IK_MasterComponent>().SetLeftHandIK(true);
         researcher2.WalkTo(nav_vend.position);
         researcher2Ready = true;
     }
@@ -334,7 +389,11 @@ public class EVNT_Intro : MonoBehaviour {
         yield return new WaitForSeconds(4);
         classDB.WalkTo(navPoint2_B.position);
 
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(1);
+
+        RevivalSessionEngine.Instance.NotifyPlayer("Press [SPACE] to blink manually.", 5);
+
+        yield return new WaitForSeconds(4);
 
         AudioManager.PlayOneShot(surge);
 
@@ -531,6 +590,7 @@ public class EVNT_Intro : MonoBehaviour {
         postBreachEnv.SetActive(true);
 
         postBreachEvent.TriggerPostBreachEvent();
+        MarkIntroCompleted();
 
         yield return new WaitForSeconds(0.5f);
 

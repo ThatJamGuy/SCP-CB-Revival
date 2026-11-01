@@ -22,6 +22,7 @@ public class CanvasInstance : MonoBehaviour {
     public GameObject gasMaskOverlay;
 
     [Header("Pause Menu")]
+    public PauseMenu pauseMenu;
     public GameObject controllerTooltips;
     public Button resumeButton;
 

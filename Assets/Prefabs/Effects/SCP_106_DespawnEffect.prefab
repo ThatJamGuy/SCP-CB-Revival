@@ -10,10 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3334610729347116816}
   - component: {fileID: 1501214015951269396}
-  - component: {fileID: 78064741262077994}
-  - component: {fileID: 8032585202665261695}
+  - component: {fileID: 7392441485471789201}
   m_Layer: 0
-  m_Name: 106DespawnGooProjector
+  m_Name: SCP_106_DespawnEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,11 +45,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f19d9143a39eb3b46bc4563e9889cfbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Version: 3
   m_Material: {fileID: 2100000, guid: 70f99b8febf171e47a373451ebb959cf, type: 2}
   m_DrawDistance: 20
   m_FadeScale: 0.9
-  m_StartAngleFade: 180
-  m_EndAngleFade: 180
+  m_StartAngleFade: 0
+  m_EndAngleFade: 90
   m_UVScale: {x: 1, y: 1}
   m_UVBias: {x: 0, y: 0}
   m_AffectsTransparency: 0
@@ -61,10 +61,9 @@ MonoBehaviour:
   m_DecalLayerMask: 1
   m_ScaleMode: 0
   m_Offset: {x: 0, y: 0, z: 0}
-  m_Size: {x: 4, y: 4, z: 0.1}
+  m_Size: {x: 5, y: 5, z: 0.1}
   m_FadeFactor: 1
-  m_Version: 3
---- !u!114 &78064741262077994
+--- !u!114 &7392441485471789201
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73,12 +72,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6306790722705746932}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6ec757a740526d43adf4854b432b7e4, type: 3}
+  m_Script: {fileID: 11500000, guid: e39750e685935f641bde2ec1f2816652, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DecalScaler
   startSize: {x: 0, y: 0, z: 1}
-  targetSize: {x: 4, y: 4, z: 1}
-  duration: 1
+  targetSize: {x: 5, y: 5, z: 1}
   easing:
     serializedVersion: 2
     m_Curve:
@@ -103,16 +101,4 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &8032585202665261695
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6306790722705746932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8f59ff3b24e47046b701f7a1fd9718b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DestroyAfterTime
-  timeUntilDestroy: 120
+  duration: 2

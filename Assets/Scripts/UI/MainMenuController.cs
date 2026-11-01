@@ -24,6 +24,7 @@ public class MainMenuController : MonoBehaviour {
     [Header("References")]
     [SerializeField] private TextMeshProUGUI versionText;
     [SerializeField] private StudioEventEmitter menuClick;
+    [SerializeField] private TextMeshProUGUI loadGameText;
 
     private const string CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -38,6 +39,9 @@ public class MainMenuController : MonoBehaviour {
         SetDifficulty(0);
 
         if (enableMenuShakes) StartCoroutine(PeriodicMenuShake());
+
+        // Little visual cue for if a safe file is present to load into (White - Has Save, Gray - No Save)
+        loadGameText.color = SavegameEngine.HasSave() ? Color.white : new Color(0.4f, 0.4f, 0.4f);
     }
 
     #endregion
@@ -104,7 +108,16 @@ public class MainMenuController : MonoBehaviour {
             "simoxus",
             "smokes",
             "fathergaslight",
-            "girlfriendwhen"
+            "girlfriendwhen",
+            "EURMisNotASequel",
+            "ThereIsNoCB2",
+            "jorge",
+            "SomaIsAwesome",
+            "OUTLAST",
+            "containsnoOil",
+            "YouLoveTESLAGates",
+            "ValorantIsTRASH",
+            "NoUlgrinIDontHaveAGFPleaseStopAsking"
         };
 
         seedInputField.text = presetSeeds[Random.Range(0, presetSeeds.Length)];
@@ -127,6 +140,17 @@ public class MainMenuController : MonoBehaviour {
         shakeDebris.SetActive(false);
 
         if (enableMenuShakes) StartCoroutine(PeriodicMenuShake());
+    }
+
+    private void LoadSessionEnvironments() {
+        SceneController.instance
+            .NewTransition()
+            .Load(SceneDatabase.Slots.SESSION, SceneDatabase.Scenes.SESSION)
+            .Load(SceneDatabase.Slots.GAME, SceneDatabase.Scenes.GAME, setActive: true)
+            .Unload(SceneDatabase.Slots.MENU)
+            .WithOverlay()
+            .WithClearUnusedAssets()
+            .Perform();
     }
 
     #endregion
@@ -158,21 +182,16 @@ public class MainMenuController : MonoBehaviour {
 
     public void StartGame() {
         if (string.IsNullOrEmpty(nameInputField.text)) return;
+        if (!SavegameEngine.NewGame(nameInputField.text, seedInputField.text, GetDifficulty(), skipIntroToggle.isOn)) return;
 
-        if (!SavegameEngine.NewGame(nameInputField.text, seedInputField.text, GetDifficulty(), skipIntroToggle.isOn)) {
-            return;
-        }
+        //Debug.Log("Starting game with name: " + nameInputField.text + " and seed: " + seedInputField.text);
 
-        Debug.Log("Starting game with name: " + nameInputField.text + " and seed: " + seedInputField.text);
+        LoadSessionEnvironments();
+    }
 
-        SceneController.instance
-            .NewTransition()
-            .Load(SceneDatabase.Slots.SESSION, SceneDatabase.Scenes.SESSION)
-            .Load(SceneDatabase.Slots.GAME, SceneDatabase.Scenes.GAME, setActive: true)
-            .Unload(SceneDatabase.Slots.MENU)
-            .WithOverlay()
-            .WithClearUnusedAssets()
-            .Perform();
+    public void ContinueGame() {
+        if (!SavegameEngine.LoadGame()) return;
+        GameLoader.EnterFromMenu();
     }
 
     public void SetDifficulty(int diff) {

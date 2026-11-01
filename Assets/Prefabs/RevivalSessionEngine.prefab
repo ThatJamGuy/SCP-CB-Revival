@@ -4203,6 +4203,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 2732250330220972135}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: LoadGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &6738721759980008238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5957,7 +5969,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 55.5}
+  m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &9156618808198541367
 CanvasRenderer:
@@ -6014,12 +6026,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
+  m_fontSize: 14
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 1
-  m_fontSizeMax: 15
+  m_fontSizeMax: 14
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
@@ -6931,7 +6943,6 @@ MonoBehaviour:
   - {fileID: 6305907494283461751}
   - {fileID: 2822281627837971051}
   currentlyHeldItem: {fileID: 0}
-  currentlyWornItem: {fileID: 0}
   itemDisplay: {fileID: 8323473849984638062}
   documentDisplay: {fileID: 8555417130139268969}
   itemDataList:
@@ -6979,6 +6990,7 @@ MonoBehaviour:
   deathMenuDeathCauseText: {fileID: 6683825858491561986}
   blinkOverlay: {fileID: 4773750658566943078}
   gasMaskOverlay: {fileID: 8301975309047996547}
+  pauseMenu: {fileID: 2732250330220972135}
   controllerTooltips: {fileID: 8579118646882354497}
   resumeButton: {fileID: 3611221041923016806}
   revivalBarStyleParent: {fileID: 2533280508185438930}
@@ -7118,6 +7130,18 @@ MonoBehaviour:
       - m_Target: {fileID: 8243722491345662118}
         m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
         m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2732250330220972135}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: LoadGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7846,6 +7870,8 @@ MonoBehaviour:
   currentSeedText: {fileID: 8147678678834062008}
   currentDifficultyText: {fileID: 6674486601578138555}
   menuManager: {fileID: 3714986947274237453}
+  loadGameTextPause: {fileID: 269998450804463251}
+  loadGameTextDeath: {fileID: 418539455221948215}
 --- !u!1 &4023924931127862120
 GameObject:
   m_ObjectHideFlags: 0
@@ -12725,8 +12751,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 12.5}
-  m_SizeDelta: {x: 0, y: 25}
+  m_AnchoredPosition: {x: 0, y: 9.75}
+  m_SizeDelta: {x: 0, y: 30.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3888248968144458661
 CanvasRenderer:
@@ -12783,7 +12809,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22.25
+  m_fontSize: 25
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -13187,7 +13213,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -15, y: -150}
-  m_SizeDelta: {x: 400, y: 111}
+  m_SizeDelta: {x: 450, y: 111}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &7686075676643198839
 CanvasRenderer:
@@ -14343,12 +14369,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22.2
+  m_fontSize: 20
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 1
-  m_fontSizeMax: 30
+  m_fontSizeMax: 20
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 1024

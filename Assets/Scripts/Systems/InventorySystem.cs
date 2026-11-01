@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Inventory system script to handle the current items in the inventory and communicate with other scripts needing access to inventory values
 /// </summary>
-public class InventorySystem : MonoBehaviour {
+public class InventorySystem : MonoBehaviour, ISaveable {
     public static InventorySystem Instance { get; private set; }
 
     [SerializeField] private MenuManager menuManager;
@@ -16,9 +16,7 @@ public class InventorySystem : MonoBehaviour {
     [SerializeField] private GameObject[] inventorySlotObjects;
 
     [Header("Inventory States")]
-    // Two equipped item layers to allow the player to wear stuff and hold things at the same time
-    public ItemData currentlyHeldItem; // Layer 1 for regular items
-    public ItemData currentlyWornItem; // Layer 2 for worn items
+    public ItemData currentlyHeldItem;
 
     [Header("UI Things")]
     [SerializeField] private Image itemDisplay;
@@ -38,10 +36,9 @@ public class InventorySystem : MonoBehaviour {
 
     private InputAction unequipItemAction;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Awake() {
-        // Ensure that there is only one instance of the Inventory system
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
@@ -54,6 +51,10 @@ public class InventorySystem : MonoBehaviour {
         foreach (ItemData item in itemDataList) {
             itemDataLookup.Add(item.itemIdentifier, item);
         }
+
+        // Load inventory from save if applicable, but otherwise register this saveable
+        LoadInventoryFromSave();
+        SavegameEngine.Register(this);
     }
 
     private void OnEnable() {
@@ -66,13 +67,18 @@ public class InventorySystem : MonoBehaviour {
         unequipItemAction.Disable();
     }
 
+    private void OnDestroy() {
+        SavegameEngine.Unregister(this);
+        if (Instance == this) Instance = null;
+    }
+
     #endregion
 
     #region Private Methods
 
     private GameObject CheckForEmptySlots() {
         // For every slot in the inventorySlotObjects array...
-        foreach (var slot in inventorySlotObjects) {
+        foreach (GameObject slot in inventorySlotObjects) {
             // If the child count is 2 (Only the outlines) then return the current slot as available
             if (slot.transform.childCount == 2) return slot;
         }
@@ -81,21 +87,52 @@ public class InventorySystem : MonoBehaviour {
         return null;
     }
 
+    // Creats and sets up the UI object for an item inside a specific slot and registers it
+    private void CreateItemInSlot(GameObject slot, ItemData itemData) {
+        GameObject itemObj = Instantiate(inventoryItemTemplate, slot.transform);
+        itemObj.GetComponent<Image>().sprite = itemData.itemInventoryIcon;
+
+        TooltipTrigger tooltip = itemObj.GetComponent<TooltipTrigger>();
+        tooltip.Title = itemData.itemName;
+        tooltip.Content = itemData.itemDescription;
+
+        InventoryItem invItem = itemObj.GetComponent<InventoryItem>();
+        invItem.itemData = itemData;
+
+        RegisterItem(slot, itemData.itemIdentifier);
+    }
+
     private void RegisterItem(GameObject slot, string itemIdentifier) {
         slotContents[slot] = itemIdentifier;
-        inventoryContents[itemIdentifier] = inventoryContents.TryGetValue(itemIdentifier, out var count) ? count + 1 : 1;
+        inventoryContents[itemIdentifier] = inventoryContents.TryGetValue(itemIdentifier, out int count) ? count + 1 : 1;
     }
 
     private void UnregisterItem(GameObject slot) {
-        if (!slotContents.Remove(slot, out var itemIdentifier)) return;
+        if (!slotContents.Remove(slot, out string itemIdentifier)) return;
 
-        if (!inventoryContents.TryGetValue(itemIdentifier, out var count)) return;
+        if (!inventoryContents.TryGetValue(itemIdentifier, out int count)) return;
         if (count <= 1) inventoryContents.Remove(itemIdentifier);
         else inventoryContents[itemIdentifier] = count - 1;
     }
 
     private void OnRightClick(InputAction.CallbackContext context) {
         if (context.performed && currentlyHeldItem != null) UnequipCurrentItem();
+    }
+
+    private void LoadInventoryFromSave() {
+        PlayerData data = SavegameEngine.Get<PlayerData>();
+        string[] slotItems = data.slotItems;
+        if (slotItems == null) return;
+
+        int count = Mathf.Min(slotItems.Length, inventorySlotObjects.Length);
+        for (int i = 0; i < count; i++) {
+            string id = slotItems[i];
+
+            if (string.IsNullOrEmpty(id)) continue;
+            if (!itemDataLookup.TryGetValue(id, out ItemData item)) continue;
+
+            CreateItemInSlot(inventorySlotObjects[i], item);
+        }
     }
 
     #endregion
@@ -119,26 +156,16 @@ public class InventorySystem : MonoBehaviour {
     public bool HasItem(string itemIdentifier) => GetItemCount(itemIdentifier) > 0;
 
     public void AddItemToInventory(string itemIdentifier, int amount = 1) {
-        if (!itemDataLookup.TryGetValue(itemIdentifier, out var itemData)) return;
+        if (!itemDataLookup.TryGetValue(itemIdentifier, out ItemData itemData)) return;
 
         for (var i = 0; i < amount; i++) {
-            var slot = CheckForEmptySlots();
+            GameObject slot = CheckForEmptySlots();
             if (!slot) {
                 RevivalSessionEngine.Instance.NotifyPlayer("You cannot pick up any more items.");
                 return;
             }
 
-            var itemObj = Instantiate(inventoryItemTemplate, slot.transform);
-            itemObj.GetComponent<Image>().sprite = itemData.itemInventoryIcon;
-
-            var tooltip = itemObj.GetComponent<TooltipTrigger>();
-            tooltip.Title = itemData.itemName;
-            tooltip.Content = itemData.itemDescription;
-
-            var invItem = itemObj.GetComponent<InventoryItem>();
-            invItem.itemData = itemData;
-
-            RegisterItem(slot, itemIdentifier);
+            CreateItemInSlot(slot, itemData);
         }
     }
 
@@ -165,13 +192,18 @@ public class InventorySystem : MonoBehaviour {
         menuManager.ToggleMenu(1, false);
     }
 
-    /// <summary>
-    /// Call this from the player or something on it so that the inventory systems knows what the camera is.
-    /// Used to be able to do this in start but loading order no longer lets this happen
-    /// </summary>
-    /// <param name="camera">Camera to pass into the Inventory System.</param>
-    public void SetPlayerCamera(Camera camera) {
-        playerCamera = camera;
+    public void SetPlayerCamera(Camera camera) => playerCamera = camera;
+
+    // Save inventory data
+    public void PrepareSaveableValues() {
+        PlayerData data = SavegameEngine.Get<PlayerData>();
+        string[] slotItems = new string[inventorySlotObjects.Length];
+
+        for (int i = 0; i < slotItems.Length; i++) {
+            slotItems[i] = slotContents.TryGetValue(inventorySlotObjects[i], out string id) ? id : string.Empty;
+        }
+
+        data.slotItems = slotItems;
     }
 
     #endregion
@@ -233,8 +265,6 @@ public class InventorySystem : MonoBehaviour {
 
             return;
         }
-
-        //TODO: Figure out what to do if it's a custom item, as it could go multiple ways
     }
 
     #endregion

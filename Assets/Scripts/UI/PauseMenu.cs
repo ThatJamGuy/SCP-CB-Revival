@@ -12,8 +12,9 @@ public class PauseMenu : MonoBehaviour {
 
     [Header("References")]
     [SerializeField] private MenuManager menuManager;
+    [SerializeField] private TextMeshProUGUI loadGameTextPause;
+    [SerializeField] private TextMeshProUGUI loadGameTextDeath;
 
-    private RevivalSessionEngine gameManager;
     private MapGenerator mapGenerator;
 
     private int currentDifficulty;
@@ -21,7 +22,8 @@ public class PauseMenu : MonoBehaviour {
     #region Unity Callbacks
 
     private void OnEnable() {
-        CanvasInstance.Instance.controllerTooltips.SetActive(false);
+        // Make sure the load game text is the proper color when opening the pause menu
+        RefreshLoadGameText();
     }
 
     private void Start() {
@@ -29,7 +31,6 @@ public class PauseMenu : MonoBehaviour {
         if (RevivalSessionEngine.Instance != null) {
             currentSaveNameText.text = $"<color=grey>Save Name: </color>{RevivalSessionEngine.saveName}";
 
-            gameManager = RevivalSessionEngine.Instance;
             currentDifficulty = RevivalSessionEngine.currentDifficulty;
         }
 
@@ -51,46 +52,60 @@ public class PauseMenu : MonoBehaviour {
             currentSeedText.text = "<color=grey>Map Seed: </color>" + mapGenerator.seed;
         }
     }
+
     #endregion
 
     #region Public Methods
-    /// <summary>
-    /// Public method to resume the game while in a paused state. Should be accessed via buttons
-    /// </summary>
+
     public void ResumeGame() {
         // Toggle menu 0 (Pause menu atm) off by forcing it's state to false. Then resume the game
         menuManager.ToggleMenu(0, false);
         RevivalSessionEngine.ResumeGame();
     }
 
-    public void ToggleOptionsMenu(bool active) {
-        RevivalRuntimeEngine.ToggleOptionsMenu(active);
+    private bool CanLoadGame() {
+        if (!SavegameEngine.HasActiveSave || !SavegameEngine.HasSave())
+            return false;
+
+        // Disallow the player from manually reloading on Keter to prevent save/load abuse
+        if (RevivalSessionEngine.currentDifficulty == 2 && !Player.Instance.isDead) return false;
+
+        GameStateData state = SavegameEngine.Get<GameStateData>();
+
+        bool playerDeadOnKeter =
+            RevivalSessionEngine.currentDifficulty == 2
+            && Player.Instance != null
+            && Player.Instance.isDead;
+
+        return state.introCompleted && !playerDeadOnKeter;
     }
 
-    /// <summary>
-    /// Public method to switch the active state of the achievements menu, mostly via that one button in pause menu
-    /// </summary>
-    /// <param name="active">Boolean whether the achievements screen should be set to active</param>
-    public void ToggleAchievementsMenu(bool active) {
-        RevivalRuntimeEngine.ToggleAchievementsMenu(active);
+    public void LoadGame() {
+        if (!CanLoadGame()) return;
+
+        GameLoader.ReloadGame();
     }
 
-    /// <summary>
-    /// Public method to clean up some game stuff and return to the main menu. Should be accessed via buttons
-    /// </summary>
+    public void ToggleOptionsMenu(bool active) => RevivalRuntimeEngine.ToggleOptionsMenu(active);
+    public void ToggleAchievementsMenu(bool active) => RevivalRuntimeEngine.ToggleAchievementsMenu(active);
+
     public void ReturnToMenu() {
+        // Delete the save if the intro was not completed or if the player died on Keter mode
+        if (!SavegameEngine.Get<GameStateData>().introCompleted
+            || (RevivalSessionEngine.currentDifficulty == 2 && Player.Instance.isDead))
+            SavegameEngine.DeleteSave("SaveFile");
+
         // Kind of resume game as to not get stuck before attempting to load the main menu
         Time.timeScale = 1f;
         AudioManager.Instance.ResumeAllSFX();
 
         // Prevents sounds from bleeding into the main menu
-        // FIXME: Has been show to not work
         RuntimeManager.GetBus("bus:/SFX").stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        RuntimeManager.GetBus("bus:/Voice").stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
 
         // If available, use the SceneController instance to load the menu scene and unload Session and Game scenes
         if (SceneController.instance == null) return;
 
-        // FIXME: Some session value seems to not unload correctly
         SceneController.instance
             .NewTransition()
             .Load(SceneDatabase.Slots.MENU, SceneDatabase.Scenes.MENU, setActive: true)
@@ -100,5 +115,16 @@ public class PauseMenu : MonoBehaviour {
             .WithOverlay()
             .Perform();
     }
+
+    public void RefreshLoadGameText() {
+        loadGameTextPause.color = CanLoadGame()
+            ? Color.white
+            : new Color(0.4f, 0.4f, 0.4f);
+
+        loadGameTextDeath.color = CanLoadGame()
+            ? Color.white
+            : new Color(0.4f, 0.4f, 0.4f);
+    }
+
     #endregion
 }

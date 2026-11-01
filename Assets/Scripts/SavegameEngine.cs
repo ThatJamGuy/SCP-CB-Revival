@@ -16,7 +16,7 @@ public static class SavegameEngine {
     private static readonly Dictionary<Type, string> paths = new Dictionary<Type, string>(8);
     private static readonly List<ISaveable> saveables = new List<ISaveable>(16);
 
-    private static string slotFolder; // IE. "Saves/D-9341"
+    private static string slotFolder; // IE. "Saves/D-9341" (Overwritten for the temporary singleslot)
 
     public static bool HasActiveSave => slotFolder != null;
     public static SessionData Session => Get<SessionData>();
@@ -59,15 +59,32 @@ public static class SavegameEngine {
     // Makes an existing save active (If it can find it, and it will return false if it can't)
     public static bool LoadGame(string saveFolder) {
         string folder = Path.Combine(SAVE_ROOT_FOLDER, saveFolder);
-        SetSlot(folder);
+        string sessionPath = Path.Combine(folder, nameof(SessionData) + SAVE_EXTENSION);
 
-        if (!DataSaver.DataFileExists(GetPath(typeof(SessionData)))) {
-            slotFolder = null;
+        if (!DataSaver.DataFileExists(sessionPath)) return false;
+
+        SessionData session;
+        try {
+            session = DataSaver.Load<SessionData>(sessionPath);
+        } catch (Exception e) {
+            Debug.LogError($"Could not load save session '{saveFolder}': {e.Message}");
             return false;
         }
 
-        Get<SessionData>();
+        if (session == null) {
+            Debug.LogError($"Save session '{saveFolder}' contained no session data.");
+            return false;
+        }
+
+        // Only switch slots after the session data has been read successfully
+        SetSlot(folder);
+        cache[typeof(SessionData)] = session;
         return true;
+    }
+
+    // Drops cached modules so the next Get<T>() rereads from disk. Keeps the slot and registered saveables
+    public static void ReloadFromDisk() {
+        cache.Clear();
     }
 
     // Extra bool for loading the temporary single slot
@@ -116,8 +133,21 @@ public static class SavegameEngine {
 
     // Asks all registered ISaveables to update their data, then writes every loaded module
     public static void SaveAll() {
-        for (int i = 0; i < saveables.Count; i++) saveables[i].PrepareSaveableValues();
-        foreach (KeyValuePair<Type, object> pair in cache) DataSaver.Save(pair.Value, GetPath(pair.Key));
+        if (!HasActiveSave) {
+            Debug.LogWarning("Cannot save because there is no active save slot.");
+            return;
+        }
+
+        for (int i = 0; i < saveables.Count; i++)
+            saveables[i].PrepareSaveableValues();
+
+        foreach (KeyValuePair<Type, object> pair in cache)
+            DataSaver.Save(pair.Value, GetPath(pair.Key));
+
+        CanvasInstance.Instance.HUD_QuickSave.SetTrigger("Quicksave");
+        AudioManager.PlayOneShot(
+            AudioManager.Instance.globalAudioContainer.quicksave01,
+            Player.Instance.transform.position);
     }
 
     // Register a class using ISaveable to the SavegameEngine
@@ -165,4 +195,19 @@ public class SessionData {
     public bool skipIntro;
     public string createdUTC;
     public string version;
+}
+
+[Serializable]
+public class GameStateData {
+    public bool introCompleted;
+    public bool lczInLockdown;
+    public int currentZone;
+}
+
+[Serializable]
+public class PlayerData {
+    public bool hasPosition;
+    public Vector3 position;
+
+    public string[] slotItems = new string[0]; // One entry per slot, null for empty slot
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Player instance class that will carry all publicly available information about the player.
 /// </summary>
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour, ISaveable {
     public static Player Instance { get; private set; }
 
     [Header("Movements Settings")]
@@ -51,6 +51,14 @@ public class Player : MonoBehaviour {
         cameraStartPos = cameraRoot.transform.localPosition;
 
         InventorySystem.Instance.playerCamera = playerCamera;
+    }
+
+    private void Start() {
+        SavegameEngine.Register(this);
+    }
+
+    private void OnDestroy() {
+        SavegameEngine.Unregister(this);
     }
 
     #region Private Methods
@@ -147,6 +155,22 @@ public class Player : MonoBehaviour {
         }
 
         StartCoroutine(DisplayDeathMessageCoroutine(deathMessageDelay, causeOfDeath));
+    }
+
+    // Required by ISaveable to setup the saved values
+    public void PrepareSaveableValues() {
+        PlayerData data = SavegameEngine.Get<PlayerData>();
+        data.position = transform.position;
+        data.hasPosition = true;
+    }
+
+    // Moves the player to the saved position
+    public void ApplySaveData() {
+        PlayerData data = SavegameEngine.Get<PlayerData>();
+        if (!data.hasPosition) return;
+
+        transform.position = data.position;
+        Physics.SyncTransforms();
     }
 
     #endregion

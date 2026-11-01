@@ -114,13 +114,18 @@ public class AudioManager : MonoBehaviour {
     // Pause the SFX bus and any tracked active instances
     public void PauseAllSFX() {
         SFXBus.setPaused(true);
-        foreach (var instance in activeInstances)
+        voiceBus.setPaused(true);
+
+        foreach (EventInstance instance in activeInstances)
             if (instance.isValid()) instance.setPaused(true);
     }
+
     // Resume the SFX bus and any tracked active instances
     public void ResumeAllSFX() {
         SFXBus.setPaused(false);
-        foreach (var instance in activeInstances)
+        voiceBus.setPaused(false);
+
+        foreach (EventInstance instance in activeInstances)
             if (instance.isValid()) instance.setPaused(false);
     }
 

@@ -101,12 +101,15 @@ public class MenuManager : MonoBehaviour {
 
         bool shouldPause = unregisteredMenuOpen;
 
-        foreach (var menu in menuList) {
+        foreach (Menu menu in menuList) {
             if (!menu.isOpen) continue;
-            if ((menu.pausesOnSafe && currentDifficulty == 0) || (menu.pausesOnEuclid && currentDifficulty == 1) || (menu.pausesOnKeter && currentDifficulty == 2)) {
+            shouldPause = true;
+
+            // Temporarily removing this because pausing is misbehaving on different gamemodes
+            /*if ((menu.pausesOnSafe && currentDifficulty == 0) || (menu.pausesOnEuclid && currentDifficulty == 1) || (menu.pausesOnKeter && currentDifficulty == 2)) {
                 shouldPause = true;
                 break;
-            }
+            }*/
         }
 
         // Welcome to this abhorrent section of code that allows Euclid and Keter modes to pause (or not pause)
@@ -114,22 +117,7 @@ public class MenuManager : MonoBehaviour {
         // One day this might end up in a code comments video, so hello from 5/27/2026. Are gas prices down yet?
         // If I'm not in a video, hello to the random guy reading my code, and I ask you the same question ^^^
 
-        // If the mode is Euclid specifically, do this pausing stuff anyway because inventory menu needs it
-        if (RevivalSessionEngine.currentDifficulty == 1) {
-            Player.Instance.disableInput = !Player.Instance.disableInput;
-            Player.Instance.isMoving = false;
-            Player.SetCursorState(Player.Instance.disableInput);
-            return;
-        }
-
-        // If mode is Keter or higher, only disable inputs. If it's Safe or Euclid, pause and resume respectively
-        if (RevivalSessionEngine.currentDifficulty >= 2) {
-            Player.Instance.disableInput = !Player.Instance.disableInput;
-            Player.Instance.isMoving = false;
-            Player.SetCursorState(Player.Instance.disableInput);
-            return;
-        }
-
+        // Removed hardcoded nonsense and just having everything pause everything for now
         if (shouldPause) RevivalSessionEngine.PauseGame();
         else RevivalSessionEngine.ResumeGame();
     }

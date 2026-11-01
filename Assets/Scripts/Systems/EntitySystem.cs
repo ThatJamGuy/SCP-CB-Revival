@@ -43,7 +43,7 @@ public class EntitySystem : MonoBehaviour {
     // SCP 106 everything config: Specific to this guy since he works very different
     // Mostly just copied and pasted from the old system rn, so may not integrate the best with new EntitySystem features
     private const float SPAWN_106_RADIUS = 3;
-    private const float SPAWN_106_EFFECT_DURATION = 7;
+    private const float SPAWN_106_EFFECT_DURATION = 8;
 
     private GameObject pending106Effect;
 
@@ -188,9 +188,9 @@ public class EntitySystem : MonoBehaviour {
     }
 
     // Move an entity passing in an entity reference and spawnpoint transform
-    public void MoveEntity(Entity entity, Transform spawnPoint, bool overrideCaseCheck = false) {
+    public void MoveEntity(Entity entity, Transform spawnPoint, bool overrideChaseCheck = false) {
         if (entity.disabled) return;
-        if (!overrideCaseCheck && entity.chasingPlayer) return;
+        if (!overrideChaseCheck && entity.chasingPlayer) return;
 
         if (entity.latestActiveInstance != null) {
             if (entity.latestAgent != null) entity.latestAgent.Warp(spawnPoint.position);

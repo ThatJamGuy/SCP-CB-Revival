@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class RevivalSessionEngine : MonoBehaviour {
+public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     public static RevivalSessionEngine Instance { get; private set; }
 
     private struct ChaseRequest {
-        public EntityId sourceId; // FIX: Use EntityId, not int
+        public EntityId sourceId;
         public int priority;
         public int intensity;
         public int order; // Lower number means older
@@ -47,6 +47,7 @@ public class RevivalSessionEngine : MonoBehaviour {
         Instance = this;
 
         // Safeguard for direct testing from 3_Game because I can't live with it. Keeps the seed random still and diff on Safe
+        // FIXME: Doesn't really work when enabling developerMode in EVNT_Intro.cs anymore
 #if UNITY_EDITOR
         if (!SavegameEngine.HasActiveSave && !SavegameEngine.LoadGame())
             SavegameEngine.NewGame("EditorTest", "", 0, true);
@@ -59,6 +60,10 @@ public class RevivalSessionEngine : MonoBehaviour {
         currentDifficulty = session.difficulty;
         skipIntro = session.skipIntro;
 
+        currentZone = SavegameEngine.Get<GameStateData>().currentZone;
+        lczInLockdown = SavegameEngine.Get<GameStateData>().lczInLockdown;
+        SavegameEngine.Register(this);
+
         otherDifficultyFactor = currentDifficulty;
 
         chaseRequests.Clear();
@@ -68,6 +73,11 @@ public class RevivalSessionEngine : MonoBehaviour {
     private void Start() {
         // Ensure this john is in lockdown every session because it didn't reset when testing the build
         lczInLockdown = true;
+    }
+
+    private void OnDestroy() {
+        SavegameEngine.Unregister(this);
+        if (Instance == this) Instance = null;
     }
 
     #endregion
@@ -135,6 +145,7 @@ public class RevivalSessionEngine : MonoBehaviour {
         MusicManager.Instance.StopAllMusic();
         CanvasInstance.Instance.deathMenu.SetActive(true);
         CanvasInstance.Instance.deathMenuDeathCauseText.text = causeOfDeath;
+        CanvasInstance.Instance.pauseMenu.RefreshLoadGameText();
         Player.SetCursorState(true);
     }
 
@@ -177,9 +188,8 @@ public class RevivalSessionEngine : MonoBehaviour {
     /// <param name="setAmbience">Whether to update ambience audio when changing the zone.</param>
     /// <param name="setMusic">Whether to update music playback when changing the zone.</param>
     public static void SetZone(int zone, bool setAmbience = true, bool setMusic = true) {
-        // Manually set currentZone to the zone parameter that was passed through,
-        // as calling this likely means we want it something really specific anyway
         currentZone = zone;
+        SavegameEngine.Get<GameStateData>().currentZone = zone;
         SetGlobalAudioBasedOnZone(zone, setAmbience, setMusic);
     }
 
@@ -243,6 +253,11 @@ public class RevivalSessionEngine : MonoBehaviour {
         infoTextTween = Tween.Delay(displayDuration, () => {
             infoTextTween = Tween.Color(infoText, endColor, fadeDuration);
         });
+    }
+
+    public void PrepareSaveableValues() {
+        SavegameEngine.Get<GameStateData>().currentZone = currentZone;
+        SavegameEngine.Get<GameStateData>().lczInLockdown = lczInLockdown;
     }
 
     public void DebugDispalyZone() {
