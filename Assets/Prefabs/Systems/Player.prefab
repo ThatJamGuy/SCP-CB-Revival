@@ -440,9 +440,11 @@ MonoBehaviour:
   walkSpeed: 3
   sprintSpeed: 6
   crouchSpeed: 1
+  noclipSpeed: 5
   staminaDepletionModifier: 0
   blinkDepletionModifier: 0
   bloodLossModifier: 0
+  noclipSprintModifier: 2
   disableInput: 0
   disableLooking: 0
   isMoving: 0
@@ -520,7 +522,7 @@ CapsuleCollider:
   m_Radius: 0.3
   m_Height: 2.45
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1.2, z: 0}
 --- !u!1 &8034423973430074073
 GameObject:
   m_ObjectHideFlags: 0
@@ -661,6 +663,9 @@ MonoBehaviour:
   staminaRegenRate: 0.1
   characterController: {fileID: 6915905209020144940}
   playerCameraRoot: {fileID: 2088440344480309075}
+  capsuleCollider: {fileID: 5835967748460578399}
+  crouchingHeight: 1.2
+  crouchCameraDrop: 1
 --- !u!1 &8393352798592331691
 GameObject:
   m_ObjectHideFlags: 0

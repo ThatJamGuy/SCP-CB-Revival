@@ -272,6 +272,5 @@ public class DevelopmentConsole : MonoBehaviour {
 
         Debug.LogWarning("Could not find a room with that ID, or the room is not configured for teleporting.");
     }
-
     #endregion
 }

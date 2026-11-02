@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -11,7 +12,7 @@ public class PlayerInteraction : MonoBehaviour {
     [SerializeField] private string interactTag = "Interact";
     [SerializeField] private LayerMask interactableMask;
     [SerializeField] private LayerMask obstructionMask;
-    [SerializeField] private float interactRadius = 2.2f;
+    [SerializeField] private float interactRadius = 2.8f;
     [SerializeField] private float interactIconScreenPadding = 20f;
 
     // New stuff to prioritize objects the player is looking at.
@@ -25,7 +26,7 @@ public class PlayerInteraction : MonoBehaviour {
     // Not a clanker comment btw I'm learning about sphere overlap non alloc,
     // this is stuff from the Unity Docs
     // Set the maximum number of colliders that can be detected at once.
-    private const int MAX_COLLIDERS = 10;
+    private const int MAX_COLLIDERS = 32;
 
     private IInteractable currentInteractablePress;
     private IHoldInteractable currentInteractableHold;
@@ -89,14 +90,16 @@ public class PlayerInteraction : MonoBehaviour {
     /// Determines the closest interactable to the player.
     /// Recent changes allow this method to prioritize the object the player is looking at.
     /// </summary>
-    private void DetermineClosestInteractable() {
-        // Reuse the pre-allocated array for Physics.OverlapSphereNonAlloc.
-        var origin = transform.position;
-        int numColliders = Physics.OverlapSphereNonAlloc(origin, interactRadius, hitColliders, interactableMask);
+    private void DetermineClosestInteractable()
+    {
+        //switched to camera postion rather then previous implemenation that was transform position
+        //Correctly matches player eye level
+        var camPos = cameraTransform != null ? cameraTransform.position : transform.position;
+        var camForward = cameraTransform != null ? cameraTransform.forward : transform.forward;
 
-        // Cache what we need for scoring outside the loop
-        var camPos = cameraTransform.position;
-        var camForward = cameraTransform.forward;
+        //Changed from transform.position to camPos so that interacting follows the camera height
+        int numColliders = Physics.OverlapSphereNonAlloc(camPos, interactRadius, hitColliders, interactableMask);   
+
         float distWeight = 1f - lookWeight;
         float invRadius = 1f / interactRadius;
 
@@ -104,59 +107,69 @@ public class PlayerInteraction : MonoBehaviour {
         GameObject closestInteractable = null;
 
         // For every collider in the cool circle area around the player...
-        for (int i = 0; i < numColliders; i++) {
+        for (int i = 0; i < numColliders; i++)
+        {
             Collider hit = hitColliders[i];
 
-            // Check if it uses the interactTag. If not, give up this foreach check
-            if (!hit.CompareTag(interactTag)) continue;
+            //Basically Handles item prefabs interactions
+            bool hasTag = hit.CompareTag(interactTag) || (hit.transform.parent != null && hit.transform.parent.CompareTag(interactTag)) || hit.transform.root.CompareTag(interactTag);
+            if (!hasTag) continue;
 
-            var hitPosition = hit.transform.position;
+            // Evaluates from collider center with vertical offest to prevent linecast from not hitting the item
+            Vector3 hitPosition = hit.bounds.center + (Vector3.up * 0.02f);
 
-            // Distance from the player to the collider, normalized to 0..1 by the radius
-            var toHit = hitPosition - origin;
+            var toHit = hitPosition - camPos;
+
+            var toHitFromCam = hitPosition - camPos;
             float dist = Mathf.Sqrt(toHit.sqrMagnitude);
             float distScore = 1f - Mathf.Min(dist * invRadius, 1f);
-
-            // How directly the camera is aimed at the collider. 1 = dead center, -1 = directly behind
-            var toHitFromCam = hitPosition - camPos;
             float camSqr = toHitFromCam.sqrMagnitude;
-            float lookDot = camSqr > 0.0001f
-                ? Vector3.Dot(camForward, toHitFromCam) / Mathf.Sqrt(camSqr)
-                : 1f;
+            float lookDot = camSqr > 0.0001f ? Vector3.Dot(camForward, toHitFromCam) / Mathf.Sqrt(camSqr) : 1f;
 
             if (lookDot < minLookDot) continue;
 
-            // Blend the two. Remap the dot from -1..1 to 0..1 so both parts share the same scale
             float score = (lookDot * 0.5f + 0.5f) * lookWeight + distScore * distWeight;
 
-            // Cheap math first, expensive Linecast only if this could actually win
             if (score <= bestScore) continue;
-            if (Physics.Linecast(origin, hitPosition, obstructionMask)) continue;
+
+            // Validates linecast line of sight
+            if (Physics.Linecast(camPos, hitPosition, out RaycastHit obsHit, obstructionMask))
+            {
+                if (obsHit.collider.transform.root != hit.transform.root)
+                {
+                    continue;
+                }
+            }
 
             bestScore = score;
             closestInteractable = hit.gameObject;
-        }
 
-        // Set the current interactable to the closest one found in the foreach method
-        if (!ReferenceEquals(closestInteractable, currentInteractable)) {
+            }
+
+        if (!ReferenceEquals(closestInteractable, currentInteractable))
+        {
             currentInteractable = closestInteractable;
 
-            currentInteractablePress = closestInteractable
-                ? closestInteractable.GetComponent<IInteractable>()
-                : null;
-
-            currentInteractableHold = closestInteractable
-                ? closestInteractable.GetComponent<IHoldInteractable>()
-                : null;
+            //Fixes items when their collider or IInteractable are on different objects in the same prefab.
+            currentInteractablePress = closestInteractable != null ? closestInteractable.GetComponentInParent<IInteractable>() ?? closestInteractable.GetComponentInChildren<IInteractable>() : null;
+            currentInteractableHold = closestInteractable != null ? closestInteractable.GetComponentInParent<IHoldInteractable>() ?? closestInteractable.GetComponentInChildren<IHoldInteractable>() : null;
         }
 
-        // If there is a closestInteractable available, try and show the interact icon at the screen position of it
-        // Otherwise set that John to be inactive
-        if (closestInteractable) TryToShowInteractIcon(closestInteractable.transform.position);
-        else if (interactIcon.gameObject != null) interactIcon.gameObject.SetActive(false);
 
-
+        if (closestInteractable)
+        {
+            //Projects to visual collider center instead of root transform origin
+            Collider col = closestInteractable.GetComponent<Collider>();
+            Vector3 iconPos = col != null ? col.bounds.center : closestInteractable.transform.position;
+            TryToShowInteractIcon(iconPos);
+        }
+        else if (interactIcon.gameObject != null)
+        {
+            interactIcon.gameObject.SetActive(false);
+        }
     }
+
+
 
     private void TryToShowInteractIcon(Vector3 worldPos) {
         // Set screenPos to a spot on the screen that matches the world position of the interactable
