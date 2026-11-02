@@ -2,6 +2,9 @@ using FMODUnity;
 using System.Collections;
 using System.Text;
 using TMPro;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -229,7 +232,11 @@ public class MainMenuController : MonoBehaviour {
     }
 
     public void QuitGame() {
-        Application.Quit();
+        #if !UNITY_EDITOR
+            Application.Quit();
+        #else
+            EditorApplication.isPlaying = false;
+        #endif
     }
 
     #endregion
