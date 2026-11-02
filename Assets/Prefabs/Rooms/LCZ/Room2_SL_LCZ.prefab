@@ -2119,6 +2119,61 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 5691226428295319150, guid: ccdf4da82075ab74f98a5b96218dadbe, type: 3}
+--- !u!1 &3902129653560562254
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5458598782278397163}
+  - component: {fileID: 2360133052439311788}
+  m_Layer: 0
+  m_Name: ResAudio_Room1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &5458598782278397163
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3902129653560562254}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.25, y: 1.75, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4724959979048955309}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2360133052439311788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3902129653560562254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b0c5e63920ee4f55b7ec5248525af4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnityResonance::FMODUnityResonance.FmodResonanceAudioRoom
+  LeftWall: 4
+  RightWall: 4
+  Floor: 4
+  Ceiling: 4
+  BackWall: 4
+  FrontWall: 4
+  Reflectivity: 1
+  ReverbGainDb: 0
+  ReverbBrightness: 0
+  ReverbTime: 1
+  Size: {x: 7, y: 3.5, z: 20}
 --- !u!1 &3920171297944959919
 GameObject:
   m_ObjectHideFlags: 0
@@ -2683,6 +2738,7 @@ Transform:
   - {fileID: 1424828662736436518}
   - {fileID: 2651617985017849745}
   - {fileID: 2071409159105648889}
+  - {fileID: 5458598782278397163}
   m_Father: {fileID: 3744439812922256043}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4887650482534165678
