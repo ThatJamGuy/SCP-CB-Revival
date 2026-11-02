@@ -17,7 +17,7 @@ public class EVNT_SL : MonoBehaviour {
 
     public void DisableLCZLockdown() {
         // Adding this check so that if lockdown is disabled via console (Or early HCZ entrance) it won't trigger the 049 scene
-        RevivalSessionEngine.lczInLockdown = false;
+        RevivalSessionEngine.lczUnlocked = true;
 
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror04); // Fade out to silence
 
@@ -34,7 +34,7 @@ public class EVNT_SL : MonoBehaviour {
 
     // To be called via OnOpening on upDoorNew for the temp 049 spawn scare
     public void TempSpawn049() {
-        if (triggeredSpawn || RevivalSessionEngine.lczInLockdown) return;
+        if (triggeredSpawn || !RevivalSessionEngine.lczUnlocked) return;
 
         EntitySystem.Instance.SpawnEntity(EntitySystem.Instance.cached049Entity, temp049Spawn);
         EntitySystem.Instance.cached049Entity.disabled = false; // Alow 049 to be spawned/moved around now
@@ -46,8 +46,8 @@ public class EVNT_SL : MonoBehaviour {
     }
 
     public static void DisableLCZLockdownViaCMD() {
-        if (RevivalSessionEngine.lczInLockdown == true) {
-            RevivalSessionEngine.lczInLockdown = false;
+        if (RevivalSessionEngine.lczUnlocked == false) {
+            RevivalSessionEngine.lczUnlocked = true;
             Debug.Log("<color=#00ffff>Light Containment Zone lockdown has been lifted.</color>");
         }
 

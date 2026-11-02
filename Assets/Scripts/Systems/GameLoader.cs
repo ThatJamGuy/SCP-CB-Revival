@@ -17,12 +17,12 @@ public static class GameLoader {
     // In game -> the same scenes again, reinitialized from the save on disk (pause menu, death screen, etc)
     // Returns false if there is no save to load, in which case nothing is touched
     public static bool ReloadGame() {
-        if (SceneController.instance == null || !SavegameEngine.HasSave())
+        if (SceneController.instance == null || !SaveGameEngine.HasSave())
             return false;
 
         // This is the actual load operation; clearing registrations is expected because
         // the current scenes are about to be unloaded and recreated
-        if (!SavegameEngine.LoadGame()) return false;
+        if (!SaveGameEngine.LoadGame()) return false;
 
         RevivalSessionEngine.ResumeGame();
         RuntimeManager.GetBus("bus:/SFX").stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);

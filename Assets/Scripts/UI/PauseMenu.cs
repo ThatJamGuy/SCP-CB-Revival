@@ -15,11 +15,16 @@ public class PauseMenu : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI loadGameTextPause;
     [SerializeField] private TextMeshProUGUI loadGameTextDeath;
 
+    private SaveData saveData;
     private MapGenerator mapGenerator;
 
     private int currentDifficulty;
 
     #region Unity Callbacks
+
+    private void Awake() {
+        saveData = SaveGameEngine.Get<SaveData>();
+    }
 
     private void OnEnable() {
         // Make sure the load game text is the proper color when opening the pause menu
@@ -64,20 +69,18 @@ public class PauseMenu : MonoBehaviour {
     }
 
     private bool CanLoadGame() {
-        if (!SavegameEngine.HasActiveSave || !SavegameEngine.HasSave())
+        if (!SaveGameEngine.HasActiveSave || !SaveGameEngine.HasSave())
             return false;
 
         // Disallow the player from manually reloading on Keter to prevent save/load abuse
         if (RevivalSessionEngine.currentDifficulty == 2 && !Player.Instance.isDead) return false;
-
-        GameStateData state = SavegameEngine.Get<GameStateData>();
 
         bool playerDeadOnKeter =
             RevivalSessionEngine.currentDifficulty == 2
             && Player.Instance != null
             && Player.Instance.isDead;
 
-        return state.introCompleted && !playerDeadOnKeter;
+        return saveData.introCompleted && !playerDeadOnKeter;
     }
 
     public void LoadGame() {
@@ -91,9 +94,9 @@ public class PauseMenu : MonoBehaviour {
 
     public void ReturnToMenu() {
         // Delete the save if the intro was not completed or if the player died on Keter mode
-        if (!SavegameEngine.Get<GameStateData>().introCompleted
+        if (!saveData.introCompleted
             || (RevivalSessionEngine.currentDifficulty == 2 && Player.Instance.isDead))
-            SavegameEngine.DeleteSave("SaveFile");
+            SaveGameEngine.DeleteSave("SaveFile");
 
         // Kind of resume game as to not get stuck before attempting to load the main menu
         Time.timeScale = 1f;

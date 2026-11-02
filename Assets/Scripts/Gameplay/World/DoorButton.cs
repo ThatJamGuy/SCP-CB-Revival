@@ -36,8 +36,18 @@ public class DoorButton : MonoBehaviour, IInteractable {
         }
 
         // Player uses any keycard, but LCZ is on lockdown so it won't work regardless
-        if (InventorySystem.Instance.currentlyHeldItem.chosenBehavior == PresetBehavior.Key && requireLCZLockLift && RevivalSessionEngine.lczInLockdown) {
+        if (InventorySystem.Instance.currentlyHeldItem.chosenBehavior == PresetBehavior.Key && requireLCZLockLift && !RevivalSessionEngine.lczUnlocked) {
             RevivalSessionEngine.Instance.NotifyPlayer("The keycard was inserted into the slot, but nothing happend. The checkpoint monitor implies a lockdown is in effect.");
+            AudioManager.PlayOneShot(keycardFailedEvent, transform.position);
+
+            InventorySystem.Instance.UnequipCurrentItem();
+
+            return;
+        }
+
+        // Player uses keycard, but the door is broken or locked
+        if (InventorySystem.Instance.currentlyHeldItem.chosenBehavior == PresetBehavior.Key && (linkedDoor.isBroken || linkedDoor.isLocked)) {
+            RevivalSessionEngine.Instance.NotifyPlayer("The keycard was inserted into the slot, but nothing happend.");
             AudioManager.PlayOneShot(keycardFailedEvent, transform.position);
 
             InventorySystem.Instance.UnequipCurrentItem();

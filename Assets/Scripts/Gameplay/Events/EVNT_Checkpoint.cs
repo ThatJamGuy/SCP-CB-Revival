@@ -11,7 +11,7 @@ public class EVNT_Checkpoint : MonoBehaviour {
     private bool lockroomStopped;
 
     private void Update() {
-        if (!RevivalSessionEngine.lczInLockdown && !lockroomStopped) {
+        if (RevivalSessionEngine.lczUnlocked && !lockroomStopped) {
             lockdownAlert.Stop();
             lockroomStopped = true;
         }

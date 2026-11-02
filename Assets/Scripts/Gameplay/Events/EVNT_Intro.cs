@@ -78,6 +78,8 @@ public class EVNT_Intro : MonoBehaviour {
     [SerializeField] private LightFlicker lightToFlicker;
     [SerializeField] private Rigidbody lightBody;
 
+    private SaveData saveData;
+
     private bool researcher2Ready;
     private bool researcher2AtVend;
     private bool playerInChamber = false;
@@ -97,11 +99,11 @@ public class EVNT_Intro : MonoBehaviour {
     }
 
     private void Start() {
-        GameStateData state = SavegameEngine.Get<GameStateData>();
+        saveData = SaveGameEngine.Get<SaveData>();
 
         // Loaded a save from after the intro: rebuild the post-breach world and put the player at the saved checkpoint.
         // TriggerPostBreachEvent is deliberately NOT called here, it's the alarm cinematic and would replay on every load
-        if (state.introCompleted) {
+        if (saveData.introCompleted) {
             SetupPostBreach();
             SpawnPlayerFromSave();
             RevivalRuntimeEngine.Instance.ChangeDiscordStatus("Roaming the facility");
@@ -144,6 +146,7 @@ public class EVNT_Intro : MonoBehaviour {
         // Blink spamming to emulate intense light flickers
         // Why? Baked lighting that's why
         // EDIT: No longer using baked lighting for the part where this is used... so change this later???...
+        // EDIT 2: Probably not, now using a mix of both for coolness
         if (enableBlinkSpamming) {
             spamTimeElapsed += Time.deltaTime;
 
@@ -190,8 +193,7 @@ public class EVNT_Intro : MonoBehaviour {
 
     // Spawns at the last saved position, or at the skip intro spawn if no checkpoint has been reached yet
     private void SpawnPlayerFromSave() {
-        PlayerData data = SavegameEngine.Get<PlayerData>();
-        Vector3 position = data.hasPosition ? data.position : spawnSkipIntro.position;
+        Vector3 position = saveData.hasPosition ? saveData.position : spawnSkipIntro.position;
 
         GameObject player = Instantiate(playerPrefab, position, Quaternion.identity);
         SceneManager.MoveGameObjectToScene(player, spawnSkipIntro.gameObject.scene);
@@ -199,18 +201,20 @@ public class EVNT_Intro : MonoBehaviour {
 
     // Written to disk immediately so quitting right after the intro still continues in the post-breach state
     private static void MarkIntroCompleted() {
-        GameStateData state = SavegameEngine.Get<GameStateData>();
+        // Get the saveData again because now we're inside this static method
+        SaveData state = SaveGameEngine.Get<SaveData>();
+
         state.introCompleted = true;
         state.currentZone = RevivalSessionEngine.currentZone;
-        state.lczInLockdown = RevivalSessionEngine.lczInLockdown;
-        SavegameEngine.Save<GameStateData>();
+        state.lczUnlocked = RevivalSessionEngine.lczUnlocked;
+        SaveGameEngine.Save<SaveData>();
 
         // Establish a usable fallback checkpoint immediately after the intro
         if (Player.Instance != null) {
-            PlayerData playerData = SavegameEngine.Get<PlayerData>();
+            SaveData playerData = SaveGameEngine.Get<SaveData>();
             playerData.position = Player.Instance.transform.position;
             playerData.hasPosition = true;
-            SavegameEngine.Save<PlayerData>();
+            SaveGameEngine.Save<SaveData>();
         }
     }
 

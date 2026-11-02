@@ -21,8 +21,8 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     public static int otherDifficultyFactor = 0;
     public static int currentZone = 1;
     public static int currentPursuit = -1;
-    public static bool lczInLockdown = true;
-    public static bool skipIntro = false;
+    public static bool lczUnlocked;
+    public static bool skipIntro;
 
     [Header("Heads Up Display")]
     [SerializeField] private TextMeshProUGUI infoText;
@@ -32,6 +32,7 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
 
     private readonly List<ChaseRequest> chaseRequests = new List<ChaseRequest>(5);
 
+    private SaveData saveData;
     private MusicManager.MusicTrack activeTrack;
 
     private Tween infoTextTween;
@@ -46,23 +47,22 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
 
+        SaveGameEngine.Register(this);
+        saveData = SaveGameEngine.Get<SaveData>();
+
         // Safeguard for direct testing from 3_Game because I can't live with it. Keeps the seed random still and diff on Safe
         // FIXME: Doesn't really work when enabling developerMode in EVNT_Intro.cs anymore
 #if UNITY_EDITOR
-        if (!SavegameEngine.HasActiveSave && !SavegameEngine.LoadGame())
-            SavegameEngine.NewGame("EditorTest", "", 0, true);
+        if (!SaveGameEngine.HasActiveSave && !SaveGameEngine.LoadGame())
+            SaveGameEngine.NewGame("EditorTest", "", 0, true);
 #endif
 
-        SessionData session = SavegameEngine.Session;
-
-        saveName = session.saveName;
-        mapSeed = session.mapSeed;
-        currentDifficulty = session.difficulty;
-        skipIntro = session.skipIntro;
-
-        currentZone = SavegameEngine.Get<GameStateData>().currentZone;
-        lczInLockdown = SavegameEngine.Get<GameStateData>().lczInLockdown;
-        SavegameEngine.Register(this);
+        saveName = saveData.saveName;
+        mapSeed = saveData.mapSeed;
+        currentDifficulty = saveData.difficulty;
+        skipIntro = saveData.skipIntro;
+        currentZone = saveData.currentZone;
+        lczUnlocked = saveData.lczUnlocked;
 
         otherDifficultyFactor = currentDifficulty;
 
@@ -70,13 +70,8 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
         currentPursuit = -1;
     }
 
-    private void Start() {
-        // Ensure this john is in lockdown every session because it didn't reset when testing the build
-        lczInLockdown = true;
-    }
-
     private void OnDestroy() {
-        SavegameEngine.Unregister(this);
+        SaveGameEngine.Unregister(this);
         if (Instance == this) Instance = null;
     }
 
@@ -189,7 +184,7 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     /// <param name="setMusic">Whether to update music playback when changing the zone.</param>
     public static void SetZone(int zone, bool setAmbience = true, bool setMusic = true) {
         currentZone = zone;
-        SavegameEngine.Get<GameStateData>().currentZone = zone;
+        SaveGameEngine.Get<SaveData>().currentZone = zone;
         SetGlobalAudioBasedOnZone(zone, setAmbience, setMusic);
     }
 
@@ -256,8 +251,8 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     }
 
     public void PrepareSaveableValues() {
-        SavegameEngine.Get<GameStateData>().currentZone = currentZone;
-        SavegameEngine.Get<GameStateData>().lczInLockdown = lczInLockdown;
+        saveData.currentZone = currentZone;
+        saveData.lczUnlocked = lczUnlocked;
     }
 
     public void DebugDispalyZone() {

@@ -35,6 +35,7 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     // NERVER CHANGE THIS UNLESS MORE SLOTS ARE ADDED!!!
     private const int MAX_SLOTS = 10;
 
+    private SaveData saveData;
     private InputAction unequipItemAction;
 
     #region Unity Lifecycle
@@ -42,6 +43,9 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        SaveGameEngine.Register(this);
+        saveData = SaveGameEngine.Get<SaveData>();
 
         unequipItemAction = RevivalRuntimeEngine.Instance.GetAction("Player", "RightClick");
     }
@@ -55,7 +59,6 @@ public class InventorySystem : MonoBehaviour, ISaveable {
 
         // Load inventory from save if applicable, but otherwise register this saveable
         LoadInventoryFromSave();
-        SavegameEngine.Register(this);
     }
 
     private void OnEnable() {
@@ -69,7 +72,7 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     }
 
     private void OnDestroy() {
-        SavegameEngine.Unregister(this);
+        SaveGameEngine.Unregister(this);
         if (Instance == this) Instance = null;
     }
 
@@ -133,8 +136,7 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     }
 
     private void LoadInventoryFromSave() {
-        PlayerData data = SavegameEngine.Get<PlayerData>();
-        string[] slotItems = data.slotItems;
+        string[] slotItems = saveData.slotItems;
         if (slotItems == null) return;
 
         int count = Mathf.Min(slotItems.Length, inventorySlotObjects.Length);
@@ -209,14 +211,13 @@ public class InventorySystem : MonoBehaviour, ISaveable {
 
     // Save inventory data
     public void PrepareSaveableValues() {
-        PlayerData data = SavegameEngine.Get<PlayerData>();
         string[] slotItems = new string[inventorySlotObjects.Length];
 
         for (int i = 0; i < slotItems.Length; i++) {
             slotItems[i] = slotContents.TryGetValue(inventorySlotObjects[i], out string id) ? id : string.Empty;
         }
 
-        data.slotItems = slotItems;
+        saveData.slotItems = slotItems;
     }
 
     #endregion

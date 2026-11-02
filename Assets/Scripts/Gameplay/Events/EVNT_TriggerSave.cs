@@ -13,7 +13,7 @@ public class EVNT_TriggerSave : MonoBehaviour {
     private void OnTriggerEnter(Collider other) {
         if (other.CompareTag("Player")) {
             // If the intro isn't completed or checkpoints can only be used once then return
-            if (!SavegameEngine.Get<GameStateData>().introCompleted
+            if (!SaveGameEngine.Get<SaveData>().introCompleted
                 || (usedOnce && !allowMultiUse)) return;
 
             OnTriggerEntered.Invoke();
@@ -25,7 +25,7 @@ public class EVNT_TriggerSave : MonoBehaviour {
             }
 
             usedOnce = true;
-            SavegameEngine.SaveAll();
+            SaveGameEngine.SaveAll();
             OnSaveTriggered.Invoke();
         }
     }
