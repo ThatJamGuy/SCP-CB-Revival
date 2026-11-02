@@ -1,9 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// Purpose: Designed to act as runtime room metadata.
-/// What zone is it in? How should it handle player teleports?
-/// </summary>
+/// <summary> Purpose: Designed to act as runtime room metadata. </summary>
 public class RoomHandler : MonoBehaviour {
     [Header("Room Settings")]
     public string roomName;
@@ -13,7 +10,10 @@ public class RoomHandler : MonoBehaviour {
     [SerializeField] private Light[] roomLights;
     [SerializeField] private float activateDistance = 25;
 
+    #region Unity Lifecycle
+
     private void Update() {
+        if (roomLights == null) return;
 
         foreach (Light light in roomLights) {
             float distanceToPlayer = 0;
@@ -26,7 +26,13 @@ public class RoomHandler : MonoBehaviour {
         }
     }
 
+    #endregion
+
+    #region Public Methods
+
     public void TeleportPlayerHere() {
         Player.Instance.transform.position = teleportLocation.position;
     }
+
+    #endregion
 }
