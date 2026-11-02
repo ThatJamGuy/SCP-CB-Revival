@@ -88,16 +88,30 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     }
 
     // Creats and sets up the UI object for an item inside a specific slot and registers it
-    private void CreateItemInSlot(GameObject slot, ItemData itemData) {
+    private void CreateItemInSlot(GameObject slot, ItemData itemData)
+    {
+        if (inventoryItemTemplate == null)
+        {
+            Debug.LogError("inventoryItemTemplate is null.");
+        }
+
         GameObject itemObj = Instantiate(inventoryItemTemplate, slot.transform);
-        itemObj.GetComponent<Image>().sprite = itemData.itemInventoryIcon;
 
-        TooltipTrigger tooltip = itemObj.GetComponent<TooltipTrigger>();
-        tooltip.Title = itemData.itemName;
-        tooltip.Content = itemData.itemDescription;
+        if (itemObj.TryGetComponent<Image>(out Image img))
+        {
+            img.sprite = itemData.itemInventoryIcon;
+        }
 
-        InventoryItem invItem = itemObj.GetComponent<InventoryItem>();
-        invItem.itemData = itemData;
+        if (itemObj.TryGetComponent<TooltipTrigger>(out TooltipTrigger tooltip))
+        {
+            tooltip.Title = itemData.itemName;
+            tooltip.Content = itemData.itemDescription;
+        }
+
+        if (itemObj.TryGetComponent<InventoryItem>(out InventoryItem invItem))
+        {
+            invItem.itemData = itemData;
+        }
 
         RegisterItem(slot, itemData.itemIdentifier);
     }
