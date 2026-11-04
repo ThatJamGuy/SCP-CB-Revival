@@ -230,7 +230,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 74439a278e107ed4b9d24f093b815dc6, type: 2}
-  - {fileID: 2100000, guid: b50c4f8e1d7ba8144b97c4dd1a0349fc, type: 2}
+  - {fileID: 2100000, guid: c95e21dda7ff26747be3db823e8b4be5, type: 2}
   - {fileID: 2100000, guid: cfd0ada425dcf014a86e148c7df8c4f1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -384,6 +384,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
+  isKeycardButton: 0
+  requireLCZLockLift: 0
   interactionCooldown: 0.5
   buttonPressSound:
     Guid:
@@ -399,6 +401,20 @@ MonoBehaviour:
       Data3: 1131466380
       Data4: 413260402
     Path: event:/SFX/Interact/ButtonPress2
+  keycardFailedEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  keycardGoodEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   linkedDoor: {fileID: 5042124297846984419}
   buttonAnimator: {fileID: 8915240643392142056}
 --- !u!1 &3875118733273141681
@@ -592,7 +608,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 74439a278e107ed4b9d24f093b815dc6, type: 2}
-  - {fileID: 2100000, guid: b50c4f8e1d7ba8144b97c4dd1a0349fc, type: 2}
+  - {fileID: 2100000, guid: c95e21dda7ff26747be3db823e8b4be5, type: 2}
   - {fileID: 2100000, guid: cfd0ada425dcf014a86e148c7df8c4f1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -683,6 +699,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
+  isKeycardButton: 0
+  requireLCZLockLift: 0
   interactionCooldown: 0.5
   buttonPressSound:
     Guid:
@@ -698,6 +716,20 @@ MonoBehaviour:
       Data3: 1131466380
       Data4: 413260402
     Path: event:/SFX/Interact/ButtonPress2
+  keycardFailedEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  keycardGoodEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   linkedDoor: {fileID: 5042124297846984419}
   buttonAnimator: {fileID: 1732429861933404865}
 --- !u!1 &6692333063286819807
@@ -988,6 +1020,7 @@ MonoBehaviour:
   startOpen: 0
   isOpen: 0
   isLocked: 0
+  isBroken: 0
   requiresKeycard: 0
   requiredKeyLevel: 0
   openSpeed: 1.5
@@ -1014,6 +1047,7 @@ MonoBehaviour:
   moveAxis: 0
   doorPart01: {fileID: 453440459822240663}
   doorPart02: {fileID: 8973278481697758658}
+  occlusionPortal: {fileID: 0}
 --- !u!65 &4894724938919344979
 BoxCollider:
   m_ObjectHideFlags: 0

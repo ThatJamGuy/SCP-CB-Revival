@@ -9,6 +9,9 @@ public class OptionsMenu : MonoBehaviour {
     public static OptionsMenu Instance { get; private set; }
     public static UnityEvent<int> OnMinorGraphicsChanged = new UnityEvent<int>();
     public static UnityEvent<int> OnMajorGraphicsChanged = new UnityEvent<int>();
+    public static UnityEvent<bool> OnVFXChanged = new UnityEvent<bool>();
+    public static UnityEvent<bool> OnSSRChanged = new UnityEvent<bool>();
+    public static UnityEvent<bool> OnSSAOChanged = new UnityEvent<bool>();
 
     [Header("Graphics Settings")]
     [SerializeField] private TMP_Dropdown resolutionDropdown;
@@ -21,6 +24,8 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private TMP_Dropdown textureDropdown;
     [SerializeField] private TMP_Dropdown antiAliasingDropdown;
     [SerializeField] private TMP_Dropdown shadowQualityDropdown;
+    [SerializeField] private Toggle ssrToggle;
+    [SerializeField] private Toggle ssaoToggle;
 
     [Header("Audio Settings")]
     [SerializeField] private Slider masterVolumeSlider;
@@ -51,7 +56,7 @@ public class OptionsMenu : MonoBehaviour {
 
     private int lastHudPreset = -1;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Awake() {
         if (Instance == null) Instance = this;
@@ -89,6 +94,8 @@ public class OptionsMenu : MonoBehaviour {
         textureDropdown.SetValueWithoutNotify(localSettings.globalTextureMipmapLimit);
         antiAliasingDropdown.SetValueWithoutNotify(localSettings.antiAliasingMode);
         shadowQualityDropdown.SetValueWithoutNotify(localSettings.shadowQualityMode);
+        ssrToggle.SetIsOnWithoutNotify(localSettings.enableSSR);
+        ssaoToggle.SetIsOnWithoutNotify(localSettings.enableSSAO);
 
         // Audio settings
         soundtrackDropdown.SetValueWithoutNotify(localSettings.soundtrack);
@@ -196,6 +203,16 @@ public class OptionsMenu : MonoBehaviour {
         localSettings.shadowQualityMode = shadowQualityDropdown.value;
 
         OnMajorGraphicsChanged.Invoke(localSettings.shadowQualityMode);
+        RevivalRuntimeEngine.SaveSettingsData();
+    }
+
+    public void ApplyVFXSettings() {
+        localSettings.enableSSR = ssrToggle.isOn;
+        localSettings.enableSSAO = ssaoToggle.isOn;
+
+        OnSSRChanged.Invoke(localSettings.enableSSR);
+        OnSSAOChanged.Invoke(localSettings.enableSSAO);
+
         RevivalRuntimeEngine.SaveSettingsData();
     }
 

@@ -41,7 +41,7 @@ public class PauseMenu : MonoBehaviour {
 
         // Give the current difficulty the appropriate color when displaying it in the pause menu
         currentDifficultyText.text = currentDifficulty switch {
-            0 => "<color=grey>Difficulty:</color> <color=green>Easy</color>",
+            0 => "<color=grey>Difficulty:</color> <color=green>Safe</color>",
             1 => "<color=grey>Difficulty:</color> <color=yellow>Euclid</color>",
             2 => "<color=grey>Difficulty:</color> <color=red>Keter</color>",
             _ => currentDifficultyText.text
@@ -72,13 +72,19 @@ public class PauseMenu : MonoBehaviour {
         if (!SaveGameEngine.HasActiveSave || !SaveGameEngine.HasSave())
             return false;
 
-        // Disallow the player from manually reloading on Keter to prevent save/load abuse
-        if (RevivalSessionEngine.currentDifficulty == 2 && !Player.Instance.isDead) return false;
+        if (saveData == null) saveData = SaveGameEngine.Get<SaveData>();
+        if (saveData == null) return false;
 
-        bool playerDeadOnKeter =
-            RevivalSessionEngine.currentDifficulty == 2
-            && Player.Instance != null
-            && Player.Instance.isDead;
+        // Check if the current difficulty is Keter
+        bool isKeter = RevivalSessionEngine.currentDifficulty == 2;
+
+        Player player = Player.Instance;
+
+        // If the difficulty is Keter and the player is dead or doesn't exist return false
+        if (isKeter && (player == null || !player.isDead)) return false;
+
+        // Is the player dead and also on Keter difficulty
+        bool playerDeadOnKeter = isKeter && player.isDead;
 
         return saveData.introCompleted && !playerDeadOnKeter;
     }

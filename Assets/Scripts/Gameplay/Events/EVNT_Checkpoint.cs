@@ -8,12 +8,18 @@ public class EVNT_Checkpoint : MonoBehaviour {
     [SerializeField] private EventReference lockroomSirenEvent;
     [SerializeField] private StudioEventEmitter lockdownAlert;
 
+    [Header("References")]
+    [SerializeField] private GameObject screenLCZ;
+    [SerializeField] private GameObject screenHCZ;
+
     private bool lockroomStopped;
 
     private void Update() {
         if (RevivalSessionEngine.lczUnlocked && !lockroomStopped) {
             lockdownAlert.Stop();
             lockroomStopped = true;
+            screenLCZ.SetActive(false);
+            screenHCZ.SetActive(false);
         }
     }
 

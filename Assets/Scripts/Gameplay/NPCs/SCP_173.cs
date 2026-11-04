@@ -70,7 +70,7 @@ public class SCP_173 : MonoBehaviour {
     private bool horrorSoundReady = true;
     private bool hasPlayedDistanceHorrorSound = false;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Awake() {
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -221,13 +221,13 @@ public class SCP_173 : MonoBehaviour {
 
     //TODO: Revisit this later to optimize, might make door opening a modular component in the future
     private void CheckForDoors() {
-        var origin = transform.position;
+        Vector3 origin = transform.position;
         int count = Physics.OverlapSphereNonAlloc(origin, DOOR_CHECK_RADIUS, doorColliders);
         Door nearest = null;
         float minSqrDist = float.MaxValue;
 
         for (int i = 0; i < count; i++) {
-            var col = doorColliders[i];
+            Collider col = doorColliders[i];
             if (!col.TryGetComponent(out Door door)) continue;
             float sqrDist = (col.transform.position - origin).sqrMagnitude;
             if (sqrDist < minSqrDist) {
@@ -240,7 +240,7 @@ public class SCP_173 : MonoBehaviour {
         if (nearest && Random.value < doorOpenChance && !nearest.isOpen && !nearest.requiresKeycard && !nearest.isLocked && !isVisibleByPlayer && !puppetMode) {
             nearest.OpenDoor();
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorOpen173, nearest.transform.position);
-        } else if (nearest && !nearest.isOpen && !puppetMode && EntitySystem.Instance.cached173Entity.chasingPlayer) {
+        } else if (nearest && !nearest.isOpen && !puppetMode && EntitySystem.Instance.cached173Entity.chasingPlayer && !isVisibleByPlayer) {
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorBangEvent, nearest.transform.position);
         }
     }

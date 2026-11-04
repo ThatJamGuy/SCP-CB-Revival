@@ -10,6 +10,8 @@ public class SettingsData {
     public int shadowQualityMode; // 0 - High, 1 - Medium, 2 - Low, 3 - None
     public bool vSync = true;
     public int frameLimit = 120;
+    public bool enableSSR = true;
+    public bool enableSSAO = true;
 
     public int soundtrack = 0;
     public bool consoleEnabled = false;
