@@ -27,6 +27,7 @@ public class Player : MonoBehaviour, ISaveable {
     public bool isSprinting;
     public bool isCrouching;
     public bool isDead;
+    public bool isNoclipping;
 
     public static bool isBlinking { get; set; }
     public static bool wearingGasMask;

@@ -14,6 +14,7 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     public static RevivalRuntimeEngine Instance { get; private set; }
     public static SettingsData SettingsData { get; set; }
     public static Vector3 ShakeOffset { get; private set; }
+    public static Vector3 ShakeRotation { get; private set; }
     private static readonly HashSet<string> obtainedAchievementNames = new HashSet<string>();
 
     public static int TotalAchievements { get; private set; }
@@ -32,6 +33,14 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     [SerializeField] private GameObject achievementItemPrefab;
     [SerializeField] private Transform achievementContainer;
 
+    [Header("Camera Shake Settings")]
+    [SerializeField] private float shakeNoiseFrequency = 11f;
+    [SerializeField] private float shakeRotationStrength = 9f;
+    [SerializeField] private float shakeImpactKick = 25f;
+    [SerializeField] private float shakeSpringFrequency = 7f;
+    [SerializeField, Range(0.05f, 1f)] private float shakeSpringDamping = 0.3f;
+    [SerializeField] private float shakeFadeDuration = 1.4f;
+
     [Header("Canvas References")]
     public GameObject achievementsScreen;
     public GameObject optionsScreen;
@@ -41,6 +50,9 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     private const ulong APPLICATION_ID = 1450277986178830448; // Discord app token. Hopefully leaving this here isn't a security vulernability :)
     private const string SETTINGS_FILE_NAME = "settings.json"; // File name for the JSON settings file. This is where the settings are saved and loaded from.
     private const string ACHIEVMENTS_FILE_NAME = "achievements.json"; // Similar to the settings, but housng a list of achievement identifiers the player has unlocked.
+    private const float SHAKE_BLEND_IN = 0.15f;
+    private const float SHAKE_SPRING_STEP = 0.005f;
+    private const float SHAKE_REST_THRESHOLD = 0.00001f;
 
     private ulong startTimestamp;
 
@@ -51,6 +63,11 @@ public class RevivalRuntimeEngine : MonoBehaviour {
 
     private bool developerMode;
     private float shakeIntensity;
+    private float shakeTime;
+    private float shakeTimeScale = 1f;
+    private Vector4 shakeSeed;
+    private Vector3 shakePosVelocity;
+    private Vector3 shakeRotVelocity;
 
     #region Unity Lifecycle
 
@@ -116,6 +133,10 @@ public class RevivalRuntimeEngine : MonoBehaviour {
         }
     }
 
+    private void Update() {
+        UpdateCameraShake(Time.deltaTime);
+    }
+
     #endregion
 
     #region Private Methods
@@ -151,9 +172,72 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     }
 
     // Generate random shake offset for the camera shake
-    private void UpdateCameraShakeOffset(float intensity) {
-        Vector2 random = Random.insideUnitCircle * intensity;
-        ShakeOffset = new Vector3(random.x, random.y, 0f);
+    private void UpdateCameraShake(float deltaTime) {
+        if (deltaTime <= 0f) return;
+
+        Vector3 targetOffset = Vector3.zero;
+        Vector3 targetRotation = Vector3.zero;
+
+        if (shakeIntensity > 0f) {
+            shakeTime += deltaTime * shakeTimeScale;
+            float t = shakeTime * shakeNoiseFrequency;
+
+            targetOffset = new Vector3(
+                ShakeNoise(shakeSeed.x, t),
+                ShakeNoise(shakeSeed.y, t),
+                ShakeNoise(shakeSeed.z + shakeSeed.y, t) * 0.5f
+            ) * shakeIntensity;
+
+            targetRotation = new Vector3(
+                ShakeNoise(shakeSeed.z, t),
+                ShakeNoise(shakeSeed.w, t),
+                ShakeNoise(shakeSeed.x + shakeSeed.w, t) * 0.6f
+            ) * (shakeIntensity * shakeRotationStrength);
+        } else if (ShakeOffset.sqrMagnitude < SHAKE_REST_THRESHOLD && shakePosVelocity.sqrMagnitude < SHAKE_REST_THRESHOLD
+                && ShakeRotation.sqrMagnitude < SHAKE_REST_THRESHOLD && shakeRotVelocity.sqrMagnitude < SHAKE_REST_THRESHOLD) {
+            ShakeOffset = Vector3.zero;
+            ShakeRotation = Vector3.zero;
+            shakePosVelocity = Vector3.zero;
+            shakeRotVelocity = Vector3.zero;
+            return;
+        }
+
+        float omega = shakeSpringFrequency * 2f * Mathf.PI;
+        float stiffness = omega * omega;
+        float damping = 2f * shakeSpringDamping * omega;
+        int steps = Mathf.CeilToInt(deltaTime / SHAKE_SPRING_STEP);
+        float step = deltaTime / steps;
+
+        Vector3 offset = ShakeOffset;
+        Vector3 rotation = ShakeRotation;
+
+        for (int i = 0; i < steps; i++) {
+            shakePosVelocity += (stiffness * (targetOffset - offset) - damping * shakePosVelocity) * step;
+            offset += shakePosVelocity * step;
+
+            shakeRotVelocity += (stiffness * (targetRotation - rotation) - damping * shakeRotVelocity) * step;
+            rotation += shakeRotVelocity * step;
+        }
+
+        ShakeOffset = offset;
+        ShakeRotation = rotation;
+    }
+
+    private void ApplyShakeImpact(float intensity) {
+        if (intensity <= 0f) return;
+
+        Vector3 direction = Random.onUnitSphere;
+        shakePosVelocity += new Vector3(direction.x, direction.y, direction.z * 0.5f) * (intensity * shakeImpactKick);
+
+        Vector3 rotDirection = Random.onUnitSphere;
+        shakeRotVelocity += new Vector3(rotDirection.x, rotDirection.y, rotDirection.z * 0.6f) * (intensity * shakeImpactKick * shakeRotationStrength);
+    }
+
+    private static float ShakeNoise(float seed, float t) {
+        float sway = Mathf.PerlinNoise(seed, t * 0.35f) * 2f - 1f;
+        float shake = Mathf.PerlinNoise(seed + 31.7f, t) * 2f - 1f;
+        float rumble = Mathf.PerlinNoise(seed + 77.3f, t * 2.7f) * 2f - 1f;
+        return sway * 0.6f + shake + rumble * 0.45f;
     }
 
     #endregion
@@ -163,34 +247,43 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     private IEnumerator CameraShakeRoutine(float startIntensity, float endIntensity, float duration) {
         float elapsed = 0f;
         float invDuration = duration > 0f ? 1f / duration : 0f;
+        float previousIntensity = shakeIntensity;
 
-        // While elapsed time is less than the duration, 
+        if (shakeIntensity <= 0f) {
+            shakeTime = 0f;
+            shakeSeed = new Vector4(Random.value, Random.value, Random.value, Random.value) * 1000f;
+        }
+
+        shakeTimeScale = 1f;
+        ApplyShakeImpact(startIntensity);
+
+        // While elapsed time is less than the duration,
         // lerp the shake intensity from start to end and update the camera shake offset
         while (elapsed < duration) {
-            shakeIntensity = Mathf.Lerp(startIntensity, endIntensity, elapsed * invDuration);
-            UpdateCameraShakeOffset(shakeIntensity);
+            float target = Mathf.Lerp(startIntensity, endIntensity, elapsed * invDuration);
+            shakeIntensity = Mathf.Lerp(previousIntensity, target, Mathf.SmoothStep(0f, 1f, elapsed / SHAKE_BLEND_IN));
             elapsed += Time.deltaTime;
             yield return null;
         }
 
         // Fade out
-        const float fadeDuration = 0.5f;
-        const float invFade = 1f / fadeDuration;
+        float invFade = shakeFadeDuration > 0f ? 1f / shakeFadeDuration : float.MaxValue;
         float startShake = shakeIntensity;
         elapsed = 0f;
 
         // While elapsed time is less than the fade duration,
         // lerp the shake intensity from the current shake intensity to 0 and update the camera shake offset
-        while (elapsed < fadeDuration) {
-            shakeIntensity = Mathf.Lerp(startShake, 0f, elapsed * invFade);
-            UpdateCameraShakeOffset(shakeIntensity);
+        while (elapsed < shakeFadeDuration) {
+            float remaining = 1f - elapsed * invFade;
+            shakeIntensity = startShake * remaining * remaining;
+            shakeTimeScale = Mathf.Lerp(0.4f, 1f, remaining);
             elapsed += Time.deltaTime;
             yield return null;
         }
 
         // Reset these Johns
         shakeIntensity = 0f;
-        ShakeOffset = Vector3.zero;
+        shakeTimeScale = 1f;
         shakeCoroutine = null;
     }
 

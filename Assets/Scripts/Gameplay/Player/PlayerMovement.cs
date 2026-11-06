@@ -34,6 +34,7 @@ public class PlayerMovement : MonoBehaviour {
     private bool isSprinting;
     private bool isCrouching;
     private bool sprintLocked;
+    private bool noclipActive;
 
     private float currentSpeed;
     private float walkingSpeed;
@@ -88,6 +89,13 @@ public class PlayerMovement : MonoBehaviour {
         // If input is manually disabled or functionality is broken then don't do anything
         if (player.disableInput || cantFunction) return;
 
+        if (player.isNoclipping != noclipActive) SetNoclipActive(player.isNoclipping);
+
+        if (noclipActive) {
+            HandleNoclipMovement();
+            return;
+        }
+
         DetermineMovementSpeed();
         HandleMovement();
         HandleStamina();
@@ -115,6 +123,27 @@ public class PlayerMovement : MonoBehaviour {
         characterController.Move(move * Time.deltaTime);
 
         player.isMoving = input.sqrMagnitude > 0f;
+    }
+
+    private void SetNoclipActive(bool active) {
+        noclipActive = active;
+        characterController.enabled = !active;
+        velocity = Vector3.zero;
+        player.isMoving = false;
+
+        if (!active) Physics.SyncTransforms();
+    }
+
+    private void HandleNoclipMovement() {
+        Vector2 input = moveAction.ReadValue<Vector2>();
+        Transform body = characterController.transform;
+        Transform view = player.playerCamera != null ? player.playerCamera.transform : body;
+
+        float speed = player.noclipSpeed;
+        if (sprintAction.IsPressed()) speed *= player.noclipSprintModifier;
+
+        Vector3 move = view.right * input.x + view.forward * input.y;
+        body.position += Vector3.ClampMagnitude(move, 1f) * (speed * Time.deltaTime);
     }
 
     private void HandleStamina() {
@@ -171,7 +200,7 @@ public class PlayerMovement : MonoBehaviour {
 
     // When hitting the crouch button, if crouching stand, otherwise start crouching
     private void AttemptToToggleCrouch() {
-        if (player.disableInput) return;
+        if (player.disableInput || noclipActive) return;
         if (isCrouching) TryToStand();
         else StartCrouch();
     }

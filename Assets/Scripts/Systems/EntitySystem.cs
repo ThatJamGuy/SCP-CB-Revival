@@ -25,6 +25,7 @@ public class EntitySystem : MonoBehaviour {
     [Header("SCP Specific Settings")]
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private GameObject scp106_SpawnedEffect;
+    [SerializeField] private LayerMask spawnSightMask = Physics.DefaultRaycastLayers;
 
     [HideInInspector] public List<Transform> cachedWaypoints = new List<Transform>();
     [HideInInspector] public Entity cached173Entity;
@@ -34,6 +35,9 @@ public class EntitySystem : MonoBehaviour {
     // SCP 173 range config: Closer and more frequent encounters
     private const float SPAWN_173_MIN_SQR = 20 * 20;
     private const float SPAWN_173_MAX_SQR = 60 * 60;
+
+    private const float SPAWN_SIGHT_HEIGHT = 1.2f;
+    private const float SPAWN_VIEWPORT_MARGIN = 0.25f;
 
     // SCP 049 range config: Further and less frequent.
     // spawnRate should also be higher so he can freeroam more
@@ -96,6 +100,7 @@ public class EntitySystem : MonoBehaviour {
     private void HandleAutoSpawning(Entity entity, ref float timer, float minSqr, float maxSqr) {
         timer += Time.deltaTime;
         if (timer < (entity.spawnRate - RevivalSessionEngine.otherDifficultyFactor)) return;
+        if (IsInstanceSeenByPlayer(entity)) return;
 
         timer = 0;
 
@@ -230,12 +235,33 @@ public class EntitySystem : MonoBehaviour {
             Transform wp = cachedWaypoints[i];
             float sqr = (wp.position - playerPos).sqrMagnitude;
             if (sqr <= minSqr || sqr >= maxSqr) continue;
+            if (IsPositionInPlayerSight(wp.position)) continue;
 
             candidates++;
             if (Random.Range(0, candidates) == 0) chosen = wp;
         }
 
         return chosen != null;
+    }
+
+    private static bool IsInstanceSeenByPlayer(Entity entity) {
+        if (entity.latestActiveInstance == null) return false;
+        if (entity.latestActiveInstance.TryGetComponent(out SCP_173 scp173)) return scp173.isVisibleByPlayer;
+        return false;
+    }
+
+    private bool IsPositionInPlayerSight(Vector3 position) {
+        Camera cam = Player.Instance.playerCamera;
+        if (cam == null) return false;
+
+        Vector3 point = position + Vector3.up * SPAWN_SIGHT_HEIGHT;
+        Vector3 viewport = cam.WorldToViewportPoint(point);
+
+        if (viewport.z <= 0f) return false;
+        if (viewport.x < -SPAWN_VIEWPORT_MARGIN || viewport.x > 1f + SPAWN_VIEWPORT_MARGIN) return false;
+        if (viewport.y < -SPAWN_VIEWPORT_MARGIN || viewport.y > 1f + SPAWN_VIEWPORT_MARGIN) return false;
+
+        return !Physics.Linecast(cam.transform.position, point, spawnSightMask, QueryTriggerInteraction.Ignore);
     }
 
     private bool TryGetRandomGroundPosition(out Vector3 groundPos) {

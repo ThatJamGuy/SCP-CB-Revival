@@ -24,7 +24,8 @@ public class PanoramicCameraController : MonoBehaviour {
 
     private void Update() {
         // Determine finalized mouse input
-        mouseInput = Mouse.current.delta.ReadValue() * mouseSensitivity * rotationSpeed * Time.deltaTime;
+        Vector2 mouseDelta = Mouse.current != null ? Mouse.current.delta.ReadValue() : Vector2.zero;
+        mouseInput = mouseDelta * mouseSensitivity * rotationSpeed * Time.deltaTime;
         smoothInput = Vector2.SmoothDamp(smoothInput, mouseInput, ref velocity, smoothTime);
 
         // Clamp the camera rotation
@@ -32,7 +33,7 @@ public class PanoramicCameraController : MonoBehaviour {
         float y = Mathf.Clamp(initialRotation.y + smoothInput.x, initialRotation.y - maxHorizontalAngle, initialRotation.y + maxHorizontalAngle);
 
         // Set the rotation of the camera
-        transform.eulerAngles = new Vector3(x, y, initialRotation.z);
+        transform.eulerAngles = new Vector3(x, y, initialRotation.z) + RevivalRuntimeEngine.ShakeRotation;
 
         // Return to default position if the mouse stops moving
         if (mouseInput.sqrMagnitude < 0.0001f) smoothInput = Vector2.Lerp(smoothInput, Vector2.zero, Time.deltaTime * returnSpeed);

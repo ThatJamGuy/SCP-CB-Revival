@@ -91,6 +91,7 @@ public class DevelopmentConsole : MonoBehaviour {
         Register("settrack", "Set the music track, taking in <trackindex> and optinally <intensity>.", CMD_SetTrack);
         Register("printlockdown", "Prints the current state of the LCZ lockdown.", CMD_PrintLockdown);
         Register("disablelockdown", "Disabled the lockdown on the Light Containment Zone.", CMD_DisableLockdown);
+        Register("noclip", "Toggle noclip, optionally taking in <on/off>.", CMD_Noclip);
     }
 
     private void Register(string name, string desc, CommandHandler handler) {
@@ -250,6 +251,36 @@ public class DevelopmentConsole : MonoBehaviour {
 
     private void CMD_DisableLockdown(string[] args) {
         EVNT_SL.DisableLCZLockdownViaCMD();
+    }
+
+    private void CMD_Noclip(string[] args) {
+        if (Player.Instance == null) {
+            AddLine("<color=yellow>No player found to noclip.</color>");
+            return;
+        }
+
+        bool enable = !Player.Instance.isNoclipping;
+
+        if (args.Length > 0) {
+            switch (args[0].ToLowerInvariant()) {
+                case "on":
+                case "1":
+                case "true":
+                    enable = true;
+                    break;
+                case "off":
+                case "0":
+                case "false":
+                    enable = false;
+                    break;
+                default:
+                    AddLine("<color=yellow>Usage: noclip <on/off></color>");
+                    return;
+            }
+        }
+
+        Player.Instance.isNoclipping = enable;
+        Debug.Log($"<color=#00ffff>Noclip {(enable ? "enabled" : "disabled")}.</color>");
     }
 
     private void CMD_TeleportPlayer(string[] args) {
