@@ -48,6 +48,11 @@ public class SCP_914_Knob : MonoBehaviour, IHoldInteractable {
     private void Update() {
         if (!inUsage) return;
 
+        if (scp914.IsRefining) {
+            StopUsage();
+            return;
+        }
+
         float input = lookAction.ReadValue<Vector2>().x * knobRotationSpeed * Time.deltaTime;
         if (Mathf.Abs(input) < INPUT_DEADZONE) return;
 
@@ -90,6 +95,8 @@ public class SCP_914_Knob : MonoBehaviour, IHoldInteractable {
     }
 
     private void StopUsage() {
+        if (!inUsage) return;
+
         Player.Instance.disableLooking = false;
         inUsage = false;
     }
@@ -126,6 +133,8 @@ public class SCP_914_Knob : MonoBehaviour, IHoldInteractable {
     #region Public Methods
 
     public void BeginInteract(PlayerInteraction playerInteraction) {
+        if (scp914.IsRefining) return;
+
         Player.Instance.disableLooking = true;
         inUsage = true;
 

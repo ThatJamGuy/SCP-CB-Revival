@@ -102,6 +102,14 @@ public class PlayerInteraction : MonoBehaviour {
 
         var bestScore = float.MinValue;
         GameObject closestInteractable = null;
+        Collider aimedCollider = GetAimedInteractable(camPos, camForward, origin);
+        Vector3 closestPosition = Vector3.zero;
+
+        if (aimedCollider != null) {
+            closestInteractable = aimedCollider.gameObject;
+            closestPosition = aimedCollider.bounds.center;
+            numColliders = 0;
+        }
 
         // For every collider in the cool circle area around the player...
         for (int i = 0; i < numColliders; i++) {
@@ -110,7 +118,7 @@ public class PlayerInteraction : MonoBehaviour {
             // Check if it uses the interactTag. If not, give up this foreach check
             if (!hit.CompareTag(interactTag)) continue;
 
-            var hitPosition = hit.transform.position;
+            var hitPosition = hit.bounds.center;
 
             // Distance from the player to the collider, normalized to 0..1 by the radius
             var toHit = hitPosition - origin;
@@ -135,6 +143,7 @@ public class PlayerInteraction : MonoBehaviour {
 
             bestScore = score;
             closestInteractable = hit.gameObject;
+            closestPosition = hitPosition;
         }
 
         // Set the current interactable to the closest one found in the foreach method
@@ -152,10 +161,22 @@ public class PlayerInteraction : MonoBehaviour {
 
         // If there is a closestInteractable available, try and show the interact icon at the screen position of it
         // Otherwise set that John to be inactive
-        if (closestInteractable) TryToShowInteractIcon(closestInteractable.transform.position);
+        if (closestInteractable) TryToShowInteractIcon(closestPosition);
         else if (interactIcon.gameObject != null) interactIcon.gameObject.SetActive(false);
 
 
+    }
+
+    private Collider GetAimedInteractable(Vector3 camPos, Vector3 camForward, Vector3 origin) {
+        float maxDistance = interactRadius + Vector3.Distance(camPos, origin);
+        if (!Physics.Raycast(camPos, camForward, out RaycastHit hit, maxDistance, interactableMask | obstructionMask, QueryTriggerInteraction.Collide))
+            return null;
+
+        Collider hitCollider = hit.collider;
+        if (!hitCollider.CompareTag(interactTag)) return null;
+        if ((hitCollider.bounds.ClosestPoint(origin) - origin).sqrMagnitude > interactRadius * interactRadius) return null;
+
+        return hitCollider;
     }
 
     private void TryToShowInteractIcon(Vector3 worldPos) {

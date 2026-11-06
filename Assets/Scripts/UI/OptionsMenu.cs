@@ -107,6 +107,7 @@ public class OptionsMenu : MonoBehaviour {
         // Gameplay Settings
         lookSensSlider.SetValueWithoutNotify(localSettings.mouseSensitivity);
         lookSmoothSlider.SetValueWithoutNotify(localSettings.mouseSmoothing);
+        RefreshInputSliderTexts();
         hudDesignDropdown.SetValueWithoutNotify(localSettings.hudDesign);
         hudFunctionDropdown.SetValueWithoutNotify(localSettings.hudFunctionality);
 
@@ -276,9 +277,13 @@ public class OptionsMenu : MonoBehaviour {
         RevivalRuntimeEngine.SaveSettingsData();
     }
 
-    public void ApplyInputSliders() {
+    private void RefreshInputSliderTexts() {
         lookSensText.text = lookSensSlider.value.ToString();
         lookSmoothText.text = lookSmoothSlider.value.ToString();
+    }
+
+    public void ApplyInputSliders() {
+        RefreshInputSliderTexts();
 
         localSettings.mouseSensitivity = lookSensSlider.value;
         localSettings.mouseSmoothing = lookSmoothSlider.value;

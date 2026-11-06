@@ -131,9 +131,12 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     public static void ResumeGame() {
         // Set the game's timescale to 1 (Resuming Time.deltaTime to normal) and resume FMOD via the AudioManager
         Time.timeScale = 1f;
+        AudioManager.Instance.ResumeAllSFX();
+
+        if (Player.Instance.isDead) return;
+
         Player.SetCursorState(false);
         Player.Instance.disableInput = false;
-        AudioManager.Instance.ResumeAllSFX();
     }
 
     public void ShowDeathScreen(string causeOfDeath) {
