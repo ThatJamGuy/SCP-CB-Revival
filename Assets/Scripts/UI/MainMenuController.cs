@@ -127,21 +127,21 @@ public class MainMenuController : MonoBehaviour {
 
     // As the name implies, occasionally shakes the panoramic main menu camera for cool things and stuff reasons
     private IEnumerator PeriodicMenuShake() {
-        if (!enableMenuShakes) StopCoroutine(PeriodicMenuShake());
+        WaitForSeconds debrisWait = new WaitForSeconds(5);
 
-        yield return new WaitForSeconds(Random.Range(minShakeTime, maxShakeTime));
+        while (enableMenuShakes) {
+            yield return new WaitForSeconds(Random.Range(minShakeTime, maxShakeTime));
 
-        if (!enableMenuShakes) StopCoroutine(PeriodicMenuShake());
+            if (!enableMenuShakes) yield break;
 
-        shakeDebris.SetActive(true);
-        RevivalRuntimeEngine.Instance.ShakeCamera(0.02f, 0f, 4);
-        AudioManager.PlayOneShot(bigBooms);
+            shakeDebris.SetActive(true);
+            RevivalRuntimeEngine.Instance.ShakeCamera(0.02f, 0f, 4);
+            AudioManager.PlayOneShot(bigBooms);
 
-        yield return new WaitForSeconds(5);
+            yield return debrisWait;
 
-        shakeDebris.SetActive(false);
-
-        if (enableMenuShakes) StartCoroutine(PeriodicMenuShake());
+            shakeDebris.SetActive(false);
+        }
     }
 
     private void LoadSessionEnvironments() {

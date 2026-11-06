@@ -28,6 +28,8 @@ public class SCP_914 : MonoBehaviour {
 
     private bool isRefining;
 
+    public bool IsRefining => isRefining;
+
     #region Unity Lifecycle
 
     private void Awake() {
@@ -85,6 +87,7 @@ public class SCP_914 : MonoBehaviour {
 
     private IEnumerator RefinementProcess() {
         isRefining = true;
+        SCP_914_Recipe.RefinementMode lockedMode = currentRefinementMode;
 
         CollectItemsInInputArea();
 
@@ -98,7 +101,7 @@ public class SCP_914 : MonoBehaviour {
 
         for (int i = 0; i < itemsToRefine.Count; i++) {
             WorldItem item = itemsToRefine[i];
-            if (item) RefineItem(item);
+            if (item) RefineItem(item, lockedMode);
         }
 
         itemsToRefine.Clear();
@@ -109,14 +112,14 @@ public class SCP_914 : MonoBehaviour {
         isRefining = false;
     }
 
-    private void RefineItem(WorldItem item) {
+    private void RefineItem(WorldItem item, SCP_914_Recipe.RefinementMode mode) {
         ItemData inputData = item.associatedItemData;
         if (inputData == null) return;
 
         if (verboseLogging)
-            Debug.Log($"914 refining {inputData.name} in mode {currentRefinementMode}", this);
+            Debug.Log($"914 refining {inputData.name} in mode {mode}", this);
 
-        ItemData outputItem = GetOutput(inputData, currentRefinementMode);
+        ItemData outputItem = GetOutput(inputData, mode);
         Destroy(item.gameObject);
 
         if (outputItem == null) return;

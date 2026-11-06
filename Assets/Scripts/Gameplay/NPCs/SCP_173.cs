@@ -49,6 +49,7 @@ public class SCP_173 : MonoBehaviour {
     private const float REPATH_DISTANCE_SQR = 0.25f;
     private const int MAX_DOOR_COLLIDERS = 32;
     private const int SAMPLE_COUNT = 5;
+    private const float LINE_OF_SIGHT_RANGE = 80f;
 
     private readonly Plane[] frustumPlanes = new Plane[6];
     private readonly Collider[] doorColliders = new Collider[MAX_DOOR_COLLIDERS];
@@ -67,6 +68,7 @@ public class SCP_173 : MonoBehaviour {
     private float roamTimer;
     private float visibilityTimer;
     private float notVisibleTimer;
+    private bool inPlayerLineOfSight;
     private bool horrorSoundReady = true;
     private bool hasPlayedDistanceHorrorSound = false;
 
@@ -106,7 +108,7 @@ public class SCP_173 : MonoBehaviour {
 
     private void Update() {
         visibilityTimer -= Time.deltaTime;
-        if (visibilityTimer <= 0f) {
+        if (visibilityTimer <= 0f || hasTarget) {
             CheckPlayerVisibility();
             visibilityTimer = visibilityCheckInterval;
         }
@@ -123,7 +125,7 @@ public class SCP_173 : MonoBehaviour {
     #region Movement Control
 
     private void HandleMoving() {
-        if (isVisibleByPlayer || isVisibleByAnyNPC) {
+        if (inPlayerLineOfSight || isVisibleByAnyNPC) {
             if (!Player.isBlinking) {
                 movementSource.SetActive(false);
                 StopCompletely();
@@ -251,22 +253,22 @@ public class SCP_173 : MonoBehaviour {
 
     private void CheckPlayerVisibility() {
         bool wasVisible = isVisibleByPlayer;
-        isVisibleByPlayer = false;
+        inPlayerLineOfSight = false;
+        float sqrDistance = float.MaxValue;
 
-        if (!Player.isBlinking) {
-            Bounds bounds = meshRenderer.bounds;
-            bounds.Expand(frustumPadding);
+        Bounds bounds = meshRenderer.bounds;
+        bounds.Expand(frustumPadding);
 
-            Matrix4x4 worldToProjectionMatrix = playerCamera.projectionMatrix * playerCamera.worldToCameraMatrix;
-            GeometryUtility.CalculateFrustumPlanes(worldToProjectionMatrix, frustumPlanes);
+        Matrix4x4 worldToProjectionMatrix = playerCamera.projectionMatrix * playerCamera.worldToCameraMatrix;
+        GeometryUtility.CalculateFrustumPlanes(worldToProjectionMatrix, frustumPlanes);
 
-            if (GeometryUtility.TestPlanesAABB(frustumPlanes, bounds)) {
-                Transform camTransform = playerCamera.transform;
-                Vector3 origin = camTransform.position;
-                Vector3 pos = transform.position;
-                Vector3 toCenter = pos + eyeOffset - origin;
-                if (toCenter.sqrMagnitude > maxVisibilityRange * maxVisibilityRange) return;
+        if (GeometryUtility.TestPlanesAABB(frustumPlanes, bounds)) {
+            Transform camTransform = playerCamera.transform;
+            Vector3 origin = camTransform.position;
+            Vector3 pos = transform.position;
+            sqrDistance = (pos + eyeOffset - origin).sqrMagnitude;
 
+            if (sqrDistance <= LINE_OF_SIGHT_RANGE * LINE_OF_SIGHT_RANGE) {
                 Vector3 right = camTransform.right * lateralSampleRadius;
                 Vector3 mid = pos + eyeOffset * 0.5f;
                 samplePoints[0] = pos + eyeOffset;
@@ -278,34 +280,39 @@ public class SCP_173 : MonoBehaviour {
                 for (int i = 0; i < SAMPLE_COUNT; i++) {
                     Vector3 dir = samplePoints[i] - origin;
                     float dist = dir.magnitude;
-                    if (dist < 0.0001f) { isVisibleByPlayer = true; break; }
+                    if (dist < 0.0001f) { inPlayerLineOfSight = true; break; }
 
                     if (!Physics.Raycast(origin, dir / dist, out RaycastHit hit, dist, obstructionMask) ||
                         hit.transform.IsChildOf(transform)) {
-                        isVisibleByPlayer = true;
+                        inPlayerLineOfSight = true;
                         break;
                     }
                 }
             }
         }
 
+        isVisibleByPlayer = inPlayerLineOfSight && !Player.isBlinking;
+
         if (isVisibleByPlayer && !wasVisible) OnBecameVisibleToPlayer();
+        if (isVisibleByPlayer && sqrDistance <= maxVisibilityRange * maxVisibilityRange) TryStartChase();
+    }
+
+    private void TryStartChase() {
+        if (alreadySeenByPlayer || puppetMode) return;
+
+        alreadySeenByPlayer = true;
+        AcquireTarget(playerTransform);
+
+        // Let the entity system know that 173 is now actively chasing the player and shouldn't be messed with
+        EntitySystem.Instance.cached173Entity.chasingPlayer = true;
+
+        // Make a request for SCP-173 chase music
+        RevivalSessionEngine.Instance.RequestChaseTrack(this, 1, MusicManager.MusicTrack.SCP_173, 1);
+
+        tensionEmitter.Play();
     }
 
     private void OnBecameVisibleToPlayer() {
-        if (!alreadySeenByPlayer && !puppetMode) {
-            alreadySeenByPlayer = true;
-            AcquireTarget(playerTransform);
-
-            // Let the entity system know that 173 is now actively chasing the player and shouldn't be messed with
-            EntitySystem.Instance.cached173Entity.chasingPlayer = true;
-
-            // Make a request for SCP-173 chase music
-            RevivalSessionEngine.Instance.RequestChaseTrack(this, 1, MusicManager.MusicTrack.SCP_173, 1);
-
-            tensionEmitter.Play();
-        }
-
         if (horrorSoundReady) {
             PlayHorrorSound();
             horrorSoundReady = false;

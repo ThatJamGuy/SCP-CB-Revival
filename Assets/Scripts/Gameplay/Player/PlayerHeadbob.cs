@@ -18,13 +18,11 @@ public class PlayerHeadbob : MonoBehaviour {
 
     private Player player;
 
-    private float defaultYPos;
     private float bobTimer;
     private float movementSpeed;
     private bool hasPlayedFootstep;
     private Vector3 defaultPosition;
     private Vector3 defaultRotation;
-    private Quaternion defauyltRotationQuat;
 
     #region Unity Callbacks
     private void Start() {
@@ -32,12 +30,16 @@ public class PlayerHeadbob : MonoBehaviour {
         player = Player.Instance;
 
         // Set default position and rotation for the camera so the headbob can utilize these values
-        defaultYPos = transform.localPosition.y;
         defaultPosition = transform.localPosition;
         defaultRotation = transform.localRotation.eulerAngles;
     }
 
     private void Update() {
+        if (player == null) {
+            player = Player.Instance;
+            if (player == null) return;
+        }
+
         var bobOffset = Mathf.Sin(bobTimer) * bobAmount;
         var rotationOffset = Mathf.Sin(bobTimer * rotationSpeed) * maxRotationAngle * rotationStrength;
 
@@ -63,10 +65,12 @@ public class PlayerHeadbob : MonoBehaviour {
             defaultPosition.z + shake.z
         );
 
+        Vector3 shakeRotation = RevivalRuntimeEngine.ShakeRotation;
+
         transform.localRotation = Quaternion.Euler(
-            defaultRotation.x,
-            defaultRotation.y,
-            defaultRotation.z + rotationOffset
+            defaultRotation.x + shakeRotation.x,
+            defaultRotation.y + shakeRotation.y,
+            defaultRotation.z + rotationOffset + shakeRotation.z
         );
 
         // Calculations for playing the footstep sound

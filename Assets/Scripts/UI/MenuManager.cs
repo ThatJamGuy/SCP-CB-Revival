@@ -77,6 +77,7 @@ public class MenuManager : MonoBehaviour {
         bool open = forceState ?? !menu.isOpen;
         if (open == menu.isOpen || cantFunction) return;
         if (open && anyMenuCurrentlyOpen) return;
+        if (open && IsPlayerDead()) return;
         if (menu.requireConsoleToggle && !RevivalRuntimeEngine.SettingsData.consoleEnabled) return; // Prevent menu from opening if "Enable Console" is disabled
 
         // Hardcoded gate to prevent the player from closing the pause menu if the options or achievements menu is open
@@ -121,6 +122,8 @@ public class MenuManager : MonoBehaviour {
         if (shouldPause) RevivalSessionEngine.PauseGame();
         else RevivalSessionEngine.ResumeGame();
     }
+
+    private static bool IsPlayerDead() => Player.Instance != null && Player.Instance.isDead;
     #endregion
 
     /// <summary>
@@ -144,6 +147,7 @@ public class MenuManager : MonoBehaviour {
         var open = forceState ?? !unregisteredMenuOpen;
 
         if (open && !unregisteredMenuOpen && System.Array.Exists(menuList, m => m.isOpen)) return;
+        if (open && IsPlayerDead()) return;
         if (open == unregisteredMenuOpen) return;
 
         unregisteredMenuOpen = open;
