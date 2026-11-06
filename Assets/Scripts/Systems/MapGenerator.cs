@@ -57,6 +57,12 @@ public class MapGenerator : MonoBehaviour {
     private readonly Dictionary<Vector2Int, RoomPlacement> placementLookup = new();
     private readonly HashSet<(Vector2Int, Vector2Int)> processedEdges = new();
     private readonly List<(Vector2Int pos, Color color)> gizmoCells = new();
+    private readonly Dictionary<Vector2Int, float> mandatoryRotations = new();
+    private readonly Dictionary<GameObject, Rect> footprintCache = new();
+    private readonly List<Rect> occupiedFootprints = new();
+    private readonly List<float> rotationOptionsBuffer = new();
+
+    private const float OVERLAP_TOLERANCE = 0.5f;
 
     #region Unity Lifecycle
 
@@ -140,30 +146,52 @@ public class MapGenerator : MonoBehaviour {
 
         for (int i = 0; i < placements.Length; i++) {
             RoomPlacement placement = placements[i];
+            if (!placedMandatoryRooms.TryGetValue(placement.gridPosition, out RoomData mandatory)) continue;
+            if (mandatory.roomPrefab == null) continue;
 
-            RoomData roomToSpawn = placedMandatoryRooms.TryGetValue(placement.gridPosition, out RoomData mandatory)
-                ? mandatory
-                : GetRandomValidRoom(placement.requiredShape, GetZoneAtPosition(placement.gridPosition));
+            float yRotation = mandatoryRotations.TryGetValue(placement.gridPosition, out float chosen) ? chosen : placement.rotation;
+            SpawnRoom(mandatory, placement.gridPosition, yRotation);
+        }
 
-            if (roomToSpawn == null || roomToSpawn.roomPrefab == null) continue;
+        for (int i = 0; i < placements.Length; i++) {
+            RoomPlacement placement = placements[i];
+            if (placedMandatoryRooms.ContainsKey(placement.gridPosition)) continue;
 
             Vector3 worldPos = GridToWorld(placement.gridPosition);
-            float yRotation = placement.rotation;
+            FillValidRoomPool(placement.requiredShape, GetZoneAtPosition(placement.gridPosition));
+            ShuffleBuffer(validPoolBuffer);
 
-            // New feature: adding some rotation variation to 2way and 4way rooms for extra cool
-            switch (roomToSpawn.roomShape) {
-                case RoomData.RoomShape.TwoWay:
-                    yRotation += Random.Range(0, 2) * 180f;
-                    break;
-                case RoomData.RoomShape.FourWay:
-                    yRotation += Random.Range(0, 4) * 90f;
-                    break;
+            RoomData bestRoom = null;
+            float bestRotation = placement.rotation;
+            float bestOverlap = float.MaxValue;
+
+            for (int c = 0; c < validPoolBuffer.Count; c++) {
+                RoomData candidate = validPoolBuffer[c];
+                if (candidate.roomPrefab == null) continue;
+
+                float overlap = FindBestRotation(candidate, worldPos, placement.rotation, out float rotation);
+                if (overlap >= bestOverlap) continue;
+
+                bestRoom = candidate;
+                bestRotation = rotation;
+                bestOverlap = overlap;
+                if (overlap <= 0f) break;
             }
 
-            Quaternion rotation = Quaternion.Euler(0f, yRotation, 0f);
+            if (bestRoom == null) continue;
 
-            spawnedRooms.Add(Instantiate(roomToSpawn.roomPrefab, worldPos, rotation, generatedMapParent));
+            if (bestOverlap > 0f)
+                Debug.LogWarning($"[MapGenerator] No room fits at {placement.gridPosition} without overlapping, using {bestRoom.name} ({bestOverlap:F1}m² overlap).");
+
+            if (bestRoom.isUnique) usedUniqueRooms.Add(bestRoom);
+            occupiedFootprints.Add(GetWorldFootprint(bestRoom.roomPrefab, worldPos, bestRotation));
+            SpawnRoom(bestRoom, placement.gridPosition, bestRotation);
         }
+    }
+
+    private void SpawnRoom(RoomData room, Vector2Int gridPos, float yRotation) {
+        Quaternion rotation = Quaternion.Euler(0f, yRotation, 0f);
+        spawnedRooms.Add(Instantiate(room.roomPrefab, GridToWorld(gridPos), rotation, generatedMapParent));
     }
 
     private void Cleanup() {
@@ -178,6 +206,8 @@ public class MapGenerator : MonoBehaviour {
         spawnedDoors.Clear();
 
         placedMandatoryRooms.Clear();
+        mandatoryRotations.Clear();
+        occupiedFootprints.Clear();
         usedUniqueRooms.Clear();
         zoneLookup.Clear();
         gizmoCells.Clear();
@@ -242,8 +272,30 @@ public class MapGenerator : MonoBehaviour {
                 continue;
             }
 
-            Vector2Int selectedPos = validPositionsBuffer[Random.Range(0, validPositionsBuffer.Count)];
+            ShuffleBuffer(validPositionsBuffer);
+
+            Vector2Int selectedPos = validPositionsBuffer[0];
+            float selectedRotation = 0f;
+            float bestOverlap = float.MaxValue;
+
+            for (int p = 0; p < validPositionsBuffer.Count; p++) {
+                Vector2Int pos = validPositionsBuffer[p];
+                float overlap = FindBestRotation(room, GridToWorld(pos), GetPlacementRotation(pos), out float rotation);
+                if (overlap >= bestOverlap) continue;
+
+                selectedPos = pos;
+                selectedRotation = rotation;
+                bestOverlap = overlap;
+                if (overlap <= 0f) break;
+            }
+
+            if (bestOverlap > 0f)
+                Debug.LogWarning($"[MapGenerator] Mandatory room {room.name} overlaps another mandatory room ({bestOverlap:F1}m²).");
+
             placedMandatoryRooms[selectedPos] = room;
+            mandatoryRotations[selectedPos] = selectedRotation;
+            if (room.roomPrefab != null)
+                occupiedFootprints.Add(GetWorldFootprint(room.roomPrefab, GridToWorld(selectedPos), selectedRotation));
 
             if (room.isUnique) usedUniqueRooms.Add(room);
         }
@@ -315,13 +367,18 @@ public class MapGenerator : MonoBehaviour {
 
     #region Helpers :)
 
-    private RoomData GetRandomValidRoom(RoomData.RoomShape shape, RoomData.Zone zone) {
-        if (shape == RoomData.RoomShape.Checkpoint) return GetCheckpointForZone(zone);
+    private void FillValidRoomPool(RoomData.RoomShape shape, RoomData.Zone zone) {
+        validPoolBuffer.Clear();
+
+        if (shape == RoomData.RoomShape.Checkpoint) {
+            RoomData checkpoint = GetCheckpointForZone(zone);
+            if (checkpoint != null) validPoolBuffer.Add(checkpoint);
+            return;
+        }
 
         RoomData[] candidates = roomSet.GetRoomsByShape(shape);
-        if (candidates == null) return null;
+        if (candidates == null) return;
 
-        validPoolBuffer.Clear();
         for (int i = 0; i < candidates.Length; i++) {
             RoomData r = candidates[i];
             if (r == null) continue;
@@ -329,13 +386,133 @@ public class MapGenerator : MonoBehaviour {
             if (r.isUnique && usedUniqueRooms.Contains(r)) continue;
             validPoolBuffer.Add(r);
         }
+    }
 
-        if (validPoolBuffer.Count == 0) return null;
+    private int GetPlacementRotation(Vector2Int gridPos) {
+        RoomPlacement[] placements = selectedMapTemplate.roomPlacements;
+        for (int i = 0; i < placements.Length; i++) {
+            if (placements[i].gridPosition == gridPos) return placements[i].rotation;
+        }
+        return 0;
+    }
 
-        RoomData selected = validPoolBuffer[Random.Range(0, validPoolBuffer.Count)];
-        if (selected.isUnique) usedUniqueRooms.Add(selected);
+    private static void ShuffleBuffer<T>(List<T> list) {
+        for (int i = list.Count - 1; i > 0; i--) {
+            int j = Random.Range(0, i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
+    }
 
-        return selected;
+    private float FindBestRotation(RoomData room, Vector3 worldPos, int baseRotation, out float bestRotation) {
+        rotationOptionsBuffer.Clear();
+        rotationOptionsBuffer.Add(baseRotation);
+
+        // New feature: adding some rotation variation to 2way and 4way rooms for extra cool
+        switch (room.roomShape) {
+            case RoomData.RoomShape.TwoWay:
+                rotationOptionsBuffer.Add(baseRotation + 180f);
+                break;
+            case RoomData.RoomShape.FourWay:
+                rotationOptionsBuffer.Add(baseRotation + 90f);
+                rotationOptionsBuffer.Add(baseRotation + 180f);
+                rotationOptionsBuffer.Add(baseRotation + 270f);
+                break;
+        }
+
+        ShuffleBuffer(rotationOptionsBuffer);
+
+        bestRotation = rotationOptionsBuffer[0];
+        if (room.roomPrefab == null) return 0f;
+
+        float bestOverlap = float.MaxValue;
+        for (int i = 0; i < rotationOptionsBuffer.Count; i++) {
+            float overlap = GetOverlapArea(GetWorldFootprint(room.roomPrefab, worldPos, rotationOptionsBuffer[i]));
+            if (overlap >= bestOverlap) continue;
+
+            bestOverlap = overlap;
+            bestRotation = rotationOptionsBuffer[i];
+            if (overlap <= 0f) break;
+        }
+
+        return bestOverlap;
+    }
+
+    private float GetOverlapArea(Rect footprint) {
+        float total = 0f;
+
+        for (int i = 0; i < occupiedFootprints.Count; i++) {
+            Rect other = occupiedFootprints[i];
+            float width = Mathf.Min(footprint.xMax, other.xMax) - Mathf.Max(footprint.xMin, other.xMin);
+            float depth = Mathf.Min(footprint.yMax, other.yMax) - Mathf.Max(footprint.yMin, other.yMin);
+
+            if (width <= OVERLAP_TOLERANCE || depth <= OVERLAP_TOLERANCE) continue;
+            total += width * depth;
+        }
+
+        return total;
+    }
+
+    private Rect GetWorldFootprint(GameObject prefab, Vector3 worldPos, float yRotation) {
+        Rect local = GetLocalFootprint(prefab);
+        Quaternion rotation = Quaternion.Euler(0f, yRotation, 0f);
+
+        Vector3 a = rotation * new Vector3(local.xMin, 0f, local.yMin);
+        Vector3 b = rotation * new Vector3(local.xMax, 0f, local.yMin);
+        Vector3 c = rotation * new Vector3(local.xMin, 0f, local.yMax);
+        Vector3 d = rotation * new Vector3(local.xMax, 0f, local.yMax);
+
+        float minX = Mathf.Min(Mathf.Min(a.x, b.x), Mathf.Min(c.x, d.x));
+        float maxX = Mathf.Max(Mathf.Max(a.x, b.x), Mathf.Max(c.x, d.x));
+        float minZ = Mathf.Min(Mathf.Min(a.z, b.z), Mathf.Min(c.z, d.z));
+        float maxZ = Mathf.Max(Mathf.Max(a.z, b.z), Mathf.Max(c.z, d.z));
+
+        return Rect.MinMaxRect(minX + worldPos.x, minZ + worldPos.z, maxX + worldPos.x, maxZ + worldPos.z);
+    }
+
+    private Rect GetLocalFootprint(GameObject prefab) {
+        if (footprintCache.TryGetValue(prefab, out Rect cached)) return cached;
+
+        Transform root = prefab.transform;
+        Matrix4x4 toRoot = Matrix4x4.Scale(root.localScale) * root.worldToLocalMatrix;
+
+        float minX = float.MaxValue, minZ = float.MaxValue;
+        float maxX = float.MinValue, maxZ = float.MinValue;
+        bool hasBounds = false;
+
+        MeshFilter[] filters = prefab.GetComponentsInChildren<MeshFilter>(true);
+        for (int i = 0; i < filters.Length; i++) {
+            MeshFilter filter = filters[i];
+            if (filter.sharedMesh == null || !filter.gameObject.activeSelf) continue;
+            if (!filter.TryGetComponent(out MeshRenderer meshRenderer) || !meshRenderer.enabled) continue;
+
+            Matrix4x4 matrix = toRoot * filter.transform.localToWorldMatrix;
+            Bounds bounds = filter.sharedMesh.bounds;
+            Vector3 min = bounds.min;
+            Vector3 max = bounds.max;
+
+            for (int corner = 0; corner < 8; corner++) {
+                Vector3 point = matrix.MultiplyPoint3x4(new Vector3(
+                    (corner & 1) == 0 ? min.x : max.x,
+                    (corner & 2) == 0 ? min.y : max.y,
+                    (corner & 4) == 0 ? min.z : max.z));
+
+                minX = Mathf.Min(minX, point.x);
+                maxX = Mathf.Max(maxX, point.x);
+                minZ = Mathf.Min(minZ, point.z);
+                maxZ = Mathf.Max(maxZ, point.z);
+            }
+
+            hasBounds = true;
+        }
+
+        Rect footprint = hasBounds ? Rect.MinMaxRect(minX, minZ, maxX, maxZ) : Rect.zero;
+        footprintCache[prefab] = footprint;
+
+        float halfCell = cellSize * 0.5f + OVERLAP_TOLERANCE;
+        if (hasBounds && (minX < -halfCell || maxX > halfCell || minZ < -halfCell || maxZ > halfCell))
+            Debug.LogWarning($"[MapGenerator] Room prefab {prefab.name} is larger than a grid cell ({footprint.width:F1} x {footprint.height:F1}m, cell {cellSize}m).");
+
+        return footprint;
     }
 
     private void FillValidPositionsForRoom(RoomData room) {
