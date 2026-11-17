@@ -1,4 +1,5 @@
 using PrimeTween;
+using System.Reflection.Metadata.Ecma335;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -17,10 +18,20 @@ public class PlayerMovement : MonoBehaviour {
     [Header("References")]
     [SerializeField] private CharacterController characterController;
     [SerializeField] private Transform playerCameraRoot;
+    [SerializeField] private CapsuleCollider capsuleCollider;
+
+    [Header("Crouching Camera")]
+    [SerializeField] private float crouchingHeight = 0.9f;
+    [SerializeField] private float crouchCameraDrop = 1f;
+    private Vector3 defaultCameraLocalPos;
+    private Vector3 defaultCenter;
 
     #region Private Variables
     private static Player player => Player.Instance;
     private static RevivalRuntimeEngine runtimeEngine => RevivalRuntimeEngine.Instance;
+
+    private static readonly RaycastHit[] hitBuffer = new RaycastHit[4];
+    private static int playerLayerMask = -1;
 
     private InputAction moveAction;
     private InputAction sprintAction;
@@ -35,6 +46,8 @@ public class PlayerMovement : MonoBehaviour {
     private bool isCrouching;
     private bool sprintLocked;
 
+    private Tween heightTween;
+
     private float currentSpeed;
     private float walkingSpeed;
     private float sprintSpeed;
@@ -42,8 +55,9 @@ public class PlayerMovement : MonoBehaviour {
 
     private const float GRAVITY = -9.81f;
     private const float STANDING_HEIGHT = 2.45f;
-    private const float CROUCHING_HEIGHT = 0.4f;
     private const float MAX_STAMINA = 1;
+
+
     #endregion
 
     #region Unity Lifecycle
@@ -56,9 +70,11 @@ public class PlayerMovement : MonoBehaviour {
         crouchAction.performed -= OnCrouchPerformed;
     }
 
-    private void Start() {
+    private void Start()
+    {
         // If there is no InputManager available at the start, disallow functionality and print a warning in console
-        if (runtimeEngine == null) {
+        if (runtimeEngine == null)
+        {
             cantFunction = true;
             Debug.Log("<color=red>[PlayerMovement]</color> InputManager was not found, moving will not work!");
 
@@ -82,6 +98,21 @@ public class PlayerMovement : MonoBehaviour {
 
         // Default the slider to the chosen one in CanvasInstance based on the players settings
         currStaminaSlider = CanvasInstance.Instance.currSprintSlider;
+
+        // caches default camera height
+        if (playerCameraRoot != null)
+        {
+            defaultCameraLocalPos = playerCameraRoot.localPosition;
+        }
+
+        if (capsuleCollider != null)
+        {
+            capsuleCollider.center = characterController.center;
+            capsuleCollider.height = characterController.height;
+            capsuleCollider.radius = characterController.radius;
+        }
+
+
     }
 
     private void Update() {
@@ -183,7 +214,7 @@ public class PlayerMovement : MonoBehaviour {
         if (isCrouching) return;
         isCrouching = true;
         player.isCrouching = true;
-        TweenHeight(characterController.height, CROUCHING_HEIGHT);
+        TweenHeight(characterController.height, crouchingHeight);
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.crouchFoley, transform.position);
     }
 
@@ -199,23 +230,85 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     // Method that uses PrimeTween to smoothly interpolate between standing and crouching heights
-    private void TweenHeight(float from, float to) {
+    private void TweenHeight(float from, float to)
+    {
+        heightTween.Stop();
         // Tween height and center.y together so the capsule stays grounded. Prevents that weird stuttering
-        Tween.Custom(from, to, 0.1f, val => characterController.height = val);
+        heightTween = Tween.Custom(from, to, 0.15f, val =>
+        {
+            float heightDifference = STANDING_HEIGHT - val;
+            Vector3 newCenter = defaultCenter;
+            newCenter.y -= heightDifference * 0.5f;
+
+            characterController.height = val;
+            characterController.center = newCenter;
+
+
+            //keeps capscule collider grounded
+            if (capsuleCollider != null)
+            {
+                capsuleCollider.height = val;
+                capsuleCollider.center = newCenter;
+            }
+
+            //Smoothly lerps camera root
+            if (playerCameraRoot != null)
+            {
+                float t = Mathf.InverseLerp(STANDING_HEIGHT, crouchingHeight, val);
+                playerCameraRoot.localPosition = defaultCameraLocalPos + (Vector3.down * (crouchCameraDrop * t));
+            }
+        });
     }
 
     // Some more black magic to determine if the player can stand or not
     // Checks for any layer collisions above the player by looking above the player for any layers that aren't on
     // the same Player layer, then returning true or false depending on if there is
-    private bool CanStand() {
-        var playerRadius = characterController.radius;
-        var playerBottom = transform.position + Vector3.up * playerRadius;
-        var playerTop = transform.position + Vector3.up * (STANDING_HEIGHT - playerRadius);
-        var mask = ~(1 << LayerMask.NameToLayer("Player"));
-        return !Physics.CheckCapsule(playerBottom, playerTop, playerRadius - 0.05f, mask, QueryTriggerInteraction.Ignore);
+
+    //Note: Now Uses SphereCastNonAlloc from the top of crouched to standing    
+    private bool CanStand()
+    {
+        float distance = STANDING_HEIGHT - characterController.height;
+        if (distance <= 0.01f) return true;
+
+        if (playerLayerMask == -1)
+        {
+            playerLayerMask = ~(1 << LayerMask.NameToLayer("Player"));
+        }
+
+        // finds top of your "head" when crouched
+        float LocalTop = characterController.center.y + (characterController.height * 0.5f);
+        Vector3 headCenter = characterController.transform.TransformPoint(new Vector3(0f, LocalTop, 0f));
+
+        float checkRadius = 0.1f;
+
+        int hitCount = Physics.SphereCastNonAlloc(
+            headCenter,
+            checkRadius,
+            Vector3.up,
+            hitBuffer,
+            distance,
+            playerLayerMask,
+            QueryTriggerInteraction.Ignore
+            );
+
+        for (int i = 0; i < hitCount; i++)
+        {
+
+            RaycastHit hit = hitBuffer[i];
+
+            //Ignores player own collider
+            if (hit.collider.transform.root == characterController.transform.root) continue;
+
+            if (hit.normal.y < -0.3f)
+            {
+                return false;
+            }
+
+        }
+        return true;
     }
-
+    
     #endregion
 
     #endregion
-}
+    }
