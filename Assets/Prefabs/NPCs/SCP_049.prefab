@@ -627,7 +627,7 @@ MonoBehaviour:
   doorLayer:
     serializedVersion: 2
     m_Bits: 128
-  doorCheckInterval: 2
+  doorCheckInterval: 1.5
   doorOpenRadius: 2
   spottedPlayerStinger:
     Guid:
@@ -681,8 +681,12 @@ MonoBehaviour:
   trackingRadius: 15
   retargetSpeed: 5
   maxAngle: 90
-  enableLeftArmIK: 0
+  enableLeftHandIK: 0
+  leftHandBlendSpeed: 5
+  gripReference: {fileID: 0}
+  leftHandIkTarget: {fileID: 0}
   headRig: {fileID: 7503010803864206844}
+  leftArmRig: {fileID: 0}
   headTransform: {fileID: 3194224646949992825}
   headIkTarget: {fileID: 538712185950377589}
 --- !u!114 &8308020149542121843

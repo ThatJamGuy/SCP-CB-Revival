@@ -8,6 +8,7 @@ public class EVNT_SL : MonoBehaviour {
     private bool triggeredSpawn;
 
     public void ChangeMusicToSL() {
+        if (EntitySystem.AnyEntityChasingPlayer()) return;
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SL);
     }
 
