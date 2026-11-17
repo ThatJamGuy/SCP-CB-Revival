@@ -1,6 +1,7 @@
 using FMODUnity;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
 /// <summary>
@@ -14,6 +15,7 @@ public class Door : MonoBehaviour {
     [HideInInspector] public bool isOpen;
     public bool isLocked;
     public bool isBroken;
+    public bool noBusting;
     public bool requiresKeycard;
     public int requiredKeyLevel;
 
@@ -71,18 +73,18 @@ public class Door : MonoBehaviour {
 
     private IEnumerator MoveDoors(Vector3 target1, Vector3 target2, UnityEvent onComplete) {
         // Set some necessary variables
-        var start1 = doorPart01.transform.position; // Starting pos for door01
-        var start2 = doorPart02.transform.position; // Starting pos for door02
-        var dist = Vector3.Distance(start1, target1); // Calculated distance between the start and the end
-        var duration = dist / openSpeed; // Calculated movement duration
-        var time = 0f; // Time elapsed
+        Vector3 start1 = doorPart01.transform.position; // Starting pos for door01
+        Vector3 start2 = doorPart02.transform.position; // Starting pos for door02
+        float dist = Vector3.Distance(start1, target1); // Calculated distance between the start and the end
+        float duration = dist / openSpeed; // Calculated movement duration
+        float time = 0f; // Time elapsed
 
         // Immediately start playing the sound so it isn't delayed by the stuff below
         PlaySound();
 
         // While the elapsed time is less than the calculated curation...
         while (time < duration) {
-            var factor = Mathf.SmoothStep(0, 1, time / duration);
+            float factor = Mathf.SmoothStep(0, 1, time / duration);
             doorPart01.transform.position = Vector3.Lerp(start1, target1, factor);
             doorPart02.transform.position = Vector3.Lerp(start2, target2, factor);
             time += Time.deltaTime;
@@ -102,7 +104,7 @@ public class Door : MonoBehaviour {
 
     private void PlaySound() {
         // Set the doorStateValue based on the isOpen bool. Then play the door sound passing in the doorState as param
-        var doorStateValue = isOpen ? 0 : 1;
+        int doorStateValue = isOpen ? 0 : 1;
         AudioManager.PlayOneShot(doorSoundEvent, transform.position, "DoorState", doorStateValue);
     }
 
@@ -113,25 +115,32 @@ public class Door : MonoBehaviour {
             _ => transform.right * distance, // X-Axis
         };
     }
+
+    private void ApplyExplosionForce(GameObject part, Vector3 direction, float force) {
+        // Constrain the direction of the force to the doors local z axis
+        part.transform.position += direction * 0.7f;
+        Physics.SyncTransforms();
+
+        Rigidbody rb = part.AddComponent<Rigidbody>();
+
+        rb.mass = 8;
+        rb.isKinematic = false;
+        rb.constraints = RigidbodyConstraints.None;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+
+        rb.AddForce(direction * force, ForceMode.Impulse);
+    }
     #endregion
 
     #region Public Methods
-    /// <summary>
-    /// Toggle the lock state of the door to the opposite of what it currently is
-    /// </summary>
     public void ToggleLockState() => isLocked = !isLocked;
 
-    /// <summary>
-    /// Toggle the open/close state of the door to the opposite of what it currently is
-    /// </summary>
     public void ToggleDoorState() {
         if (isOpen) CloseDoor();
         else OpenDoor();
     }
 
-    /// <summary>
-    /// Trigger the door to open, and it will, assuming it's not already open/opening
-    /// </summary>
     public void OpenDoor() {
         // If the door is already open, locked, or the move coroutine exists and is active already then do nothing
         if (isOpen || isLocked || isBroken || moveRoutine != null || isTransitioning) return;
@@ -145,9 +154,6 @@ public class Door : MonoBehaviour {
         isTransitioning = false;
     }
 
-    /// <summary>
-    /// Trigger the door to close, and it will, assuming it's not already closed/closing
-    /// </summary>
     public void CloseDoor() {
         // If the door is not open or the move coroutine exists and is active already then do nothing
         if (!isOpen || isLocked || isBroken || moveRoutine != null || isTransitioning) return;
@@ -161,11 +167,29 @@ public class Door : MonoBehaviour {
         isTransitioning = false;
     }
 
-    /// <summary>
-    /// Enables gravity on the physics door children and applies force in a specified direction
-    /// </summary>
-    public void EnableGravityOnDoors(Vector3 explosionDirection, float explosionForce = 50f) {
-        //TODO: do this stuff
+    public void ExplodeDoor(Transform explosionSource, float explosionForce) {
+        if (isBroken || noBusting || explosionSource == null) return;
+
+        isBroken = true;
+
+        if (moveRoutine != null) {
+            StopCoroutine(moveRoutine);
+            moveRoutine = null;
+        }
+
+        NavMeshObstacle obstacle1 = doorPart01.GetComponent<NavMeshObstacle>();
+        NavMeshObstacle obstacle2 = doorPart02.GetComponent<NavMeshObstacle>();
+
+        if (obstacle1 != null) obstacle1.enabled = false;
+        if (obstacle2 != null) obstacle2.enabled = false;
+
+        float side = Vector3.Dot(transform.position - explosionSource.position, transform.forward);
+        Vector3 explosionDirection = side >= 0f ? transform.forward : -transform.forward;
+
+        ApplyExplosionForce(doorPart01, explosionDirection, explosionForce);
+        ApplyExplosionForce(doorPart02, explosionDirection, explosionForce);
+
+        AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorExplode, transform.position);
     }
     #endregion
 }

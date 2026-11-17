@@ -67,6 +67,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -553,6 +554,7 @@ MonoBehaviour:
   isOpen: 0
   isLocked: 0
   isBroken: 0
+  noBusting: 1
   requiresKeycard: 1
   requiredKeyLevel: 2
   openSpeed: 0.57
@@ -591,8 +593,7 @@ MonoBehaviour:
   moveAxis: 0
   doorPart01: {fileID: 6596141033809774981}
   doorPart02: {fileID: 3653411807361899911}
-  doorPhys01: {fileID: 0}
-  doorPhys02: {fileID: 0}
+  occlusionPortal: {fileID: 0}
 --- !u!1 &5971684445779653626
 GameObject:
   m_ObjectHideFlags: 0
@@ -977,6 +978,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:

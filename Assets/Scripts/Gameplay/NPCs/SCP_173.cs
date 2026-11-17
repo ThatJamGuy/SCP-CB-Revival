@@ -9,7 +9,6 @@ using UnityEngine.AI;
 /// </summary>
 public class SCP_173 : MonoBehaviour {
     [Header("Status")]
-    public bool puppetMode;
     public bool isVisibleByPlayer;
     public bool disableKilling;
 
@@ -21,6 +20,13 @@ public class SCP_173 : MonoBehaviour {
     [SerializeField, Range(0f, 1f)] float doorOpenChance = 0.3f;
     [SerializeField, Range(1f, 10f)] float doorCheckInterval = 10;
     [SerializeField] private float maxTargetDistance;
+
+    // Values pertaining to the max amount of failed door open attempts per difficulty
+    // before a door is allowed to be downed on the next failure
+    // TODO: MAKE IT ALL DIFFICULTY BECAUSE SAFE PEOPLE SHOULD BE ABLE TO ENJOY THIS FEATURE
+    // AS WELL IT WILL JUST BE MUCH RARER
+    [SerializeField] private int euclidDoorBashMax = 10;
+    [SerializeField] private int keterDoorBashMax = 5;
 
     [Header("Posing")]
     [SerializeField] private string[] poseAnimations;
@@ -69,6 +75,7 @@ public class SCP_173 : MonoBehaviour {
     private float notVisibleTimer;
     private bool horrorSoundReady = true;
     private bool hasPlayedDistanceHorrorSound = false;
+    private int currentDoorBang;
 
     #region Unity Lifecycle
 
@@ -110,12 +117,11 @@ public class SCP_173 : MonoBehaviour {
             CheckPlayerVisibility();
             visibilityTimer = visibilityCheckInterval;
         }
-        if (!puppetMode) {
-            HandleHorrorSoundReset();
-            HandleMoving();
 
-            if (hasTarget && !Player.Instance.isDead) AttemptToKillPlayer();
-        }
+        HandleHorrorSoundReset();
+        HandleMoving();
+
+        if (hasTarget && !Player.Instance.isDead) AttemptToKillPlayer();
     }
 
     #endregion
@@ -194,6 +200,9 @@ public class SCP_173 : MonoBehaviour {
         RevivalSessionEngine.Instance.ReleaseChaseTrack(this);
 
         tensionEmitter.Stop();
+
+        // Reset this to 0 so that he can't bash a door down too soon
+        currentDoorBang = 0;
     }
 
     #endregion
@@ -223,7 +232,7 @@ public class SCP_173 : MonoBehaviour {
     private void CheckForDoors() {
         Vector3 origin = transform.position;
         int count = Physics.OverlapSphereNonAlloc(origin, DOOR_CHECK_RADIUS, doorColliders);
-        Door nearest = null;
+        Door nearestDoor = null;
         float minSqrDist = float.MaxValue;
 
         for (int i = 0; i < count; i++) {
@@ -232,16 +241,30 @@ public class SCP_173 : MonoBehaviour {
             float sqrDist = (col.transform.position - origin).sqrMagnitude;
             if (sqrDist < minSqrDist) {
                 minSqrDist = sqrDist;
-                nearest = door;
+                nearestDoor = door;
             }
         }
 
         // Randomly be able to either open the nearest door or fail to do so and bang on it a bit
-        if (nearest && Random.value < doorOpenChance && !nearest.isOpen && !nearest.requiresKeycard && !nearest.isLocked && !isVisibleByPlayer && !puppetMode) {
-            nearest.OpenDoor();
-            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorOpen173, nearest.transform.position);
-        } else if (nearest && !nearest.isOpen && !puppetMode && EntitySystem.Instance.cached173Entity.chasingPlayer && !isVisibleByPlayer) {
-            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorBangEvent, nearest.transform.position);
+        if (nearestDoor && Random.value < doorOpenChance && !nearestDoor.isOpen && !nearestDoor.requiresKeycard && !nearestDoor.isLocked && !isVisibleByPlayer) {
+            nearestDoor.OpenDoor();
+            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorOpen173, nearestDoor.transform.position);
+        } else if (nearestDoor && !nearestDoor.isOpen && EntitySystem.Instance.cached173Entity.chasingPlayer && !isVisibleByPlayer) {
+
+            // Difficulty is Euclid and the door was banged on 10 times during the chase, so bust it down OR
+            // Difficulty is Keter and the door was banged on 5 times during the chase, so bust it down
+            if ((RevivalSessionEngine.currentDifficulty == 1 && currentDoorBang >= euclidDoorBashMax) ||
+                (RevivalSessionEngine.currentDifficulty == 2 && currentDoorBang >= keterDoorBashMax)) {
+
+                nearestDoor.ExplodeDoor(transform, 80);
+
+                // Reset currentDoorBang and return to restart the count and prevent another bang from happening during the explode
+                currentDoorBang = 0;
+                return;
+            }
+
+            currentDoorBang++;
+            AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorBangEvent, nearestDoor.transform.position);
         }
     }
 
@@ -293,7 +316,7 @@ public class SCP_173 : MonoBehaviour {
     }
 
     private void OnBecameVisibleToPlayer() {
-        if (!alreadySeenByPlayer && !puppetMode) {
+        if (!alreadySeenByPlayer) {
             alreadySeenByPlayer = true;
             AcquireTarget(playerTransform);
 
@@ -328,7 +351,7 @@ public class SCP_173 : MonoBehaviour {
 
     public void PlayRandomPose() {
         // Use the animator to change 173 poses
-        if (poseAnimationHashes.Length == 0 || isVisibleByPlayer || puppetMode || animator == null) return;
+        if (poseAnimationHashes.Length == 0 || isVisibleByPlayer || animator == null) return;
         animator.Play(poseAnimationHashes[Random.Range(0, poseAnimationHashes.Length)]);
     }
 
@@ -339,7 +362,7 @@ public class SCP_173 : MonoBehaviour {
     private void AttemptToKillPlayer() {
         if (!hasTarget || target == null || disableKilling) return;
         float dist = Vector3.Distance(transform.position, target.position);
-        if (dist <= 1.5f && !isVisibleByPlayer && !puppetMode) {
+        if (dist <= 1.5f && !isVisibleByPlayer) {
             Player.Instance.KillPlayer(2, 0.5f, 0, "Subject D-9341. Cause of death: Fatal cervical fracture. Assumed to be attacked by SCP-173.");
             AudioManager.PlayOneShot(neckBreakSound, transform.position);
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.statueHorrorNear, transform.position);
