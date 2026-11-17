@@ -8,6 +8,23 @@ using UnityEngine.AI;
 /// TODO: Refactor this one day.
 /// </summary>
 public class SCP_173 : MonoBehaviour {
+    // Values pertaining to the max amount of failed door open attempts per difficulty
+    // before a door is allowed to be downed on the next failure
+    // Will probably later make each door have it's own health value per difficulty instead
+    private const int SAFE_DOOR_BASH_AMOUNT = 20;
+    private const int EUCLID_DOOR_BASH_AMOUNT = 10;
+    private const int KETER_DOOR_BASH_AMOUNT = 5;
+
+    private const float ROAM_SPEED = 5f;
+    private const float ROAM_INTERVAL = 3f;
+    private const float ROAM_RADIUS = 10f;
+    private const float DOOR_CHECK_RADIUS = 2f;
+    private const float CHASE_SPEED = 200f;
+    private const float HORROR_SOUND_DISTANCE_THRESHOLD = 5f;
+    private const float REPATH_DISTANCE_SQR = 0.25f;
+    private const int MAX_DOOR_COLLIDERS = 32;
+    private const int SAMPLE_COUNT = 5;
+
     [Header("Status")]
     public bool isVisibleByPlayer;
     public bool disableKilling;
@@ -20,13 +37,6 @@ public class SCP_173 : MonoBehaviour {
     [SerializeField, Range(0f, 1f)] float doorOpenChance = 0.3f;
     [SerializeField, Range(1f, 10f)] float doorCheckInterval = 10;
     [SerializeField] private float maxTargetDistance;
-
-    // Values pertaining to the max amount of failed door open attempts per difficulty
-    // before a door is allowed to be downed on the next failure
-    // TODO: MAKE IT ALL DIFFICULTY BECAUSE SAFE PEOPLE SHOULD BE ABLE TO ENJOY THIS FEATURE
-    // AS WELL IT WILL JUST BE MUCH RARER
-    [SerializeField] private int euclidDoorBashMax = 10;
-    [SerializeField] private int keterDoorBashMax = 5;
 
     [Header("Posing")]
     [SerializeField] private string[] poseAnimations;
@@ -45,16 +55,6 @@ public class SCP_173 : MonoBehaviour {
     [SerializeField] private StudioEventEmitter tensionEmitter;
     [SerializeField] private EventReference neckBreakSound;
     [SerializeField] private float horrorSoundResetDelay = 1f;
-
-    private const float ROAM_SPEED = 5f;
-    private const float ROAM_INTERVAL = 3f;
-    private const float ROAM_RADIUS = 10f;
-    private const float DOOR_CHECK_RADIUS = 2f;
-    private const float CHASE_SPEED = 200f;
-    private const float HORROR_SOUND_DISTANCE_THRESHOLD = 5f;
-    private const float REPATH_DISTANCE_SQR = 0.25f;
-    private const int MAX_DOOR_COLLIDERS = 32;
-    private const int SAMPLE_COUNT = 5;
 
     private readonly Plane[] frustumPlanes = new Plane[6];
     private readonly Collider[] doorColliders = new Collider[MAX_DOOR_COLLIDERS];
@@ -251,10 +251,13 @@ public class SCP_173 : MonoBehaviour {
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorOpen173, nearestDoor.transform.position);
         } else if (nearestDoor && !nearestDoor.isOpen && EntitySystem.Instance.cached173Entity.chasingPlayer && !isVisibleByPlayer) {
 
+            currentDoorBang++;
+
             // Difficulty is Euclid and the door was banged on 10 times during the chase, so bust it down OR
             // Difficulty is Keter and the door was banged on 5 times during the chase, so bust it down
-            if ((RevivalSessionEngine.currentDifficulty == 1 && currentDoorBang >= euclidDoorBashMax) ||
-                (RevivalSessionEngine.currentDifficulty == 2 && currentDoorBang >= keterDoorBashMax)) {
+            if (RevivalSessionEngine.currentDifficulty == 0 && currentDoorBang >= SAFE_DOOR_BASH_AMOUNT ||
+                (RevivalSessionEngine.currentDifficulty == 1 && currentDoorBang >= EUCLID_DOOR_BASH_AMOUNT) ||
+                (RevivalSessionEngine.currentDifficulty == 2 && currentDoorBang >= KETER_DOOR_BASH_AMOUNT)) {
 
                 nearestDoor.ExplodeDoor(transform, 80);
 
@@ -263,7 +266,6 @@ public class SCP_173 : MonoBehaviour {
                 return;
             }
 
-            currentDoorBang++;
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorBangEvent, nearestDoor.transform.position);
         }
     }
