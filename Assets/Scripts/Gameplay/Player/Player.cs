@@ -32,6 +32,7 @@ public class Player : MonoBehaviour, ISaveable {
     public static bool wearingGasMask;
     public static bool wearing714;
 
+    private SaveData saveData;
     public GameObject cameraRoot;
     public Camera playerCamera;
     public PlayerBlink playerBlink;
@@ -47,18 +48,17 @@ public class Player : MonoBehaviour, ISaveable {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
+        SaveGameEngine.Register(this);
+        saveData = SaveGameEngine.Get<SaveData>();
+
         settingsData = RevivalRuntimeEngine.SettingsData;
         cameraStartPos = cameraRoot.transform.localPosition;
 
         InventorySystem.Instance.playerCamera = playerCamera;
     }
 
-    private void Start() {
-        SavegameEngine.Register(this);
-    }
-
     private void OnDestroy() {
-        SavegameEngine.Unregister(this);
+        SaveGameEngine.Unregister(this);
     }
 
     #region Private Methods
@@ -159,17 +159,15 @@ public class Player : MonoBehaviour, ISaveable {
 
     // Required by ISaveable to setup the saved values
     public void PrepareSaveableValues() {
-        PlayerData data = SavegameEngine.Get<PlayerData>();
-        data.position = transform.position;
-        data.hasPosition = true;
+        saveData.position = transform.position;
+        saveData.hasPosition = true;
     }
 
     // Moves the player to the saved position
     public void ApplySaveData() {
-        PlayerData data = SavegameEngine.Get<PlayerData>();
-        if (!data.hasPosition) return;
+        if (!saveData.hasPosition) return;
 
-        transform.position = data.position;
+        transform.position = saveData.position;
         Physics.SyncTransforms();
     }
 

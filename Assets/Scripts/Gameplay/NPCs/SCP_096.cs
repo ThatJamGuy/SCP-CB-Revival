@@ -194,8 +194,8 @@ public class SCP_096 : MonoBehaviour {
                             hasBustedDoor = true;
 
                             // Calculate direction away from SCP-096
-                            Vector3 explosionDirection = (door.transform.position - transform.position).normalized;
-                            door.EnableGravityOnDoors(explosionDirection, 50f);
+                            //Vector3 explosionDirection = (door.transform.position - transform.position).normalized;
+                            door.ExplodeDoor(transform, 50f);
 
                             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorExplode, transform.position);
                             return;

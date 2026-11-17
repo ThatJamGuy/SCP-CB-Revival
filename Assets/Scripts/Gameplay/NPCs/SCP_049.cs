@@ -26,7 +26,7 @@ public class SCP_049 : MonoBehaviour {
     [SerializeField, Range(1, 90)] private int visibilityConeAngle;
     [SerializeField] private Transform headTransform;
     [SerializeField] private float plagueDoctoringRange = 25;
-    [SerializeField] private float maxLostTargetTime = 5;
+    [SerializeField] private float maxLostTargetTime = 10;
 
     [Header("Door Manip Settings")]
     [SerializeField] private LayerMask doorLayer;

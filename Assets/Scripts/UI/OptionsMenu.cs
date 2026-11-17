@@ -1,16 +1,43 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+// PURPOSE: It's all the primary stuff pertaining to the settings menu. Modifies values and applies them
+
+// It's also the thing people forget about the most. They'll forget the settings menu exists so when their
+// 20 year old toaster doesn't run a DEMO that ISNT FINISHED YET very well because they LEFT THE SETTINGS ON HIGH
+// they give the game a negative review calling it SLOP and also claim they dislike it becuase it's a WIP,
+// like the fuck did you expect when you played A DEMO????? And who gave that review a like AND A FUCKING REWARD??????
+// THERE'S EVEN TWO WHOLE ASS ZEROS BEFORE THE NUMBER, OF COURSE IT'S GOING TO LOOK LIKE AN ASSET FLIP THIS EARLY
+// BUT ALSO LOWER THE GOD DAMN FUCKING SETTINGS BEFORE YOU COMPLAIN TO ME THAT IT RUNS LIKE ASS. IT'S NOT HARD
+// AND NO, MEDIUM OR EVEN LOW DOESN'T LOOK THAT BAD BECAUSE IT DOESN'T TURN EVERYTHING TO MUSH LIKE URNEAL DOES
+
+// That aside MOST of the critisim was valid, but calling my game "slop" is really not necessary
+// You can prefer the original without giving this game degrading titles that should be reserved for low effort & AI games
 public class OptionsMenu : MonoBehaviour {
+    // EMERGENCY BULLSHIT FOR THE RENDERING API SWITCHING
+#if UNITY_STANDALONE_WIN
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode, EntryPoint = "ShellExecuteW")]
+    private static extern IntPtr ShellExecute(IntPtr hwnd, string operation, string file, string parameters, string directory, int showCmd);
+
+    private const int SW_SHOWNORMAL = 1;
+#endif
+
     public static OptionsMenu Instance { get; private set; }
     public static UnityEvent<int> OnMinorGraphicsChanged = new UnityEvent<int>();
     public static UnityEvent<int> OnMajorGraphicsChanged = new UnityEvent<int>();
+    public static UnityEvent<bool> OnVFXChanged = new UnityEvent<bool>();
+    public static UnityEvent<bool> OnSSRChanged = new UnityEvent<bool>();
+    public static UnityEvent<bool> OnSSAOChanged = new UnityEvent<bool>();
 
     [Header("Graphics Settings")]
+    [SerializeField] private TMP_Dropdown renderingAPIdropdown;
     [SerializeField] private TMP_Dropdown resolutionDropdown;
     [SerializeField] private TMP_Dropdown windowModeDropdown;
     [SerializeField] private Toggle vSyncToggle;
@@ -21,6 +48,8 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private TMP_Dropdown textureDropdown;
     [SerializeField] private TMP_Dropdown antiAliasingDropdown;
     [SerializeField] private TMP_Dropdown shadowQualityDropdown;
+    [SerializeField] private Toggle ssrToggle;
+    [SerializeField] private Toggle ssaoToggle;
 
     [Header("Audio Settings")]
     [SerializeField] private Slider masterVolumeSlider;
@@ -42,6 +71,7 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private Toggle consoleToggle;
 
     [Header("References")]
+    [SerializeField] private GameObject renderingAPIScreen;
     [SerializeField] private GameObject fpsDisplayObj;
 
     private SettingsData localSettings;
@@ -49,9 +79,10 @@ public class OptionsMenu : MonoBehaviour {
     private Vector2Int[] resolutions;
     private FullScreenMode[] windowModes;
 
+    private int pendingRenderingAPI = -1;
     private int lastHudPreset = -1;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Awake() {
         if (Instance == null) Instance = this;
@@ -80,6 +111,11 @@ public class OptionsMenu : MonoBehaviour {
 
         // Graphics settings — SetValueWithoutNotify prevents these from firing
         // Apply*() methods mid-restore and stomping localSettings with stale UI defaults
+
+        // NOTE: THIS IS THE GRAPHICS API OPTION WHICH IS SUPER DELICATE
+        // The order of options in this dropdown MUST be as follows: 0 - Dx12, 1 - Dx11, 2 - Vulkan
+        renderingAPIdropdown.SetValueWithoutNotify(Mathf.Clamp(localSettings.renderingAPI, 0, renderingAPIdropdown.options.Count - 1));
+
         resolutionDropdown.SetValueWithoutNotify(resIndex);
         windowModeDropdown.SetValueWithoutNotify(winIndex);
         vSyncToggle.SetIsOnWithoutNotify(localSettings.vSync);
@@ -89,6 +125,8 @@ public class OptionsMenu : MonoBehaviour {
         textureDropdown.SetValueWithoutNotify(localSettings.globalTextureMipmapLimit);
         antiAliasingDropdown.SetValueWithoutNotify(localSettings.antiAliasingMode);
         shadowQualityDropdown.SetValueWithoutNotify(localSettings.shadowQualityMode);
+        ssrToggle.SetIsOnWithoutNotify(localSettings.enableSSR);
+        ssaoToggle.SetIsOnWithoutNotify(localSettings.enableSSAO);
 
         // Audio settings
         soundtrackDropdown.SetValueWithoutNotify(localSettings.soundtrack);
@@ -167,6 +205,90 @@ public class OptionsMenu : MonoBehaviour {
 
     #region Public Methods
 
+    // Called via the rendering API dropdown, which adds sets the chosen API to a pending state and activates the confirm screen
+    public void OnRenderingAPISelected(int index) {
+        // Little check to ensure tampering with the settings file doesn't break things
+        if (renderingAPIdropdown.options.Count == 0 ||
+            (uint)index >= renderingAPIdropdown.options.Count ||
+            index == localSettings.renderingAPI)
+            return;
+
+        pendingRenderingAPI = index;
+        renderingAPIScreen.SetActive(true);
+    }
+
+    // Called via the "No" button on the confirm screen. Resets pending values, restores dropdown value, and closes the confirm
+    public void CancelRenderingAPIChange() {
+        pendingRenderingAPI = -1;
+        renderingAPIScreen.SetActive(false);
+
+        renderingAPIdropdown.SetValueWithoutNotify(Mathf.Clamp(localSettings.renderingAPI, 0, renderingAPIdropdown.options.Count - 1));
+    }
+
+    // Called via the "Yes" button on the confirm screen. Get's the associated args for the pending API and attempts to reboot with it
+    public void ConfirmRenderingAPIChange() {
+        // Since the rendering API cannot be changed via index it's done via args here like Steam launch options
+        string graphicsArg = pendingRenderingAPI switch {
+            0 => string.Empty, // This guy is empty because Dx12 is the default, so choosing 0 will use default rendering API :D
+            1 => "-force-d3d11",
+            2 => "-force-vulkan",
+            _ => null
+        };
+
+        // If the pending index isn't good then don't do anything (Safefuard for typos and shi)
+        if (graphicsArg == null) return;
+
+        // Save only after the user confirms so that we're not doing strange things at runtime
+        // The previously used SaveValueWithoutNotify() thing should prevent the prompt from displaying when booting up
+        int previousRenderingAPI = localSettings.renderingAPI;
+        localSettings.renderingAPI = pendingRenderingAPI;
+        RevivalRuntimeEngine.SaveSettingsData();
+
+        // Attempt to perform the restart, and if it fails then we restor previous settings and yell about it a bit
+        // Initially tried a Process.GetCurrentProcess() but I then learned that only works on mono, so use it no more
+        // New method uses the command line instead
+        try {
+            string[] commandLineArgs = Environment.GetCommandLineArgs();
+            string executablePath = Path.GetFullPath(commandLineArgs[0]);
+            StringBuilder argBuilder = new StringBuilder(128);
+
+            for (int i = 1; i < commandLineArgs.Length; i++) {
+                string arg = commandLineArgs[i];
+
+                if (arg == "-force-d3d12" || arg == "-force-d3d11" || arg == "-force-vulkan") continue;
+                if (argBuilder.Length > 0) argBuilder.Append(' ');
+
+                // Re-quote the arguments containing spaces so they survive when launching again
+                if (arg.IndexOf(' ') >= 0) argBuilder.Append('"').Append(arg).Append('"');
+                else argBuilder.Append(arg);
+            }
+
+            // Add the rendering api argument to the argument builder that passes in the cmd
+            if (graphicsArg.Length > 0) {
+                if (argBuilder.Length > 0) argBuilder.Append(' ');
+                argBuilder.Append(graphicsArg);
+            }
+
+#if UNITY_STANDALONE_WIN
+            // ShellExecuteW returns a value greater than 32 on success, otherwise an error code
+            long result = ShellExecute(IntPtr.Zero, "open", executablePath, argBuilder.ToString(), Path.GetDirectoryName(executablePath), SW_SHOWNORMAL).ToInt64();
+            if (result <= 32)
+                throw new InvalidOperationException($"ShellExecute failed with code {result}");
+#else
+        throw new PlatformNotSupportedException("Restarting with a graphics API is only supported on Windows standalone builds");
+#endif
+
+            // And can't forget this guy, the one that kills it all
+            Application.Quit();
+        } catch (Exception exception) {
+            UnityEngine.Debug.LogError($"Could not restart with the selected graphics API: {exception}");
+
+            localSettings.renderingAPI = previousRenderingAPI;
+            RevivalRuntimeEngine.SaveSettingsData();
+            CancelRenderingAPIChange();
+        }
+    }
+
     public void ApplyMinorGraphicsSettings() {
         // Set the vSync value and display framelimit if necessary
         localSettings.vSync = vSyncToggle.isOn;
@@ -196,6 +318,16 @@ public class OptionsMenu : MonoBehaviour {
         localSettings.shadowQualityMode = shadowQualityDropdown.value;
 
         OnMajorGraphicsChanged.Invoke(localSettings.shadowQualityMode);
+        RevivalRuntimeEngine.SaveSettingsData();
+    }
+
+    public void ApplyVFXSettings() {
+        localSettings.enableSSR = ssrToggle.isOn;
+        localSettings.enableSSAO = ssaoToggle.isOn;
+
+        OnSSRChanged.Invoke(localSettings.enableSSR);
+        OnSSAOChanged.Invoke(localSettings.enableSSAO);
+
         RevivalRuntimeEngine.SaveSettingsData();
     }
 

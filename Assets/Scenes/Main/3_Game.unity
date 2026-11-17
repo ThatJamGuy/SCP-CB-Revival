@@ -24268,7 +24268,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_VolumetricDimmer
-      value: 10
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5653553398773298133, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_CullingMode
@@ -29107,6 +29107,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5653553398773298133, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5653553398773298133, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
+      propertyPath: m_CullingMode
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7972817736844553459, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
@@ -46350,6 +46354,7 @@ GameObject:
   m_Component:
   - component: {fileID: 987431480}
   - component: {fileID: 987431481}
+  - component: {fileID: 987431482}
   m_Layer: 0
   m_Name: Global Volume
   m_TagString: Untagged
@@ -46389,6 +46394,19 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: e0891d4e6cf296d4cb08f21d4a8a3aad, type: 2}
+--- !u!114 &987431482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987431479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 0200000003000000i
 --- !u!1001 &988724009
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -103452,7 +103470,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1.0345072
+  m_Intensity: 0.5570423
   m_Range: 15
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -103491,11 +103509,11 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 1
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
-  m_ColorTemperature: 6656
+  m_BounceIntensity: 0
+  m_ColorTemperature: 7000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 4.59239e-40, z: 7.699e-42, w: 0}
   m_UseBoundingSphereOverride: 0

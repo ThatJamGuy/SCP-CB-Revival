@@ -41,7 +41,7 @@ public class MainMenuController : MonoBehaviour {
         if (enableMenuShakes) StartCoroutine(PeriodicMenuShake());
 
         // Little visual cue for if a safe file is present to load into (White - Has Save, Gray - No Save)
-        loadGameText.color = SavegameEngine.HasSave() ? Color.white : new Color(0.4f, 0.4f, 0.4f);
+        loadGameText.color = SaveGameEngine.HasSave() ? Color.white : new Color(0.4f, 0.4f, 0.4f);
     }
 
     #endregion
@@ -117,7 +117,9 @@ public class MainMenuController : MonoBehaviour {
             "containsnoOil",
             "YouLoveTESLAGates",
             "ValorantIsTRASH",
-            "NoUlgrinIDontHaveAGFPleaseStopAsking"
+            "NoUlgrinIDontHaveAGFStopAsking",
+            "youloveteslagates",
+            "weloveteslagates"
         };
 
         seedInputField.text = presetSeeds[Random.Range(0, presetSeeds.Length)];
@@ -182,7 +184,7 @@ public class MainMenuController : MonoBehaviour {
 
     public void StartGame() {
         if (string.IsNullOrEmpty(nameInputField.text)) return;
-        if (!SavegameEngine.NewGame(nameInputField.text, seedInputField.text, GetDifficulty(), skipIntroToggle.isOn)) return;
+        if (!SaveGameEngine.NewGame(nameInputField.text, seedInputField.text, GetDifficulty(), skipIntroToggle.isOn)) return;
 
         //Debug.Log("Starting game with name: " + nameInputField.text + " and seed: " + seedInputField.text);
 
@@ -190,7 +192,7 @@ public class MainMenuController : MonoBehaviour {
     }
 
     public void ContinueGame() {
-        if (!SavegameEngine.LoadGame()) return;
+        if (!SaveGameEngine.LoadGame()) return;
         GameLoader.EnterFromMenu();
     }
 

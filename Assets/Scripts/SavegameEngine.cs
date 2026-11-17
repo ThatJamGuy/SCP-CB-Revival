@@ -6,7 +6,7 @@ using UnityEngine;
 // Put this John on the Runtime Engine to handle everything relating to creating/saving/loading a game state
 // Each save is it's own folder for self contained niceness, each featuring JSON modules and eventually a preview image
 // NOTE: CURRENTLY HAS A LOT OF COMMENTED OUT CODE THAT WILL COME BACK LATER. IT'S JUST MOVED TO USE THE SINGLE SLOT SYSTEM FOR NOW
-public static class SavegameEngine {
+public static class SaveGameEngine {
     private const string SAVE_ROOT_FOLDER = "Saves";
     private const string SAVE_EXTENSION = ".cbr";
     private const string TEMP_SINGLE_SLOT = "SaveFile";
@@ -19,7 +19,7 @@ public static class SavegameEngine {
     private static string slotFolder; // IE. "Saves/D-9341" (Overwritten for the temporary singleslot)
 
     public static bool HasActiveSave => slotFolder != null;
-    public static SessionData Session => Get<SessionData>();
+    public static SaveData Session => Get<SaveData>();
 
     // Returns true or false if the save attempt is a new game
     public static bool NewGame(string saveName, string mapSeed, int difficulty, bool skipIntro) {
@@ -42,7 +42,7 @@ public static class SavegameEngine {
         SetSlot(saveFolder);
 
         // Setup the default save file values with stuff set in the main menu config
-        var session = new SessionData {
+        SaveData session = new SaveData {
             saveName = saveName,
             mapSeed = mapSeed,
             difficulty = difficulty,
@@ -51,21 +51,21 @@ public static class SavegameEngine {
             version = Application.version
         };
 
-        cache[typeof(SessionData)] = session;
-        DataSaver.Save(session, GetPath(typeof(SessionData)));
+        cache[typeof(SaveData)] = session;
+        DataSaver.Save(session, GetPath(typeof(SaveData)));
         return true;
     }
 
     // Makes an existing save active (If it can find it, and it will return false if it can't)
     public static bool LoadGame(string saveFolder) {
         string folder = Path.Combine(SAVE_ROOT_FOLDER, saveFolder);
-        string sessionPath = Path.Combine(folder, nameof(SessionData) + SAVE_EXTENSION);
+        string sessionPath = Path.Combine(folder, nameof(SaveData) + SAVE_EXTENSION);
 
         if (!DataSaver.DataFileExists(sessionPath)) return false;
 
-        SessionData session;
+        SaveData session;
         try {
-            session = DataSaver.Load<SessionData>(sessionPath);
+            session = DataSaver.Load<SaveData>(sessionPath);
         } catch (Exception e) {
             Debug.LogError($"Could not load save session '{saveFolder}': {e.Message}");
             return false;
@@ -78,7 +78,7 @@ public static class SavegameEngine {
 
         // Only switch slots after the session data has been read successfully
         SetSlot(folder);
-        cache[typeof(SessionData)] = session;
+        cache[typeof(SaveData)] = session;
         return true;
     }
 
@@ -111,7 +111,7 @@ public static class SavegameEngine {
 
     // Is the temporary save slot currently filled by a save or nah
     public static bool HasSave() {
-        return DataSaver.DataFileExists(Path.Combine(SAVE_ROOT_FOLDER, TEMP_SINGLE_SLOT, nameof(SessionData) + SAVE_EXTENSION));
+        return DataSaver.DataFileExists(Path.Combine(SAVE_ROOT_FOLDER, TEMP_SINGLE_SLOT, nameof(SaveData) + SAVE_EXTENSION));
     }
 
     // Returns the cached module data, loading it (or creating a default) on first request
@@ -186,28 +186,24 @@ public static class SavegameEngine {
     }
 }
 
-// Default save file setup. Necessary for pre-game configuration
+// Combined all the save data into one file for convenience reasons for now
+// I may regret this decision later but right now it felt like the right thing to do
 [Serializable]
-public class SessionData {
+public class SaveData {
     public string saveName;
     public string mapSeed;
-    public int difficulty;
-    public bool skipIntro;
     public string createdUTC;
     public string version;
-}
 
-[Serializable]
-public class GameStateData {
-    public bool introCompleted;
-    public bool lczInLockdown;
+    public string[] slotItems = new string[0]; // FOR INV: One entry per slot, null for empty slot
+
+    public int difficulty;
     public int currentZone;
-}
 
-[Serializable]
-public class PlayerData {
+    public bool skipIntro;
+    public bool introCompleted;
+    public bool lczUnlocked;
     public bool hasPosition;
-    public Vector3 position;
 
-    public string[] slotItems = new string[0]; // One entry per slot, null for empty slot
+    public Vector3 position;
 }

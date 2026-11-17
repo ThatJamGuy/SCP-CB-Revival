@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6077424531376500768}
   m_Layer: 7
   m_Name: HeavyDoor_01
-  m_TagString: Untagged
+  m_TagString: Floor_Metal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -543,6 +543,7 @@ MonoBehaviour:
   isOpen: 0
   isLocked: 0
   isBroken: 0
+  noBusting: 0
   requiresKeycard: 0
   requiredKeyLevel: 0
   openSpeed: 1
@@ -692,11 +693,11 @@ GameObject:
   - component: {fileID: 1162221569710195925}
   - component: {fileID: 6408721537350643073}
   - component: {fileID: 1316640376368685763}
-  - component: {fileID: 7995031979739959175}
+  - component: {fileID: 5381062612500948991}
   - component: {fileID: 6150958769424479938}
   m_Layer: 7
   m_Name: HeavyDoor_02
-  m_TagString: Untagged
+  m_TagString: Floor_Metal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -774,7 +775,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &7995031979739959175
+--- !u!64 &5381062612500948991
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -793,7 +794,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8410892411681454704, guid: 2ac8c2b78f325154db82b290b7e51752, type: 3}
 --- !u!208 &6150958769424479938
@@ -879,7 +880,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 74439a278e107ed4b9d24f093b815dc6, type: 2}
-  - {fileID: 2100000, guid: b50c4f8e1d7ba8144b97c4dd1a0349fc, type: 2}
+  - {fileID: 2100000, guid: c95e21dda7ff26747be3db823e8b4be5, type: 2}
   - {fileID: 2100000, guid: cfd0ada425dcf014a86e148c7df8c4f1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -1228,7 +1229,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 74439a278e107ed4b9d24f093b815dc6, type: 2}
-  - {fileID: 2100000, guid: b50c4f8e1d7ba8144b97c4dd1a0349fc, type: 2}
+  - {fileID: 2100000, guid: c95e21dda7ff26747be3db823e8b4be5, type: 2}
   - {fileID: 2100000, guid: cfd0ada425dcf014a86e148c7df8c4f1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0

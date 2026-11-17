@@ -11385,6 +11385,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2075984255}
   - component: {fileID: 2075984254}
+  - component: {fileID: 2075984256}
   m_Layer: 0
   m_Name: Global Volume
   m_TagString: Untagged
@@ -11424,6 +11425,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 378309820}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2075984256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075984253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
+  settingToRetreive: 0200000003000000i
 --- !u!1 &2100691139
 GameObject:
   m_ObjectHideFlags: 0
@@ -12069,7 +12083,7 @@ Light:
   serializedVersion: 13
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1.5509812
+  m_Intensity: 0.7754906
   m_Range: 10
   m_SpotAngle: 134.79866
   m_InnerSpotAngle: 111.96645
@@ -13158,6 +13172,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 378309820}
     m_Modifications:
+    - target: {fileID: 95009174090165897, guid: 16740a357e730da459b5403f586f9ed6, type: 3}
+      propertyPath: OverrideAttenuation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 95009174090165897, guid: 16740a357e730da459b5403f586f9ed6, type: 3}
+      propertyPath: OverrideMaxDistance
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 1331279020183118004, guid: 16740a357e730da459b5403f586f9ed6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.5
@@ -14093,7 +14115,7 @@ Light:
   serializedVersion: 13
   m_Type: 0
   m_Color: {r: 1, g: 0.09259259, b: 0, a: 1}
-  m_Intensity: 4.5719924
+  m_Intensity: 2.2859962
   m_Range: 15
   m_SpotAngle: 43.012276
   m_InnerSpotAngle: 9.7361965

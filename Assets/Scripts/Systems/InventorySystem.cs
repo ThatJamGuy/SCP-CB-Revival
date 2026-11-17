@@ -32,8 +32,10 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     private readonly Dictionary<string, int> inventoryContents = new();
     private readonly Dictionary<GameObject, string> slotContents = new();
 
+    // NERVER CHANGE THIS UNLESS MORE SLOTS ARE ADDED!!!
     private const int MAX_SLOTS = 10;
 
+    private SaveData saveData;
     private InputAction unequipItemAction;
 
     #region Unity Lifecycle
@@ -41,6 +43,9 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        SaveGameEngine.Register(this);
+        saveData = SaveGameEngine.Get<SaveData>();
 
         unequipItemAction = RevivalRuntimeEngine.Instance.GetAction("Player", "RightClick");
     }
@@ -54,7 +59,6 @@ public class InventorySystem : MonoBehaviour, ISaveable {
 
         // Load inventory from save if applicable, but otherwise register this saveable
         LoadInventoryFromSave();
-        SavegameEngine.Register(this);
     }
 
     private void OnEnable() {
@@ -68,7 +72,7 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     }
 
     private void OnDestroy() {
-        SavegameEngine.Unregister(this);
+        SaveGameEngine.Unregister(this);
         if (Instance == this) Instance = null;
     }
 
@@ -89,19 +93,31 @@ public class InventorySystem : MonoBehaviour, ISaveable {
 
     // Creats and sets up the UI object for an item inside a specific slot and registers it
     private void CreateItemInSlot(GameObject slot, ItemData itemData) {
+        if (inventoryItemTemplate == null)
+            Debug.LogError("The InventoryItemTemplate is null. Items cannot be created in slots unless this is assigned!");
+
+        // Grab the item template prefab and instantiate it into the slot we're working with
         GameObject itemObj = Instantiate(inventoryItemTemplate, slot.transform);
-        itemObj.GetComponent<Image>().sprite = itemData.itemInventoryIcon;
 
-        TooltipTrigger tooltip = itemObj.GetComponent<TooltipTrigger>();
-        tooltip.Title = itemData.itemName;
-        tooltip.Content = itemData.itemDescription;
+        // If the template contains an <Image> component, set the sprite to the itemData inv icon
+        if (itemObj.TryGetComponent<Image>(out Image img))
+            img.sprite = itemData.itemInventoryIcon;
 
-        InventoryItem invItem = itemObj.GetComponent<InventoryItem>();
-        invItem.itemData = itemData;
+        // If the template contains a <ToolTipTrigger> component, assign the title and content to itemName and itemDescription
+        if (itemObj.TryGetComponent<TooltipTrigger>(out TooltipTrigger tooltip)) {
+            tooltip.Title = itemData.itemName;
+            tooltip.Content = itemData.itemDescription;
+        }
 
+        // If the template contains the <InventoryItem> component, set the itemData reference to the itemData parameter
+        if (itemObj.TryGetComponent<InventoryItem>(out InventoryItem invItem))
+            invItem.itemData = itemData;
+
+        // Finally, register this item to the slot as well as passing in the itemData's identifier 
         RegisterItem(slot, itemData.itemIdentifier);
     }
 
+    // Assigns items to a slot so other items cannot take the aforementioned slot
     private void RegisterItem(GameObject slot, string itemIdentifier) {
         slotContents[slot] = itemIdentifier;
         inventoryContents[itemIdentifier] = inventoryContents.TryGetValue(itemIdentifier, out int count) ? count + 1 : 1;
@@ -120,8 +136,7 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     }
 
     private void LoadInventoryFromSave() {
-        PlayerData data = SavegameEngine.Get<PlayerData>();
-        string[] slotItems = data.slotItems;
+        string[] slotItems = saveData.slotItems;
         if (slotItems == null) return;
 
         int count = Mathf.Min(slotItems.Length, inventorySlotObjects.Length);
@@ -196,14 +211,13 @@ public class InventorySystem : MonoBehaviour, ISaveable {
 
     // Save inventory data
     public void PrepareSaveableValues() {
-        PlayerData data = SavegameEngine.Get<PlayerData>();
         string[] slotItems = new string[inventorySlotObjects.Length];
 
         for (int i = 0; i < slotItems.Length; i++) {
             slotItems[i] = slotContents.TryGetValue(inventorySlotObjects[i], out string id) ? id : string.Empty;
         }
 
-        data.slotItems = slotItems;
+        saveData.slotItems = slotItems;
     }
 
     #endregion

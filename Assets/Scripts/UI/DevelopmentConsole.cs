@@ -245,7 +245,7 @@ public class DevelopmentConsole : MonoBehaviour {
     }
 
     private void CMD_PrintLockdown(string[] args) {
-        Debug.Log($"<color=#00ffff>Current LCZ lockdown state: {RevivalSessionEngine.lczInLockdown}</color>");
+        Debug.Log($"<color=#00ffff>Current LCZ unlocked state: {RevivalSessionEngine.lczUnlocked}</color>");
     }
 
     private void CMD_DisableLockdown(string[] args) {

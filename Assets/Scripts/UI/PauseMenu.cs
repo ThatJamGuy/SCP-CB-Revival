@@ -15,11 +15,16 @@ public class PauseMenu : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI loadGameTextPause;
     [SerializeField] private TextMeshProUGUI loadGameTextDeath;
 
+    private SaveData saveData;
     private MapGenerator mapGenerator;
 
     private int currentDifficulty;
 
     #region Unity Callbacks
+
+    private void Awake() {
+        saveData = SaveGameEngine.Get<SaveData>();
+    }
 
     private void OnEnable() {
         // Make sure the load game text is the proper color when opening the pause menu
@@ -36,7 +41,7 @@ public class PauseMenu : MonoBehaviour {
 
         // Give the current difficulty the appropriate color when displaying it in the pause menu
         currentDifficultyText.text = currentDifficulty switch {
-            0 => "<color=grey>Difficulty:</color> <color=green>Easy</color>",
+            0 => "<color=grey>Difficulty:</color> <color=green>Safe</color>",
             1 => "<color=grey>Difficulty:</color> <color=yellow>Euclid</color>",
             2 => "<color=grey>Difficulty:</color> <color=red>Keter</color>",
             _ => currentDifficultyText.text
@@ -64,20 +69,24 @@ public class PauseMenu : MonoBehaviour {
     }
 
     private bool CanLoadGame() {
-        if (!SavegameEngine.HasActiveSave || !SavegameEngine.HasSave())
+        if (!SaveGameEngine.HasActiveSave || !SaveGameEngine.HasSave())
             return false;
 
-        // Disallow the player from manually reloading on Keter to prevent save/load abuse
-        if (RevivalSessionEngine.currentDifficulty == 2 && !Player.Instance.isDead) return false;
+        if (saveData == null) saveData = SaveGameEngine.Get<SaveData>();
+        if (saveData == null) return false;
 
-        GameStateData state = SavegameEngine.Get<GameStateData>();
+        // Check if the current difficulty is Keter
+        bool isKeter = RevivalSessionEngine.currentDifficulty == 2;
 
-        bool playerDeadOnKeter =
-            RevivalSessionEngine.currentDifficulty == 2
-            && Player.Instance != null
-            && Player.Instance.isDead;
+        Player player = Player.Instance;
 
-        return state.introCompleted && !playerDeadOnKeter;
+        // If the difficulty is Keter and the player is dead or doesn't exist return false
+        if (isKeter && (player == null || !player.isDead)) return false;
+
+        // Is the player dead and also on Keter difficulty
+        bool playerDeadOnKeter = isKeter && player.isDead;
+
+        return saveData.introCompleted && !playerDeadOnKeter;
     }
 
     public void LoadGame() {
@@ -91,9 +100,9 @@ public class PauseMenu : MonoBehaviour {
 
     public void ReturnToMenu() {
         // Delete the save if the intro was not completed or if the player died on Keter mode
-        if (!SavegameEngine.Get<GameStateData>().introCompleted
+        if (!saveData.introCompleted
             || (RevivalSessionEngine.currentDifficulty == 2 && Player.Instance.isDead))
-            SavegameEngine.DeleteSave("SaveFile");
+            SaveGameEngine.DeleteSave("SaveFile");
 
         // Kind of resume game as to not get stuck before attempting to load the main menu
         Time.timeScale = 1f;
