@@ -64,10 +64,6 @@ public class TeslaController : MonoBehaviour {
 
         yield return new WaitForSeconds(1f);
         specialEffects.SetActive(true);
-
-        //foreach (var f in flickerableLights) {
-        //    f.enabled = false;
-        //}
     }
 
     private IEnumerator TriggerTeslaCoroutine() {

@@ -69,7 +69,7 @@ public class PlayerLook : MonoBehaviour {
         // Clamp the xRotation - input.y (Up and Down Mouse Movement), positive and negative maxLookAngle
         // Finally set the localRotation of this transform (CameraRoot object) to xRotation on the X only
         xRotation = Mathf.Clamp(xRotation - input.y, -maxLookAngle, maxLookAngle);
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
 
         // Rotate the playerBody GameObject on the Vector3.up Axis (Y Axis) multiplied by input.x (Look action X)
         playerBody.Rotate(Vector3.up * input.x);

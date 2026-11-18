@@ -26,6 +26,7 @@ public class Player : MonoBehaviour, ISaveable {
     public bool isMoving;
     public bool isSprinting;
     public bool isCrouching;
+    public bool isNoclipping;
     public bool isDead;
 
     public static bool isBlinking { get; set; }
@@ -134,6 +135,7 @@ public class Player : MonoBehaviour, ISaveable {
         disableInput = true;
         disableLooking = true;
         isMoving = false;
+        isNoclipping = false;
         isDead = true;
 
         currentDeathTween.Stop();

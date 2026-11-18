@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -84,31 +83,23 @@ public class PlayerInteraction : MonoBehaviour {
 
     #region Private Methods
 
-    #region Determine Current Interactable
-
-    /// <summary>
-    /// Determines the closest interactable to the player.
-    /// Recent changes allow this method to prioritize the object the player is looking at.
-    /// </summary>
-    private void DetermineClosestInteractable()
-    {
+    private void DetermineClosestInteractable() {
         //switched to camera postion rather then previous implemenation that was transform position
         //Correctly matches player eye level
-        var camPos = cameraTransform != null ? cameraTransform.position : transform.position;
-        var camForward = cameraTransform != null ? cameraTransform.forward : transform.forward;
+        Vector3 camPos = cameraTransform != null ? cameraTransform.position : transform.position;
+        Vector3 camForward = cameraTransform != null ? cameraTransform.forward : transform.forward;
 
         //Changed from transform.position to camPos so that interacting follows the camera height
-        int numColliders = Physics.OverlapSphereNonAlloc(camPos, interactRadius, hitColliders, interactableMask);   
+        int numColliders = Physics.OverlapSphereNonAlloc(camPos, interactRadius, hitColliders, interactableMask);
 
         float distWeight = 1f - lookWeight;
         float invRadius = 1f / interactRadius;
 
-        var bestScore = float.MinValue;
+        float bestScore = float.MinValue;
         GameObject closestInteractable = null;
 
         // For every collider in the cool circle area around the player...
-        for (int i = 0; i < numColliders; i++)
-        {
+        for (int i = 0; i < numColliders; i++) {
             Collider hit = hitColliders[i];
 
             //Basically Handles item prefabs interactions
@@ -118,9 +109,9 @@ public class PlayerInteraction : MonoBehaviour {
             // Evaluates from collider center with vertical offest to prevent linecast from not hitting the item
             Vector3 hitPosition = hit.bounds.center + (Vector3.up * 0.02f);
 
-            var toHit = hitPosition - camPos;
+            Vector3 toHit = hitPosition - camPos;
 
-            var toHitFromCam = hitPosition - camPos;
+            Vector3 toHitFromCam = hitPosition - camPos;
             float dist = Mathf.Sqrt(toHit.sqrMagnitude);
             float distScore = 1f - Mathf.Min(dist * invRadius, 1f);
             float camSqr = toHitFromCam.sqrMagnitude;
@@ -133,10 +124,8 @@ public class PlayerInteraction : MonoBehaviour {
             if (score <= bestScore) continue;
 
             // Validates linecast line of sight
-            if (Physics.Linecast(camPos, hitPosition, out RaycastHit obsHit, obstructionMask))
-            {
-                if (obsHit.collider.transform.root != hit.transform.root)
-                {
+            if (Physics.Linecast(camPos, hitPosition, out RaycastHit obsHit, obstructionMask)) {
+                if (obsHit.collider.transform.root != hit.transform.root) {
                     continue;
                 }
             }
@@ -144,10 +133,9 @@ public class PlayerInteraction : MonoBehaviour {
             bestScore = score;
             closestInteractable = hit.gameObject;
 
-            }
+        }
 
-        if (!ReferenceEquals(closestInteractable, currentInteractable))
-        {
+        if (!ReferenceEquals(closestInteractable, currentInteractable)) {
             currentInteractable = closestInteractable;
 
             //Fixes items when their collider or IInteractable are on different objects in the same prefab.
@@ -156,15 +144,12 @@ public class PlayerInteraction : MonoBehaviour {
         }
 
 
-        if (closestInteractable)
-        {
+        if (closestInteractable) {
             //Projects to visual collider center instead of root transform origin
             Collider col = closestInteractable.GetComponent<Collider>();
             Vector3 iconPos = col != null ? col.bounds.center : closestInteractable.transform.position;
             TryToShowInteractIcon(iconPos);
-        }
-        else if (interactIcon.gameObject != null)
-        {
+        } else if (interactIcon.gameObject != null) {
             interactIcon.gameObject.SetActive(false);
         }
     }
@@ -193,7 +178,6 @@ public class PlayerInteraction : MonoBehaviour {
         interactIcon.rectTransform.anchoredPosition = canvasPos;
         interactIcon.gameObject.SetActive(true);
     }
-    #endregion
 
     #region Handle Interaction Input
 

@@ -1,5 +1,4 @@
 using PrimeTween;
-using System.Reflection.Metadata.Ecma335;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -27,6 +26,7 @@ public class PlayerMovement : MonoBehaviour {
     private Vector3 defaultCenter;
 
     #region Private Variables
+
     private static Player player => Player.Instance;
     private static RevivalRuntimeEngine runtimeEngine => RevivalRuntimeEngine.Instance;
 
@@ -45,6 +45,7 @@ public class PlayerMovement : MonoBehaviour {
     private bool isSprinting;
     private bool isCrouching;
     private bool sprintLocked;
+    private bool noclipActive;
 
     private Tween heightTween;
 
@@ -56,7 +57,6 @@ public class PlayerMovement : MonoBehaviour {
     private const float GRAVITY = -9.81f;
     private const float STANDING_HEIGHT = 2.45f;
     private const float MAX_STAMINA = 1;
-
 
     #endregion
 
@@ -70,11 +70,9 @@ public class PlayerMovement : MonoBehaviour {
         crouchAction.performed -= OnCrouchPerformed;
     }
 
-    private void Start()
-    {
+    private void Start() {
         // If there is no InputManager available at the start, disallow functionality and print a warning in console
-        if (runtimeEngine == null)
-        {
+        if (runtimeEngine == null) {
             cantFunction = true;
             Debug.Log("<color=red>[PlayerMovement]</color> InputManager was not found, moving will not work!");
 
@@ -100,13 +98,11 @@ public class PlayerMovement : MonoBehaviour {
         currStaminaSlider = CanvasInstance.Instance.currSprintSlider;
 
         // caches default camera height
-        if (playerCameraRoot != null)
-        {
+        if (playerCameraRoot != null) {
             defaultCameraLocalPos = playerCameraRoot.localPosition;
         }
 
-        if (capsuleCollider != null)
-        {
+        if (capsuleCollider != null) {
             capsuleCollider.center = characterController.center;
             capsuleCollider.height = characterController.height;
             capsuleCollider.radius = characterController.radius;
@@ -118,6 +114,12 @@ public class PlayerMovement : MonoBehaviour {
     private void Update() {
         // If input is manually disabled or functionality is broken then don't do anything
         if (player.disableInput || cantFunction) return;
+        if (player.isNoclipping != noclipActive) SetNoclipActive(player.isNoclipping);
+
+        if (noclipActive) {
+            HandleNoclipMovement();
+            return;
+        }
 
         DetermineMovementSpeed();
         HandleMovement();
@@ -146,6 +148,18 @@ public class PlayerMovement : MonoBehaviour {
         characterController.Move(move * Time.deltaTime);
 
         player.isMoving = input.sqrMagnitude > 0f;
+    }
+
+    private void HandleNoclipMovement() {
+        Vector2 input = moveAction.ReadValue<Vector2>();
+        Transform playerBody = characterController.transform;
+        Transform view = player.playerCamera.transform;
+
+        float speed = player.noclipSpeed;
+        if (sprintAction.IsPressed()) speed *= player.noclipSprintModifier;
+
+        Vector3 move = view.right * input.x + view.forward * input.y;
+        playerBody.position += Vector3.ClampMagnitude(move, 1) * (speed * Time.deltaTime);
     }
 
     private void HandleStamina() {
@@ -181,6 +195,15 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
+    private void SetNoclipActive(bool active) {
+        noclipActive = active;
+        characterController.enabled = !active;
+        velocity = Vector3.zero;
+        player.isMoving = false;
+
+        if (!active) Physics.SyncTransforms();
+    }
+
     #region Input Callbacks
 
     private void OnSprintStarted(InputAction.CallbackContext ctx) {
@@ -202,7 +225,7 @@ public class PlayerMovement : MonoBehaviour {
 
     // When hitting the crouch button, if crouching stand, otherwise start crouching
     private void AttemptToToggleCrouch() {
-        if (player.disableInput) return;
+        if (player.disableInput || noclipActive) return;
         if (isCrouching) TryToStand();
         else StartCrouch();
     }
@@ -230,12 +253,10 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     // Method that uses PrimeTween to smoothly interpolate between standing and crouching heights
-    private void TweenHeight(float from, float to)
-    {
+    private void TweenHeight(float from, float to) {
         heightTween.Stop();
         // Tween height and center.y together so the capsule stays grounded. Prevents that weird stuttering
-        heightTween = Tween.Custom(from, to, 0.15f, val =>
-        {
+        heightTween = Tween.Custom(from, to, 0.15f, val => {
             float heightDifference = STANDING_HEIGHT - val;
             Vector3 newCenter = defaultCenter;
             newCenter.y -= heightDifference * 0.5f;
@@ -245,15 +266,13 @@ public class PlayerMovement : MonoBehaviour {
 
 
             //keeps capscule collider grounded
-            if (capsuleCollider != null)
-            {
+            if (capsuleCollider != null) {
                 capsuleCollider.height = val;
                 capsuleCollider.center = newCenter;
             }
 
             //Smoothly lerps camera root
-            if (playerCameraRoot != null)
-            {
+            if (playerCameraRoot != null) {
                 float t = Mathf.InverseLerp(STANDING_HEIGHT, crouchingHeight, val);
                 playerCameraRoot.localPosition = defaultCameraLocalPos + (Vector3.down * (crouchCameraDrop * t));
             }
@@ -265,13 +284,11 @@ public class PlayerMovement : MonoBehaviour {
     // the same Player layer, then returning true or false depending on if there is
 
     //Note: Now Uses SphereCastNonAlloc from the top of crouched to standing    
-    private bool CanStand()
-    {
+    private bool CanStand() {
         float distance = STANDING_HEIGHT - characterController.height;
         if (distance <= 0.01f) return true;
 
-        if (playerLayerMask == -1)
-        {
+        if (playerLayerMask == -1) {
             playerLayerMask = ~(1 << LayerMask.NameToLayer("Player"));
         }
 
@@ -291,24 +308,22 @@ public class PlayerMovement : MonoBehaviour {
             QueryTriggerInteraction.Ignore
             );
 
-        for (int i = 0; i < hitCount; i++)
-        {
+        for (int i = 0; i < hitCount; i++) {
 
             RaycastHit hit = hitBuffer[i];
 
             //Ignores player own collider
             if (hit.collider.transform.root == characterController.transform.root) continue;
 
-            if (hit.normal.y < -0.3f)
-            {
+            if (hit.normal.y < -0.3f) {
                 return false;
             }
 
         }
         return true;
     }
-    
+
     #endregion
 
     #endregion
-    }
+}

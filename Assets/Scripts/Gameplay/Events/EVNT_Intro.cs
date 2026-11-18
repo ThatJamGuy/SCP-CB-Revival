@@ -6,6 +6,8 @@ using UnityEngine.Video;
 
 // Welcome to hell
 public class EVNT_Intro : MonoBehaviour {
+    private const float GUARD_SHOOT173_TIME = 1.9f;
+
     [Header("Settings")]
     [SerializeField] private bool developerMode;
     [SerializeField] private bool playVideo;
@@ -565,7 +567,7 @@ public class EVNT_Intro : MonoBehaviour {
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.superShoot, balconyGuard_2.transform.position);
         gunLight.SetActive(true);
 
-        yield return new WaitForSeconds(3.8f);
+        yield return new WaitForSeconds(GUARD_SHOOT173_TIME);
 
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.legacyLightFlicker);
         AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.introBoomA);
@@ -573,7 +575,7 @@ public class EVNT_Intro : MonoBehaviour {
         gunLight.SetActive(false);
 
         scp173.transform.position = nav173_2.transform.position;
-        classDA.Speak(AudioManager.Instance.globalAudioContainer.neckBreak);
+        balconyGuard_2.Speak(AudioManager.Instance.globalAudioContainer.neckBreak);
         balconyGuard_2.SetAnimTrigger("Die");
 
         yield return new WaitForSeconds(1);
