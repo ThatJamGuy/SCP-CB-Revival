@@ -14,20 +14,31 @@ public class RoomHandler : MonoBehaviour {
 
     private void Update()
     {
-        
+
         if (roomLights == null || Player.Instance == null) return;
 
         Vector3 playerPos = Player.Instance.transform.position;
         float activateDistSqr = activateDistance * activateDistance;
 
-        //using a manual distance check over Vector3.Distance saves a single squareRoot call per light source.
+        bool shouldBeActive = (transform.position - playerPos).sqrMagnitude <= activateDistSqr;
+
+
         foreach (Light light in roomLights)
         {
-            bool shouldBeActive = (light.transform.position - playerPos).sqrMagnitude <= activateDistSqr;
-
-            if (light.gameObject.activeSelf != shouldBeActive)
-                light.gameObject.SetActive(shouldBeActive);
+            light.gameObject.SetActive(shouldBeActive);
         }
+
+
+
+
+        //using a manual distance check over Vector3.Distance saves a single squareRoot call per light source.
+        //foreach (Light light in roomLights)
+        //{
+        //    bool shouldBeActive = (light.transform.position - playerPos).sqrMagnitude <= activateDistSqr;
+
+        //    if (light.gameObject.activeSelf != shouldBeActive)
+        //        light.gameObject.SetActive(shouldBeActive);
+        //}
     }
 
     #endregion

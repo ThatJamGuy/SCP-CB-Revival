@@ -590,6 +590,8 @@ MonoBehaviour:
   maxSpeed: 1.5
   animations: []
   animationNames: []
+  disableMaxRange: 3
+  disableChance: 1
 --- !u!1 &1655352377540743020
 GameObject:
   m_ObjectHideFlags: 0
@@ -2543,12 +2545,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248c7f6a56bd88c4197e3f1a5d2de6de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
+  roomName: 
+  teleportLocation: {fileID: 0}
   roomLights:
   - {fileID: 648582913259318827}
   - {fileID: 8392010647677672828}
   - {fileID: 2961746807720320479}
   - {fileID: 4513970452866259015}
-  activateDistance: 25
+  activateDistance: 32
 --- !u!1 &4789836288960106779
 GameObject:
   m_ObjectHideFlags: 0
@@ -5533,6 +5537,8 @@ MonoBehaviour:
   maxSpeed: 1.5
   animations: []
   animationNames: []
+  disableMaxRange: 3
+  disableChance: 1
 --- !u!4 &4150605114787501458 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4255880716833147312, guid: 451ac836aa694ba41ba0bd04e2d495b8, type: 3}
