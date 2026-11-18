@@ -28,17 +28,6 @@ public class RoomHandler : MonoBehaviour {
             light.gameObject.SetActive(shouldBeActive);
         }
 
-
-
-
-        //using a manual distance check over Vector3.Distance saves a single squareRoot call per light source.
-        //foreach (Light light in roomLights)
-        //{
-        //    bool shouldBeActive = (light.transform.position - playerPos).sqrMagnitude <= activateDistSqr;
-
-        //    if (light.gameObject.activeSelf != shouldBeActive)
-        //        light.gameObject.SetActive(shouldBeActive);
-        //}
     }
 
     #endregion
