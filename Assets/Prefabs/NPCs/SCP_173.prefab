@@ -152,7 +152,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6d3f79daf7efe744a018c5aa94c1795, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SCP_173
-  puppetMode: 0
   isVisibleByPlayer: 0
   disableKilling: 0
   isVisibleByAnyNPC: 0
@@ -161,8 +160,6 @@ MonoBehaviour:
   doorOpenChance: 0.3
   doorCheckInterval: 3
   maxTargetDistance: 25
-  euclidDoorBashMax: 10
-  keterDoorBashMax: 5
   poseAnimations:
   - Pose1
   - Pose2
@@ -176,7 +173,7 @@ MonoBehaviour:
   obstructionMask:
     serializedVersion: 2
     m_Bits: 192
-  visibilityCheckInterval: 0.1
+  visibilityCheckInterval: 0.01
   eyeOffset: {x: 0, y: 1.5, z: 0}
   frustumPadding: 0.3
   lateralSampleRadius: 0.35
