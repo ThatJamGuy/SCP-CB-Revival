@@ -12,17 +12,21 @@ public class RoomHandler : MonoBehaviour {
 
     #region Unity Lifecycle
 
-    private void Update() {
-        if (roomLights == null) return;
+    private void Update()
+    {
+        
+        if (roomLights == null || Player.Instance == null) return;
 
-        foreach (Light light in roomLights) {
-            float distanceToPlayer = 0;
+        Vector3 playerPos = Player.Instance.transform.position;
+        float activateDistSqr = activateDistance * activateDistance;
 
-            if (Player.Instance != null)
-                distanceToPlayer = Vector3.Distance(light.transform.position, Player.Instance.transform.position);
+        //using a manual distance check over Vector3.Distance saves a single squareRoot call per light source.
+        foreach (Light light in roomLights)
+        {
+            bool shouldBeActive = (light.transform.position - playerPos).sqrMagnitude <= activateDistSqr;
 
-            if (distanceToPlayer <= activateDistance) light.gameObject.SetActive(true);
-            else light.gameObject.SetActive(false);
+            if (light.gameObject.activeSelf != shouldBeActive)
+                light.gameObject.SetActive(shouldBeActive);
         }
     }
 
