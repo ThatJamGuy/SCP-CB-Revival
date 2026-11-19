@@ -10,6 +10,8 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour {
     public static AudioManager Instance { get; private set; }
     private readonly List<EventInstance> activeInstances = new();
+    [SerializeField] private EventReference reverbMasterReference;
+    private EventInstance reverbInstance;
 
     [Header("Volume Sliders")]
     [Range(0, 1)] public float masterVolume = 1;
@@ -31,6 +33,9 @@ public class AudioManager : MonoBehaviour {
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        //Create the global reverb instance. This instance must NEVER be destroyed.
+        reverbInstance = RuntimeManager.CreateInstance(reverbMasterReference);
 
         // Set the SFX bus to the SFX mixer channel in FMOD Studio
         masterBus = RuntimeManager.GetBus("bus:/");
