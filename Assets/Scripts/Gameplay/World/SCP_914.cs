@@ -27,6 +27,7 @@ public class SCP_914 : MonoBehaviour {
     private const string ACHV_TO_GIVE = "achv_914";
 
     private bool isRefining;
+    public bool IsRefining => isRefining;
 
     #region Unity Lifecycle
 
@@ -86,6 +87,10 @@ public class SCP_914 : MonoBehaviour {
     private IEnumerator RefinementProcess() {
         isRefining = true;
 
+        // Set up the locked refinement mode when the machine starts cooking
+        // Extra safety to prevent the mode from being changed mid-refinement
+        SCP_914_Recipe.RefinementMode lockedMode = currentRefinementMode;
+
         CollectItemsInInputArea();
 
         for (int i = 0; i < machineLights.Length; i++)
@@ -98,7 +103,7 @@ public class SCP_914 : MonoBehaviour {
 
         for (int i = 0; i < itemsToRefine.Count; i++) {
             WorldItem item = itemsToRefine[i];
-            if (item) RefineItem(item);
+            if (item) RefineItem(item, lockedMode);
         }
 
         itemsToRefine.Clear();
@@ -109,14 +114,17 @@ public class SCP_914 : MonoBehaviour {
         isRefining = false;
     }
 
-    private void RefineItem(WorldItem item) {
+    private void RefineItem(WorldItem item, SCP_914_Recipe.RefinementMode mode) {
         ItemData inputData = item.associatedItemData;
         if (inputData == null) return;
 
         if (verboseLogging)
-            Debug.Log($"914 refining {inputData.name} in mode {currentRefinementMode}", this);
+            Debug.Log($"914 refining {inputData.name} in mode {mode}", this);
 
-        ItemData outputItem = GetOutput(inputData, currentRefinementMode);
+        // TODO: If the item is a paper behavior, hard code oragami on fine/veryfine and another paper on 1:1
+        // Prevents me from having to spend ages adding recipes for each paper I add
+
+        ItemData outputItem = GetOutput(inputData, mode);
         Destroy(item.gameObject);
 
         if (outputItem == null) return;
