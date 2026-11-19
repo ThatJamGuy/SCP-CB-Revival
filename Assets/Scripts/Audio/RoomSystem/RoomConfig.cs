@@ -1,3 +1,4 @@
+using FMODUnity;
 using UnityEngine;
 
 /// <summary>
@@ -8,4 +9,5 @@ using UnityEngine;
 public class RoomConfig : ScriptableObject
 {
     public ReverbEnum reverbType;
+    public EventReference ambienceSoundScape;
 }

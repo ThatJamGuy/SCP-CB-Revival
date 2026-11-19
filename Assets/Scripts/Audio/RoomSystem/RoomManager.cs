@@ -24,6 +24,6 @@ public class RoomManager : MonoBehaviour
     /// </summary>
     public void UpdateRoomConfig(RoomTrigger roomTrigger)
     {
-        AudioManager.Instance.UpdateReverb(roomTrigger);
+        AudioManager.Instance.UpdateRoom(roomTrigger);
     }
 }

@@ -12,6 +12,7 @@ public class AudioManager : MonoBehaviour {
     private readonly List<EventInstance> activeInstances = new();
     [SerializeField] private EventReference reverbMasterReference;
     private EventInstance reverbInstance;
+    private EventInstance ambienceInstance;
 
     [Header("Volume Sliders")]
     [Range(0, 1)] public float masterVolume = 1;
@@ -108,6 +109,21 @@ public class AudioManager : MonoBehaviour {
         Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to release it from memory when finished
     }
 
+    // Check if an instance is playing any given instance already.
+    public static bool IsPlayingEvent(EventInstance instance, EventReference reference)
+    {
+        if (!instance.isValid() || reference.IsNull)
+            return false;
+
+        if (instance.getDescription(out EventDescription description) != FMOD.RESULT.OK)
+            return false;
+
+        if (description.getID(out FMOD.GUID id) != FMOD.RESULT.OK)
+            return false;
+
+        return id.Equals(reference.Guid);
+    }
+
     // Set a parameter without doing anything else
     public static void SetParameter(string name, float value) {
         RuntimeManager.StudioSystem.setParameterByName(name, value);
@@ -147,9 +163,11 @@ public class AudioManager : MonoBehaviour {
     /// <summary>
     /// Updates the current GLOBAL reverb.
     /// </summary>
-    public void UpdateReverb(RoomTrigger roomTrigger)
+    public void UpdateRoom(RoomTrigger roomTrigger)
     {
         reverbInstance.setParameterByNameWithLabel("ReverbTypes", roomTrigger.roomConfig.reverbType.ToString());
+
+        if(ambienceInstance.isValid() && roomTrigger.roomConfig.ambienceSoundScape == ambienceInstance.get)
     }
     #endregion
 }
