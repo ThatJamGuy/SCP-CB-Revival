@@ -1,4 +1,8 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.HighDefinition;
+using UnityEngine.Rendering.Universal;
 
 /// <summary>
 /// Handles all updates related to the room system.
@@ -6,13 +10,21 @@ using UnityEngine;
 public class RoomManager : MonoBehaviour
 {
     public static RoomManager Instance;
+
+
     public RoomConfig currentRoomConfig;
+
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
     }
+
 
     /// <summary>
     /// Sets the active room config. For multiplayer, make sure each player can manage their own changes to the appropreate systems.
@@ -21,6 +33,7 @@ public class RoomManager : MonoBehaviour
     {
         currentRoomConfig = roomTrigger.roomConfig;
         AudioManager.Instance.UpdateRoom(roomTrigger);
+        PostProcessingManager.Instance.UpdateRoom(roomTrigger);
     }
 
     /// <summary>
