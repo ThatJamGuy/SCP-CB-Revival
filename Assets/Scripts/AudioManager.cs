@@ -3,6 +3,7 @@ using FMODUnity;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.STP;
 
 /// <summary>
 /// Globally accessible class to play One-Shots and manage some other base audio things like volume
@@ -35,10 +36,7 @@ public class AudioManager : MonoBehaviour {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        //Create the global reverb instance. This instance must NEVER be released or destroyed after its creation. 
-        reverbInstance.release();
-        reverbInstance = RuntimeManager.CreateInstance(reverbMasterReference);
-        reverbInstance.start();
+      
 
         // Set the SFX bus to the SFX mixer channel in FMOD Studio
         masterBus = RuntimeManager.GetBus("bus:/");
@@ -115,6 +113,11 @@ public class AudioManager : MonoBehaviour {
         if (!instance.isValid() || reference.IsNull)
             return false;
 
+        // A stopped or stopping instance of the same event shouldn't count as "already playing".
+        if (instance.getPlaybackState(out PLAYBACK_STATE state) != FMOD.RESULT.OK ||
+            state == PLAYBACK_STATE.STOPPED || state == PLAYBACK_STATE.STOPPING)
+            return false;
+
         if (instance.getDescription(out EventDescription description) != FMOD.RESULT.OK)
             return false;
 
@@ -165,9 +168,40 @@ public class AudioManager : MonoBehaviour {
     /// </summary>
     public void UpdateRoom(RoomTrigger roomTrigger)
     {
-        reverbInstance.setParameterByNameWithLabel("ReverbTypes", roomTrigger.roomConfig.reverbType.ToString());
+        RoomConfig roomConfig = roomTrigger.roomConfig;
 
-        if(ambienceInstance.isValid() && roomTrigger.roomConfig.ambienceSoundScape == ambienceInstance.get)
+        if (!reverbInstance.isValid())
+        {
+            reverbInstance.release();
+            reverbInstance = RuntimeManager.CreateInstance(reverbMasterReference);
+            reverbInstance.start();
+        }
+
+        //Update reverb
+        reverbInstance.setParameterByNameWithLabel("ReverbTypes", roomConfig.reverbType.ToString());
+
+
+
+        // default EventReference counts as null, so "no room" and "room with no ambience" take the same path
+        EventReference ambience = roomConfig != null ? roomConfig.ambienceSoundScape : default;
+
+        // Already playing this exact ambience, nothing to do.
+        if (!ambience.IsNull)
+            return;
+
+        // Fade out whatever was playing.
+        if (ambienceInstance.isValid())
+        {
+            ambienceInstance.stop(STOP_MODE.ALLOWFADEOUT);
+            ambienceInstance.release();
+            ambienceInstance = default; // a released handle stays "valid" while it fades out, so clear it
+        }
+
+        if (ambience.IsNull)
+            return;
+
+        ambienceInstance = RuntimeManager.CreateInstance(ambience);
+        ambienceInstance.start();
     }
     #endregion
 }
