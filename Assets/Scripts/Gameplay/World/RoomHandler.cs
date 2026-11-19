@@ -9,20 +9,36 @@ public class RoomHandler : MonoBehaviour {
     [Header("Optimization")]
     [SerializeField] private Light[] roomLights;
     [SerializeField] private float activateDistance = 25;
-
+    [SerializeField, Tooltip("Only enable if the room is obscenely large, such as 106's containment room.")] private bool usePerLightCalculation = false;
     #region Unity Lifecycle
 
-    private void Update() {
-        if (roomLights == null) return;
+    private void Update()
+    {
+        if (roomLights == null || Player.Instance == null) return;
 
-        foreach (Light light in roomLights) {
-            float distanceToPlayer = 0;
+        Vector3 playerPos = Player.Instance.transform.position;
+        float activateDistSqr = activateDistance * activateDistance;
 
-            if (Player.Instance != null)
-                distanceToPlayer = Vector3.Distance(light.transform.position, Player.Instance.transform.position);
+        //Cull all lights in the room if the player is too far from the rooms center
+        if (!usePerLightCalculation)
+        {
+            bool shouldBeActive = (transform.position - playerPos).sqrMagnitude <= activateDistSqr;
 
-            if (distanceToPlayer <= activateDistance) light.gameObject.SetActive(true);
-            else light.gameObject.SetActive(false);
+            foreach (Light light in roomLights)
+            {
+                light.gameObject.SetActive(shouldBeActive);
+            }
+        }
+
+        //Cull lights individually based on the players distance from the light.
+        else
+        {
+            foreach (Light light in roomLights)
+            {
+                bool shouldBeActive = (light.transform.position - playerPos).sqrMagnitude <= activateDistSqr;
+                light.gameObject.SetActive(shouldBeActive);
+            }
+
         }
     }
 
