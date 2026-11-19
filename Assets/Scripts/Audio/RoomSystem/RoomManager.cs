@@ -7,16 +7,16 @@ using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 public class RoomManager : MonoBehaviour
 {
     public static RoomManager Instance;
-    private RoomConfig currentRoomConfig;
+    public RoomConfig currentRoomConfig;
 
     private void Start()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-      
         Player.Instance.roomListener.OnRoomChanged += UpdateRoomConfig;
         UpdateRoomConfig(Player.Instance.roomListener.activeRoom);
+
     }
 
     /// <summary>
@@ -24,6 +24,14 @@ public class RoomManager : MonoBehaviour
     /// </summary>
     public void UpdateRoomConfig(RoomTrigger roomTrigger)
     {
+        currentRoomConfig = roomTrigger.roomConfig;
         AudioManager.Instance.UpdateRoom(roomTrigger);
+    }
+
+    [ContextMenu("Force Update Rooms")]
+    public void UpdateRegistry()
+    {
+        Player.Instance.roomListener.OnRoomChanged += UpdateRoomConfig;
+        UpdateRoomConfig(Player.Instance.roomListener.activeRoom);
     }
 }
