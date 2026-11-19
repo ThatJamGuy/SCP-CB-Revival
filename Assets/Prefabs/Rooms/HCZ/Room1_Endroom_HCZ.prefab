@@ -187,6 +187,7 @@ MonoBehaviour:
   - {fileID: 506155647365667953}
   - {fileID: 7703391372978662563}
   activateDistance: 32
+  usePerLightCalculation: 0
 --- !u!1 &4115235048226645596
 GameObject:
   m_ObjectHideFlags: 0
@@ -1339,6 +1340,7 @@ GameObject:
   - component: {fileID: 8474995365400091816}
   - component: {fileID: 3691973786658542923}
   - component: {fileID: 399803472901512038}
+  - component: {fileID: 4762125594899866833}
   m_Layer: 2
   m_Name: AmbienceZone
   m_TagString: Untagged
@@ -1413,6 +1415,19 @@ MonoBehaviour:
   OverrideAttenuation: 0
   OverrideMinDistance: 1
   OverrideMaxDistance: 20
+--- !u!114 &4762125594899866833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7022865965057262960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  roomConfig: {fileID: 0}
 --- !u!1 &8129782429826088530
 GameObject:
   m_ObjectHideFlags: 0

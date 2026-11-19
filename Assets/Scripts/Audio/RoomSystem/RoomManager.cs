@@ -9,7 +9,7 @@ public class RoomManager : MonoBehaviour
     public static RoomManager Instance;
     private RoomConfig currentRoomConfig;
 
-    private void Awake()
+    private void Start()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
