@@ -63,8 +63,11 @@ public class RoomListener : MonoBehaviour
 
         int count = Physics.OverlapSphereNonAlloc(transform.position, 0.1f, overlapBuffer, ROOM_MASK, QueryTriggerInteraction.Collide);
 
-        if (count > 0)
-            overlapBuffer[0].TryGetComponent(out found);
+        for (int i = 0; i < count; i++)
+        {
+            if (overlapBuffer[i].TryGetComponent(out found))
+                break;
+        }
 
         SetActiveRoom(found);
     }
