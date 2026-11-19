@@ -2553,6 +2553,7 @@ MonoBehaviour:
   - {fileID: 2961746807720320479}
   - {fileID: 4513970452866259015}
   activateDistance: 32
+  usePerLightCalculation: 0
 --- !u!1 &4789836288960106779
 GameObject:
   m_ObjectHideFlags: 0
@@ -4747,6 +4748,73 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &7402497735434052364
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3460719590734164695}
+  - component: {fileID: 7014855071565200609}
+  - component: {fileID: 8425636034780724309}
+  m_Layer: 2
+  m_Name: AmbienceZone01 (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3460719590734164695
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7402497735434052364}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.0000001, y: 2.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 215855307321365097}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7014855071565200609
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7402497735434052364}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6.152225, y: 5, z: 5.7112384}
+  m_Center: {x: 6.4238873, y: 0, z: -0.009104013}
+--- !u!114 &8425636034780724309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7402497735434052364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
 --- !u!1 &7440115430018848320
 GameObject:
   m_ObjectHideFlags: 0
@@ -4844,6 +4912,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7233870788996632408}
+  - {fileID: 3460719590734164695}
   m_Father: {fileID: 4137816571396412526}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8089146085624625114
@@ -5377,9 +5446,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7233870788996632408}
-  - component: {fileID: 5833594844011527530}
   - component: {fileID: 2502606875117261425}
-  m_Layer: 0
+  - component: {fileID: 383315861810038808}
+  m_Layer: 2
   m_Name: AmbienceZone01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5401,37 +5470,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 215855307321365097}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5833594844011527530
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9221350673043621544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
-  CollisionTag: Player
-  EventReference:
-    Guid:
-      Data1: -877661569
-      Data2: 1247767477
-      Data3: -674235979
-      Data4: 1083816676
-    Path: event:/SFX/Ambience/Soundscapes/Industrial_Ambience_04
-  Event: 
-  EventPlayTrigger: 3
-  EventStopTrigger: 4
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
 --- !u!65 &2502606875117261425
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5451,8 +5489,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 7, y: 8, z: 20}
-  m_Center: {x: 0, y: 1.5, z: 0}
+  m_Size: {x: 7, y: 8, z: 20.441505}
+  m_Center: {x: 0, y: 1.5, z: -0.027678967}
+--- !u!114 &383315861810038808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9221350673043621544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  roomConfig: {fileID: 11400000, guid: db506736eaff01548902fd60e6e6bea3, type: 2}
 --- !u!1001 &186342666321157154
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -187,6 +187,7 @@ MonoBehaviour:
   - {fileID: 506155647365667953}
   - {fileID: 7703391372978662563}
   activateDistance: 32
+  usePerLightCalculation: 0
 --- !u!1 &4115235048226645596
 GameObject:
   m_ObjectHideFlags: 0
@@ -1338,7 +1339,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8474995365400091816}
   - component: {fileID: 3691973786658542923}
-  - component: {fileID: 399803472901512038}
+  - component: {fileID: 5988164269158938617}
   m_Layer: 2
   m_Name: AmbienceZone
   m_TagString: Untagged
@@ -1380,9 +1381,9 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 7, y: 4, z: 13}
-  m_Center: {x: 0, y: 1.5, z: -4}
---- !u!114 &399803472901512038
+  m_Size: {x: 9.104069, y: 4, z: 12.76539}
+  m_Center: {x: 0.052034378, y: 1.5, z: -3.8826952}
+--- !u!114 &5988164269158938617
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1391,28 +1392,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7022865965057262960}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
-  CollisionTag: Player
-  EventReference:
-    Guid:
-      Data1: -1038335838
-      Data2: 1316597380
-      Data3: -742431088
-      Data4: 1975095838
-    Path: event:/SFX/Ambience/Soundscapes/Industrial_Ambience_03
-  Event: 
-  EventPlayTrigger: 3
-  EventStopTrigger: 4
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
+  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
 --- !u!1 &8129782429826088530
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,13 +15,31 @@ public static class DataSaver {
     }
 
     // Loads data from a file
-    public static T Load<T>(string fileName) where T : new() {
+    public static T Load<T>(string fileName) where T : new()
+    {
+        if (string.IsNullOrEmpty(fileName))
+        {
+            Debug.LogError($"Load<{typeof(T).Name}>: fileName is null or empty, returning default data.");
+            return new T();
+        }
+
         string fullPath = Path.Combine(Application.persistentDataPath, fileName);
 
         if (File.Exists(fullPath))
-            return JsonUtility.FromJson<T>(File.ReadAllText(fullPath));
+        {
+            string json = File.ReadAllText(fullPath);
+            T loaded = string.IsNullOrWhiteSpace(json) ? default : JsonUtility.FromJson<T>(json);
 
-        Debug.LogWarning("No existing file could be found to load this data from, creating one now...");
+            if (loaded != null)
+                return loaded;
+
+            Debug.LogWarning($"Load<{typeof(T).Name}>: {fileName} was empty or corrupt, creating a fresh one...");
+        }
+        else
+        {
+            Debug.LogWarning("No existing file could be found to load this data from, creating one now...");
+        }
+
         T defaultData = new T();
         Save(defaultData, fileName);
         return defaultData;

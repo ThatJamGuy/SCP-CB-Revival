@@ -3,6 +3,7 @@ using FMODUnity;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.STP;
 
 /// <summary>
 /// Globally accessible class to play One-Shots and manage some other base audio things like volume
@@ -10,6 +11,9 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour {
     public static AudioManager Instance { get; private set; }
     private readonly List<EventInstance> activeInstances = new();
+    [SerializeField] private EventReference reverbMasterReference;
+    private EventInstance reverbInstance;
+    private EventInstance ambienceInstance;
 
     [Header("Volume Sliders")]
     [Range(0, 1)] public float masterVolume = 1;
@@ -31,6 +35,8 @@ public class AudioManager : MonoBehaviour {
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+      
 
         // Set the SFX bus to the SFX mixer channel in FMOD Studio
         masterBus = RuntimeManager.GetBus("bus:/");
@@ -101,6 +107,26 @@ public class AudioManager : MonoBehaviour {
         Instance.activeInstances.Add(soundInstance); // Add to activeInstances list to release it from memory when finished
     }
 
+    // Check if an instance is playing any given instance already.
+    public static bool IsPlayingEvent(EventInstance instance, EventReference reference)
+    {
+        if (!instance.isValid() || reference.IsNull)
+            return false;
+
+        // A stopped or stopping instance of the same event shouldn't count as "already playing".
+        if (instance.getPlaybackState(out PLAYBACK_STATE state) != FMOD.RESULT.OK ||
+            state == PLAYBACK_STATE.STOPPED || state == PLAYBACK_STATE.STOPPING)
+            return false;
+
+        if (instance.getDescription(out EventDescription description) != FMOD.RESULT.OK)
+            return false;
+
+        if (description.getID(out FMOD.GUID id) != FMOD.RESULT.OK)
+            return false;
+
+        return id.Equals(reference.Guid);
+    }
+
     // Set a parameter without doing anything else
     public static void SetParameter(string name, float value) {
         RuntimeManager.StudioSystem.setParameterByName(name, value);
@@ -137,6 +163,46 @@ public class AudioManager : MonoBehaviour {
         voiceBus.setVolume(voiceVolume);
     }
 
+    /// <summary>
+    /// Updates the current GLOBAL reverb.
+    /// </summary>
+    public void UpdateRoom(RoomTrigger roomTrigger)
+    {
+        RoomConfig roomConfig = roomTrigger.roomConfig;
+
+        if (!reverbInstance.isValid())
+        {
+            reverbInstance.release();
+            reverbInstance = RuntimeManager.CreateInstance(reverbMasterReference);
+            reverbInstance.start();
+        }
+
+        //Update reverb
+        reverbInstance.setParameterByNameWithLabel("ReverbTypes", roomConfig.reverbType.ToString());
+
+
+
+        // default EventReference counts as null, so "no room" and "room with no ambience" take the same path
+        EventReference ambience = roomConfig != null ? roomConfig.ambienceSoundScape : default;
+
+        // Already playing this exact ambience, nothing to do.
+        if (!ambience.IsNull)
+            return;
+
+        // Fade out whatever was playing.
+        if (ambienceInstance.isValid())
+        {
+            ambienceInstance.stop(STOP_MODE.ALLOWFADEOUT);
+            ambienceInstance.release();
+            ambienceInstance = default; // a released handle stays "valid" while it fades out, so clear it
+        }
+
+        if (ambience.IsNull)
+            return;
+
+        ambienceInstance = RuntimeManager.CreateInstance(ambience);
+        ambienceInstance.start();
+    }
     #endregion
 }
 

@@ -102,14 +102,16 @@ public class EVNT_Intro : MonoBehaviour {
 
     private void Start() {
         saveData = SaveGameEngine.Get<SaveData>();
-
+       
         // Loaded a save from after the intro: rebuild the post-breach world and put the player at the saved checkpoint.
         // TriggerPostBreachEvent is deliberately NOT called here, it's the alarm cinematic and would replay on every load
         if (saveData.introCompleted) {
             SetupPostBreach();
             SpawnPlayerFromSave();
+            RoomManager.Instance.UpdateRegistry();
             RevivalRuntimeEngine.Instance.ChangeDiscordStatus("Roaming the facility");
             RevivalSessionEngine.SetGlobalAudioBasedOnZone(); // Restores ambience + music for the saved zone
+ 
             return;
         }
 
@@ -121,7 +123,7 @@ public class EVNT_Intro : MonoBehaviour {
             EntitySystem.Instance.cached106Entity.disabled = true;
 
             SpawnPlayer(spawnRegular);
-
+            RoomManager.Instance.UpdateRegistry();
             if (playVideo) {
                 Player.Instance.disableInput = true;
                 Player.Instance.disableLooking = true;
@@ -136,12 +138,15 @@ public class EVNT_Intro : MonoBehaviour {
             SetupPostBreach();
             skipIntroCanvas.SetActive(true);
             SpawnPlayer(spawnSkipIntro);
+            RoomManager.Instance.UpdateRegistry();
 
             StartCoroutine(PlayerInputRoutine());
 
             postBreachEvent.TriggerPostBreachEvent(true);
             MarkIntroCompleted();
         }
+
+      
     }
 
     private void Update() {
