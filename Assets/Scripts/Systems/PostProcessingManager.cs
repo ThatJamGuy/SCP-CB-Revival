@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
+/// <summary>
+/// handles and updates all post processing changes including those related to the room system.
+/// </summary>
 public class PostProcessingManager : MonoBehaviour
 {
     public static PostProcessingManager Instance;
@@ -11,8 +14,6 @@ public class PostProcessingManager : MonoBehaviour
     [Header("Configuration")]
     [Tooltip("Seconds to blend between room color grades. 0 = instant.")]
     [SerializeField] private float colorTransitionTime = 0.5f;
-
-
 
     //Private Vars
     private ColorAdjustments colorAdjustments;

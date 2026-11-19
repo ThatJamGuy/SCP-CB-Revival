@@ -1,19 +1,14 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.HighDefinition;
-using UnityEngine.Rendering.Universal;
+
 
 /// <summary>
-/// Handles all updates related to the room system.
+/// Handles all updates related to the room system. The main draw of this system is complete customization of every single room. 
+/// However it also requires a bit of extra authoring work on behalf of the user to manually set up the room trigger to be the exact size of the room its representing. 
 /// </summary>
 public class RoomManager : MonoBehaviour
 {
     public static RoomManager Instance;
-
-
     public RoomConfig currentRoomConfig;
-
 
     private void Awake()
     {
@@ -24,7 +19,6 @@ public class RoomManager : MonoBehaviour
             return;
         }
     }
-
 
     /// <summary>
     /// Sets the active room config. For multiplayer, make sure each player can manage their own changes to the appropreate systems.

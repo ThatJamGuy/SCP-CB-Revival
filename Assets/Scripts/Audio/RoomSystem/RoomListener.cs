@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// Tracks and updates movement between RoomTriggers. Place on any object that needs to move between rooms.
+/// Tracks and updates movement between RoomTriggers. Place on any object that needs its rooms tracked.
 /// </summary>
 public class RoomListener : MonoBehaviour
 {
@@ -32,7 +32,6 @@ public class RoomListener : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!IsRoom(other)) return;
-
         ManualUpdate();
     }
 
