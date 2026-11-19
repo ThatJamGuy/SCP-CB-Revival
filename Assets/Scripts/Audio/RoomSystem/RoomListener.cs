@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// Tracks and updates movement between RoomTriggers. Place on any object that needs its rooms tracked.
+/// see https://github.com/ThatJamGuy/SCP-CB-Revival/pull/32
 /// </summary>
 public class RoomListener : MonoBehaviour
 {

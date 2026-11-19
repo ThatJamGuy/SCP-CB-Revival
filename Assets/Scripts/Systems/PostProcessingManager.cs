@@ -4,6 +4,7 @@ using UnityEngine.Rendering.HighDefinition;
 
 /// <summary>
 /// handles and updates all post processing changes including those related to the room system.
+/// see https://github.com/ThatJamGuy/SCP-CB-Revival/pull/32
 /// </summary>
 public class PostProcessingManager : MonoBehaviour
 {

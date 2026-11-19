@@ -4,6 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Handles all updates related to the room system. The main draw of this system is complete customization of every single room. 
 /// However it also requires a bit of extra authoring work on behalf of the user to manually set up the room trigger to be the exact size of the room its representing. 
+/// see https://github.com/ThatJamGuy/SCP-CB-Revival/pull/32
 /// </summary>
 public class RoomManager : MonoBehaviour
 {
