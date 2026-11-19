@@ -13,26 +13,23 @@ public class PlayerHeadbob : MonoBehaviour {
     [SerializeField] private float rotationSpeed = 0.5f;
 
     [Header("References")]
-    [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private PlayerFootsteps playerFootsteps;
 
     private Player player;
 
-    private float defaultYPos;
     private float bobTimer;
     private float movementSpeed;
     private bool hasPlayedFootstep;
     private Vector3 defaultPosition;
     private Vector3 defaultRotation;
-    private Quaternion defauyltRotationQuat;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
+
     private void Start() {
         // Set the player variable to the Instance in the world if available, which is should be
         player = Player.Instance;
 
         // Set default position and rotation for the camera so the headbob can utilize these values
-        defaultYPos = transform.localPosition.y;
         defaultPosition = transform.localPosition;
         defaultRotation = transform.localRotation.eulerAngles;
     }
@@ -82,5 +79,6 @@ public class PlayerHeadbob : MonoBehaviour {
                 break;
         }
     }
+
     #endregion
 }
