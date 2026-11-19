@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8627230302160588615}
   - component: {fileID: 7079969419987714436}
-  - component: {fileID: 4449572439896686791}
   - component: {fileID: 8470418446322942341}
   m_Layer: 2
   m_Name: AmbienceZone
@@ -55,37 +54,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 21, y: 5, z: 15}
   m_Center: {x: 0, y: 0, z: -3}
---- !u!114 &4449572439896686791
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 480460008950813104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
-  CollisionTag: Player
-  EventReference:
-    Guid:
-      Data1: 1506033910
-      Data2: 1332354605
-      Data3: -222907774
-      Data4: 1940633627
-    Path: event:/SFX/Ambience/Soundscapes/RoomTone_02
-  Event: 
-  EventPlayTrigger: 3
-  EventStopTrigger: 4
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
 --- !u!114 &8470418446322942341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,7 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  roomConfig: {fileID: 0}
+  roomConfig: {fileID: 11400000, guid: df67b3a2c2772dc4798dd4595598a902, type: 2}
 --- !u!1 &1065728693880218577
 GameObject:
   m_ObjectHideFlags: 0
