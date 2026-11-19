@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 /// <summary>
 /// Handles all updates related to the room system.
@@ -9,14 +8,10 @@ public class RoomManager : MonoBehaviour
     public static RoomManager Instance;
     public RoomConfig currentRoomConfig;
 
-    private void Start()
+    private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-
-        Player.Instance.roomListener.OnRoomChanged += UpdateRoomConfig;
-        UpdateRoomConfig(Player.Instance.roomListener.activeRoom);
-
     }
 
     /// <summary>
@@ -28,10 +23,13 @@ public class RoomManager : MonoBehaviour
         AudioManager.Instance.UpdateRoom(roomTrigger);
     }
 
+    /// <summary>
+    /// Subscribes the roommanager to the players listener event.
+    /// </summary>
     [ContextMenu("Force Update Rooms")]
     public void UpdateRegistry()
     {
         Player.Instance.roomListener.OnRoomChanged += UpdateRoomConfig;
-        UpdateRoomConfig(Player.Instance.roomListener.activeRoom);
+        Player.Instance.roomListener.ManualUpdate();
     }
 }
