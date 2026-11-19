@@ -34,8 +34,10 @@ public class AudioManager : MonoBehaviour {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        //Create the global reverb instance. This instance must NEVER be destroyed.
+        //Create the global reverb instance. This instance must NEVER be released or destroyed after its creation. 
+        reverbInstance.release();
         reverbInstance = RuntimeManager.CreateInstance(reverbMasterReference);
+        reverbInstance.start();
 
         // Set the SFX bus to the SFX mixer channel in FMOD Studio
         masterBus = RuntimeManager.GetBus("bus:/");
@@ -142,6 +144,13 @@ public class AudioManager : MonoBehaviour {
         voiceBus.setVolume(voiceVolume);
     }
 
+    /// <summary>
+    /// Updates the current GLOBAL reverb.
+    /// </summary>
+    public void UpdateReverb(RoomTrigger roomTrigger)
+    {
+        reverbInstance.setParameterByNameWithLabel("ReverbTypes", roomTrigger.roomConfig.reverbType.ToString());
+    }
     #endregion
 }
 

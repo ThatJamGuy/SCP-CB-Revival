@@ -401,6 +401,7 @@ GameObject:
   - component: {fileID: 6334468712509065949}
   - component: {fileID: 6915905209020144940}
   - component: {fileID: 5835967748460578399}
+  - component: {fileID: 257242362416446787}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -450,11 +451,14 @@ MonoBehaviour:
   isMoving: 0
   isSprinting: 0
   isCrouching: 0
+  isNoclipping: 0
   isDead: 0
   cameraRoot: {fileID: 4110714013436287149}
   playerCamera: {fileID: 3494950506248203125}
   playerBlink: {fileID: 5224656048304691893}
+  roomListener: {fileID: 257242362416446787}
   settingsData:
+    renderingAPI: 0
     resolutionWidth: 1920
     resolutionHeight: 1080
     windowMode: 0
@@ -464,6 +468,8 @@ MonoBehaviour:
     shadowQualityMode: 0
     vSync: 0
     frameLimit: -1
+    enableSSR: 1
+    enableSSAO: 0
     soundtrack: 2
     consoleEnabled: 0
     fpsCounter: 0
@@ -523,6 +529,19 @@ CapsuleCollider:
   m_Height: 2.45
   m_Direction: 1
   m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &257242362416446787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6033358741291658909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19e1ca0d6705b3d47b66451d6d6b1b02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomListener
+  activeRoom: {fileID: 0}
 --- !u!1 &8034423973430074073
 GameObject:
   m_ObjectHideFlags: 0
