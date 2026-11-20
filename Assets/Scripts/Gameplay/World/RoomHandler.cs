@@ -5,14 +5,21 @@ public class RoomHandler : MonoBehaviour {
     [Header("Room Settings")]
     public string roomName;
     public Transform teleportLocation;
-
+    
     [Header("Optimization")]
     [SerializeField] private Light[] roomLights;
     [SerializeField] private float activateDistance = 25;
     private bool roomState = true;   // for the room-wide mode
+    private Transform transformCache; //Cache the rooms transform to never have to call it again
+
 
     [SerializeField, Tooltip("Only enable if the room is obscenely large, such as 106's containment room.")] private bool usePerLightCalculation = false;
     #region Unity Lifecycle
+
+    private void Awake()
+    {
+        transformCache = this.transform;
+    }
 
     private void Update()
     {
@@ -24,7 +31,7 @@ public class RoomHandler : MonoBehaviour {
         //Cull all lights in the room if the player is too far from the rooms center
         if (!usePerLightCalculation)
         {
-            bool shouldBeActive = (transform.position - playerPos).sqrMagnitude <= activateDistSqr;
+            bool shouldBeActive = (transformCache.position - playerPos).sqrMagnitude <= activateDistSqr;
             if (shouldBeActive == roomState) return;   // nothing changed, zero native calls
 
             roomState = shouldBeActive;
