@@ -41,7 +41,6 @@ public class RoomHandler : MonoBehaviour {
 
                 light.gameObject.SetActive(shouldBeActive);
             }
-
         }
     }
 
