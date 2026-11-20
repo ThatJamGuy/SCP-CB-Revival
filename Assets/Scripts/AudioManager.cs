@@ -180,14 +180,9 @@ public class AudioManager : MonoBehaviour {
         //Update reverb
         reverbInstance.setParameterByNameWithLabel("ReverbTypes", roomConfig.reverbType.ToString());
 
-
-
         // default EventReference counts as null, so "no room" and "room with no ambience" take the same path
         EventReference ambience = roomConfig != null ? roomConfig.ambienceSoundScape : default;
 
-        // Already playing this exact ambience, nothing to do.
-        if (!ambience.IsNull)
-            return;
 
         // Fade out whatever was playing.
         if (ambienceInstance.isValid())
