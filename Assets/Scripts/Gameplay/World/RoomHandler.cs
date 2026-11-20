@@ -1,14 +1,18 @@
 using UnityEngine;
 
 /// <summary> Purpose: Designed to act as runtime room metadata. </summary>
-public class RoomHandler : MonoBehaviour {
+public class RoomHandler : MonoBehaviour
+{
     [Header("Room Settings")]
     public string roomName;
     public Transform teleportLocation;
-    
+
     [Header("Optimization")]
     [SerializeField] private Light[] roomLights;
     [SerializeField] private float activateDistance = 25;
+    private float activationDistanceSqr;
+
+
     private bool roomState = true;   // for the room-wide mode
     private Transform transformCache; //Cache the rooms transform to never have to call it again
 
@@ -19,6 +23,7 @@ public class RoomHandler : MonoBehaviour {
     private void Awake()
     {
         transformCache = this.transform;
+        activationDistanceSqr = activateDistance * activateDistance;
     }
 
     private void Update()
@@ -26,17 +31,23 @@ public class RoomHandler : MonoBehaviour {
         if (roomLights == null || Player.Instance == null) return;
 
         Vector3 playerPos = Player.Instance.transform.position;
-        float activateDistSqr = activateDistance * activateDistance;
+
 
         //Cull all lights in the room if the player is too far from the rooms center
         if (!usePerLightCalculation)
         {
-            bool shouldBeActive = (transformCache.position - playerPos).sqrMagnitude <= activateDistSqr;
-            if (shouldBeActive == roomState) return;   // nothing changed, zero native calls
+            bool shouldBeActive = (transformCache.position - playerPos).sqrMagnitude <= activationDistanceSqr;
+
+            if (shouldBeActive == roomState)
+                return;
 
             roomState = shouldBeActive;
+
             foreach (Light light in roomLights)
-                light.gameObject.SetActive(shouldBeActive);
+            {
+                if (light != null)
+                    light.gameObject.SetActive(shouldBeActive);
+            }
         }
 
         //Cull lights individually based on the players distance from the light.
@@ -44,18 +55,23 @@ public class RoomHandler : MonoBehaviour {
         {
             foreach (Light light in roomLights)
             {
-                bool shouldBeActive = (light.transform.position - playerPos).sqrMagnitude <= activateDistSqr;
+                if (light == null) continue;
 
-                light.gameObject.SetActive(shouldBeActive);
+                bool shouldBeActive = (light.transform.position - playerPos).sqrMagnitude <= activationDistanceSqr;
+
+                if (light.gameObject.activeSelf != shouldBeActive)
+                    light.gameObject.SetActive(shouldBeActive);
             }
         }
     }
+
 
     #endregion
 
     #region Public Methods
 
-    public void TeleportPlayerHere() {
+    public void TeleportPlayerHere()
+    {
         Player.Instance.transform.position = teleportLocation.position;
     }
 
