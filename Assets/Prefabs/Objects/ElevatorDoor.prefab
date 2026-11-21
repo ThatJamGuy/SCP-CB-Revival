@@ -66,6 +66,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
+  isKeycardButton: 0
+  isDisabled: 0
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -81,6 +84,26 @@ MonoBehaviour:
       Data3: 1131466380
       Data4: 413260402
     Path: event:/SFX/Interact/ButtonPress2
+  keycardFailedEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  keycardGoodEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 6218250711187165439}
   buttonAnimator: {fileID: 0}
 --- !u!1 &488183825590128522
@@ -442,6 +465,8 @@ MonoBehaviour:
   startOpen: 0
   isOpen: 0
   isLocked: 0
+  isBroken: 0
+  noBusting: 1
   requiresKeycard: 0
   requiredKeyLevel: 0
   openSpeed: 0.7
@@ -468,6 +493,7 @@ MonoBehaviour:
   moveAxis: 0
   doorPart01: {fileID: 8131066316720868010}
   doorPart02: {fileID: 4079989043160008168}
+  occlusionPortal: {fileID: 0}
 --- !u!65 &5205265958355291938
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -501,6 +527,7 @@ GameObject:
   - component: {fileID: 139203696654495318}
   - component: {fileID: 2476533455395312967}
   - component: {fileID: 3815994499704254063}
+  - component: {fileID: 8421769680666926683}
   m_Layer: 7
   m_Name: ElevatorDoor02
   m_TagString: Untagged
@@ -603,6 +630,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.9600002, y: 3.2000003, z: 0.2800005}
   m_Center: {x: -0.4800001, y: 1.6000001, z: -0.00000017881398}
+--- !u!208 &8421769680666926683
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4079989043160008168}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.48000002, y: 1.6, z: 0.14}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.48000002, y: 1.6, z: 0}
+  m_TimeToStationary: 1
 --- !u!1 &4597444098527916249
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,6 +712,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
+  isKeycardButton: 0
+  isDisabled: 0
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -684,6 +730,26 @@ MonoBehaviour:
       Data3: 1131466380
       Data4: 413260402
     Path: event:/SFX/Interact/ButtonPress2
+  keycardFailedEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  keycardGoodEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 6218250711187165439}
   buttonAnimator: {fileID: 522819606279451830}
 --- !u!1 &4829012104462775041
@@ -1080,6 +1146,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
+  isKeycardButton: 0
+  isDisabled: 0
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -1095,6 +1164,26 @@ MonoBehaviour:
       Data3: 1131466380
       Data4: 413260402
     Path: event:/SFX/Interact/ButtonPress2
+  keycardFailedEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  keycardGoodEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 6218250711187165439}
   buttonAnimator: {fileID: 0}
 --- !u!1 &7384547625570225657
@@ -1312,6 +1401,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4d5ed10ba9a9e478bece119a14e52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
+  isKeycardButton: 0
+  isDisabled: 0
+  requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
     Guid:
@@ -1327,6 +1419,26 @@ MonoBehaviour:
       Data3: 1131466380
       Data4: 413260402
     Path: event:/SFX/Interact/ButtonPress2
+  keycardFailedEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  keycardGoodEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 6218250711187165439}
   buttonAnimator: {fileID: 5745622049280115782}
 --- !u!1 &8131066316720868010
@@ -1341,6 +1453,7 @@ GameObject:
   - component: {fileID: 6030925693752502769}
   - component: {fileID: 8575188500307512409}
   - component: {fileID: 6963479324988903449}
+  - component: {fileID: 1316249421858867155}
   m_Layer: 7
   m_Name: ElevatorDoor01
   m_TagString: Untagged
@@ -1443,6 +1556,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.9600002, y: 3.2000003, z: 0.2800005}
   m_Center: {x: -0.4800001, y: 1.6000001, z: -0.00000017881398}
+--- !u!208 &1316249421858867155
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8131066316720868010}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.48000002, y: 1.6, z: 0.14}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.48000002, y: 1.6, z: 0}
+  m_TimeToStationary: 1
 --- !u!1 &8260561751359437286
 GameObject:
   m_ObjectHideFlags: 0

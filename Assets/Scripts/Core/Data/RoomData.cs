@@ -11,8 +11,6 @@ public class RoomData : ScriptableObject {
     public bool isUnique;
     public bool mustSpawn;
 
-    public bool largeRoom;
-
     [Header("Room References")]
     public GameObject roomPrefab;
 }

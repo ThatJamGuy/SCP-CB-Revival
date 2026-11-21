@@ -39559,7 +39559,7 @@ MonoBehaviour:
   version: 2
   globalVolume: 0
   mode: 1
-  size: {x: 51.482826, y: 33.54812, z: 35.927002}
+  size: {x: 51.482834, y: 33.54812, z: 35.927002}
   overrideRendererFilters: 0
   minRendererVolumeSize: 0.1
   objectLayerMask:
@@ -39597,7 +39597,7 @@ Transform:
   m_GameObject: {fileID: 863660156}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 37.78265, y: 6.249999, z: 32.583504}
+  m_LocalPosition: {x: 37.782646, y: 6.249999, z: 32.583504}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -42764,10 +42764,6 @@ PrefabInstance:
     - target: {fileID: 5624290096900462397, guid: 3367ad3b1346099469b82261f11ff4ab, type: 3}
       propertyPath: m_Name
       value: '[ Map Generator ]'
-      objectReference: {fileID: 0}
-    - target: {fileID: 5624290096900462397, guid: 3367ad3b1346099469b82261f11ff4ab, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6871179456811409886, guid: 3367ad3b1346099469b82261f11ff4ab, type: 3}
       propertyPath: m_LocalPosition.x
@@ -47166,6 +47162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  isDisabled: 0
   requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
@@ -47196,6 +47193,12 @@ MonoBehaviour:
       Data3: 541241531
       Data4: 308827177
     Path: event:/SFX/Interact/KeycardSwipeGood
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 1329344042}
   buttonAnimator: {fileID: 0}
 --- !u!135 &1015903994
@@ -88022,6 +88025,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  isDisabled: 0
   requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
@@ -88052,6 +88056,12 @@ MonoBehaviour:
       Data3: 541241531
       Data4: 308827177
     Path: event:/SFX/Interact/KeycardSwipeGood
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 1329344042}
   buttonAnimator: {fileID: 0}
 --- !u!135 &1838974959

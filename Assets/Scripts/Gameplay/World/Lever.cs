@@ -36,7 +36,7 @@ public class Lever : MonoBehaviour, IHoldInteractable {
     private bool leverTurnedOn;
     private bool hasPlayedMoveSound;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Awake() {
         // Cache the starting local X rotation of the handle
@@ -83,29 +83,23 @@ public class Lever : MonoBehaviour, IHoldInteractable {
     /// </summary>
     private void HandleLeverMovement() {
         // Read vertical look input and scale it by rotation speed
-        float input =
-            lookAction.ReadValue<Vector2>().y *
-            handleRotationSpeed *
-            Time.deltaTime;
+        float input = lookAction.ReadValue<Vector2>().y * handleRotationSpeed * Time.deltaTime;
 
         // Ignore tiny inputs to prevent accidental movement/audio spam
-        if (Mathf.Abs(input) < 0.001f)
-            return;
+        if (Mathf.Abs(input) < 0.001f) return;
+
+        float previousRotation = currentHandleXRotation;
+        float newRotation = Mathf.Clamp(previousRotation + input, minRotationAngle, maxRotationAngle);
+
+        if (Mathf.Approximately(newRotation, previousRotation)) return;
+
+        currentHandleXRotation = newRotation;
 
         // Play the movement start sound once when the lever begins moving
-        if (!hasPlayedMoveSound) {
+        if (!hasPlayedMoveSound && !IsInEndZone(newRotation)) {
             hasPlayedMoveSound = true;
             AudioManager.PlayOneShot(leverStartMovingSound, transform.position);
         }
-
-        // Accumulate lever rotation and clamp within allowed range
-        currentHandleXRotation += input;
-
-        currentHandleXRotation = Mathf.Clamp(
-            currentHandleXRotation,
-            minRotationAngle,
-            maxRotationAngle
-        );
 
         // Apply the rotation locally so parent rotation does not interfere
         leverHandleObject.transform.localRotation = Quaternion.Euler(currentHandleXRotation, 0f, 0f);
@@ -163,6 +157,12 @@ public class Lever : MonoBehaviour, IHoldInteractable {
 
         return angle;
     }
+
+    private bool IsInEndZone(float angle) {
+        return Mathf.Abs(angle - leverOnAngle) <= leverOnOffThreshold ||
+               Mathf.Abs(angle - leverOffAngle) <= leverOnOffThreshold;
+    }
+
     #endregion
 
     #region Public Methods

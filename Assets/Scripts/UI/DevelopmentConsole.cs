@@ -92,6 +92,8 @@ public class DevelopmentConsole : MonoBehaviour {
         Register("printlockdown", "Prints the current state of the LCZ lockdown.", CMD_PrintLockdown);
         Register("disablelockdown", "Disabled the lockdown on the Light Containment Zone.", CMD_DisableLockdown);
         Register("noclip", "Toggle noclip, optionally taking in <true/false> or <on/off> or <1/0>.", CMD_NoClip);
+        Register("forcesave", "Force a save. Developer only for now because it's still unstable.", CMD_ForceSave);
+        Register("frametest", "Performs a 5 seconds test that ultimately prints out the average framerate.", CMD_TestFrames);
     }
 
     private void Register(string name, string desc, CommandHandler handler) {
@@ -297,6 +299,15 @@ public class DevelopmentConsole : MonoBehaviour {
 
         Player.Instance.isNoclipping = enabled;
         Debug.Log($"<color=#00ffff>Noclip {(enabled ? "enabled" : "disabled")}.</color>");
+    }
+
+    private void CMD_ForceSave(string[] args) {
+        SaveGameEngine.SaveAll();
+        Debug.Log($"<color=#00ffff>Forced a save. Whether it worked or not, only time will tell.</color>");
+    }
+
+    private void CMD_TestFrames(string[] args) {
+        RevivalRuntimeEngine.Instance.fpsDisplay.TestAverageFramerate();
     }
 
     #endregion

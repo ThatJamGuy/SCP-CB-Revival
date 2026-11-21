@@ -162,4 +162,5 @@ public class GlobalAudioContainer {
     public EventReference doorExplode;
     public EventReference doorBangEvent;
     public EventReference neckBreak;
+    public EventReference elevatorMoving;
 }

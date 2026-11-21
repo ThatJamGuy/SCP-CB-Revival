@@ -293,9 +293,6 @@ public class MapGenerator : MonoBehaviour {
                 if (overlap <= 0f) break;
             }
 
-            if (bestOverlap > 0f)
-                Debug.LogWarning($"[MapGenerator] Mandatory room {room.name} overlaps another mandatory room ({bestOverlap:F1}m²).");
-
             placedMandatoryRooms[selectedPos] = room;
             mandatoryRotations[selectedPos] = selectedRotation;
             if (room.roomPrefab != null)
@@ -513,8 +510,6 @@ public class MapGenerator : MonoBehaviour {
         footprintCache[prefab] = footprint;
 
         float halfCell = cellSize * 0.5f + OVERLAP_TOLERANCE;
-        if (hasBounds && (minX < -halfCell || maxX > halfCell || minZ < -halfCell || maxZ > halfCell))
-            Debug.LogWarning($"[MapGenerator] Room prefab {prefab.name} is larger than a grid cell ({footprint.width:F1} x {footprint.height:F1}m, cell {cellSize}m).");
 
         return footprint;
     }

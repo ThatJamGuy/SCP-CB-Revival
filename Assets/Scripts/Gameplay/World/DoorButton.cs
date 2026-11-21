@@ -2,6 +2,7 @@ using EditorAttributes;
 using FMODUnity;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary>
 /// Simple preset button script to handle interaction for doors. Meant for the generic ones you find around a lot
@@ -9,6 +10,7 @@ using UnityEngine;
 public class DoorButton : MonoBehaviour, IInteractable {
     [Header("Button Settings")]
     [SerializeField] private bool isKeycardButton;
+    [SerializeField] private bool isDisabled;
     [SerializeField] private bool requireLCZLockLift;
     [SerializeField] private float interactionCooldown = 0.2f;
 
@@ -17,6 +19,10 @@ public class DoorButton : MonoBehaviour, IInteractable {
     [SerializeField, HideField(nameof(isKeycardButton))] private EventReference buttonPressLockedSound;
     [SerializeField, ShowField(nameof(isKeycardButton))] private EventReference keycardFailedEvent;
     [SerializeField, ShowField(nameof(isKeycardButton))] private EventReference keycardGoodEvent;
+
+    [Header("Events")]
+    public UnityEvent OnButtonPressedImmediate; // Called regardless of check status
+    public UnityEvent OnButtonPressedPassed; // Called after all the checks pass
 
     [Header("References")]
     public Door linkedDoor;
@@ -84,6 +90,8 @@ public class DoorButton : MonoBehaviour, IInteractable {
     #region Public Methods
 
     public void Interact(PlayerInteraction playerInteraction) {
+        OnButtonPressedImmediate.Invoke();
+
         if (isKeycardButton) { HandleKeycardDoorThings(); return; }
 
         // If a linked door is missing, disallow functionality as this script in meant specifically for doors
@@ -106,6 +114,10 @@ public class DoorButton : MonoBehaviour, IInteractable {
         // If the previous check passed, play button sound
         AudioManager.PlayOneShot(buttonPressSound, transform.position);
         if (buttonAnimator) buttonAnimator.Play("ModernButtonPress");
+
+        if (isDisabled) return;
+
+        OnButtonPressedPassed.Invoke();
 
         // Tells the linked door to toggle it's current state
         linkedDoor.ToggleDoorState();

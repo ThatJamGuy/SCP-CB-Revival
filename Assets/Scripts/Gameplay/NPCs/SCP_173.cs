@@ -197,7 +197,7 @@ public class SCP_173 : MonoBehaviour {
 
         // Tell the entity system the entity is no longer chasing the player, allowing teleports and stuff again
         EntitySystem.Instance.cached173Entity.chasingPlayer = false;
-        RevivalSessionEngine.Instance.ReleaseChaseTrack(this);
+        MusicManager.Instance.ReleaseChaseTrack(this);
 
         tensionEmitter.Stop();
 
@@ -246,10 +246,10 @@ public class SCP_173 : MonoBehaviour {
         }
 
         // Randomly be able to either open the nearest door or fail to do so and bang on it a bit
-        if (nearestDoor && Random.value < doorOpenChance && !nearestDoor.isOpen && !nearestDoor.requiresKeycard && !nearestDoor.isLocked && !isVisibleByPlayer) {
+        if (nearestDoor && Random.value < doorOpenChance && !nearestDoor.isOpen && !nearestDoor.requiresKeycard && !nearestDoor.isLocked && !isVisibleByPlayer && !nearestDoor.disableNPCUseage) {
             nearestDoor.OpenDoor();
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorOpen173, nearestDoor.transform.position);
-        } else if (nearestDoor && !nearestDoor.isOpen && EntitySystem.Instance.cached173Entity.chasingPlayer && !isVisibleByPlayer) {
+        } else if (nearestDoor && !nearestDoor.isOpen && EntitySystem.Instance.cached173Entity.chasingPlayer && !isVisibleByPlayer && !nearestDoor.disableNPCUseage) {
 
             currentDoorBang++;
 
@@ -326,7 +326,7 @@ public class SCP_173 : MonoBehaviour {
             EntitySystem.Instance.cached173Entity.chasingPlayer = true;
 
             // Make a request for SCP-173 chase music
-            RevivalSessionEngine.Instance.RequestChaseTrack(this, 1, MusicManager.MusicTrack.SCP_173, 1);
+            MusicManager.Instance.RequestChaseTrack(this, 1, MusicManager.MusicTrack.SCP_173, 1);
 
             tensionEmitter.Play();
         }

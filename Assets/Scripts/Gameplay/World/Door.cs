@@ -17,6 +17,7 @@ public class Door : MonoBehaviour {
     public bool isBroken;
     public bool noBusting;
     public bool requiresKeycard;
+    public bool disableNPCUseage;
     public int requiredKeyLevel;
 
     [SerializeField] private float openSpeed = 1.5f;
@@ -46,7 +47,8 @@ public class Door : MonoBehaviour {
 
     private bool isTransitioning;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
+
     private void Start() {
         // Set the initial positions for the doors so they know where to slide back to when closing
         door01InitialPos = doorPart01.transform.position;

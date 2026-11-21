@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -15,10 +16,12 @@ public class FPSDisplay : MonoBehaviour {
     [SerializeField] private int fpsBadMaxValue = 59;
     [SerializeField] private Color fpsBadColor = Color.red;
 
+    private Coroutine avgFrameCoroutine;
+
     private float time;
     private int frameCount;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Update() {
         // Increase the frameCount variable and increase time by deltaTime
@@ -37,6 +40,39 @@ public class FPSDisplay : MonoBehaviour {
         fpsDisplayText.SetText("{0} FPS", Mathf.RoundToInt(frameCount / time));
         time -= pollingTime;
         frameCount = 0;
+    }
+
+    #endregion
+
+    #region Private Coroutines
+
+    private IEnumerator AvgFrameTestRoutine(float testDuration) {
+        int startFrame = Time.frameCount;
+        float startTime = Time.realtimeSinceStartup;
+
+        Debug.Log($"<color=#00ffff>The frametest has begun...</color>");
+
+        yield return new WaitForSecondsRealtime(testDuration);
+
+        int frames = Time.frameCount - startFrame;
+        float elapsed = Time.realtimeSinceStartup - startTime;
+        float avgFps = frames / elapsed;
+        float avgMs = elapsed * 1000f / frames;
+
+        Debug.Log($"<color=#00ffff>Average FPS over {elapsed:F2}s: {avgFps:F1} ({avgMs:F2} ms/frame, {frames} frames)</color>");
+
+        avgFrameCoroutine = null;
+    }
+
+    #endregion
+
+    #region Public Methods
+
+    public void TestAverageFramerate(float testDuration = 0) {
+        if (testDuration <= 0) testDuration = 5;
+        if (avgFrameCoroutine != null) StopCoroutine(avgFrameCoroutine);
+
+        avgFrameCoroutine = StartCoroutine(AvgFrameTestRoutine(testDuration));
     }
 
     #endregion
