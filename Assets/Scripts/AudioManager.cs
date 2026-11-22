@@ -3,7 +3,6 @@ using FMODUnity;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Rendering.STP;
 
 /// <summary>
 /// Globally accessible class to play One-Shots and manage some other base audio things like volume
@@ -14,6 +13,7 @@ public class AudioManager : MonoBehaviour {
     [SerializeField] private EventReference reverbMasterReference;
     private EventInstance reverbInstance;
     private EventInstance ambienceInstance;
+    private EventReference currentAmbience;
 
     [Header("Volume Sliders")]
     [Range(0, 1)] public float masterVolume = 1;
@@ -35,8 +35,6 @@ public class AudioManager : MonoBehaviour {
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-
-      
 
         // Set the SFX bus to the SFX mixer channel in FMOD Studio
         masterBus = RuntimeManager.GetBus("bus:/");
@@ -180,22 +178,23 @@ public class AudioManager : MonoBehaviour {
         //Update reverb
         reverbInstance.setParameterByNameWithLabel("ReverbTypes", roomConfig.reverbType.ToString());
 
+        SetAmbience(roomConfig.ambienceSoundScape);
+    }
 
-
-        // default EventReference counts as null, so "no room" and "room with no ambience" take the same path
-        EventReference ambience = roomConfig != null ? roomConfig.ambienceSoundScape : default;
-
-        // Already playing this exact ambience, nothing to do.
-        if (!ambience.IsNull)
+    private void SetAmbience(EventReference ambience)
+    {
+        // Same event already playing: leave it running so there's no fade or restart
+        if (ambienceInstance.isValid() && ambience.Guid.Equals(currentAmbience.Guid))
             return;
 
-        // Fade out whatever was playing.
         if (ambienceInstance.isValid())
         {
             ambienceInstance.stop(STOP_MODE.ALLOWFADEOUT);
             ambienceInstance.release();
-            ambienceInstance = default; // a released handle stays "valid" while it fades out, so clear it
+            ambienceInstance = default;
         }
+
+        currentAmbience = ambience;
 
         if (ambience.IsNull)
             return;
