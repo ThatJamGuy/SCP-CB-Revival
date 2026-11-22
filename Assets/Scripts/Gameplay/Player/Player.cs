@@ -37,6 +37,7 @@ public class Player : MonoBehaviour, ISaveable {
     public GameObject cameraRoot;
     public Camera playerCamera;
     public PlayerBlink playerBlink;
+    public RoomListener roomListener;
 
     private Sequence currentDeathTween;
     private Vector3 cameraStartPos;
