@@ -13,7 +13,7 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     public static int currentZone = 1;
     public static bool lczUnlocked;
     public static bool skipIntro;
-    public static bool nukeRoomEntered = false;
+    public static bool nukeRoomEntered;
 
     [Header("Heads Up Display")]
     [SerializeField] private TextMeshProUGUI infoText;
@@ -34,19 +34,13 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
         SaveGameEngine.Register(this);
         saveData = SaveGameEngine.Get<SaveData>();
 
-        // Safeguard for direct testing from 3_Game because I can't live with it. Keeps the seed random still and diff on Safe
-        // FIXME: Doesn't really work when enabling developerMode in EVNT_Intro.cs anymore
-#if UNITY_EDITOR
-        if (!SaveGameEngine.HasActiveSave && !SaveGameEngine.LoadGame())
-            SaveGameEngine.NewGame("EditorTest", "", 0, true);
-#endif
-
         saveName = saveData.saveName;
         mapSeed = saveData.mapSeed;
         currentDifficulty = saveData.difficulty;
         skipIntro = saveData.skipIntro;
         currentZone = saveData.currentZone;
         lczUnlocked = saveData.lczUnlocked;
+        nukeRoomEntered = saveData.enteredNukeRoom;
 
         otherDifficultyFactor = currentDifficulty;
     }
@@ -152,6 +146,7 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     public void PrepareSaveableValues() {
         saveData.currentZone = currentZone;
         saveData.lczUnlocked = lczUnlocked;
+        saveData.enteredNukeRoom = nukeRoomEntered;
     }
 
     public void DebugDispalyZone() {

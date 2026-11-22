@@ -90,8 +90,9 @@ public class SCP_173 : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        // Cleanup, not super necessary since once the player dies the game is over but good to have generally
-        // (SCP-173 for now is destroyed when killing the player so he's not emoting on the player upon death)
+        MusicManager music = MusicManager.Instance;
+        if (music != null) music.ReleaseChaseTrack(this);
+
         EntitySystem system = EntitySystem.Instance;
         if (system == null) return;
 
@@ -138,10 +139,11 @@ public class SCP_173 : MonoBehaviour {
         }
 
         if (hasTarget && target != null) {
-            if (ShouldAbandonTarget()) {
+            if (target == null || ShouldAbandonTarget()) {
                 AbandonTarget();
                 return;
             }
+
             float currentChaseSpeed = GetChaseSpeed();
             navMeshAgent.speed = currentChaseSpeed;
             navMeshAgent.acceleration = currentChaseSpeed;
@@ -186,23 +188,20 @@ public class SCP_173 : MonoBehaviour {
     public void AbandonTarget() {
         target = null;
         hasTarget = false;
-        navMeshAgent.ResetPath();
-
-        if (alreadySeenByPlayer) {
-            alreadySeenByPlayer = false;
-        }
-
-        movementSource.SetActive(false);
+        alreadySeenByPlayer = false;
         hasPlayedDistanceHorrorSound = false;
-
-        // Tell the entity system the entity is no longer chasing the player, allowing teleports and stuff again
-        EntitySystem.Instance.cached173Entity.chasingPlayer = false;
-        MusicManager.Instance.ReleaseChaseTrack(this);
-
-        tensionEmitter.Stop();
-
-        // Reset this to 0 so that he can't bash a door down too soon
         currentDoorBang = 0;
+
+        MusicManager music = MusicManager.Instance;
+        if (music != null) music.ReleaseChaseTrack(this);
+
+        if (navMeshAgent.isOnNavMesh) navMeshAgent.ResetPath();
+        movementSource.SetActive(false);
+        if (tensionEmitter != null) tensionEmitter.Stop();
+
+        EntitySystem system = EntitySystem.Instance;
+        if (system != null && system.cached173Entity != null)
+            system.cached173Entity.chasingPlayer = false;
     }
 
     #endregion

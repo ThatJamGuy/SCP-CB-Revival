@@ -203,6 +203,7 @@ public class SaveData {
     public bool skipIntro;
     public bool introCompleted;
     public bool lczUnlocked;
+    public bool enteredNukeRoom;
     public bool hasPosition;
 
     public Vector3 position;
