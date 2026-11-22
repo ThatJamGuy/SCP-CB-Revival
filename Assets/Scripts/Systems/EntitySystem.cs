@@ -65,6 +65,7 @@ public class EntitySystem : MonoBehaviour {
         // Cache some entities for the spawning systems to prevent repeated foreach checks
         for (int i = 0; i < entities.Length; i++) {
             Entity entity = entities[i];
+
             if (entity.entityIdentifier == "scp173") cached173Entity = entity;
             else if (entity.entityIdentifier == "scp106") cached106Entity = entity;
             else if (entity.entityIdentifier == "scp049") cached049Entity = entity;

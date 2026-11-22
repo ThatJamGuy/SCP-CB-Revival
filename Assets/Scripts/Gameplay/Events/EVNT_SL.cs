@@ -7,6 +7,14 @@ public class EVNT_SL : MonoBehaviour {
 
     private bool triggeredSpawn;
 
+    private void Update() {
+        // Continuously check if the conditions allow for 049 to spawn so reloading allows him to
+        // TODO: Probably move this somewhere else in a spot where we're not checking every frame
+        if (RevivalSessionEngine.lczUnlocked && EntitySystem.Instance.cached049Entity.disabled == true) {
+            EntitySystem.Instance.cached049Entity.disabled = false;
+        }
+    }
+
     public void ChangeMusicToSL() {
         if (EntitySystem.AnyEntityChasingPlayer()) return;
         MusicManager.Instance.SetTrack(MusicManager.MusicTrack.SL);
@@ -24,13 +32,6 @@ public class EVNT_SL : MonoBehaviour {
 
         downDoor.OpenDoor();
         upDoor.CloseDoor();
-
-        // TODO: SCP-049 scene (Using trimmed down version for now)
-
-        // PLAN: All monitors except the middle one turn off, with 079s face on it for a second to draw attention.
-        // SCP-049 will be visible walking down the hall and into the SL room with the player.
-        // I will probably add his speech later on for time reasons, but I'll just get him to walk up there
-        // and look around for a second before leaving and free-roaming.
     }
 
     // To be called via OnOpening on upDoorNew for the temp 049 spawn scare

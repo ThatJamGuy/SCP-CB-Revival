@@ -167,7 +167,7 @@ public class SCP_106_New : MonoBehaviour {
         nextLaughTime = now;
 
         AudioManager.PlayOneShot(horror106Event, LOCAL_EVENT_PARAM, 0);
-        RevivalSessionEngine.Instance.RequestChaseTrack(this, 10, MusicManager.MusicTrack.SCP_106);
+        MusicManager.Instance.RequestChaseTrack(this, 10, MusicManager.MusicTrack.SCP_106);
         EntitySystem.Instance.cached106Entity.chasingPlayer = true;
         RevivalRuntimeEngine.Instance.GiveAchievement("achv_106");
 
@@ -248,7 +248,7 @@ public class SCP_106_New : MonoBehaviour {
 
         if (tesla) AudioManager.PlayOneShot(teslaRetreatSound, transform.position);
         AudioManager.PlayOneShot(horror106Event, LOCAL_EVENT_PARAM, 1);
-        RevivalSessionEngine.Instance.ReleaseChaseTrack(this);
+        MusicManager.Instance.ReleaseChaseTrack(this);
 
         activeTarget = null;
 

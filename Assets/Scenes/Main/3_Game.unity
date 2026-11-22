@@ -42892,10 +42892,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: '[ Map Generator ]'
       objectReference: {fileID: 0}
-    - target: {fileID: 5624290096900462397, guid: 3367ad3b1346099469b82261f11ff4ab, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6871179456811409886, guid: 3367ad3b1346099469b82261f11ff4ab, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -47360,6 +47356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  isDisabled: 0
   requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
@@ -47390,6 +47387,12 @@ MonoBehaviour:
       Data3: 541241531
       Data4: 308827177
     Path: event:/SFX/Interact/KeycardSwipeGood
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 1329344042}
   buttonAnimator: {fileID: 0}
 --- !u!135 &1015903994
@@ -88355,6 +88358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  isDisabled: 0
   requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
@@ -88385,6 +88389,12 @@ MonoBehaviour:
       Data3: 541241531
       Data4: 308827177
     Path: event:/SFX/Interact/KeycardSwipeGood
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 1329344042}
   buttonAnimator: {fileID: 0}
 --- !u!135 &1838974959

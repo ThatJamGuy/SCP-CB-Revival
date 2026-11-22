@@ -100,13 +100,13 @@ public class SCP_096 : MonoBehaviour {
         // Set music track based on range state
         if (!playerInRange) {
             if (sqrDistanceToPlayer < sqrNearbyRadius) {
-                RevivalSessionEngine.Instance.RequestChaseTrack(this, 1, MusicManager.MusicTrack.SCP_096, 0);
+                MusicManager.Instance.RequestChaseTrack(this, 1, MusicManager.MusicTrack.SCP_096, 0);
                 gm.playerNear096 = true;
                 playerInRange = true;
             }
         } else if (playerInRange) {
             if (sqrDistanceToPlayer > sqrNearbyRadius) {
-                RevivalSessionEngine.Instance.ReleaseChaseTrack(this);
+                MusicManager.Instance.ReleaseChaseTrack(this);
                 gm.playerNear096 = false;
                 playerInRange = false;
             }
@@ -144,7 +144,7 @@ public class SCP_096 : MonoBehaviour {
         }
 
         if (!chaseMusicStarted) {
-            RevivalSessionEngine.Instance.RequestChaseTrack(this, 6, MusicManager.MusicTrack.SCP_096, 1);
+            MusicManager.Instance.RequestChaseTrack(this, 6, MusicManager.MusicTrack.SCP_096, 1);
             chaseMusicStarted = true;
         }
 

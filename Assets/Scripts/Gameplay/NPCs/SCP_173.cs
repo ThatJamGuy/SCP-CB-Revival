@@ -90,8 +90,9 @@ public class SCP_173 : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        // Cleanup, not super necessary since once the player dies the game is over but good to have generally
-        // (SCP-173 for now is destroyed when killing the player so he's not emoting on the player upon death)
+        MusicManager music = MusicManager.Instance;
+        if (music != null) music.ReleaseChaseTrack(this);
+
         EntitySystem system = EntitySystem.Instance;
         if (system == null) return;
 
@@ -138,10 +139,11 @@ public class SCP_173 : MonoBehaviour {
         }
 
         if (hasTarget && target != null) {
-            if (ShouldAbandonTarget()) {
+            if (target == null || ShouldAbandonTarget()) {
                 AbandonTarget();
                 return;
             }
+
             float currentChaseSpeed = GetChaseSpeed();
             navMeshAgent.speed = currentChaseSpeed;
             navMeshAgent.acceleration = currentChaseSpeed;
@@ -186,23 +188,20 @@ public class SCP_173 : MonoBehaviour {
     public void AbandonTarget() {
         target = null;
         hasTarget = false;
-        navMeshAgent.ResetPath();
-
-        if (alreadySeenByPlayer) {
-            alreadySeenByPlayer = false;
-        }
-
-        movementSource.SetActive(false);
+        alreadySeenByPlayer = false;
         hasPlayedDistanceHorrorSound = false;
-
-        // Tell the entity system the entity is no longer chasing the player, allowing teleports and stuff again
-        EntitySystem.Instance.cached173Entity.chasingPlayer = false;
-        RevivalSessionEngine.Instance.ReleaseChaseTrack(this);
-
-        tensionEmitter.Stop();
-
-        // Reset this to 0 so that he can't bash a door down too soon
         currentDoorBang = 0;
+
+        MusicManager music = MusicManager.Instance;
+        if (music != null) music.ReleaseChaseTrack(this);
+
+        if (navMeshAgent.isOnNavMesh) navMeshAgent.ResetPath();
+        movementSource.SetActive(false);
+        if (tensionEmitter != null) tensionEmitter.Stop();
+
+        EntitySystem system = EntitySystem.Instance;
+        if (system != null && system.cached173Entity != null)
+            system.cached173Entity.chasingPlayer = false;
     }
 
     #endregion
@@ -246,10 +245,10 @@ public class SCP_173 : MonoBehaviour {
         }
 
         // Randomly be able to either open the nearest door or fail to do so and bang on it a bit
-        if (nearestDoor && Random.value < doorOpenChance && !nearestDoor.isOpen && !nearestDoor.requiresKeycard && !nearestDoor.isLocked && !isVisibleByPlayer) {
+        if (nearestDoor && Random.value < doorOpenChance && !nearestDoor.isOpen && !nearestDoor.requiresKeycard && !nearestDoor.isLocked && !isVisibleByPlayer && !nearestDoor.disableNPCUseage) {
             nearestDoor.OpenDoor();
             AudioManager.PlayOneShot(AudioManager.Instance.globalAudioContainer.doorOpen173, nearestDoor.transform.position);
-        } else if (nearestDoor && !nearestDoor.isOpen && EntitySystem.Instance.cached173Entity.chasingPlayer && !isVisibleByPlayer) {
+        } else if (nearestDoor && !nearestDoor.isOpen && EntitySystem.Instance.cached173Entity.chasingPlayer && !isVisibleByPlayer && !nearestDoor.disableNPCUseage) {
 
             currentDoorBang++;
 
@@ -326,7 +325,7 @@ public class SCP_173 : MonoBehaviour {
             EntitySystem.Instance.cached173Entity.chasingPlayer = true;
 
             // Make a request for SCP-173 chase music
-            RevivalSessionEngine.Instance.RequestChaseTrack(this, 1, MusicManager.MusicTrack.SCP_173, 1);
+            MusicManager.Instance.RequestChaseTrack(this, 1, MusicManager.MusicTrack.SCP_173, 1);
 
             tensionEmitter.Play();
         }

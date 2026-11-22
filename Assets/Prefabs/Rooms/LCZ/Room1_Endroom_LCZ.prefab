@@ -1,72 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &130715977528543666
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6816005455047516680}
-  - component: {fileID: 4450140407385968140}
-  - component: {fileID: 157568358812799737}
-  m_Layer: 2
-  m_Name: AmbienceZone_02 (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
---- !u!4 &6816005455047516680
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 130715977528543666}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.5, y: 0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4402724905142522063}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &4450140407385968140
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 130715977528543666}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 13.044313, y: 7, z: 18.467342}
-  m_Center: {x: 5.4206934, y: 3, z: -0.96251106}
---- !u!114 &157568358812799737
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 130715977528543666}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  roomConfig: {fileID: 11400000, guid: df67b3a2c2772dc4798dd4595598a902, type: 2}
 --- !u!1 &932588107772233279
 GameObject:
   m_ObjectHideFlags: 0
@@ -991,7 +924,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6816005455047516680}
   - {fileID: 4314369995150803122}
   - {fileID: 3831574244338640337}
   - {fileID: 6756136506899714166}
@@ -1017,7 +949,7 @@ MonoBehaviour:
   - {fileID: 3735088647724434681}
   - {fileID: 1900947333393832806}
   - {fileID: 5942360333387958732}
-  activateDistance: 25
+  activateDistance: 32
   usePerLightCalculation: 0
 --- !u!1 &6857863266927264542
 GameObject:
@@ -1655,7 +1587,7 @@ MonoBehaviour:
   m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
-  m_VolumetricDimmer: 3
+  m_VolumetricDimmer: 1
   m_FadeDistance: 20
   m_VolumetricFadeDistance: 20
   m_AffectDiffuse: 1
@@ -2009,7 +1941,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_VolumetricDimmer
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4418139793012229248, guid: 4f117d8b6bd5b364da6cffb08815ecc1, type: 3}
       propertyPath: m_VolumetricFadeDistance

@@ -35,6 +35,7 @@ public class RevivalRuntimeEngine : MonoBehaviour {
     [Header("Canvas References")]
     public GameObject achievementsScreen;
     public GameObject optionsScreen;
+    public FPSDisplay fpsDisplay;
 
     public bool anyMenuOpen { get; private set; }
 

@@ -1,28 +1,19 @@
 using EditorAttributes;
 using PrimeTween;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     public static RevivalSessionEngine Instance { get; private set; }
 
-    private struct ChaseRequest {
-        public EntityId sourceId;
-        public int priority;
-        public int intensity;
-        public int order; // Lower number means older
-        public MusicManager.MusicTrack track;
-    }
-
     public static string saveName = "DefaultSaveName";
     public static string mapSeed = "DefaultSeed";
     public static int currentDifficulty = 0;
     public static int otherDifficultyFactor = 0;
     public static int currentZone = 1;
-    public static int currentPursuit = -1;
     public static bool lczUnlocked;
     public static bool skipIntro;
+    public static bool nukeRoomEntered;
 
     [Header("Heads Up Display")]
     [SerializeField] private TextMeshProUGUI infoText;
@@ -30,16 +21,9 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     [Header("Game States")]
     [ReadOnly] public bool playerNear096;
 
-    private readonly List<ChaseRequest> chaseRequests = new List<ChaseRequest>(5);
-
     private SaveData saveData;
-    private MusicManager.MusicTrack activeTrack;
 
     private Tween infoTextTween;
-
-    private bool hasActiveChase;
-    private int requestCounter;
-    private int activeIntensity;
 
     #region Unity Lifecycle
 
@@ -50,24 +34,15 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
         SaveGameEngine.Register(this);
         saveData = SaveGameEngine.Get<SaveData>();
 
-        // Safeguard for direct testing from 3_Game because I can't live with it. Keeps the seed random still and diff on Safe
-        // FIXME: Doesn't really work when enabling developerMode in EVNT_Intro.cs anymore
-#if UNITY_EDITOR
-        if (!SaveGameEngine.HasActiveSave && !SaveGameEngine.LoadGame())
-            SaveGameEngine.NewGame("EditorTest", "", 0, true);
-#endif
-
         saveName = saveData.saveName;
         mapSeed = saveData.mapSeed;
         currentDifficulty = saveData.difficulty;
         skipIntro = saveData.skipIntro;
         currentZone = saveData.currentZone;
         lczUnlocked = saveData.lczUnlocked;
+        nukeRoomEntered = saveData.enteredNukeRoom;
 
         otherDifficultyFactor = currentDifficulty;
-
-        chaseRequests.Clear();
-        currentPursuit = -1;
     }
 
     private void OnDestroy() {
@@ -76,49 +51,6 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     }
 
     #endregion
-
-    private void ApplyTopChaseRequest() {
-        int best = -1;
-        int count = chaseRequests.Count;
-
-        for (int i = 0; i < count; i++) {
-            if (best == -1) { best = i; continue; }
-            ChaseRequest candidate = chaseRequests[i];
-            ChaseRequest current = chaseRequests[best];
-            if (candidate.priority > current.priority ||
-                (candidate.priority == current.priority && candidate.order < current.order)) {
-                best = i;
-            }
-        }
-
-        // No requests left: fall back to zone music
-        if (best == -1) {
-            if (!hasActiveChase) return;
-            hasActiveChase = false;
-            currentPursuit = -1;
-            SetGlobalAudioBasedOnZone(bypassChaseCheck: true);
-            return;
-        }
-
-        ChaseRequest top = chaseRequests[best];
-        currentPursuit = top.priority;
-
-        // Winner's track unchanged, so don't retrigger
-        if (hasActiveChase && activeTrack == top.track && activeIntensity == top.intensity) return;
-
-        hasActiveChase = true;
-        activeTrack = top.track;
-        activeIntensity = top.intensity;
-        MusicManager.Instance.SetTrack(top.track, top.intensity);
-    }
-
-    private int IndexOfSource(EntityId id) {
-        for (int i = 0; i < chaseRequests.Count; i++) {
-            if (chaseRequests[i].sourceId == id) return i;
-        }
-
-        return -1;
-    }
 
     public static void PauseGame() {
         // Set the game's timescale to 0 (Pausing Time.deltaTime) and pause FMOD via the AudioManager
@@ -189,45 +121,6 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     }
 
     /// <summary>
-    /// Registers or updates a chase music request from a source. The highest priority active request plays.
-    /// Safe to call repeatedly; the track is only changed when the winning request changes.
-    /// </summary>
-    public void RequestChaseTrack(Object source, int priority, MusicManager.MusicTrack track, int intensity = 0) {
-        if (priority < 0) { ReleaseChaseTrack(source); return; }
-
-        EntityId id = source.GetEntityId();
-        int index = IndexOfSource(id);
-
-        ChaseRequest request;
-        request.sourceId = id;
-        request.priority = priority;
-        request.track = track;
-        request.intensity = intensity;
-        request.order = index >= 0 ? chaseRequests[index].order : requestCounter++;
-
-        if (index >= 0) chaseRequests[index] = request;
-        else chaseRequests.Add(request);
-
-        ApplyTopChaseRequest();
-    }
-
-    /// <summary>
-    /// Call when a source stops chasing (lost the player, died, disabled, destroyed).
-    /// </summary>
-    public void ReleaseChaseTrack(Object source) {
-        EntityId id = source.GetEntityId();
-        int index = IndexOfSource(id);
-        if (index < 0) return;
-
-        // Swap-remove: O(1), order is stored per request so list order doesn't matter
-        int last = chaseRequests.Count - 1;
-        chaseRequests[index] = chaseRequests[last];
-        chaseRequests.RemoveAt(last);
-
-        ApplyTopChaseRequest();
-    }
-
-    /// <summary>
     /// Displays a heads-up bit of text to the player similar to how Containment Breach did it.
     /// </summary>
     /// <param name="textToDisplay">The text that will appear on screen</param>
@@ -253,6 +146,7 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     public void PrepareSaveableValues() {
         saveData.currentZone = currentZone;
         saveData.lczUnlocked = lczUnlocked;
+        saveData.enteredNukeRoom = nukeRoomEntered;
     }
 
     public void DebugDispalyZone() {

@@ -138,6 +138,8 @@ public class OptionsMenu : MonoBehaviour {
         // Gameplay Settings
         lookSensSlider.SetValueWithoutNotify(localSettings.mouseSensitivity);
         lookSmoothSlider.SetValueWithoutNotify(localSettings.mouseSmoothing);
+        RefreshSensitivitySliderText();
+
         hudDesignDropdown.SetValueWithoutNotify(localSettings.hudDesign);
         hudFunctionDropdown.SetValueWithoutNotify(localSettings.hudFunctionality);
 
@@ -199,6 +201,11 @@ public class OptionsMenu : MonoBehaviour {
 
         windowModeDropdown.ClearOptions();
         windowModeDropdown.AddOptions(options);
+    }
+
+    private void RefreshSensitivitySliderText() {
+        lookSensText.text = lookSensSlider.value.ToString();
+        lookSmoothText.text = lookSmoothSlider.value.ToString();
     }
 
     #endregion
@@ -392,8 +399,7 @@ public class OptionsMenu : MonoBehaviour {
     }
 
     public void ApplyInputSliders() {
-        lookSensText.text = lookSensSlider.value.ToString();
-        lookSmoothText.text = lookSmoothSlider.value.ToString();
+        RefreshSensitivitySliderText();
 
         localSettings.mouseSensitivity = lookSensSlider.value;
         localSettings.mouseSmoothing = lookSmoothSlider.value;
