@@ -27,6 +27,7 @@ public class AudioManager : MonoBehaviour {
     private Bus masterBus;
     private Bus musicBus;
     private Bus SFXBus;
+    private Bus SFX_NoReverbBus;
     private Bus UI_SFXBus;
     private Bus voiceBus;
 
@@ -40,6 +41,7 @@ public class AudioManager : MonoBehaviour {
         masterBus = RuntimeManager.GetBus("bus:/");
         musicBus = RuntimeManager.GetBus("bus:/Music");
         SFXBus = RuntimeManager.GetBus("bus:/SFX");
+        SFX_NoReverbBus = RuntimeManager.GetBus("bus:/SFX_NoReverb");
         UI_SFXBus = RuntimeManager.GetBus("bus:/SFX_UI");
         voiceBus = RuntimeManager.GetBus("bus:/Voice");
 
@@ -106,8 +108,7 @@ public class AudioManager : MonoBehaviour {
     }
 
     // Check if an instance is playing any given instance already.
-    public static bool IsPlayingEvent(EventInstance instance, EventReference reference)
-    {
+    public static bool IsPlayingEvent(EventInstance instance, EventReference reference) {
         if (!instance.isValid() || reference.IsNull)
             return false;
 
@@ -157,6 +158,7 @@ public class AudioManager : MonoBehaviour {
         masterBus.setVolume(masterVolume);
         musicBus.setVolume(musicVolume);
         SFXBus.setVolume(sfxVolume);
+        SFX_NoReverbBus.setVolume(sfxVolume);
         UI_SFXBus.setVolume(sfxVolume);
         voiceBus.setVolume(voiceVolume);
     }
@@ -164,12 +166,10 @@ public class AudioManager : MonoBehaviour {
     /// <summary>
     /// Updates the current GLOBAL reverb.
     /// </summary>
-    public void UpdateRoom(RoomTrigger roomTrigger)
-    {
+    public void UpdateRoom(RoomTrigger roomTrigger) {
         RoomConfig roomConfig = roomTrigger.roomConfig;
 
-        if (!reverbInstance.isValid())
-        {
+        if (!reverbInstance.isValid()) {
             reverbInstance.release();
             reverbInstance = RuntimeManager.CreateInstance(reverbMasterReference);
             reverbInstance.start();
@@ -181,14 +181,12 @@ public class AudioManager : MonoBehaviour {
         SetAmbience(roomConfig.ambienceSoundScape);
     }
 
-    private void SetAmbience(EventReference ambience)
-    {
+    private void SetAmbience(EventReference ambience) {
         // Same event already playing: leave it running so there's no fade or restart
         if (ambienceInstance.isValid() && ambience.Guid.Equals(currentAmbience.Guid))
             return;
 
-        if (ambienceInstance.isValid())
-        {
+        if (ambienceInstance.isValid()) {
             ambienceInstance.stop(STOP_MODE.ALLOWFADEOUT);
             ambienceInstance.release();
             ambienceInstance = default;

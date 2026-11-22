@@ -545,6 +545,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
   roomConfig: {fileID: 11400000, guid: d42f511051796f347a969c68299d4680, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 41354416646445190}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 41354416646445190}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &692169770544334577
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,7 +585,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8229534849248929617}
   m_Layer: 0
-  m_Name: SoundEmitters
+  m_Name: Sound Emitters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -576,7 +606,7 @@ Transform:
   m_Children:
   - {fileID: 3399116101205207054}
   - {fileID: 4218463060948428157}
-  m_Father: {fileID: 8775078883819487826}
+  m_Father: {fileID: 5096596590645713528}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1326972979944744863
 GameObject:
@@ -1420,7 +1450,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4965009854644709127}
   m_Layer: 0
-  m_Name: Props_Dynamic
+  m_Name: Dynamic Props
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1434,7 +1464,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3454495182485755511}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1442,7 +1472,7 @@ Transform:
   - {fileID: 6434063515898804519}
   - {fileID: 3606324021698049178}
   - {fileID: 1956630247178830788}
-  m_Father: {fileID: 8775078883819487826}
+  m_Father: {fileID: 5096596590645713528}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4450111227601930578
 GameObject:
@@ -1746,39 +1776,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
---- !u!1 &6057311848671625024
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8775078883819487826}
-  m_Layer: 0
-  m_Name: Extra
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8775078883819487826
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6057311848671625024}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8229534849248929617}
-  - {fileID: 4965009854644709127}
-  m_Father: {fileID: 5096596590645713528}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7611424980452130380
 GameObject:
   m_ObjectHideFlags: 0
@@ -1810,7 +1807,8 @@ Transform:
   m_Children:
   - {fileID: 9140925323023927512}
   - {fileID: 7695992429505205980}
-  - {fileID: 8775078883819487826}
+  - {fileID: 4965009854644709127}
+  - {fileID: 8229534849248929617}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &513687372847460889
