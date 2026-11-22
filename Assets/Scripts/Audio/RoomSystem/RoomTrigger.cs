@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary>
 /// A simple trigger that should be scaled to match the exact bounds of the room its representing, Including doorways.
@@ -7,4 +8,7 @@ using UnityEngine;
 public class RoomTrigger : MonoBehaviour
 {
     public RoomConfig roomConfig;
+
+    public UnityEvent onRoomEnter;
+    public UnityEvent onRoomExit;
 }

@@ -40,14 +40,25 @@ public class RoomListener : MonoBehaviour
     {
         if (!IsRoom(other)) return;
         ManualUpdate();
+        
     }
 
+    /// <summary>
+    /// updates the listeners room as well as invokes the appropreate unity events.
+    /// </summary>
     private void SetActiveRoom(RoomTrigger newRoom)
     {
         if (newRoom == activeRoom)
             return;
+        //Invoke the onExit event for the previous rooms
+        activeRoom?.onRoomExit?.Invoke();
 
+        //Set the new Room
         activeRoom = newRoom;
+
+        //Invoke the onEnter event for the new Room
+        activeRoom.onRoomEnter?.Invoke();
+
         OnRoomChanged?.Invoke(newRoom);
     }
 
