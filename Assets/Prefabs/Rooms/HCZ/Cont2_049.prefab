@@ -138,7 +138,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  roomConfig: {fileID: 11400000, guid: 6d39c411abac32847adb0581751829bc, type: 2}
+  roomConfig: {fileID: 11400000, guid: 7e58525007ae1c04e82fa82b0bfebde3, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1099893527933498856
 GameObject:
   m_ObjectHideFlags: 0
@@ -206,6 +212,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
   roomConfig: {fileID: 11400000, guid: 10b08d3498260e64da8c9f53aa6d50fb, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1215441468119344720
 GameObject:
   m_ObjectHideFlags: 0
@@ -273,6 +285,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
   roomConfig: {fileID: 11400000, guid: 10b08d3498260e64da8c9f53aa6d50fb, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2377024777540253290
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,6 +394,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
   roomConfig: {fileID: 11400000, guid: 10b08d3498260e64da8c9f53aa6d50fb, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3398686148775009000
 GameObject:
   m_ObjectHideFlags: 0
@@ -483,6 +507,7 @@ Transform:
   - {fileID: 3126794883304338205}
   - {fileID: 4820193644635274683}
   - {fileID: 3214703570105477076}
+  - {fileID: 2193751056720959269}
   - {fileID: 2385065612111673683}
   - {fileID: 5490874399301893358}
   - {fileID: 1658689483135180621}
@@ -602,8 +627,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 11.139999, y: 4.9678226, z: 7.2959356}
-  m_Center: {x: -2.4517899, y: 1.8470509, z: -5.281976}
+  m_Size: {x: 5.1399994, y: 4.9678226, z: 7.2959356}
+  m_Center: {x: -5.45179, y: 1.8470509, z: -5.281976}
 --- !u!114 &5405108120394531632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -617,6 +642,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
   roomConfig: {fileID: 11400000, guid: 6d39c411abac32847adb0581751829bc, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3934286546435748251
 GameObject:
   m_ObjectHideFlags: 0
@@ -870,6 +901,79 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
   settingToRetreive: 01000000i
+--- !u!1 &4383222451998307956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2193751056720959269}
+  - component: {fileID: 1376812340075281414}
+  - component: {fileID: 4920626888577971974}
+  m_Layer: 2
+  m_Name: AmbienceZone-Elevator2 (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2193751056720959269
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4383222451998307956}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.70710677, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 32.43859, y: -34.5, z: 12.930002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7513698433436479477}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!65 &1376812340075281414
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4383222451998307956}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6.14, y: 4.9678226, z: 6.2959366}
+  m_Center: {x: 0.048209667, y: 1.8470509, z: -4.7819767}
+--- !u!114 &4920626888577971974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4383222451998307956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  roomConfig: {fileID: 11400000, guid: 7e58525007ae1c04e82fa82b0bfebde3, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5161315693629549009
 GameObject:
   m_ObjectHideFlags: 0
@@ -1442,7 +1546,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  roomConfig: {fileID: 11400000, guid: 6d39c411abac32847adb0581751829bc, type: 2}
+  roomConfig: {fileID: 11400000, guid: 7e58525007ae1c04e82fa82b0bfebde3, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6431261075240450409
 GameObject:
   m_ObjectHideFlags: 0
@@ -1869,7 +1979,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  roomConfig: {fileID: 11400000, guid: 6d39c411abac32847adb0581751829bc, type: 2}
+  roomConfig: {fileID: 11400000, guid: 7e58525007ae1c04e82fa82b0bfebde3, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8011178907810750702
 GameObject:
   m_ObjectHideFlags: 0
