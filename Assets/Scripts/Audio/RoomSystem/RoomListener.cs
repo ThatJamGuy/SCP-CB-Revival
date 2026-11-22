@@ -57,7 +57,7 @@ public class RoomListener : MonoBehaviour
         activeRoom = newRoom;
 
         //Invoke the onEnter event for the new Room
-        activeRoom.onRoomEnter?.Invoke();
+        activeRoom?.onRoomEnter?.Invoke();
 
         OnRoomChanged?.Invoke(newRoom);
     }
