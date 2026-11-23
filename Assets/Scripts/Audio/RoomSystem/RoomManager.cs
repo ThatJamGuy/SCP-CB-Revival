@@ -42,7 +42,7 @@ public class RoomManager : MonoBehaviour
     }
 
 
-    //Editor bullshitery, this doesnt need to be compiled as its purely designer stuff.
+    //Editor bullshitery, this doesnt need to be compiled as its purely designer stuff. 
 #if UNITY_EDITOR
     private const string ShowRoomDebugsKey = "CBR.ShowRoomDebugs";
     private const string RoomDebugsMenuPath = "SCP:CBR/Show Room Debugs";
