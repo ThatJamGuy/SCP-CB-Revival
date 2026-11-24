@@ -346,10 +346,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4569779856997401491}
   - {fileID: 978354660923201925}
   - {fileID: 8839669276922309499}
   - {fileID: 2718375602703110339}
+  - {fileID: 4569779856997401491}
   - {fileID: 8245797106389195574}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -367,6 +367,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
   roomName: cont3_513
   teleportLocation: {fileID: 8245797106389195574}
+  associatedZone: 1
   roomLights:
   - {fileID: 7747123285247952458}
   - {fileID: 4649252043066258606}
@@ -894,7 +895,7 @@ GameObject:
   - component: {fileID: 2856645035402851076}
   - component: {fileID: 3416529050428350772}
   m_Layer: 2
-  m_Name: AmbienceZone (1)
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -909,7 +910,7 @@ Transform:
   m_GameObject: {fileID: 3755086368905763340}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.75, y: 0.5, z: -8}
+  m_LocalPosition: {x: 0, y: 2.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -934,8 +935,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 20.526665, y: 4.706876, z: 20.415188}
-  m_Center: {x: -7.7633324, y: 1.739213, z: 7.9680195}
+  m_Size: {x: 20.5, y: 5, z: 20.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3416529050428350772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -948,7 +949,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 4422992732039878719}
   roomConfig: {fileID: 11400000, guid: 10b08d3498260e64da8c9f53aa6d50fb, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5215775491525578942
 GameObject:
   m_ObjectHideFlags: 0
