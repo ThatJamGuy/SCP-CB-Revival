@@ -42,33 +42,5 @@ public class RoomManager : MonoBehaviour
     }
 
 
-    //Editor bullshitery, this doesnt need to be compiled as its purely designer stuff. 
-#if UNITY_EDITOR
-    private const string ShowRoomDebugsKey = "CBR.ShowRoomDebugs";
-    private const string RoomDebugsMenuPath = "SCP:CBR/Show Room Debugs";
-
-    public static bool showRoomDebugs
-    {
-        get => UnityEditor.EditorPrefs.GetBool(ShowRoomDebugsKey, false);
-        set
-        {
-            UnityEditor.EditorPrefs.SetBool(ShowRoomDebugsKey, value);
-            UnityEditor.SceneView.RepaintAll();
-        }
-    }
-
-    [UnityEditor.MenuItem(RoomDebugsMenuPath)]
-    public static void ToggleRoomDebugs()
-    {
-        showRoomDebugs = !showRoomDebugs;
-    }
-
-    // Validate function: runs when the menu is drawn, used to show the tick
-    [UnityEditor.MenuItem(RoomDebugsMenuPath, true)]
-    private static bool ToggleRoomDebugsValidate()
-    {
-        UnityEditor.Menu.SetChecked(RoomDebugsMenuPath, showRoomDebugs);
-        return true;
-    }
-#endif
+   
 }
