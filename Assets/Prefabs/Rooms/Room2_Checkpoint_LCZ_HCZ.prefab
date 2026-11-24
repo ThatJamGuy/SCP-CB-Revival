@@ -340,6 +340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  isDisabled: 0
   requireLCZLockLift: 1
   interactionCooldown: 0.2
   buttonPressSound:
@@ -370,6 +371,12 @@ MonoBehaviour:
       Data3: 541241531
       Data4: 308827177
     Path: event:/SFX/Interact/KeycardSwipeGood
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 5271142268944510686}
   buttonAnimator: {fileID: 0}
 --- !u!1 &421833062878684796
@@ -815,6 +822,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
   roomConfig: {fileID: 11400000, guid: 5dc652b04afd14242840d88fcee5b661, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1703477539537140532
 GameObject:
   m_ObjectHideFlags: 0
@@ -1251,6 +1264,7 @@ MonoBehaviour:
   isBroken: 0
   noBusting: 1
   requiresKeycard: 1
+  disableNPCUseage: 0
   requiredKeyLevel: 3
   openSpeed: 1.5
   openDistance: 1.9
@@ -1915,6 +1929,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  isDisabled: 0
   requireLCZLockLift: 1
   interactionCooldown: 0.2
   buttonPressSound:
@@ -1945,6 +1960,12 @@ MonoBehaviour:
       Data3: 541241531
       Data4: 308827177
     Path: event:/SFX/Interact/KeycardSwipeGood
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 5271142268944510686}
   buttonAnimator: {fileID: 0}
 --- !u!1 &2759847716476658949
@@ -2862,7 +2883,7 @@ MonoBehaviour:
   m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
-  m_VolumetricDimmer: 5
+  m_VolumetricDimmer: 3
   m_FadeDistance: 20
   m_VolumetricFadeDistance: 20
   m_AffectDiffuse: 1
@@ -3786,7 +3807,7 @@ Light:
   serializedVersion: 13
   m_Type: 0
   m_Color: {r: 1, g: 0.7877358, b: 0.7877358, a: 1}
-  m_Intensity: 2.9817994
+  m_Intensity: 3.9757326
   m_Range: 20
   m_SpotAngle: 157
   m_InnerSpotAngle: 108
@@ -3871,7 +3892,7 @@ MonoBehaviour:
   m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
-  m_VolumetricDimmer: 3
+  m_VolumetricDimmer: 1
   m_FadeDistance: 20
   m_VolumetricFadeDistance: 20
   m_AffectDiffuse: 1
@@ -4771,6 +4792,7 @@ MonoBehaviour:
   isBroken: 0
   noBusting: 1
   requiresKeycard: 1
+  disableNPCUseage: 0
   requiredKeyLevel: 3
   openSpeed: 1.5
   openDistance: 1.9
@@ -5272,6 +5294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  isDisabled: 0
   requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
@@ -5302,6 +5325,12 @@ MonoBehaviour:
       Data3: 541241531
       Data4: 308827177
     Path: event:/SFX/Interact/KeycardSwipeGood
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 1999019721237042338}
   buttonAnimator: {fileID: 0}
 --- !u!1 &6287461313476582400
@@ -6160,7 +6189,7 @@ Light:
   serializedVersion: 13
   m_Type: 0
   m_Color: {r: 1, g: 0.7877358, b: 0.7877358, a: 1}
-  m_Intensity: 2.9817994
+  m_Intensity: 3.9757326
   m_Range: 20
   m_SpotAngle: 157
   m_InnerSpotAngle: 108
@@ -6245,7 +6274,7 @@ MonoBehaviour:
   m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
-  m_VolumetricDimmer: 3
+  m_VolumetricDimmer: 1
   m_FadeDistance: 20
   m_VolumetricFadeDistance: 20
   m_AffectDiffuse: 1
@@ -7309,6 +7338,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonDoor
   isKeycardButton: 1
+  isDisabled: 0
   requireLCZLockLift: 0
   interactionCooldown: 0.2
   buttonPressSound:
@@ -7339,6 +7369,12 @@ MonoBehaviour:
       Data3: 541241531
       Data4: 308827177
     Path: event:/SFX/Interact/KeycardSwipeGood
+  OnButtonPressedImmediate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPressedPassed:
+    m_PersistentCalls:
+      m_Calls: []
   linkedDoor: {fileID: 1999019721237042338}
   buttonAnimator: {fileID: 0}
 --- !u!1 &8531814578875986718
@@ -7657,7 +7693,7 @@ MonoBehaviour:
   m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
-  m_VolumetricDimmer: 5
+  m_VolumetricDimmer: 3
   m_FadeDistance: 20
   m_VolumetricFadeDistance: 20
   m_AffectDiffuse: 1
@@ -7939,7 +7975,7 @@ GameObject:
   - component: {fileID: 2234844103146554660}
   - component: {fileID: 1544018246579447896}
   m_Layer: 0
-  m_Name: HCZ_Light_02 (1)
+  m_Name: AmbientLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7972,7 +8008,7 @@ Light:
   m_Type: 2
   m_Color: {r: 1, g: 0.7877358, b: 0.7877358, a: 1}
   m_Intensity: 0.9188945
-  m_Range: 9.071551
+  m_Range: 7
   m_SpotAngle: 157
   m_InnerSpotAngle: 108
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -8281,7 +8317,7 @@ Light:
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1.6628937
-  m_Range: 7.9450655
+  m_Range: 7
   m_SpotAngle: 157.71751
   m_InnerSpotAngle: 108.859695
   m_CookieSize2D: {x: 0.5, y: 0.5}

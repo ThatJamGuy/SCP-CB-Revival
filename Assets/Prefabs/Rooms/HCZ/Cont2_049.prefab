@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3249318859033591296}
   - component: {fileID: 7987627572880165860}
-  - component: {fileID: 7387677310984133577}
+  - component: {fileID: 8834320816387188242}
+  - component: {fileID: 7648574136284141015}
   m_Layer: 2
   m_Name: Trigger_ElevatorArea2
   m_TagString: Untagged
@@ -54,7 +55,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.4, y: 5, z: 5.4}
   m_Center: {x: 0, y: 2, z: 0}
---- !u!114 &7387677310984133577
+--- !u!114 &8834320816387188242
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -63,76 +64,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 173488921998473876}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b4fa32afc8a13040b0a42f5933539c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 36bfb49b5119e5b439d9041f405b6a48, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Elevator_Teleport
-  floorA: {fileID: 0}
-  floorB: {fileID: 0}
-  startingFloor: {fileID: 0}
-  OnPlayerUsedElevator:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!1 &959019306609610664
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4820193644635274683}
-  - component: {fileID: 2655383997937795793}
-  - component: {fileID: 572636974922331755}
-  m_Layer: 2
-  m_Name: AmbienceZone-Elevator
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4820193644635274683
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 959019306609610664}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.5, y: 0.5, z: 6.25}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7513698433436479477}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &2655383997937795793
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 959019306609610664}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 5.846984, y: 4.9678226, z: 6.3759575}
-  m_Center: {x: 0.048209667, y: 1.8470509, z: -5.1403837}
---- !u!114 &572636974922331755
+  m_EditorClassIdentifier: Assembly-CSharp::Elevator_Teleport_Floor
+  elevatorController: {fileID: 3590475077929186999}
+  thisElevatorDoor: {fileID: 2353307216100960511}
+  thisLight: {fileID: 4600688747498355219}
+--- !u!114 &7648574136284141015
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 959019306609610664}
+  m_GameObject: {fileID: 173488921998473876}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
@@ -410,7 +354,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1912756046318102006}
   - component: {fileID: 1255639471015589037}
-  - component: {fileID: 6457864106773880557}
+  - component: {fileID: 5822170706819565779}
+  - component: {fileID: 4232960044079126097}
   m_Layer: 2
   m_Name: Trigger_ElevatorArea1
   m_TagString: Untagged
@@ -454,7 +399,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.4, y: 5, z: 5.4}
   m_Center: {x: 0, y: 2, z: 0}
---- !u!114 &6457864106773880557
+--- !u!114 &5822170706819565779
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -463,13 +408,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 3398686148775009000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b4fa32afc8a13040b0a42f5933539c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 36bfb49b5119e5b439d9041f405b6a48, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Elevator_Teleport
-  floorA: {fileID: 0}
-  floorB: {fileID: 0}
-  startingFloor: {fileID: 0}
-  OnPlayerUsedElevator:
+  m_EditorClassIdentifier: Assembly-CSharp::Elevator_Teleport_Floor
+  elevatorController: {fileID: 3590475077929186999}
+  thisElevatorDoor: {fileID: 8813583838638475313}
+  thisLight: {fileID: 2402140594855096334}
+--- !u!114 &4232960044079126097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3398686148775009000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  roomConfig: {fileID: 11400000, guid: 7e58525007ae1c04e82fa82b0bfebde3, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &3447056665106439672
@@ -482,6 +443,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7513698433436479477}
   - component: {fileID: 7356453144232328719}
+  - component: {fileID: 3590475077929186999}
   m_Layer: 0
   m_Name: Cont2_049
   m_TagString: Untagged
@@ -505,11 +467,6 @@ Transform:
   - {fileID: 3784370630498434715}
   - {fileID: 3603891966822957803}
   - {fileID: 3126794883304338205}
-  - {fileID: 4820193644635274683}
-  - {fileID: 3214703570105477076}
-  - {fileID: 2193751056720959269}
-  - {fileID: 2385065612111673683}
-  - {fileID: 5490874399301893358}
   - {fileID: 1658689483135180621}
   - {fileID: 2334134323616808688}
   - {fileID: 4813761584891332628}
@@ -540,6 +497,24 @@ MonoBehaviour:
   - {fileID: 6194722519472318307}
   activateDistance: 25
   usePerLightCalculation: 0
+--- !u!114 &3590475077929186999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3447056665106439672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b4fa32afc8a13040b0a42f5933539c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Elevator_Teleport
+  floorA: {fileID: 5822170706819565779}
+  floorB: {fileID: 8834320816387188242}
+  startingFloor: {fileID: 8834320816387188242}
+  OnPlayerUsedElevator:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3769919657613991942
 GameObject:
   m_ObjectHideFlags: 0
@@ -575,79 +550,6 @@ Transform:
   - {fileID: 6751165364569803075}
   m_Father: {fileID: 7513698433436479477}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &3900785029815703836
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5490874399301893358}
-  - component: {fileID: 4057990641951970706}
-  - component: {fileID: 5405108120394531632}
-  m_Layer: 2
-  m_Name: AmbienceZone-Elevator2 (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5490874399301893358
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3900785029815703836}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.70710677, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 32.34, y: -34.47, z: 12.67}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7513698433436479477}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!65 &4057990641951970706
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3900785029815703836}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 5.1399994, y: 4.9678226, z: 7.2959356}
-  m_Center: {x: -5.45179, y: 1.8470509, z: -5.281976}
---- !u!114 &5405108120394531632
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3900785029815703836}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  roomConfig: {fileID: 11400000, guid: 6d39c411abac32847adb0581751829bc, type: 2}
-  onRoomEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onRoomExit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &3934286546435748251
 GameObject:
   m_ObjectHideFlags: 0
@@ -901,79 +803,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
   settingToRetreive: 01000000i
---- !u!1 &4383222451998307956
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2193751056720959269}
-  - component: {fileID: 1376812340075281414}
-  - component: {fileID: 4920626888577971974}
-  m_Layer: 2
-  m_Name: AmbienceZone-Elevator2 (3)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2193751056720959269
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4383222451998307956}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.70710677, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 32.43859, y: -34.5, z: 12.930002}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7513698433436479477}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!65 &1376812340075281414
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4383222451998307956}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 6.14, y: 4.9678226, z: 6.2959366}
-  m_Center: {x: 0.048209667, y: 1.8470509, z: -4.7819767}
---- !u!114 &4920626888577971974
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4383222451998307956}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  roomConfig: {fileID: 11400000, guid: 7e58525007ae1c04e82fa82b0bfebde3, type: 2}
-  onRoomEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onRoomExit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &5161315693629549009
 GameObject:
   m_ObjectHideFlags: 0
@@ -1239,8 +1068,9 @@ GameObject:
   - component: {fileID: 5664624774398646692}
   - component: {fileID: 3312038023450567656}
   - component: {fileID: 7367463554088758731}
+  - component: {fileID: 2402140594855096334}
   m_Layer: 0
-  m_Name: Point Light (9)
+  m_Name: ElevatorLight1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1480,79 +1310,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
   settingToRetreive: 01000000i
---- !u!1 &5585179915132579784
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2385065612111673683}
-  - component: {fileID: 5074835498999085333}
-  - component: {fileID: 4735092781391459400}
-  m_Layer: 2
-  m_Name: AmbienceZone-Elevator2 (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2385065612111673683
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5585179915132579784}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.70710677, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -27.311407, y: -34.47, z: -18.25}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7513698433436479477}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!65 &5074835498999085333
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5585179915132579784}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 6.14, y: 4.9678226, z: 6.2959366}
-  m_Center: {x: 0.048209667, y: 1.8470509, z: -4.7819767}
---- !u!114 &4735092781391459400
+--- !u!114 &2402140594855096334
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5585179915132579784}
+  m_GameObject: {fileID: 5330783700760553320}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
+  m_Script: {fileID: 11500000, guid: 8fafb817f42376349814c4bb96628512, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  roomConfig: {fileID: 11400000, guid: 7e58525007ae1c04e82fa82b0bfebde3, type: 2}
-  onRoomEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onRoomExit:
-    m_PersistentCalls:
-      m_Calls: []
+  m_EditorClassIdentifier: Assembly-CSharp::LightFlicker
+  preset: 3
+  customPattern: anmonanbaaomamabaoanaoanbonqnmaaabnmaomaomaao
+  stepsPerSecond: 35
+  randomOffset: 1
+  startActive: 0
+  smoothTransitions: 1
+  smoothSpeed: 25
 --- !u!1 &6431261075240450409
 GameObject:
   m_ObjectHideFlags: 0
@@ -1913,79 +1689,6 @@ Transform:
   - {fileID: 3249318859033591296}
   m_Father: {fileID: 7513698433436479477}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7629588814685415881
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3214703570105477076}
-  - component: {fileID: 441441181801963782}
-  - component: {fileID: 3819385678421410298}
-  m_Layer: 2
-  m_Name: AmbienceZone-Elevator2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3214703570105477076
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7629588814685415881}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.70710677, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -1.3114061, y: 0.5, z: -6.32}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7513698433436479477}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!65 &441441181801963782
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7629588814685415881}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 6.14, y: 4.9678226, z: 6.2959366}
-  m_Center: {x: 0.048209667, y: 1.8470509, z: -4.7819767}
---- !u!114 &3819385678421410298
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7629588814685415881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  roomConfig: {fileID: 11400000, guid: 7e58525007ae1c04e82fa82b0bfebde3, type: 2}
-  onRoomEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onRoomExit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &8011178907810750702
 GameObject:
   m_ObjectHideFlags: 0
@@ -2064,8 +1767,9 @@ GameObject:
   - component: {fileID: 6194722519472318307}
   - component: {fileID: 6468932507406598700}
   - component: {fileID: 7387457505701285754}
+  - component: {fileID: 4600688747498355219}
   m_Layer: 0
-  m_Name: Point Light (10)
+  m_Name: ElevatorLight2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2305,6 +2009,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
   settingToRetreive: 01000000i
+--- !u!114 &4600688747498355219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9060721942896156197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fafb817f42376349814c4bb96628512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightFlicker
+  preset: 3
+  customPattern: anmonanbaaomamabaoanaoanbonqnmaaabnmaomaomaao
+  stepsPerSecond: 35
+  randomOffset: 1
+  startActive: 0
+  smoothTransitions: 1
+  smoothSpeed: 25
 --- !u!1001 &1192996738564077734
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2313,6 +2036,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7513698433436479477}
     m_Modifications:
+    - target: {fileID: -8738768294598214725, guid: 010f6802a51270c439b1e5bf835dc66a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: -8738768294598214725, guid: 010f6802a51270c439b1e5bf835dc66a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -2510,6 +2237,10 @@ PrefabInstance:
       value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -3782136977091647557, guid: 010f6802a51270c439b1e5bf835dc66a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -3782136977091647557, guid: 010f6802a51270c439b1e5bf835dc66a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -2700,6 +2431,10 @@ PrefabInstance:
     - target: {fileID: 6675373587995799030, guid: 010f6802a51270c439b1e5bf835dc66a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7035425310881294667, guid: 010f6802a51270c439b1e5bf835dc66a, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7035425310881294667, guid: 010f6802a51270c439b1e5bf835dc66a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -3003,9 +2738,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 988978108239232239, guid: 6e8c0c0e2cad4cf47b0a1e7323560427, type: 3}
+      propertyPath: isDisabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 988978108239232239, guid: 6e8c0c0e2cad4cf47b0a1e7323560427, type: 3}
+      propertyPath: isKeycardButton
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3360743646736033341, guid: 6e8c0c0e2cad4cf47b0a1e7323560427, type: 3}
       propertyPath: isBroken
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3360743646736033341, guid: 6e8c0c0e2cad4cf47b0a1e7323560427, type: 3}
+      propertyPath: requiredKeyLevel
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5371496176047482232, guid: 6e8c0c0e2cad4cf47b0a1e7323560427, type: 3}
+      propertyPath: isDisabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5371496176047482232, guid: 6e8c0c0e2cad4cf47b0a1e7323560427, type: 3}
+      propertyPath: isKeycardButton
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8903503752945336873, guid: 6e8c0c0e2cad4cf47b0a1e7323560427, type: 3}
       propertyPath: m_Name
@@ -3076,7 +2831,7 @@ PrefabInstance:
     - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 6457864106773880557}
+      objectReference: {fileID: 5822170706819565779}
     - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -3087,7 +2842,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Elevator_Teleport, Assembly-CSharp
+      value: Elevator_Teleport_Floor, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -3152,7 +2907,7 @@ PrefabInstance:
     - target: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: onDoorClosed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 6457864106773880557}
+      objectReference: {fileID: 5822170706819565779}
     - target: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: onDoorClosed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -3163,7 +2918,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: onDoorClosed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Elevator_Teleport, Assembly-CSharp
+      value: Elevator_Teleport_Floor, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: onDoorClosed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -3208,7 +2963,7 @@ PrefabInstance:
     - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 6457864106773880557}
+      objectReference: {fileID: 5822170706819565779}
     - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -3219,7 +2974,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Elevator_Teleport, Assembly-CSharp
+      value: Elevator_Teleport_Floor, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -3235,6 +2990,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3122119632420647235, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
   m_PrefabInstance: {fileID: 3178285546208893134}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8813583838638475313 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+  m_PrefabInstance: {fileID: 3178285546208893134}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c176da06ff179b6488e220d3c431212b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
 --- !u!1001 &5629378185757998098
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3499,6 +3265,38 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -0.46
       objectReference: {fileID: 0}
+    - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: isDisabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8834320816387188242}
+    - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnInsideButtonPressed
+      objectReference: {fileID: 0}
+    - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Elevator_Teleport_Floor, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2718854454562172275, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3122119632420647235, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.2
@@ -3547,11 +3345,82 @@ PrefabInstance:
       propertyPath: noBusting
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: onDoorClosed.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: onDoorClosed.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: onDoorClosed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8834320816387188242}
+    - target: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: onDoorClosed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: onDoorClosed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnElevatorDoorClosed
+      objectReference: {fileID: 0}
+    - target: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: onDoorClosed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Elevator_Teleport_Floor, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: onDoorClosed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: isDisabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8834320816387188242}
+    - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnOutsideButtonPressed
+      objectReference: {fileID: 0}
+    - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Elevator_Teleport_Floor, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8553860895092976197, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+      propertyPath: OnButtonPressedImmediate.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+--- !u!114 &2353307216100960511 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6218250711187165439, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
+  m_PrefabInstance: {fileID: 8566702335092209664}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c176da06ff179b6488e220d3c431212b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
 --- !u!4 &6751165364569803075 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3122119632420647235, guid: 84cda60b6e22e5b458278eb7092f7453, type: 3}
