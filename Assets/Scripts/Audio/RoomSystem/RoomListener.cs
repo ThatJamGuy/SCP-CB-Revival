@@ -1,16 +1,14 @@
-using UnityEngine;
 using System;
-using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Tracks and updates movement between RoomTriggers. Place on any object that needs its rooms tracked.
 /// see https://github.com/ThatJamGuy/SCP-CB-Revival/pull/32
 /// </summary>
-public class RoomListener : MonoBehaviour
-{
+public class RoomListener : MonoBehaviour {
     public RoomTrigger activeRoom; //the room the object is currently in.
     private const int ROOM_LAYER = 2; //configure to be the index of whatever layer Ambience Zones are on.
-    private const int ROOM_MASK = 1 << ROOM_LAYER; 
+    private const int ROOM_MASK = 1 << ROOM_LAYER;
 
     private readonly Collider[] overlapBuffer = new Collider[16]; // Reusable buffer (physics query fallback safety)
 
@@ -19,35 +17,30 @@ public class RoomListener : MonoBehaviour
     /// <summary>
     /// Very simple layer check to quickly ignore objects that arent rooms before commiting to more expensive checks
     /// </summary>
-    private bool IsRoom(Collider col)
-    {
+    private bool IsRoom(Collider col) {
         return (ROOM_MASK & (1 << col.gameObject.layer)) != 0;
     }
 
-    private void OnEnable()
-    {
+    private void OnEnable() {
         //force a manual update to make sure we ALWAYS start in a room regardles of unity's physics system.
         ManualUpdate();
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
+    private void OnTriggerEnter(Collider other) {
         if (!IsRoom(other)) return;
         ManualUpdate();
     }
 
-    private void OnTriggerExit(Collider other)
-    {
+    private void OnTriggerExit(Collider other) {
         if (!IsRoom(other)) return;
         ManualUpdate();
-        
+
     }
 
     /// <summary>
     /// updates the listeners room as well as invokes the appropreate unity events.
     /// </summary>
-    private void SetActiveRoom(RoomTrigger newRoom)
-    {
+    private void SetActiveRoom(RoomTrigger newRoom) {
         if (newRoom == activeRoom)
             return;
         //Invoke the onExit event for the previous rooms
@@ -55,6 +48,15 @@ public class RoomListener : MonoBehaviour
 
         //Set the new Room
         activeRoom = newRoom;
+
+        // If the activeRoom exists then set the players zone in the session engine based on the defined zone in RoomHandler
+        // This is so that manually setting the zone is no longer required and prevents bugs if teleport or noclip is used
+        if (activeRoom != null && activeRoom.parentRoomHander != null) {
+            int zoneint = (int)activeRoom.parentRoomHander.associatedZone + 1;
+
+            // Set the zone via this, which automatically sets the zone AmbienceMaster and BG music track
+            RevivalSessionEngine.SetZone(zoneint);
+        }
 
         //Invoke the onEnter event for the new Room
         activeRoom?.onRoomEnter?.Invoke();
@@ -68,14 +70,12 @@ public class RoomListener : MonoBehaviour
     /// We solve for overlapping AmbienceZones by prioritizing the first found room currently. 
     /// </summary>
     [ContextMenu("Force Update Rooms")]
-    public void ManualUpdate()
-    {
+    public void ManualUpdate() {
         RoomTrigger found = null;
 
         int count = Physics.OverlapSphereNonAlloc(transform.position, 0.1f, overlapBuffer, ROOM_MASK, QueryTriggerInteraction.Collide);
 
-        for (int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             if (overlapBuffer[i].TryGetComponent(out found))
                 break;
         }

@@ -5,8 +5,8 @@ using UnityEngine.Events;
 /// A simple trigger that should be scaled to match the exact bounds of the room its representing, Including doorways.
 /// see https://github.com/ThatJamGuy/SCP-CB-Revival/pull/32
 /// </summary>
-public class RoomTrigger : MonoBehaviour
-{
+public class RoomTrigger : MonoBehaviour {
+    public RoomHandler parentRoomHander;
     public RoomConfig roomConfig;
 
     public UnityEvent onRoomEnter;
@@ -21,8 +21,7 @@ public class RoomTrigger : MonoBehaviour
     /// <summary>
     /// Draws a debug cube scaled to the triggers bounds to help vizualize triggers when building room triggers.
     /// </summary>
-    private void OnDrawGizmos()
-    {
+    private void OnDrawGizmos() {
         if (!RoomManager.showRoomDebugs || Application.isPlaying) return;      // gizmos across the whole map are expensive at runtime
         if (!triggerCollider && !TryGetComponent(out triggerCollider)) return; // no collider, nothing to draw
 
@@ -31,8 +30,7 @@ public class RoomTrigger : MonoBehaviour
         Gizmos.color = new Color(0f, 1f, 1f, 0.25f);
 
         //Draw the appropriate mesh shape based on the collider type.
-        switch (triggerCollider)
-        {
+        switch (triggerCollider) {
             case BoxCollider box:
                 Gizmos.DrawCube(box.center, box.size);
                 break;

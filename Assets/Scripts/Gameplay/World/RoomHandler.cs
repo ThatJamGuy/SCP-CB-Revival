@@ -1,11 +1,13 @@
 using UnityEngine;
 
 /// <summary> Purpose: Designed to act as runtime room metadata. </summary>
-public class RoomHandler : MonoBehaviour
-{
+public class RoomHandler : MonoBehaviour {
+    public enum Zone { LCZ, HCZ, EZ }
+
     [Header("Room Settings")]
     public string roomName;
     public Transform teleportLocation;
+    public Zone associatedZone;
 
     [Header("Optimization")]
     [SerializeField] private Light[] roomLights;
@@ -18,24 +20,22 @@ public class RoomHandler : MonoBehaviour
 
 
     [SerializeField, Tooltip("Only enable if the room is obscenely large, such as 106's containment room.")] private bool usePerLightCalculation = false;
+
     #region Unity Lifecycle
 
-    private void Awake()
-    {
+    private void Awake() {
         transformCache = this.transform;
         activationDistanceSqr = activateDistance * activateDistance;
     }
 
-    private void Update()
-    {
+    private void Update() {
         if (roomLights == null || Player.Instance == null) return;
 
         Vector3 playerPos = Player.Instance.transform.position;
 
 
         //Cull all lights in the room if the player is too far from the rooms center
-        if (!usePerLightCalculation)
-        {
+        if (!usePerLightCalculation) {
             bool shouldBeActive = (transformCache.position - playerPos).sqrMagnitude <= activationDistanceSqr;
 
             if (shouldBeActive == roomState)
@@ -43,18 +43,15 @@ public class RoomHandler : MonoBehaviour
 
             roomState = shouldBeActive;
 
-            foreach (Light light in roomLights)
-            {
+            foreach (Light light in roomLights) {
                 if (light != null)
                     light.gameObject.SetActive(shouldBeActive);
             }
         }
 
         //Cull lights individually based on the players distance from the light.
-        else
-        {
-            foreach (Light light in roomLights)
-            {
+        else {
+            foreach (Light light in roomLights) {
                 if (light == null) continue;
 
                 bool shouldBeActive = (light.transform.position - playerPos).sqrMagnitude <= activationDistanceSqr;
@@ -70,8 +67,7 @@ public class RoomHandler : MonoBehaviour
 
     #region Public Methods
 
-    public void TeleportPlayerHere()
-    {
+    public void TeleportPlayerHere() {
         Player.Instance.transform.position = teleportLocation.position;
     }
 
