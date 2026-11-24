@@ -310,6 +310,37 @@ Transform:
   - {fileID: 3699645335739945079}
   m_Father: {fileID: 2836823806014272035}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!1 &1696004926907618507
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8638627534836103379}
+  m_Layer: 0
+  m_Name: AI_WAYPOINT
+  m_TagString: Respawn
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &8638627534836103379
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696004926907618507}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2836823806014272035}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2686330806530499997
 GameObject:
   m_ObjectHideFlags: 0
@@ -1406,7 +1437,7 @@ GameObject:
   - component: {fileID: 8216367809400560989}
   - component: {fileID: 1465564193004398753}
   m_Layer: 2
-  m_Name: AmbienceZone (3)
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1460,6 +1491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 6177913133984008244}
   roomConfig: {fileID: 11400000, guid: 10b08d3498260e64da8c9f53aa6d50fb, type: 2}
   onRoomEnter:
     m_PersistentCalls:
@@ -1729,6 +1761,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2836823806014272035}
+  - component: {fileID: 6177913133984008244}
   m_Layer: 0
   m_Name: Room2C_Gas_HCZ
   m_TagString: Untagged
@@ -1749,13 +1782,38 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 424408285991779063}
   - {fileID: 2414964852298655039}
   - {fileID: 59079308101490183}
   - {fileID: 2067769420065523537}
   - {fileID: 1255664679236035341}
+  - {fileID: 424408285991779063}
+  - {fileID: 8638627534836103379}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6177913133984008244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8650023151334455345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 248c7f6a56bd88c4197e3f1a5d2de6de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
+  roomName: room2c_gas_hcz
+  teleportLocation: {fileID: 8638627534836103379}
+  associatedZone: 1
+  roomLights:
+  - {fileID: 8467715948693557477}
+  - {fileID: 3798385980578533722}
+  - {fileID: 2198228189510355019}
+  - {fileID: 5870560531688728281}
+  - {fileID: 8199597870068138128}
+  - {fileID: 6121589195588471678}
+  activateDistance: 25
+  usePerLightCalculation: 0
 --- !u!1 &9173288668179933303
 GameObject:
   m_ObjectHideFlags: 0

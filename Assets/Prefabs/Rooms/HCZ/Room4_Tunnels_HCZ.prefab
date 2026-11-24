@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 396530830007312893}
   - component: {fileID: 52407285597391504}
   m_Layer: 2
-  m_Name: AmbienceZone
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66,6 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 1728850056372635300}
   roomConfig: {fileID: 11400000, guid: df67b3a2c2772dc4798dd4595598a902, type: 2}
   onRoomEnter:
     m_PersistentCalls:
@@ -1223,8 +1224,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248c7f6a56bd88c4197e3f1a5d2de6de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
-  roomName: 
+  roomName: room4_tunnels_hcz
   teleportLocation: {fileID: 8764227806613569465}
+  associatedZone: 1
   roomLights:
   - {fileID: 1479856947583923574}
   - {fileID: 985101165133275737}

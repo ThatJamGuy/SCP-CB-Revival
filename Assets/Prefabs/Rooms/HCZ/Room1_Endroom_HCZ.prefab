@@ -132,6 +132,7 @@ Transform:
   - {fileID: 3865697324061205239}
   - {fileID: 4802973170853775443}
   - {fileID: 8840543595238931209}
+  - {fileID: 8474995365400091816}
   - {fileID: 1857875459953498481}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -147,8 +148,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248c7f6a56bd88c4197e3f1a5d2de6de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
-  roomName: 
-  teleportLocation: {fileID: 0}
+  roomName: room1_endroom_hcz
+  teleportLocation: {fileID: 1857875459953498481}
+  associatedZone: 1
   roomLights:
   - {fileID: 5625257788727604840}
   - {fileID: 1756916901648559859}
@@ -1309,7 +1311,7 @@ GameObject:
   - component: {fileID: 3691973786658542923}
   - component: {fileID: 5988164269158938617}
   m_Layer: 2
-  m_Name: AmbienceZone
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1323,12 +1325,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7022865965057262960}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8840543595238931209}
+  m_Father: {fileID: 950345593228272197}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &3691973786658542923
 BoxCollider:
@@ -1363,6 +1365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 6982423445948466773}
   roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
   onRoomEnter:
     m_PersistentCalls:
@@ -1399,7 +1402,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8474995365400091816}
   - {fileID: 8519273504436402071}
   - {fileID: 6736520965380674861}
   m_Father: {fileID: 950345593228272197}

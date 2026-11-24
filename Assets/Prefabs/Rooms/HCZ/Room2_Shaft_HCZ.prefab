@@ -846,14 +846,14 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3519587758395208396}
-  - {fileID: 5958801473095691379}
-  - {fileID: 6821917276281310864}
-  - {fileID: 7788378831825676797}
   - {fileID: 3264617785831862725}
   - {fileID: 7797599146197888534}
   - {fileID: 6596822071241761665}
   - {fileID: 8990788259293374184}
+  - {fileID: 3519587758395208396}
+  - {fileID: 5958801473095691379}
+  - {fileID: 6821917276281310864}
+  - {fileID: 7788378831825676797}
   - {fileID: 2747995337893216393}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -871,6 +871,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
   roomName: room2_shaft_hcz
   teleportLocation: {fileID: 2747995337893216393}
+  associatedZone: 1
   roomLights:
   - {fileID: 6393249059506871966}
   - {fileID: 525314373827408896}
@@ -1040,7 +1041,7 @@ GameObject:
   - component: {fileID: 6625709599282545054}
   - component: {fileID: 6501775091089169318}
   m_Layer: 2
-  m_Name: AmbienceZone (1)
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1094,6 +1095,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 5722616706048428825}
   roomConfig: {fileID: 11400000, guid: 6d39c411abac32847adb0581751829bc, type: 2}
   onRoomEnter:
     m_PersistentCalls:
@@ -1604,7 +1606,7 @@ GameObject:
   - component: {fileID: 5877881467551820885}
   - component: {fileID: 3034194233649934571}
   m_Layer: 2
-  m_Name: AmbienceZone (2)
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1658,6 +1660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 5722616706048428825}
   roomConfig: {fileID: 11400000, guid: 6d39c411abac32847adb0581751829bc, type: 2}
   onRoomEnter:
     m_PersistentCalls:
@@ -3033,7 +3036,7 @@ GameObject:
   - component: {fileID: 7060803177123443471}
   - component: {fileID: 3232041263823972219}
   m_Layer: 2
-  m_Name: AmbienceZone (3)
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3087,6 +3090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 5722616706048428825}
   roomConfig: {fileID: 11400000, guid: 6d39c411abac32847adb0581751829bc, type: 2}
   onRoomEnter:
     m_PersistentCalls:
@@ -3288,7 +3292,7 @@ GameObject:
   - component: {fileID: 6203289498070758858}
   - component: {fileID: 2843925961193394280}
   m_Layer: 2
-  m_Name: AmbienceZone (4)
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3342,6 +3346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 5722616706048428825}
   roomConfig: {fileID: 11400000, guid: 8b18c4dad60f2c14b9f5032574430d48, type: 2}
   onRoomEnter:
     m_PersistentCalls:

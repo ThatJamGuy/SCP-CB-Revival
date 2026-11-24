@@ -82,6 +82,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
   roomName: 
   teleportLocation: {fileID: 0}
+  associatedZone: 1
   roomLights:
   - {fileID: 404658709864608969}
   - {fileID: 7060481264101125961}
@@ -153,7 +154,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 0}
   roomConfig: {fileID: 11400000, guid: 6d39c411abac32847adb0581751829bc, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3255615763969362834
 GameObject:
   m_ObjectHideFlags: 0

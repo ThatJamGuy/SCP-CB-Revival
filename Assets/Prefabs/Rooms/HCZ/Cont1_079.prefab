@@ -1362,11 +1362,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1507283638550792046}
   - {fileID: 6514984102420405148}
   - {fileID: 1298945249052948024}
   - {fileID: 8508088295126900619}
   - {fileID: 603071495055705532}
+  - {fileID: 1507283638550792046}
   - {fileID: 2341945137319680183}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1384,6 +1384,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
   roomName: cont1_079
   teleportLocation: {fileID: 2341945137319680183}
+  associatedZone: 1
   roomLights:
   - {fileID: 4180851667001829340}
   - {fileID: 7832075736200286562}
@@ -1411,7 +1412,7 @@ GameObject:
   - component: {fileID: 1249758177014465877}
   - component: {fileID: 516804028556428922}
   m_Layer: 2
-  m_Name: AmbienceZone-StairWell
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1465,7 +1466,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 8520283400181252671}
   roomConfig: {fileID: 11400000, guid: 8b18c4dad60f2c14b9f5032574430d48, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4276000320492029524
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,37 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &92378907939079136
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3491855937093429631}
-  m_Layer: 0
-  m_Name: SoundEmitters
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3491855937093429631
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 92378907939079136}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 3555679360057825743}
-  m_Father: {fileID: 2023987760632847694}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1027048901698466929
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,7 +67,7 @@ Transform:
   - {fileID: 6552600777619760983}
   - {fileID: 475754903372403748}
   - {fileID: 6640683439144586918}
-  - {fileID: 3491855937093429631}
+  - {fileID: 3555679360057825743}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &403402779436447415
@@ -116,6 +84,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
   roomName: 
   teleportLocation: {fileID: 0}
+  associatedZone: 1
   roomLights:
   - {fileID: 3624180768545221446}
   activateDistance: 32
@@ -219,7 +188,7 @@ GameObject:
   - component: {fileID: 4501161219899481879}
   - component: {fileID: 1768207087408398290}
   m_Layer: 2
-  m_Name: AmbienceZone
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -234,11 +203,11 @@ Transform:
   m_GameObject: {fileID: 2401278714444968973}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 3.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3491855937093429631}
+  m_Father: {fileID: 2023987760632847694}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &4501161219899481879
 BoxCollider:
@@ -259,8 +228,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 15, y: 7, z: 20.852282}
-  m_Center: {x: 0, y: 3, z: -0.073859215}
+  m_Size: {x: 15, y: 7, z: 20.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1768207087408398290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,7 +242,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 403402779436447415}
   roomConfig: {fileID: 11400000, guid: 8b18c4dad60f2c14b9f5032574430d48, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2785583340004267726
 GameObject:
   m_ObjectHideFlags: 0

@@ -33,6 +33,7 @@ Transform:
   - {fileID: 797361437929806836}
   - {fileID: 927457308704645462}
   - {fileID: 8307193372440351997}
+  - {fileID: 4648276509374735222}
   - {fileID: 5846699730559097615}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -50,6 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
   roomName: room2_tube_hcz
   teleportLocation: {fileID: 5846699730559097615}
+  associatedZone: 1
   roomLights:
   - {fileID: 3294554041790349682}
   - {fileID: 4084937296227976499}
@@ -107,38 +109,6 @@ Transform:
   - {fileID: 2382512362911019190}
   m_Father: {fileID: 8307193372440351997}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2218125202716888715
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5006270440375056740}
-  m_Layer: 0
-  m_Name: SoundEmitters
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
---- !u!4 &5006270440375056740
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2218125202716888715}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 4648276509374735222}
-  m_Father: {fileID: 8307193372440351997}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2543495975489853722
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,7 +140,6 @@ Transform:
   m_Children:
   - {fileID: 1610598564765970006}
   - {fileID: 393903255467495583}
-  - {fileID: 5006270440375056740}
   m_Father: {fileID: 2929665728850940692}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2743197258317281470
@@ -438,7 +407,7 @@ GameObject:
   - component: {fileID: 8707724738816844576}
   - component: {fileID: 2581220272511720084}
   m_Layer: 2
-  m_Name: AmbienceZone
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -452,12 +421,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3200769424507278725}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 2.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5006270440375056740}
+  m_Father: {fileID: 2929665728850940692}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &8707724738816844576
 BoxCollider:
@@ -478,8 +447,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 5, y: 5, z: 20.484386}
-  m_Center: {x: 0, y: 0, z: -0.009394169}
+  m_Size: {x: 5, y: 5, z: 20.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2581220272511720084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -492,6 +461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 7844290983893820063}
   roomConfig: {fileID: 11400000, guid: d42f511051796f347a969c68299d4680, type: 2}
   onRoomEnter:
     m_PersistentCalls:
