@@ -168,18 +168,14 @@ public static class SaveGameEngine {
     }
 
     // Builds "Saves/<slot>/<TypeName>.json" once per type per slot
-    static string GetPath(Type type)
-    {
-        if (type == null)
-        {
+    static string GetPath(Type type) {
+        if (type == null) {
             Debug.LogError("SaveSystem.GetPath: type is null.");
             return null;
         }
 
-        if (!paths.TryGetValue(type, out string path))
-        {
-            if (string.IsNullOrEmpty(slotFolder))
-            {
+        if (!paths.TryGetValue(type, out string path)) {
+            if (string.IsNullOrEmpty(slotFolder)) {
                 Debug.LogError($"SaveSystem.GetPath: slotFolder isn't set, can't build a path for {type.Name}.");
                 return null;
             }
@@ -217,6 +213,7 @@ public class SaveData {
     public bool skipIntro;
     public bool introCompleted;
     public bool lczUnlocked;
+    public bool event049Triggered;
     public bool enteredNukeRoom;
     public bool hasPosition;
 

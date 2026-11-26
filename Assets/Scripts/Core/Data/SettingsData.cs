@@ -11,7 +11,7 @@ public class SettingsData {
     public int shadowQualityMode = 1; // 0 - High, 1 - Medium, 2 - Low, 3 - None
     public bool vSync = true;
     public int frameLimit = 60;
-    public float brightness = 0; // 0 - Default factory brightness (What I see when making the game)
+    public float brightness = 50; // 50 - Default factory brightness (What I see when making the game)
     public bool enableSSR = true;
     public bool enableSSAO = false;
 

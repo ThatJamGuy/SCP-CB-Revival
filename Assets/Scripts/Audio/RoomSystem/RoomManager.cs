@@ -6,16 +6,13 @@ using UnityEngine;
 /// However it also requires a bit of extra authoring work on behalf of the user to manually set up the room trigger to be the exact size of the room its representing. 
 /// see https://github.com/ThatJamGuy/SCP-CB-Revival/pull/32
 /// </summary>
-public class RoomManager : MonoBehaviour
-{
+public class RoomManager : MonoBehaviour {
     public static RoomManager Instance;
     public RoomConfig currentRoomConfig;
 
-    private void Awake()
-    {
+    private void Awake() {
         if (Instance == null) Instance = this;
-        else
-        {
+        else {
             Destroy(gameObject);
             return;
         }
@@ -24,8 +21,9 @@ public class RoomManager : MonoBehaviour
     /// <summary>
     /// Sets the active room config. For multiplayer, make sure each player can manage their own changes to the appropreate systems.
     /// </summary>
-    public void UpdateRoomConfig(RoomTrigger roomTrigger)
-    {
+    public void UpdateRoomConfig(RoomTrigger roomTrigger) {
+        if (roomTrigger == null || roomTrigger.roomConfig == null) return;
+
         currentRoomConfig = roomTrigger.roomConfig;
         AudioManager.Instance.UpdateRoom(roomTrigger);
         PostProcessingManager.Instance.UpdateRoom(roomTrigger);
@@ -35,12 +33,11 @@ public class RoomManager : MonoBehaviour
     /// Subscribes the roommanager to the players listener event.
     /// </summary>
     [ContextMenu("Force Update Rooms")]
-    public void UpdateRegistry()
-    {
+    public void UpdateRegistry() {
         Player.Instance.roomListener.OnRoomChanged += UpdateRoomConfig;
         Player.Instance.roomListener.ManualUpdate();
     }
 
 
-   
+
 }

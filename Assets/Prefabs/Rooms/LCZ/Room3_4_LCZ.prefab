@@ -657,8 +657,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 20.415573, y: 10, z: 20.253563}
-  m_Center: {x: 0.008190155, y: 0, z: -0.12678099}
+  m_Size: {x: 20.5, y: 10, z: 20.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2337311927155667754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -671,7 +671,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 4692955018719584677}
   roomConfig: {fileID: 11400000, guid: df67b3a2c2772dc4798dd4595598a902, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6543561334406384741
 GameObject:
   m_ObjectHideFlags: 0
@@ -1163,6 +1170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
   roomName: 
   teleportLocation: {fileID: 0}
+  associatedZone: 0
   roomLights:
   - {fileID: 3075707313504819663}
   - {fileID: 3390610556237765309}

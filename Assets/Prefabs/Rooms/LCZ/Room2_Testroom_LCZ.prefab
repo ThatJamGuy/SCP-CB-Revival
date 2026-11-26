@@ -684,10 +684,12 @@ Transform:
   - {fileID: 4768383475650782622}
   - {fileID: 2130743792155077170}
   - {fileID: 4451864074286911489}
-  - {fileID: 6197791755176853936}
+  - {fileID: 48063507381506842}
+  - {fileID: 1219235414792620648}
   - {fileID: 4291713941019761774}
   - {fileID: 5407237134378837903}
   - {fileID: 2155479220915038166}
+  - {fileID: 6197791755176853936}
   - {fileID: 7689328308637425138}
   - {fileID: 7971972318209092046}
   - {fileID: 5987661604715789663}
@@ -707,6 +709,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
   roomName: room2_testroom_lcz
   teleportLocation: {fileID: 7689328308637425138}
+  associatedZone: 0
   roomLights:
   - {fileID: 3597607753541051045}
   - {fileID: 3792154752605554049}
@@ -2609,8 +2612,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 13.314047, y: 4, z: 20.5}
-  m_Center: {x: -4.3429766, y: 0, z: 0}
+  m_Size: {x: 20.5, y: 4, z: 20.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2190252812105421554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2623,7 +2626,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 8599891703895640926}
   roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5684522228394883329
 GameObject:
   m_ObjectHideFlags: 0
@@ -3124,14 +3134,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6471331413676272770}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6790809822512203048}
   - {fileID: 7026026392436597158}
-  m_Father: {fileID: 6197791755176853936}
+  m_Father: {fileID: 6233121335303549480}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6636799017806703121
 GameObject:
@@ -3143,7 +3153,7 @@ GameObject:
   m_Component:
   - component: {fileID: 48063507381506842}
   m_Layer: 0
-  m_Name: Prop_Dynamic
+  m_Name: Dynamic Props
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3157,13 +3167,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6636799017806703121}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4373728180129826525}
-  m_Father: {fileID: 6197791755176853936}
+  m_Father: {fileID: 6233121335303549480}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6673935016888688405
 GameObject:
@@ -3352,8 +3362,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 48063507381506842}
-  - {fileID: 1219235414792620648}
   - {fileID: 733969174340318838}
   - {fileID: 3213204312158446389}
   - {fileID: 5736683783033739393}

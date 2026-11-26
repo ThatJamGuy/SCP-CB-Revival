@@ -13,6 +13,7 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     public static int currentZone = 1;
     public static bool lczUnlocked;
     public static bool skipIntro;
+    public static bool event049Triggered;
     public static bool nukeRoomEntered;
 
     [Header("Heads Up Display")]
@@ -40,6 +41,7 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
         skipIntro = saveData.skipIntro;
         currentZone = saveData.currentZone;
         lczUnlocked = saveData.lczUnlocked;
+        event049Triggered = saveData.event049Triggered;
         nukeRoomEntered = saveData.enteredNukeRoom;
 
         otherDifficultyFactor = currentDifficulty;
@@ -146,6 +148,7 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
     public void PrepareSaveableValues() {
         saveData.currentZone = currentZone;
         saveData.lczUnlocked = lczUnlocked;
+        saveData.event049Triggered = event049Triggered;
         saveData.enteredNukeRoom = nukeRoomEntered;
     }
 

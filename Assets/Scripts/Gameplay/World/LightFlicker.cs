@@ -74,7 +74,8 @@ public class LightFlicker : MonoBehaviour {
     private float targetIntensity;
     private float currentIntensity;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
+
     private void Awake() {
         light = GetComponent<Light>();
         maxIntensity = light.intensity;
@@ -87,7 +88,7 @@ public class LightFlicker : MonoBehaviour {
     }
 
     private void Update() {
-        if (!isActive || activePattern.Length == 0) return;
+        if (!isActive || activePattern.Length == 0 || light == null || !light.isActiveAndEnabled) return;
 
         timer += Time.deltaTime;
 
@@ -98,7 +99,7 @@ public class LightFlicker : MonoBehaviour {
             targetIntensity = CharToIntensity(activePattern[index]);
         }
 
-        var newIntensity = smoothTransitions
+        float newIntensity = smoothTransitions
             ? Mathf.MoveTowards(currentIntensity, targetIntensity, smoothSpeed * Time.deltaTime)
             : targetIntensity;
 
@@ -108,14 +109,6 @@ public class LightFlicker : MonoBehaviour {
         light.intensity = newIntensity;
     }
 
-    // Reflect inspector changes in the editor without entering play mode
-    private void OnValidate() {
-        CacheStepInterval();
-
-        // Guard against missing light reference outside play mode
-        if (light == null) light = GetComponent<Light>();
-        if (light != null) RefreshPattern();
-    }
     #endregion
 
     #region Private Methods
