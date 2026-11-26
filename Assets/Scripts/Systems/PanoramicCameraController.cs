@@ -9,10 +9,9 @@ public class PanoramicCameraController : MonoBehaviour {
     [SerializeField] private float rotationSpeed = 1f, maxHorizontalAngle = 10f, maxVerticalAngle = 5f, returnSpeed = 1f, mouseSensitivity = 5f, smoothTime = 0.3f;
 
     private Vector2 velocity, mouseInput, smoothInput;
-    private Vector3 initialRotation;
-    private Vector3 defaultPosition;
+    private Vector3 initialRotation, defaultPosition;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
 
     private void Start() {
         initialRotation = transform.eulerAngles;
@@ -21,6 +20,8 @@ public class PanoramicCameraController : MonoBehaviour {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
+
+    // TODO: Maybe convert the mouse delta vector2 into a velocity or do something else to prevent stuttering on low framerates?
 
     private void Update() {
         // Determine finalized mouse input

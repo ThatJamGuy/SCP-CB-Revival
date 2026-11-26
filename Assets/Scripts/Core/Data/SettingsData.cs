@@ -10,7 +10,8 @@ public class SettingsData {
     public int antiAliasingMode; // 0 - None, 1 - FXAA, 2 - TAA, 3 - SMAA
     public int shadowQualityMode = 1; // 0 - High, 1 - Medium, 2 - Low, 3 - None
     public bool vSync = true;
-    public int frameLimit = 120;
+    public int frameLimit = 60;
+    public float brightness = 0; // 0 - Default factory brightness (What I see when making the game)
     public bool enableSSR = true;
     public bool enableSSAO = false;
 

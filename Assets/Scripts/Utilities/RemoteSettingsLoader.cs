@@ -7,12 +7,13 @@ using UnityEngine.Rendering.HighDefinition;
 /// IE. Allows the camera to adjust it's anti-aliasing mode on start by loading data from the save file if it exists.
 /// </summary>
 public class RemoteSettingsLoader : MonoBehaviour {
-    private enum SettingPreset { AntiAliasing, ShadowQuality, SSR, SSAO };
+    private enum SettingPreset { AntiAliasing, ShadowQuality, Brightness, SSR, SSAO };
 
     [SerializeField] private SettingPreset[] settingToRetreive;
 
     private HDAdditionalCameraData playerCameraData;
     private HDAdditionalLightData lightData;
+    private ColorAdjustments colAdj;
     private ScreenSpaceReflection ssr;
     private ScreenSpaceAmbientOcclusion ssao;
 
@@ -29,6 +30,7 @@ public class RemoteSettingsLoader : MonoBehaviour {
                 case SettingPreset.ShadowQuality:
                     lightData = GetComponent<HDAdditionalLightData>();
                     break;
+                case SettingPreset.Brightness:
                 case SettingPreset.SSR:
                 case SettingPreset.SSAO:
                     CacheVolumeOverrides();
@@ -40,6 +42,7 @@ public class RemoteSettingsLoader : MonoBehaviour {
     private void OnEnable() {
         hasSettingsFile = DataSaver.DataFileExists("settings.json");
 
+        // Applies avaiable settings to make sure it updates automatically when loading into a scene
         if (hasSettingsFile) {
             for (int i = 0; i < settingToRetreive.Length; i++) {
                 switch (settingToRetreive[i]) {
@@ -49,6 +52,9 @@ public class RemoteSettingsLoader : MonoBehaviour {
                     case SettingPreset.ShadowQuality:
                         if (RevivalRuntimeEngine.Instance != null)
                             UpdateShadowQuality(RevivalRuntimeEngine.SettingsData.shadowQualityMode);
+                        break;
+                    case SettingPreset.Brightness:
+                        UpdateBrightness(RevivalRuntimeEngine.SettingsData.brightness);
                         break;
                     case SettingPreset.SSR:
                         UpdateSSR(RevivalRuntimeEngine.SettingsData.enableSSR);
@@ -62,6 +68,7 @@ public class RemoteSettingsLoader : MonoBehaviour {
 
         OptionsMenu.OnMinorGraphicsChanged.AddListener(UpdateAntiAliasing);
         OptionsMenu.OnMajorGraphicsChanged.AddListener(UpdateShadowQuality);
+        OptionsMenu.OnBrightnessChanged.AddListener(UpdateBrightness);
         OptionsMenu.OnSSRChanged.AddListener(UpdateSSR);
         OptionsMenu.OnSSAOChanged.AddListener(UpdateSSAO);
     }
@@ -69,6 +76,7 @@ public class RemoteSettingsLoader : MonoBehaviour {
     private void OnDisable() {
         OptionsMenu.OnMinorGraphicsChanged.RemoveListener(UpdateAntiAliasing);
         OptionsMenu.OnMajorGraphicsChanged.RemoveListener(UpdateShadowQuality);
+        OptionsMenu.OnBrightnessChanged.RemoveListener(UpdateBrightness);
         OptionsMenu.OnSSRChanged.RemoveListener(UpdateSSR);
         OptionsMenu.OnSSAOChanged.RemoveListener(UpdateSSAO);
     }
@@ -83,6 +91,7 @@ public class RemoteSettingsLoader : MonoBehaviour {
         Volume volume = GetComponent<Volume>();
         if (volume == null || volume.profile == null) return;
 
+        volume.profile.TryGet(out colAdj);
         volume.profile.TryGet(out ssr);
         volume.profile.TryGet(out ssao);
     }
@@ -112,6 +121,10 @@ public class RemoteSettingsLoader : MonoBehaviour {
                 lightData.EnableShadows(false);
                 break;
         }
+    }
+
+    private void UpdateBrightness(float value) {
+        if (colAdj != null) colAdj.postExposure.value = value;
     }
 
     private void UpdateSSR(bool enabled) {

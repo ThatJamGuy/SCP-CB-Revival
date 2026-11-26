@@ -1270,7 +1270,6 @@ Transform:
   m_Children:
   - {fileID: 1226352557}
   - {fileID: 1562656945}
-  - {fileID: 1409104960}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &369968869
@@ -1499,8 +1498,6 @@ Transform:
   - {fileID: 543450651668679911}
   - {fileID: 744186694}
   - {fileID: 53078548}
-  - {fileID: 1605641292}
-  - {fileID: 1546752100}
   - {fileID: 1012909197}
   - {fileID: 1967183799}
   m_Father: {fileID: 0}
@@ -2601,7 +2598,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1409104960}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &612142159
@@ -4135,7 +4133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
-  settingToRetreive: 
+  settingToRetreive: 00000000i
 --- !u!1 &819697224
 GameObject:
   m_ObjectHideFlags: 0
@@ -7876,7 +7874,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1409104960}
   m_Layer: 0
-  m_Name: MenuSounds
+  m_Name: --- MenuSounds ---
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7897,7 +7895,7 @@ Transform:
   m_Children:
   - {fileID: 2126947525}
   - {fileID: 224901094}
-  m_Father: {fileID: 363849072}
+  m_Father: {fileID: 612142158}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1414812448
 GameObject:
@@ -8693,76 +8691,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1544053236}
   m_CullTransparentMesh: 1
---- !u!1001 &1546752099
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 378309820}
-    m_Modifications:
-    - target: {fileID: 4053824443830305546, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: b50c4f8e1d7ba8144b97c4dd1a0349fc, type: 2}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 10.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5074114962319822359, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_Name
-      value: FakeDoor_Locked
-      objectReference: {fileID: 0}
-    - target: {fileID: 5074114962319822359, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
---- !u!4 &1546752100 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-  m_PrefabInstance: {fileID: 1546752099}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1562656944
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9291,76 +9219,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
---- !u!1001 &1605641291
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 378309820}
-    m_Modifications:
-    - target: {fileID: 4053824443830305546, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: b50c4f8e1d7ba8144b97c4dd1a0349fc, type: 2}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -10.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5074114962319822359, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_Name
-      value: FakeDoor_Locked (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 5074114962319822359, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
---- !u!4 &1605641292 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4463165816075666660, guid: 5a47586c4e885bd4a8b2066c3fedc3c5, type: 3}
-  m_PrefabInstance: {fileID: 1605641291}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1610338266
 GameObject:
   m_ObjectHideFlags: 0
@@ -11437,7 +11295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bab2c4a819812b43bf5abc6e858fa80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
-  settingToRetreive: 0200000003000000i
+  settingToRetreive: 020000000300000004000000i
 --- !u!1 &2100691139
 GameObject:
   m_ObjectHideFlags: 0
