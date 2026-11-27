@@ -67,6 +67,29 @@ public class SCP_914 : MonoBehaviour {
     }
 
     private ItemData GetOutput(ItemData inputItem, SCP_914_Recipe.RefinementMode mode) {
+        // Document input item on 1:1, spit out another random document. Maybe come back to this later so that it doesn't spit lore important ones
+        if (inputItem.chosenBehavior == PresetBehavior.Document && currentRefinementMode == SCP_914_Recipe.RefinementMode.OneToOne) {
+            List<ItemData> candidates = new List<ItemData>();
+
+            foreach (ItemData item in InventorySystem.Instance.itemDataList) {
+                if (item.chosenBehavior == PresetBehavior.Document) candidates.Add(item);
+            }
+
+            int randomDoc = Random.Range(0, candidates.Count);
+
+            return candidates[randomDoc];
+        }
+
+        // Document input item on Fine or Very Fine, turn it into an origami
+        if (inputItem.chosenBehavior == PresetBehavior.Document && (currentRefinementMode == SCP_914_Recipe.RefinementMode.Fine || currentRefinementMode == SCP_914_Recipe.RefinementMode.VeryFine)) {
+            foreach (ItemData item in InventorySystem.Instance.itemDataList) {
+                if (item.itemName == "origami") {
+                    return item;
+                }
+            }
+        }
+
+        // All the hard coded checks pass, so follow the previous setup of editor created recipes
         if (!recipeDictionary.TryGetValue(inputItem, out SCP_914_Recipe recipe)) {
             if (verboseLogging) Debug.LogWarning($"914 lookup: no recipe for '{inputItem.name}', passing through unchanged.", this);
             return inputItem;
@@ -143,11 +166,9 @@ public class SCP_914 : MonoBehaviour {
             Mathf.Abs(size.y * scale.y) * 0.5f,
             Mathf.Abs(size.z * scale.z) * 0.5f);
 
-        int count = Physics.OverlapBoxNonAlloc(
-            t.TransformPoint(inputArea.center), halfExtents, overlapBuffer, t.rotation, itemLayer);
+        int count = Physics.OverlapBoxNonAlloc(t.TransformPoint(inputArea.center), halfExtents, overlapBuffer, t.rotation, itemLayer);
 
-        if (count == MAX_COLLIDERS)
-            Debug.LogWarning($"{name}: max colldiers full, some items may be skipped.", this);
+        if (count == MAX_COLLIDERS) Debug.LogWarning($"{name}: max colldiers full, some items may be skipped.", this);
 
         for (int i = 0; i < count; i++) {
             if (overlapBuffer[i].TryGetComponent(out WorldItem item) && seenItems.Add(item))

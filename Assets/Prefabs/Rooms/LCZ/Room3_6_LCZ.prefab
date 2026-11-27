@@ -728,34 +728,10 @@ MonoBehaviour:
   roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
   onRoomEnter:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2585121998215590604}
-        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onRoomExit:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2585121998215590604}
-        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
-        m_MethodName: Stop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &6223861805634502404
 GameObject:
   m_ObjectHideFlags: 0
@@ -1701,7 +1677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3449399445243609586, guid: 9c79563b44309a84c92d153be9923d04, type: 3}
       propertyPath: EventPlayTrigger
-      value: 0
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 3449399445243609586, guid: 9c79563b44309a84c92d153be9923d04, type: 3}
       propertyPath: OverrideMaxDistance
@@ -1753,17 +1729,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9c79563b44309a84c92d153be9923d04, type: 3}
---- !u!114 &2585121998215590604 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3449399445243609586, guid: 9c79563b44309a84c92d153be9923d04, type: 3}
-  m_PrefabInstance: {fileID: 882292418934534974}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
 --- !u!4 &8146809620042401956 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9021203082679171994, guid: 9c79563b44309a84c92d153be9923d04, type: 3}
