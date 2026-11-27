@@ -101,7 +101,7 @@ public class EntitySystem : MonoBehaviour {
         timer = 0;
 
         if (TryPickRandomWaypoint(minSqr, maxSqr, out Transform chosen))
-            MoveEntity(entity, chosen);
+            MoveEntityInternal(entity, chosen, false);
     }
 
     // SCP 106 gets his own spawning method because he uses the old spawning system to find a valid floor point near the player
@@ -190,17 +190,13 @@ public class EntitySystem : MonoBehaviour {
 
     // Move an entity passing in an entity reference and spawnpoint transform
     public void MoveEntity(Entity entity, Transform spawnPoint, bool overrideChaseCheck = false) {
-        if (entity.disabled) return;
-        if (!overrideChaseCheck && entity.chasingPlayer) return;
+        if (!MoveEntityInternal(entity, spawnPoint, overrideChaseCheck)) return;
 
-        if (entity.latestActiveInstance != null) {
-            if (entity.latestAgent != null) entity.latestAgent.Warp(spawnPoint.position);
-        } else SpawnEntity(entity, spawnPoint);
-
-        // Mild safeguard so that the scp can't leave an event area before the player encounters the scp
+        // Scripted moves only: stop other SCPs from relocating mid-event
         spawn049Timer = 0;
         spawn173Timer = 0;
     }
+
 
     // Call this from any entity that get's destroyed, just to keep things clean
     // Removes it from it's active instance list and set's the "latest" vars to null
@@ -271,6 +267,17 @@ public class EntitySystem : MonoBehaviour {
         }
 
         return NavMesh.SamplePosition(position, out NavMeshHit centerHit, 0.5f, NavMesh.AllAreas);
+    }
+
+    private bool MoveEntityInternal(Entity entity, Transform spawnPoint, bool overrideChaseCheck) {
+        if (entity.disabled) return false;
+        if (!overrideChaseCheck && entity.chasingPlayer) return false;
+
+        if (entity.latestActiveInstance != null) {
+            if (entity.latestAgent != null) entity.latestAgent.Warp(spawnPoint.position);
+        } else SpawnEntity(entity, spawnPoint);
+
+        return true;
     }
 
     #endregion

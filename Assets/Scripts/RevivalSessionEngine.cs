@@ -47,6 +47,10 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
         otherDifficultyFactor = currentDifficulty;
     }
 
+    private void Start() {
+        EntitySystem.Instance.cached049Entity.disabled = !lczUnlocked;
+    }
+
     private void OnDestroy() {
         SaveGameEngine.Unregister(this);
         if (Instance == this) Instance = null;

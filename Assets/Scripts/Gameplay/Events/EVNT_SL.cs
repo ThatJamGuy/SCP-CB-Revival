@@ -40,6 +40,7 @@ public class EVNT_SL : MonoBehaviour {
     public static void DisableLCZLockdownViaCMD() {
         if (RevivalSessionEngine.lczUnlocked == false) {
             RevivalSessionEngine.lczUnlocked = true;
+            RevivalSessionEngine.event049Triggered = true;
             EntitySystem.Instance.cached049Entity.disabled = false;
             Debug.Log("<color=#00ffff>Light Containment Zone lockdown has been lifted.</color>");
         }
