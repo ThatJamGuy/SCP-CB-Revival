@@ -1283,7 +1283,7 @@ GameObject:
   - component: {fileID: 4044104260748270043}
   - component: {fileID: 7748597778664470138}
   m_Layer: 2
-  m_Name: AmbienceZone (1)
+  m_Name: RoomTrigger_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1297,12 +1297,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2172956427959540063}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.1, y: 0.5, z: 2.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7698022428675101368}
+  m_Father: {fileID: 3744439812922256043}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &4044104260748270043
 BoxCollider:
@@ -1337,7 +1337,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 7287665040424921501}
   roomConfig: {fileID: 11400000, guid: db506736eaff01548902fd60e6e6bea3, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2972564554624915748}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2231765262005123298}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2972564554624915748}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2231765262005123298}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2420917891233125820
 GameObject:
   m_ObjectHideFlags: 0
@@ -2190,8 +2245,6 @@ Transform:
   - {fileID: 1041301013619553155}
   - {fileID: 5913373470457486341}
   - {fileID: 8821627051793101241}
-  - {fileID: 2180495907798540732}
-  - {fileID: 8686432100867092790}
   m_Father: {fileID: 3744439812922256043}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4031384277305551355
@@ -3423,7 +3476,7 @@ GameObject:
   - component: {fileID: 1041301013619553155}
   - component: {fileID: 2231765262005123298}
   m_Layer: 0
-  m_Name: Emitter_Camera (1)
+  m_Name: Emitter_vent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3465,7 +3518,7 @@ MonoBehaviour:
       Data4: 1276108258
     Path: event:/SFX/General/Loops/Ventilation_Loop
   Event: 
-  EventPlayTrigger: 11
+  EventPlayTrigger: 0
   EventStopTrigger: 12
   AllowFadeout: 1
   TriggerOnce: 0
@@ -3794,7 +3847,7 @@ GameObject:
   - component: {fileID: 7765972585811413512}
   - component: {fileID: 703800687849353356}
   m_Layer: 2
-  m_Name: AmbienceZone
+  m_Name: RoomTrigger_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3808,12 +3861,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6467273376704019034}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.1, y: 5.3, z: 2.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7698022428675101368}
+  m_Father: {fileID: 3744439812922256043}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &7632457448268202641
 BoxCollider:
@@ -3941,7 +3994,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 7287665040424921501}
   roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4871787206210014970}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6512382979959738377
 GameObject:
   m_ObjectHideFlags: 0
@@ -4434,6 +4506,8 @@ Transform:
   - {fileID: 7698022428675101368}
   - {fileID: 5668968133354009287}
   - {fileID: 4724959979048955309}
+  - {fileID: 2180495907798540732}
+  - {fileID: 8686432100867092790}
   - {fileID: 8226186630789362600}
   - {fileID: 1970782778165743774}
   m_Father: {fileID: 0}
@@ -4452,6 +4526,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
   roomName: room2_sl_lcz
   teleportLocation: {fileID: 8226186630789362600}
+  associatedZone: 0
   roomLights:
   - {fileID: 5517316510431797025}
   - {fileID: 3993450768668683166}
@@ -4558,7 +4633,7 @@ MonoBehaviour:
       Data4: 831912683
     Path: event:/SFX/General/Loops/Camera_Loop
   Event: 
-  EventPlayTrigger: 11
+  EventPlayTrigger: 0
   EventStopTrigger: 12
   AllowFadeout: 1
   TriggerOnce: 0

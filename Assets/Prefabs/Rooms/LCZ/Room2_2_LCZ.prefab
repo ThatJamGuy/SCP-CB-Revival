@@ -66,7 +66,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 0}
   roomConfig: {fileID: 11400000, guid: db506736eaff01548902fd60e6e6bea3, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &663699828097108492
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,13 +264,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3003164156199550147}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.07848214, y: 0.70273685, z: -0.078482375, w: 0.702739}
-  m_LocalPosition: {x: -5.2000003, y: 5.5, z: 0}
+  m_LocalRotation: {x: 0.17288604, y: 0.68564487, z: -0.17288665, w: 0.685647}
+  m_LocalPosition: {x: -3.7, y: 6.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2297763889976889490}
-  m_LocalEulerAnglesHint: {x: 12.745, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 28.304, y: 90, z: 0}
 --- !u!108 &8094641377752111135
 Light:
   m_ObjectHideFlags: 0
@@ -275,10 +282,10 @@ Light:
   serializedVersion: 13
   m_Type: 0
   m_Color: {r: 1, g: 0, b: 0, a: 1}
-  m_Intensity: 20.055172
+  m_Intensity: 12.342035
   m_Range: 20
-  m_SpotAngle: 84.163925
-  m_InnerSpotAngle: 46.785683
+  m_SpotAngle: 108.94876
+  m_InnerSpotAngle: 71.570496
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 1
@@ -2144,6 +2151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
   roomName: 
   teleportLocation: {fileID: 0}
+  associatedZone: 0
   roomLights:
   - {fileID: 5032801782929878062}
   - {fileID: 2778113613288850222}

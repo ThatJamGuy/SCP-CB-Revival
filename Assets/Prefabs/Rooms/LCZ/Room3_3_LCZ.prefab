@@ -89,7 +89,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 0.5, y: 0.5}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
+  m_ColorTemperature: 7000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -303,10 +303,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7212764829834533046}
   - {fileID: 5735118891319401926}
   - {fileID: 2282653086491058603}
-  - {fileID: 2450907183717182288}
+  - {fileID: 2839679820665048726}
+  - {fileID: 2016779149687426457}
+  - {fileID: 7212764829834533046}
   - {fileID: 1465111501570533058}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -324,6 +325,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
   roomName: room3_3_lcz
   teleportLocation: {fileID: 1465111501570533058}
+  associatedZone: 0
   roomLights:
   - {fileID: 5189375636811412360}
   - {fileID: 5297284765174408539}
@@ -669,7 +671,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &8270554360031106759
 Transform:
@@ -740,7 +742,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 7129
+  m_ColorTemperature: 7000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -1027,7 +1029,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2016779149687426457}
   m_Layer: 0
-  m_Name: SoundEmitters
+  m_Name: Sound Emitters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1041,14 +1043,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2917002521580200253}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 165424864833574044}
   - {fileID: 8207554812121715386}
-  m_Father: {fileID: 2450907183717182288}
+  m_Father: {fileID: 1797646945915898389}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3110242984162747820
 GameObject:
@@ -1140,39 +1142,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &3416869776477403918
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2450907183717182288}
-  m_Layer: 0
-  m_Name: Extra
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2450907183717182288
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3416869776477403918}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2839679820665048726}
-  - {fileID: 2016779149687426457}
-  m_Father: {fileID: 1797646945915898389}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3911411045068964717
 GameObject:
   m_ObjectHideFlags: 0
@@ -1190,7 +1159,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &4597149281768564989
 Transform:
@@ -1261,7 +1230,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 7129
+  m_ColorTemperature: 7000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -1471,7 +1440,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2282653086491058603
 Transform:
@@ -1985,7 +1954,7 @@ MonoBehaviour:
       Data4: 545110111
     Path: event:/SFX/General/Loops/lightflicker_01_loop
   Event: 
-  EventPlayTrigger: 11
+  EventPlayTrigger: 0
   EventStopTrigger: 12
   AllowFadeout: 1
   TriggerOnce: 0
@@ -2007,7 +1976,7 @@ GameObject:
   - component: {fileID: 4129588676693942816}
   - component: {fileID: 4463552479785104436}
   m_Layer: 2
-  m_Name: AmbienceZone01 (1)
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2022,7 +1991,7 @@ Transform:
   m_GameObject: {fileID: 6352177200059780095}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: 2.5, z: 0}
+  m_LocalPosition: {x: 1, y: 3.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2047,8 +2016,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 20.476795, y: 7, z: 14.316456}
-  m_Center: {x: -1.0371737, y: 1, z: -3.1010952}
+  m_Size: {x: 20.5, y: 7, z: 20.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4463552479785104436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2061,7 +2030,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 8290396077312698647}
   roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3289117682347560637}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5628138722465011611}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3289117682347560637}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5628138722465011611}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6440501038959459921
 GameObject:
   m_ObjectHideFlags: 0
@@ -2625,7 +2649,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 0.5, y: 0.5}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
+  m_ColorTemperature: 7000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -2819,7 +2843,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2839679820665048726}
   m_Layer: 0
-  m_Name: Props_Static
+  m_Name: Static Props
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2833,7 +2857,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7543745947946970795}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2857,7 +2881,7 @@ Transform:
   - {fileID: 6765700283912458645}
   - {fileID: 3420563608114469879}
   - {fileID: 4046323494763628984}
-  m_Father: {fileID: 2450907183717182288}
+  m_Father: {fileID: 1797646945915898389}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7673951746942011400
 GameObject:
@@ -3002,7 +3026,7 @@ MonoBehaviour:
       Data4: 1358052378
     Path: event:/SFX/General/Loops/Water_Pipe_Loop
   Event: 
-  EventPlayTrigger: 11
+  EventPlayTrigger: 0
   EventStopTrigger: 12
   AllowFadeout: 1
   TriggerOnce: 0
@@ -3298,6 +3322,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 2839679820665048726}
     m_Modifications:
     - target: {fileID: 4943172618009570267, guid: 577cfe3fabd8b3a4ab4c739ad5e21ac1, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4943172618009570267, guid: 577cfe3fabd8b3a4ab4c739ad5e21ac1, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 4c8e6a8a7bccc8943ac6bb786a431541, type: 2}
@@ -3369,7 +3397,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000012973412514, guid: 7664aa771caa1ce42965283fa24dbbd2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8.9
+      value: 8.703
       objectReference: {fileID: 0}
     - target: {fileID: 4000012973412514, guid: 7664aa771caa1ce42965283fa24dbbd2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3425,6 +3453,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2839679820665048726}
     m_Modifications:
+    - target: {fileID: 4943172618009570267, guid: 577cfe3fabd8b3a4ab4c739ad5e21ac1, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4943172618009570267, guid: 577cfe3fabd8b3a4ab4c739ad5e21ac1, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -3491,6 +3523,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2839679820665048726}
     m_Modifications:
+    - target: {fileID: 4943172618009570267, guid: 577cfe3fabd8b3a4ab4c739ad5e21ac1, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6918518674942829071, guid: 577cfe3fabd8b3a4ab4c739ad5e21ac1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3553,6 +3589,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2839679820665048726}
     m_Modifications:
+    - target: {fileID: 4943172618009570267, guid: 577cfe3fabd8b3a4ab4c739ad5e21ac1, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6918518674942829071, guid: 577cfe3fabd8b3a4ab4c739ad5e21ac1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -7

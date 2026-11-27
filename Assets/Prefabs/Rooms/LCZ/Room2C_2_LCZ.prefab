@@ -623,7 +623,7 @@ GameObject:
   - component: {fileID: 3181282878066944713}
   - component: {fileID: 4178497880316986207}
   m_Layer: 2
-  m_Name: AmbienceZone01 (1)
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -638,7 +638,7 @@ Transform:
   m_GameObject: {fileID: 2632264728983013736}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: 2.5, z: -0}
+  m_LocalPosition: {x: 1, y: 3.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -663,8 +663,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 20.230541, y: 7, z: 20.790348}
-  m_Center: {x: -0.91880274, y: 1, z: 0.1358509}
+  m_Size: {x: 20.5, y: 7, z: 20.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4178497880316986207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -677,7 +677,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 5902054997003160456}
   roomConfig: {fileID: 11400000, guid: df67b3a2c2772dc4798dd4595598a902, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2877018751830255857
 GameObject:
   m_ObjectHideFlags: 0
@@ -873,9 +880,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7787864404945734388}
-  - {fileID: 4563395990476750512}
   - {fileID: 5757085882745946661}
-  - {fileID: 7245622883514224527}
+  - {fileID: 2241100907611372541}
+  - {fileID: 4563395990476750512}
   - {fileID: 4598540318794376302}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -891,8 +898,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248c7f6a56bd88c4197e3f1a5d2de6de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
-  roomName: 
-  teleportLocation: {fileID: 0}
+  roomName: room2c_2_lcz
+  teleportLocation: {fileID: 4598540318794376302}
+  associatedZone: 0
   roomLights:
   - {fileID: 1582558124606311931}
   - {fileID: 2987204049855402318}
@@ -909,7 +917,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2241100907611372541}
   m_Layer: 0
-  m_Name: Props_Static
+  m_Name: Static Props
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -923,7 +931,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3115403332259211634}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -939,7 +947,7 @@ Transform:
   - {fileID: 1786365674080831411}
   - {fileID: 3834315022233524435}
   - {fileID: 3250311494001191472}
-  m_Father: {fileID: 7245622883514224527}
+  m_Father: {fileID: 8977949807867704330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3637379114120309601
 GameObject:
@@ -1246,7 +1254,7 @@ Light:
   m_Type: 2
   m_Color: {r: 0.9669811, g: 0.97363716, b: 1, a: 1}
   m_Intensity: 0.7957747
-  m_Range: 15
+  m_Range: 13
   m_SpotAngle: 179
   m_InnerSpotAngle: 79.28125
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -1288,8 +1296,8 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
+  m_ColorTemperature: 7000
+  m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 0
@@ -1588,7 +1596,7 @@ Light:
   serializedVersion: 13
   m_Type: 0
   m_Color: {r: 0.8679245, g: 0.35617658, b: 0.3758593, a: 1}
-  m_Intensity: 6.263222
+  m_Intensity: 3.8603518
   m_Range: 20
   m_SpotAngle: 159.79169
   m_InnerSpotAngle: 112.65625
@@ -1673,7 +1681,7 @@ MonoBehaviour:
   m_ObsoleteContactShadows: 0
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
-  m_VolumetricDimmer: 16
+  m_VolumetricDimmer: 10
   m_FadeDistance: 25
   m_VolumetricFadeDistance: 25
   m_AffectDiffuse: 1
@@ -2142,38 +2150,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &7286063408105389816
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7245622883514224527}
-  m_Layer: 0
-  m_Name: Extra
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7245622883514224527
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7286063408105389816}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2241100907611372541}
-  m_Father: {fileID: 8977949807867704330}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7499743408155832439
 GameObject:
   m_ObjectHideFlags: 0
@@ -2220,7 +2196,7 @@ Light:
   m_Type: 2
   m_Color: {r: 0.9669811, g: 0.97363716, b: 1, a: 1}
   m_Intensity: 0.7957747
-  m_Range: 15
+  m_Range: 13
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -2262,8 +2238,8 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
+  m_ColorTemperature: 7000
+  m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 0

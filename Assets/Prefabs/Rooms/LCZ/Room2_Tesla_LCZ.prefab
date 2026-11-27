@@ -1632,6 +1632,7 @@ Transform:
   - {fileID: 909529177935049003}
   - {fileID: 4651845819259191486}
   - {fileID: 7301749318800122698}
+  - {fileID: 7413999762518561918}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5622839316176668176
@@ -1652,6 +1653,8 @@ MonoBehaviour:
   roomLights:
   - {fileID: 7658159085042713849}
   - {fileID: 4246918152427845602}
+  - {fileID: 8145868673853627392}
+  - {fileID: 4128982412050442363}
   activateDistance: 25
   usePerLightCalculation: 0
 --- !u!1 &2432237813126312657
@@ -2402,7 +2405,6 @@ Transform:
   m_Children:
   - {fileID: 5549693645697664046}
   - {fileID: 7929240256307206961}
-  - {fileID: 370500824245915853}
   m_Father: {fileID: 353368671289568238}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3303430380167278193
@@ -4030,7 +4032,7 @@ Transform:
   m_GameObject: {fileID: 5397172740239706282}
   serializedVersion: 2
   m_LocalRotation: {x: 0.70710576, y: -0, z: -0, w: 0.70710784}
-  m_LocalPosition: {x: -6.07, y: 4.9, z: 1.7000011}
+  m_LocalPosition: {x: -6.07, y: 4.4, z: 2.6000004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4047,8 +4049,8 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.6674414
-  m_Range: 20
+  m_Intensity: 1.193662
+  m_Range: 13
   m_SpotAngle: 151.19792
   m_InnerSpotAngle: 132
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -4237,7 +4239,7 @@ MonoBehaviour:
   m_ShadowVariant: 0
   m_ShadowPrecision: 0
   useOldInspector: 0
-  useVolumetric: 1
+  useVolumetric: 0
   featuresFoldout: 1
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
@@ -6294,7 +6296,7 @@ Transform:
   m_GameObject: {fileID: 7647435497711930601}
   serializedVersion: 2
   m_LocalRotation: {x: 0.70710576, y: -0, z: -0, w: 0.70710784}
-  m_LocalPosition: {x: -6.07, y: 4.8, z: -4.199999}
+  m_LocalPosition: {x: -6.07, y: 4.3, z: -4.199999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6311,8 +6313,8 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.6674414
-  m_Range: 20
+  m_Intensity: 1.193662
+  m_Range: 13
   m_SpotAngle: 151.19792
   m_InnerSpotAngle: 132
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -6501,7 +6503,7 @@ MonoBehaviour:
   m_ShadowVariant: 0
   m_ShadowPrecision: 0
   useOldInspector: 0
-  useVolumetric: 1
+  useVolumetric: 0
   featuresFoldout: 1
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
@@ -6847,80 +6849,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &8317723166532093559
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 370500824245915853}
-  - component: {fileID: 7110364553273113023}
-  - component: {fileID: 3033183822096107947}
-  m_Layer: 2
-  m_Name: AmbienceZone
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
---- !u!4 &370500824245915853
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8317723166532093559}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.4999998, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3045710193300223377}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &7110364553273113023
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8317723166532093559}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 11, y: 7, z: 20.454556}
-  m_Center: {x: -3, y: 1, z: 0.0012087822}
---- !u!114 &3033183822096107947
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8317723166532093559}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  parentRoomHander: {fileID: 0}
-  roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
-  onRoomEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onRoomExit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &8416945594919220040
 GameObject:
   m_ObjectHideFlags: 0
@@ -7482,6 +7410,104 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7664390394020660458}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8816667268585616130
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7413999762518561918}
+  - component: {fileID: 2547271705558584410}
+  - component: {fileID: 6098101358296241505}
+  m_Layer: 2
+  m_Name: RoomTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &7413999762518561918
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8816667268585616130}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353368671289568238}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2547271705558584410
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8816667268585616130}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 20.5, y: 7, z: 20.5}
+  m_Center: {x: 0, y: 3, z: 0}
+--- !u!114 &6098101358296241505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8816667268585616130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 5622839316176668176}
+  roomConfig: {fileID: 11400000, guid: db506736eaff01548902fd60e6e6bea3, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5341026041786854988}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5341026041786854988}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &124605769935507956
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7890,7 +7916,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3406197864408758958, guid: 96e6bebf67097d94cacc434341d5a0a7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.7000008
+      value: 2.6
       objectReference: {fileID: 0}
     - target: {fileID: 3406197864408758958, guid: 96e6bebf67097d94cacc434341d5a0a7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -11155,7 +11181,7 @@ MonoBehaviour:
       Data4: -1282460690
     Path: event:/SFX/General/Loops/airconditioner_loop
   Event: 
-  EventPlayTrigger: 1
+  EventPlayTrigger: 0
   EventStopTrigger: 2
   AllowFadeout: 1
   TriggerOnce: 0

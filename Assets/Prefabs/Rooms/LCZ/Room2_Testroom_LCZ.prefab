@@ -690,9 +690,8 @@ Transform:
   - {fileID: 5407237134378837903}
   - {fileID: 2155479220915038166}
   - {fileID: 6197791755176853936}
+  - {fileID: 6790809822512203048}
   - {fileID: 7689328308637425138}
-  - {fileID: 7971972318209092046}
-  - {fileID: 5987661604715789663}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8599891703895640926
@@ -883,7 +882,7 @@ Light:
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 0.39788735
-  m_Range: 10
+  m_Range: 7
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -1797,6 +1796,8 @@ Transform:
   - {fileID: 2752829871486144696}
   - {fileID: 7070575539607855122}
   - {fileID: 2133526357338625084}
+  - {fileID: 7971972318209092046}
+  - {fileID: 5987661604715789663}
   m_Father: {fileID: 6233121335303549480}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4674799261761171420
@@ -1935,7 +1936,7 @@ Light:
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 0.39788735
-  m_Range: 10
+  m_Range: 7
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -2572,7 +2573,7 @@ GameObject:
   - component: {fileID: 1399236832588347588}
   - component: {fileID: 2190252812105421554}
   m_Layer: 2
-  m_Name: AmbienceZone_01
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2586,12 +2587,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5469090245554949464}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1219235414792620648}
+  m_Father: {fileID: 6233121335303549480}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1399236832588347588
 BoxCollider:
@@ -2630,10 +2631,34 @@ MonoBehaviour:
   roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
   onRoomEnter:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3720359639467511339}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onRoomExit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3720359639467511339}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5684522228394883329
 GameObject:
   m_ObjectHideFlags: 0
@@ -3120,7 +3145,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1219235414792620648}
   m_Layer: 0
-  m_Name: SoundEmitters
+  m_Name: Sound Emitters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3139,7 +3164,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6790809822512203048}
   - {fileID: 7026026392436597158}
   m_Father: {fileID: 6233121335303549480}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3260,7 +3284,7 @@ MonoBehaviour:
       Data4: 831912683
     Path: event:/SFX/General/Loops/Camera_Loop
   Event: 
-  EventPlayTrigger: 11
+  EventPlayTrigger: 0
   EventStopTrigger: 12
   AllowFadeout: 1
   TriggerOnce: 0
@@ -3592,12 +3616,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7662432991139031815}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -6.6, y: 1, z: -6.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6233121335303549480}
+  m_Father: {fileID: 5407237134378837903}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7694046390153997806
 GameObject:
@@ -3752,12 +3776,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8139438966419269820}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -6.4, y: 1, z: -1.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6233121335303549480}
+  m_Father: {fileID: 5407237134378837903}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8207625722610815776
 GameObject:
@@ -4041,7 +4065,7 @@ MonoBehaviour:
       Data4: 545110111
     Path: event:/SFX/General/Loops/lightflicker_01_loop
   Event: 
-  EventPlayTrigger: 11
+  EventPlayTrigger: 0
   EventStopTrigger: 12
   AllowFadeout: 1
   TriggerOnce: 0

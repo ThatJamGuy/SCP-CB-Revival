@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 3637199454780505324}
   - component: {fileID: 5934531368510438264}
   m_Layer: 2
-  m_Name: AmbienceZone
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57,12 +57,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1813064157300649157}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1148946368057708961}
+  m_Father: {fileID: 7955078070684666679}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &3637199454780505324
 BoxCollider:
@@ -97,14 +97,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  parentRoomHander: {fileID: 0}
+  parentRoomHander: {fileID: 7937883124546309292}
   roomConfig: {fileID: 11400000, guid: df67b3a2c2772dc4798dd4595598a902, type: 2}
   onRoomEnter:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6263959340004053925}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onRoomExit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6263959340004053925}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2205337161810472929
 GameObject:
   m_ObjectHideFlags: 0
@@ -223,39 +247,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -7744344991206192267, guid: a118654a8d938d24283c371a764c5c10, type: 3}
---- !u!1 &4705613944078549034
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2071729905978474684}
-  m_Layer: 0
-  m_Name: Extra
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2071729905978474684
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4705613944078549034}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 5093820952624228385}
-  - {fileID: 1148946368057708961}
-  m_Father: {fileID: 7955078070684666679}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4810213770966216274
 GameObject:
   m_ObjectHideFlags: 0
@@ -519,7 +510,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5093820952624228385}
   m_Layer: 0
-  m_Name: Props_Static
+  m_Name: Static Props
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -533,7 +524,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5805280559868709313}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -557,7 +548,7 @@ Transform:
   - {fileID: 1064779965009220963}
   - {fileID: 1468679906775794092}
   - {fileID: 3217092930889278269}
-  m_Father: {fileID: 2071729905978474684}
+  m_Father: {fileID: 7955078070684666679}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5971472041544582342
 GameObject:
@@ -844,7 +835,9 @@ Transform:
   m_Children:
   - {fileID: 1335478669006241873}
   - {fileID: 4297411179795400726}
-  - {fileID: 2071729905978474684}
+  - {fileID: 5093820952624228385}
+  - {fileID: 1148946368057708961}
+  - {fileID: 8309735372542317852}
   - {fileID: 355727490484179695}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -860,8 +853,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248c7f6a56bd88c4197e3f1a5d2de6de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
-  roomName: 
-  teleportLocation: {fileID: 0}
+  roomName: room2c_1_lcz
+  teleportLocation: {fileID: 355727490484179695}
   associatedZone: 0
   roomLights:
   - {fileID: 2175395276386820944}
@@ -921,7 +914,7 @@ MonoBehaviour:
       Data4: 831912683
     Path: event:/SFX/General/Loops/Camera_Loop
   Event: 
-  EventPlayTrigger: 11
+  EventPlayTrigger: 0
   EventStopTrigger: 12
   AllowFadeout: 1
   TriggerOnce: 0
@@ -1054,7 +1047,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1148946368057708961}
   m_Layer: 0
-  m_Name: SoundEmitters
+  m_Name: Sound Emitters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1068,14 +1061,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8938222161802781247}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8438141959685342576}
-  - {fileID: 8309735372542317852}
-  m_Father: {fileID: 2071729905978474684}
+  m_Father: {fileID: 7955078070684666679}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9162524020181375776
 GameObject:

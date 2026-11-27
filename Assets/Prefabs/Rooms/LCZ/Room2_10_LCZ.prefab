@@ -122,13 +122,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 72763459629610964}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7814921497379362553}
-  m_Father: {fileID: 937184002394201029}
+  m_Father: {fileID: 5656483959686135980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &367453210070772737
 GameObject:
@@ -675,10 +675,13 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 9146130062797165945}
   - {fileID: 7322608928548258553}
   - {fileID: 8926495223766858025}
-  - {fileID: 937184002394201029}
+  - {fileID: 7180884104415552270}
+  - {fileID: 5980307155138618790}
+  - {fileID: 8358311629194813986}
+  - {fileID: 7577890381377750569}
+  - {fileID: 9146130062797165945}
   - {fileID: 8818003618433060616}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -694,8 +697,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248c7f6a56bd88c4197e3f1a5d2de6de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
-  roomName: 
-  teleportLocation: {fileID: 0}
+  roomName: room2_10_lcz
+  teleportLocation: {fileID: 8818003618433060616}
+  associatedZone: 0
   roomLights:
   - {fileID: 2763117652246015449}
   - {fileID: 2219953690271137014}
@@ -818,9 +822,9 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1.9143152
-  m_Range: 10
+  m_Range: 7
   m_SpotAngle: 160.5864
-  m_InnerSpotAngle: 68.8138
+  m_InnerSpotAngle: 78.95303
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 1
@@ -860,7 +864,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
+  m_ColorTemperature: 7000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 3.22e-43, y: 6e-45, z: 3.5e-44, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -1359,9 +1363,9 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1.9143152
-  m_Range: 10
+  m_Range: 7
   m_SpotAngle: 160.5864
-  m_InnerSpotAngle: 68.8138
+  m_InnerSpotAngle: 78.95303
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 1
@@ -1401,7 +1405,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
+  m_ColorTemperature: 7000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 1, y: 0, z: 1.1973e-41, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -1820,9 +1824,9 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1.9143152
-  m_Range: 10
+  m_Range: 7
   m_SpotAngle: 160.5864
-  m_InnerSpotAngle: 68.8138
+  m_InnerSpotAngle: 78.95303
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 1
@@ -1862,7 +1866,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
+  m_ColorTemperature: 7000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 1, y: 0, z: 1.1973e-41, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -2027,126 +2031,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
   settingToRetreive: 01000000i
---- !u!1 &5136515498877674691
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 937184002394201029}
-  m_Layer: 0
-  m_Name: Extra
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &937184002394201029
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5136515498877674691}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7180884104415552270}
-  - {fileID: 8358311629194813986}
-  - {fileID: 5980307155138618790}
-  - {fileID: 7577890381377750569}
-  m_Father: {fileID: 5656483959686135980}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5230106882205822702
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1236385644601052047}
-  - component: {fileID: 1130521018613462694}
-  - component: {fileID: 4097550171734020684}
-  m_Layer: 0
-  m_Name: AmbienceZone
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1236385644601052047
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5230106882205822702}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
-  m_LocalScale: {x: 15, y: 5, z: 20}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5980307155138618790}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1130521018613462694
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5230106882205822702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
-  CollisionTag: Player
-  EventReference:
-    Guid:
-      Data1: -1038335838
-      Data2: 1316597380
-      Data3: -742431088
-      Data4: 1975095838
-    Path: event:/SFX/Ambience/Soundscapes/Industrial_Ambience_03
-  Event: 
-  EventPlayTrigger: 3
-  EventStopTrigger: 4
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
---- !u!65 &4097550171734020684
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5230106882205822702}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5348695389917705880
 GameObject:
   m_ObjectHideFlags: 0
@@ -2157,11 +2041,11 @@ GameObject:
   m_Component:
   - component: {fileID: 5980307155138618790}
   m_Layer: 0
-  m_Name: SoundEmitters
+  m_Name: Sound Emitters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &5980307155138618790
 Transform:
@@ -2171,15 +2055,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5348695389917705880}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 644991117098158166}
   - {fileID: 7831850176906379566}
-  - {fileID: 1236385644601052047}
-  m_Father: {fileID: 937184002394201029}
+  m_Father: {fileID: 5656483959686135980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5476325121591400668
 GameObject:
@@ -2193,7 +2076,7 @@ GameObject:
   - component: {fileID: 4847000912212780842}
   - component: {fileID: 4374847977894625276}
   m_Layer: 2
-  m_Name: AmbienceZone_02 (1)
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2247,7 +2130,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 6101158102558238651}
   roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
+  onRoomEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7948555002325395314}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 9049191713061409126}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onRoomExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7948555002325395314}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 9049191713061409126}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5520421467250719985
 GameObject:
   m_ObjectHideFlags: 0
@@ -2432,14 +2370,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5935506266202219844}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8390707368119167553}
   - {fileID: 4707275695246166198}
-  m_Father: {fileID: 937184002394201029}
+  m_Father: {fileID: 5656483959686135980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6070827137109717219
 GameObject:
@@ -2551,7 +2489,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &7831850176906379566
 Transform:
@@ -2827,7 +2765,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &644991117098158166
 Transform:
@@ -2953,9 +2891,9 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1.9143152
-  m_Range: 10
+  m_Range: 7
   m_SpotAngle: 160.5864
-  m_InnerSpotAngle: 68.8138
+  m_InnerSpotAngle: 78.95303
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 1
@@ -2995,7 +2933,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
+  m_ColorTemperature: 7000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 7.2715916e+31, y: NaN, z: 2.379586e+20, w: 2.4835436e+27}
   m_UseBoundingSphereOverride: 0
@@ -3482,9 +3420,9 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1.9143152
-  m_Range: 10
+  m_Range: 7
   m_SpotAngle: 160.5864
-  m_InnerSpotAngle: 68.8138
+  m_InnerSpotAngle: 78.95303
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 1
@@ -3524,7 +3462,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
+  m_ColorTemperature: 7000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 1, y: 0, z: 1.1973e-41, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -3764,7 +3702,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7180884104415552270}
   m_Layer: 0
-  m_Name: Props_Static
+  m_Name: Static Props
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3792,7 +3730,7 @@ Transform:
   - {fileID: 588060307871036779}
   - {fileID: 3937434748065582752}
   - {fileID: 8242254589989588065}
-  m_Father: {fileID: 937184002394201029}
+  m_Father: {fileID: 5656483959686135980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9162672072255266232
 GameObject:

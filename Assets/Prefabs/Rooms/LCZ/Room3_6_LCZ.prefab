@@ -44,6 +44,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8516091332290047991}
+  - component: {fileID: 5346685004062368613}
   m_Layer: 0
   m_Name: Room3_6_LCZ
   m_TagString: Untagged
@@ -68,9 +69,31 @@ Transform:
   - {fileID: 5632962038259243005}
   - {fileID: 3743745134322816150}
   - {fileID: 2309754142557672244}
-  - {fileID: 1732170788309110612}
+  - {fileID: 8422063554129398857}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5346685004062368613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 516864739739803501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 248c7f6a56bd88c4197e3f1a5d2de6de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomHandler
+  roomName: room3_6_lcz
+  teleportLocation: {fileID: 0}
+  associatedZone: 0
+  roomLights:
+  - {fileID: 7577562554471668018}
+  - {fileID: 5974191690602401904}
+  - {fileID: 8654941955035649466}
+  - {fileID: 2872922746182936804}
+  activateDistance: 25
+  usePerLightCalculation: 0
 --- !u!1 &1299174611835527834
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,38 +405,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RemoteSettingsLoader
   settingToRetreive: 01000000i
---- !u!1 &4606063436624520149
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1732170788309110612}
-  m_Layer: 0
-  m_Name: Sound Emitters
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1732170788309110612
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4606063436624520149}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8422063554129398857}
-  m_Father: {fileID: 8516091332290047991}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5640663069641474675
 GameObject:
   m_ObjectHideFlags: 0
@@ -679,7 +670,7 @@ GameObject:
   - component: {fileID: 2881293537717093615}
   - component: {fileID: 8206625234696344596}
   m_Layer: 2
-  m_Name: AmbienceZone
+  m_Name: RoomTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -693,12 +684,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5834578961866076838}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1732170788309110612}
+  m_Father: {fileID: 8516091332290047991}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &2881293537717093615
 BoxCollider:
@@ -733,13 +724,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
+  parentRoomHander: {fileID: 5346685004062368613}
   roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
   onRoomEnter:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2585121998215590604}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onRoomExit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2585121998215590604}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6223861805634502404
 GameObject:
   m_ObjectHideFlags: 0
@@ -768,7 +784,7 @@ Transform:
   m_GameObject: {fileID: 6223861805634502404}
   serializedVersion: 2
   m_LocalRotation: {x: 0.99144477, y: -0, z: -0, w: 0.1305274}
-  m_LocalPosition: {x: 0, y: 3.7, z: 1.3000001}
+  m_LocalPosition: {x: 0, y: 3.3, z: 1.3000001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -832,7 +848,7 @@ Light:
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 4.59239e-40, z: 7.699e-42, w: 0}
   m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
+  m_UseViewFrustumForShadowCasterCull: 0
   m_ForceVisible: 0
   m_ShapeRadius: 0.025
   m_ShadowAngle: 0
@@ -953,7 +969,7 @@ MonoBehaviour:
   m_PenumbraTint: 0
   m_NormalBias: 0.75
   m_SlopeBias: 0.1
-  m_ShadowUpdateMode: 0
+  m_ShadowUpdateMode: 1
   m_AlwaysDrawDynamicShadows: 0
   m_UpdateShadowOnLightMovement: 0
   m_CachedShadowTranslationThreshold: 0.01
@@ -975,7 +991,7 @@ MonoBehaviour:
   m_ShadowVariant: 0
   m_ShadowPrecision: 0
   useOldInspector: 0
-  useVolumetric: 1
+  useVolumetric: 0
   featuresFoldout: 1
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
@@ -1684,6 +1700,10 @@ PrefabInstance:
       value: MilitaryRadio
       objectReference: {fileID: 0}
     - target: {fileID: 3449399445243609586, guid: 9c79563b44309a84c92d153be9923d04, type: 3}
+      propertyPath: EventPlayTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3449399445243609586, guid: 9c79563b44309a84c92d153be9923d04, type: 3}
       propertyPath: OverrideMaxDistance
       value: 10
       objectReference: {fileID: 0}
@@ -1728,10 +1748,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4336994877519154831, guid: 9c79563b44309a84c92d153be9923d04, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9c79563b44309a84c92d153be9923d04, type: 3}
+--- !u!114 &2585121998215590604 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3449399445243609586, guid: 9c79563b44309a84c92d153be9923d04, type: 3}
+  m_PrefabInstance: {fileID: 882292418934534974}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
 --- !u!4 &8146809620042401956 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9021203082679171994, guid: 9c79563b44309a84c92d153be9923d04, type: 3}
