@@ -25,7 +25,6 @@ public class ItemData : ScriptableObject {
     // Reusable key settings
     [ShowField(nameof(chosenBehavior), PresetBehavior.Key)] public bool openAllCardDoors;
     [ShowField(nameof(chosenBehavior), PresetBehavior.Key)] public int clearance;
-
     [ShowField(nameof(chosenBehavior), PresetBehavior.Document)] public Sprite documentDisplaySprite;
     [ShowField(nameof(chosenBehavior), PresetBehavior.Custom)] public ItemBehavior itemBehavior;
 

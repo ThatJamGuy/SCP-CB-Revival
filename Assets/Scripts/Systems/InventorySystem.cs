@@ -17,6 +17,7 @@ public class InventorySystem : MonoBehaviour, ISaveable {
 
     [Header("Inventory States")]
     public ItemData currentlyHeldItem;
+    public List<ItemData> currentWornItems = new List<ItemData>(10);
 
     [Header("UI Things")]
     [SerializeField] private Image itemDisplay;
@@ -161,8 +162,7 @@ public class InventorySystem : MonoBehaviour, ISaveable {
         foreach (var slot in inventorySlotObjects) {
             if (slot.transform.childCount > 2) {
                 fullSlotCount++;
-                if (fullSlotCount >= MAX_SLOTS)
-                    return true;
+                if (fullSlotCount >= MAX_SLOTS) return true;
             }
         }
         return false;
@@ -173,7 +173,7 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     public void AddItemToInventory(string itemIdentifier, int amount = 1) {
         if (!itemDataLookup.TryGetValue(itemIdentifier, out ItemData itemData)) return;
 
-        for (var i = 0; i < amount; i++) {
+        for (int i = 0; i < amount; i++) {
             GameObject slot = CheckForEmptySlots();
             if (!slot) {
                 RevivalSessionEngine.Instance.NotifyPlayer("You cannot pick up any more items.");
@@ -185,8 +185,17 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     }
 
     public void RemoveItemFromInventory(string itemIdentifier, bool alsoSpawnItemInWorld) {
-        // Make sure item still isn't being held when dropped
+        // Uniquip any held or equipped items so they aren't still on the player when dropped
         if (currentlyHeldItem != null && currentlyHeldItem.itemIdentifier == itemIdentifier) UnequipCurrentItem();
+
+        foreach (ItemData wearable in currentWornItems) {
+            if (wearable.itemBehavior is ITM_GasMask || wearable.itemBehavior is ITM_714) {
+                wearable.itemBehavior.OnDoubleClick(wearable);
+                RemoveWearable(wearable);
+
+                break;
+            }
+        }
 
         // Find the first slot holding this item without modifying the collection
         GameObject targetSlot = null;
@@ -240,13 +249,23 @@ public class InventorySystem : MonoBehaviour, ISaveable {
     }
     #endregion
 
-    #region Equipment Methods (Move Somewhere Else Later Maybe)
+    #region Equipment Methods
 
     public void EquipItem(ItemData itemToEquip) {
         if (itemToEquip == currentlyHeldItem) { UnequipCurrentItem(); return; }
         currentlyHeldItem = itemToEquip;
 
         UpdateDisplay();
+    }
+
+    public void EquipWearable(ItemData itemToEquip) {
+        // Don't equip if it's already on. The items behaviors will handle unequipping
+        if (currentWornItems.Contains(itemToEquip)) return;
+        currentWornItems.Add(itemToEquip);
+    }
+
+    public void RemoveWearable(ItemData itemToRemove) {
+        if (currentWornItems.Contains(itemToRemove)) currentWornItems.Remove(itemToRemove);
     }
 
     public void UnequipCurrentItem() {

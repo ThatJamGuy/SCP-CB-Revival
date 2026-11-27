@@ -2,6 +2,8 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "B_SCP-714", menuName = "SCP:CBR/Behaviors/SCP-714")]
 public class ITM_714 : ItemBehavior {
+    public ItemData associatedItemData;
+
     private bool equipped;
 
     public override void OnDoubleClick(ItemData itemData) {
@@ -22,6 +24,7 @@ public class ITM_714 : ItemBehavior {
         RevivalRuntimeEngine.Instance.GiveAchievement("achv_714");
         RevivalSessionEngine.Instance.NotifyPlayer("You slipped SCP-714 onto your finger.");
 
+        InventorySystem.Instance.EquipWearable(associatedItemData);
         equipped = true;
     }
 }

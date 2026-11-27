@@ -3,8 +3,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
-/// Local component script that will handle identifying objects the player can interact with, and then handling it
-/// Also handles the visual aspect of it (IE. the hand icon that shows when near an interactable)
+/// Local component script that identifies objects the player can interact with and handles the interaction.
+/// Also drives the hand icon shown when near an interactable.
 /// </summary>
 public class PlayerInteraction : MonoBehaviour {
     [Header("Interaction Settings")]
@@ -14,194 +14,248 @@ public class PlayerInteraction : MonoBehaviour {
     [SerializeField] private float interactRadius = 2.8f;
     [SerializeField] private float interactIconScreenPadding = 20f;
 
-    // New stuff to prioritize objects the player is looking at.
-    [Header("Look Priority Things")]
-    [SerializeField] private float lookWeight = 0.5f; // 0 - closest obj chosen, 1 - looked at object chosen
-    [SerializeField] private float minLookDot = -1;
+    [Header("Look Priority")]
+    [SerializeField, Range(0f, 1f)] private float lookWeight = 0.7f; // 0 - closest obj chosen, 1 - looked at object chosen
+    [SerializeField] private float minLookDot = -1f;
 
     [Header("References")]
     [SerializeField] private Camera playerCamera;
 
-    // Not a clanker comment btw I'm learning about sphere overlap non alloc,
-    // this is stuff from the Unity Docs
-    // Set the maximum number of colliders that can be detected at once.
     private const int MAX_COLLIDERS = 32;
+    private const float MIN_SQR_DISTANCE = 0.0001f;
 
-    private IInteractable currentInteractablePress;
-    private IHoldInteractable currentInteractableHold;
+    // Lifts the evaluated point slightly so the linecast doesn't skim the item's surface
+    private static readonly Vector3 HitOffset = new Vector3(0f, 0.02f, 0f);
+
+    private readonly Collider[] hitColliders = new Collider[MAX_COLLIDERS];
 
     private InputAction interactAction;
-    private GameObject currentInteractable;
     private RectTransform canvasRectTransform;
     private Image interactIcon;
-    private Collider[] hitColliders; // Declare hitColliders as a reusable field.
     private Transform cameraTransform;
 
+    private Collider currentCollider;
+    private IInteractable currentPress;
+    private IHoldInteractable currentHold;
+
+    private bool isHolding;
+    private bool iconVisible;
     private bool cantFunction;
 
-    #region Unity Callbacks
+    #region Unity Lifecycle
+
     private void Awake() {
-        // Initialize the colliders once
-        hitColliders = new Collider[MAX_COLLIDERS];
-        cameraTransform = playerCamera.transform;
+        if (playerCamera == null) playerCamera = Camera.main;
+        cameraTransform = playerCamera != null ? playerCamera.transform : transform;
     }
 
     private void Start() {
-        // If there is no InputManager available at the start, disallow functionality and print a warning in console
         if (RevivalRuntimeEngine.Instance == null) {
-            cantFunction = true;
-            Debug.Log("<color=red>[PlayerInteraction]</color> InputManager was not found, interacting will not work!");
-
+            DisableWithWarning("InputManager was not found, interacting will not work!");
             return;
         }
 
-        // If there is no CanvasInstance available at the start, disallow functionality and print a warning in console
-        // Will likely later redo this so that instead of just not working, it doesn't show the prompt (No Hud Mode ?)
+        // Will likely later redo this so that instead of not working, it just doesn't show the prompt (No Hud Mode?)
         if (CanvasInstance.Instance == null) {
-            cantFunction = true;
-            Debug.Log("<color=red>[PlayerInteraction]</color> CanvasInstance was not found, interacting will not work!");
-
+            DisableWithWarning("CanvasInstance was not found, interacting will not work!");
             return;
         }
 
-        // Get the inputAction from the InputManager
-        // Also set the interactIcon to the one defined in the CanvasInstance
-        // Finally get the canvasRectTransform so the thing can know how to position the interact icon on the screen
         interactAction = RevivalRuntimeEngine.Instance.GetAction("Player", "Interact");
         interactIcon = CanvasInstance.Instance.interactIcon;
         canvasRectTransform = CanvasInstance.Instance.canvasRectTransform;
+
+        if (interactAction == null || interactIcon == null || canvasRectTransform == null) {
+            DisableWithWarning("Missing interact action or canvas references, interacting will not work!");
+            return;
+        }
+
+        iconVisible = interactIcon.gameObject.activeSelf;
     }
 
     private void Update() {
-        // If input is currently not allowed or cannot function, then don't do anything
-        if (Player.Instance.disableInput || cantFunction) return;
+        if (cantFunction) return;
 
-        DetermineClosestInteractable();
+        if (Player.Instance.disableInput) {
+            ReleaseHold();
+            return;
+        }
+
+        Vector3 camPos = cameraTransform.position;
+        Collider best = FindBestInteractable(camPos, cameraTransform.forward);
+
+        SetTarget(best);
+        UpdateIcon();
         HandleInteraction();
     }
+
+    private void OnDisable() {
+        ReleaseHold();
+    }
+
     #endregion
 
-    #region Private Methods
+    #region Target Selection
 
-    private void DetermineClosestInteractable() {
-        //switched to camera postion rather then previous implemenation that was transform position
-        //Correctly matches player eye level
-        Vector3 camPos = cameraTransform != null ? cameraTransform.position : transform.position;
-        Vector3 camForward = cameraTransform != null ? cameraTransform.forward : transform.forward;
-
-        //Changed from transform.position to camPos so that interacting follows the camera height
-        int numColliders = Physics.OverlapSphereNonAlloc(camPos, interactRadius, hitColliders, interactableMask);
+    private Collider FindBestInteractable(Vector3 camPos, Vector3 camForward) {
+        int count = Physics.OverlapSphereNonAlloc(camPos, interactRadius, hitColliders, interactableMask);
 
         float distWeight = 1f - lookWeight;
         float invRadius = 1f / interactRadius;
 
         float bestScore = float.MinValue;
-        GameObject closestInteractable = null;
+        Collider best = null;
 
-        // For every collider in the cool circle area around the player...
-        for (int i = 0; i < numColliders; i++) {
+        for (int i = 0; i < count; i++) {
             Collider hit = hitColliders[i];
 
-            //Basically Handles item prefabs interactions
-            bool hasTag = hit.CompareTag(interactTag) || (hit.transform.parent != null && hit.transform.parent.CompareTag(interactTag)) || hit.transform.root.CompareTag(interactTag);
-            if (!hasTag) continue;
+            Vector3 hitPos = hit.bounds.center + HitOffset;
+            Vector3 toHit = hitPos - camPos;
+            float sqr = toHit.sqrMagnitude;
 
-            // Evaluates from collider center with vertical offest to prevent linecast from not hitting the item
-            Vector3 hitPosition = hit.bounds.center + (Vector3.up * 0.02f);
-
-            Vector3 toHit = hitPosition - camPos;
-
-            Vector3 toHitFromCam = hitPosition - camPos;
-            float dist = Mathf.Sqrt(toHit.sqrMagnitude);
-            float distScore = 1f - Mathf.Min(dist * invRadius, 1f);
-            float camSqr = toHitFromCam.sqrMagnitude;
-            float lookDot = camSqr > 0.0001f ? Vector3.Dot(camForward, toHitFromCam) / Mathf.Sqrt(camSqr) : 1f;
+            // One sqrt + one divide gives both distance and normalized dot
+            float dist = 0f;
+            float lookDot = 1f;
+            if (sqr > MIN_SQR_DISTANCE) {
+                float invDist = 1f / Mathf.Sqrt(sqr);
+                dist = sqr * invDist;
+                lookDot = Vector3.Dot(camForward, toHit) * invDist;
+            }
 
             if (lookDot < minLookDot) continue;
 
+            float distScore = 1f - Mathf.Min(dist * invRadius, 1f);
             float score = (lookDot * 0.5f + 0.5f) * lookWeight + distScore * distWeight;
 
+            // Cheap rejections first, expensive checks (tags, linecast) last
             if (score <= bestScore) continue;
-
-            // Validates linecast line of sight
-            if (Physics.Linecast(camPos, hitPosition, out RaycastHit obsHit, obstructionMask)) {
-                if (obsHit.collider.transform.root != hit.transform.root) {
-                    continue;
-                }
-            }
+            if (!HasInteractTag(hit.transform)) continue;
+            if (Physics.Linecast(camPos, hitPos, obstructionMask)) continue;
 
             bestScore = score;
-            closestInteractable = hit.gameObject;
-
+            best = hit;
         }
 
-        if (!ReferenceEquals(closestInteractable, currentInteractable)) {
-            currentInteractable = closestInteractable;
-
-            //Fixes items when their collider or IInteractable are on different objects in the same prefab.
-            currentInteractablePress = closestInteractable != null ? closestInteractable.GetComponentInParent<IInteractable>() ?? closestInteractable.GetComponentInChildren<IInteractable>() : null;
-            currentInteractableHold = closestInteractable != null ? closestInteractable.GetComponentInParent<IHoldInteractable>() ?? closestInteractable.GetComponentInChildren<IHoldInteractable>() : null;
-        }
-
-
-        if (closestInteractable) {
-            //Projects to visual collider center instead of root transform origin
-            Collider col = closestInteractable.GetComponent<Collider>();
-            Vector3 iconPos = col != null ? col.bounds.center : closestInteractable.transform.position;
-            TryToShowInteractIcon(iconPos);
-        } else if (interactIcon.gameObject != null) {
-            interactIcon.gameObject.SetActive(false);
-        }
+        return best;
     }
 
+    // Handles item prefabs where the tag sits on the collider, its parent, or the root
+    private bool HasInteractTag(Transform t) {
+        if (t.CompareTag(interactTag)) return true;
 
+        Transform parent = t.parent;
+        if (parent != null && parent.CompareTag(interactTag)) return true;
 
-    private void TryToShowInteractIcon(Vector3 worldPos) {
-        // Set screenPos to a spot on the screen that matches the world position of the interactable
-        var screenPos = playerCamera.WorldToScreenPoint(worldPos);
+        return t.root.CompareTag(interactTag);
+    }
+
+    private void SetTarget(Collider target) {
+        if (ReferenceEquals(target, currentCollider)) return;
+
+        // Never leave a hold dangling when the target changes
+        ReleaseHold();
+
+        currentCollider = target;
+
+        if (target == null) {
+            currentPress = null;
+            currentHold = null;
+            return;
+        }
+
+        // Collider and IInteractable can live on different objects of the same prefab
+        GameObject go = target.gameObject;
+        currentPress = Resolve<IInteractable>(go);
+        currentHold = Resolve<IHoldInteractable>(go);
+    }
+
+    private static T Resolve<T>(GameObject go) where T : class {
+        if (go.TryGetComponent(out T result)) return result;
+
+        result = go.GetComponentInParent<T>();
+        if (result != null) return result;
+
+        return go.GetComponentInChildren<T>();
+    }
+
+    #endregion
+
+    #region Icon
+
+    private void UpdateIcon() {
+        // Unity null check on purpose: the collider may have been destroyed
+        if (currentCollider == null) {
+            SetIconVisible(false);
+            return;
+        }
+
+        PositionIcon(currentCollider.bounds.center);
+        SetIconVisible(true);
+    }
+
+    private void PositionIcon(Vector3 worldPos) {
+        Vector3 screenPos = playerCamera.WorldToScreenPoint(worldPos);
+        float width = Screen.width;
+        float height = Screen.height;
 
         // Flip mirrored coordinates when behind camera so clamping pushes to the correct edge
         if (screenPos.z <= 0f) {
-            screenPos.x = Screen.width - screenPos.x;
-            screenPos.y = Screen.height - screenPos.y;
+            screenPos.x = width - screenPos.x;
+            screenPos.y = height - screenPos.y;
         }
 
-        // Set the clamp values so that the interact icon cannot leave the screen, basically kidnapping the guy
-        screenPos.x = Mathf.Clamp(screenPos.x, interactIconScreenPadding, Screen.width - interactIconScreenPadding);
-        screenPos.y = Mathf.Clamp(screenPos.y, interactIconScreenPadding, Screen.height - interactIconScreenPadding);
+        screenPos.x = Mathf.Clamp(screenPos.x, interactIconScreenPadding, width - interactIconScreenPadding);
+        screenPos.y = Mathf.Clamp(screenPos.y, interactIconScreenPadding, height - interactIconScreenPadding);
 
-        // Black magic stuff, I actually don't know what this does, but it's important
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            canvasRectTransform, screenPos, null, out var canvasPos);
-
-        // Set the anchored position of the interact icon to the set canvasPos and make him active
+        // Converts screen pixels to canvas-local space (null camera = Screen Space - Overlay canvas)
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRectTransform, screenPos, null, out Vector2 canvasPos);
         interactIcon.rectTransform.anchoredPosition = canvasPos;
-        interactIcon.gameObject.SetActive(true);
     }
 
-    #region Handle Interaction Input
+    private void SetIconVisible(bool visible) {
+        if (iconVisible == visible) return;
+
+        iconVisible = visible;
+        interactIcon.gameObject.SetActive(visible);
+    }
+
+    #endregion
+
+    #region Interaction Input
 
     private void HandleInteraction() {
-        if (!currentInteractable) return;
+        if (currentCollider == null) return;
 
         // Hold interactions
-        if (currentInteractableHold != null) {
-            if (interactAction.WasPressedThisFrame())
-                currentInteractableHold.BeginInteract(this);
-
-            if (interactAction.WasReleasedThisFrame())
-                currentInteractableHold.EndInteract(this);
+        if (currentHold != null) {
+            if (interactAction.WasPressedThisFrame()) {
+                isHolding = true;
+                currentHold.BeginInteract(this);
+            } else if (isHolding && interactAction.WasReleasedThisFrame()) {
+                isHolding = false;
+                currentHold.EndInteract(this);
+            }
 
             return;
         }
 
         // Single press interactions
-        if (currentInteractablePress != null &&
-            interactAction.triggered) {
-            currentInteractablePress.Interact(this);
+        if (currentPress != null && interactAction.triggered) {
+            currentPress.Interact(this);
         }
     }
-    #endregion
+
+    private void ReleaseHold() {
+        if (!isHolding) return;
+
+        isHolding = false;
+        if (currentHold != null) currentHold.EndInteract(this);
+    }
 
     #endregion
+
+    private void DisableWithWarning(string message) {
+        cantFunction = true;
+        Debug.LogWarning($"[PlayerInteraction] {message}", this);
+    }
 }

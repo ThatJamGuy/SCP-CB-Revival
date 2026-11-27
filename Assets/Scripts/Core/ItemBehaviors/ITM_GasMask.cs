@@ -2,6 +2,7 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "KeyBehavior", menuName = "SCP:CBR/Behaviors/Gas Mask")]
 public class ITM_GasMask : ItemBehavior {
+    public ItemData associatedItemData;
     public bool superMask;
 
     private bool equipped;
@@ -43,6 +44,7 @@ public class ITM_GasMask : ItemBehavior {
             CanvasInstance.Instance.gasMaskOverlay.SetActive(true);
         }
 
+        InventorySystem.Instance.EquipWearable(associatedItemData);
         equipped = true;
     }
 }
