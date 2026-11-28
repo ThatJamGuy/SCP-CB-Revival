@@ -90,8 +90,7 @@ public class RevivalSessionEngine : MonoBehaviour, ISaveable {
         if (zone != -1) currentZone = targetZone; // only update if explicitly setting
 
         // Skip the scan entirely when music is already off or the check is bypassed
-        if (setMusic && !bypassChaseCheck && EntitySystem.AnyEntityChasingPlayer()) setMusic = false;
-
+        if (setMusic && !bypassChaseCheck && (MusicManager.Instance.IsChaseActive || EntitySystem.AnyEntityChasingPlayer())) setMusic = false;
 
         switch (targetZone) {
             case 0:

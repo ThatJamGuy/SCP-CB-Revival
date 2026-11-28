@@ -232,16 +232,30 @@ public class SCP_173 : MonoBehaviour {
         Vector3 origin = transform.position;
         int count = Physics.OverlapSphereNonAlloc(origin, DOOR_CHECK_RADIUS, doorColliders);
         Door nearestDoor = null;
-        float minSqrDist = float.MaxValue;
+        Door_Hinge nearestOfficeDoor = null;
+        float minDoorSqrDist = float.MaxValue;
+        float minOfficeSqrDist = float.MaxValue;
 
         for (int i = 0; i < count; i++) {
             Collider col = doorColliders[i];
-            if (!col.TryGetComponent(out Door door)) continue;
             float sqrDist = (col.transform.position - origin).sqrMagnitude;
-            if (sqrDist < minSqrDist) {
-                minSqrDist = sqrDist;
+
+            if (sqrDist < minOfficeSqrDist && col.TryGetComponent(out Door_Hinge officeDoor)) {
+                minOfficeSqrDist = sqrDist;
+                nearestOfficeDoor = officeDoor;
+            }
+
+            if (sqrDist < minDoorSqrDist && col.TryGetComponent(out Door door)) {
+                minDoorSqrDist = sqrDist;
                 nearestDoor = door;
             }
+        }
+
+        // If currently hijacking an office door, always open it first try and ignore the rest
+        // Will not open locked or keycard doors for balancing, but will likely introduce breaking for these too
+        if (nearestOfficeDoor != null && !nearestOfficeDoor.isOpen && !nearestOfficeDoor.requiresKeycard && !nearestOfficeDoor.locked && !isVisibleByPlayer) {
+            nearestOfficeDoor.OpenDoor(true, transform);
+            return;
         }
 
         // Randomly be able to either open the nearest door or fail to do so and bang on it a bit

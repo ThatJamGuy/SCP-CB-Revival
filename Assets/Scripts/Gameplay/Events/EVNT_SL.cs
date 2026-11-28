@@ -1,9 +1,11 @@
+using FMODUnity;
 using UnityEngine;
 
 public class EVNT_SL : MonoBehaviour {
     [SerializeField] private Door downDoor;
     [SerializeField] private Door upDoor;
     [SerializeField] private Transform temp049Spawn;
+    [SerializeField] private EventReference taskComplete;
 
     public void ChangeMusicToSL() {
         if (EntitySystem.AnyEntityChasingPlayer()) return;
@@ -17,7 +19,8 @@ public class EVNT_SL : MonoBehaviour {
     public void DisableLCZLockdown() {
         RevivalSessionEngine.lczUnlocked = true;
 
-        MusicManager.Instance.SetTrack(MusicManager.MusicTrack.GeneralHorror04); // Fade out to silence
+        // Play stinger and fade out to silence
+        MusicManager.Instance.PlayStinger(taskComplete, MusicManager.MusicTrack.GeneralHorror04, instant: true);
 
         downDoor.OpenDoor();
         upDoor.CloseDoor();

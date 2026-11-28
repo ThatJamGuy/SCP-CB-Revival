@@ -14,8 +14,10 @@ public class OptionsMenu : MonoBehaviour {
     public static UnityEvent<int> OnMinorGraphicsChanged = new UnityEvent<int>();
     public static UnityEvent<int> OnMajorGraphicsChanged = new UnityEvent<int>();
     public static UnityEvent<float> OnBrightnessChanged = new UnityEvent<float>();
+    public static UnityEvent<bool> OnBloomChanged = new UnityEvent<bool>();
     public static UnityEvent<bool> OnSSRChanged = new UnityEvent<bool>();
     public static UnityEvent<bool> OnSSAOChanged = new UnityEvent<bool>();
+    public static UnityEvent<int> OnStatueModelChanged = new UnityEvent<int>();
 
     [Header("Graphics Settings")]
     [SerializeField] private TMP_Dropdown resolutionDropdown;
@@ -30,6 +32,7 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private TMP_Dropdown shadowQualityDropdown;
     [SerializeField] private Slider brightnessSlider;
     [SerializeField] private TextMeshProUGUI brightnessText;
+    [SerializeField] private Toggle bloomToggle;
     [SerializeField] private Toggle ssrToggle;
     [SerializeField] private Toggle ssaoToggle;
 
@@ -48,6 +51,7 @@ public class OptionsMenu : MonoBehaviour {
     [SerializeField] private TMP_Dropdown hudPresetDropdown;
     [SerializeField] private TMP_Dropdown hudDesignDropdown;
     [SerializeField] private TMP_Dropdown hudFunctionDropdown;
+    [SerializeField] private TMP_Dropdown scp173ModelDropdown;
 
     [Header("Advanced Settings")]
     [SerializeField] private Toggle consoleToggle;
@@ -100,6 +104,7 @@ public class OptionsMenu : MonoBehaviour {
         antiAliasingDropdown.SetValueWithoutNotify(localSettings.antiAliasingMode);
         shadowQualityDropdown.SetValueWithoutNotify(localSettings.shadowQualityMode);
         brightnessSlider.SetValueWithoutNotify((localSettings.brightness * 25f) + 50f);
+        bloomToggle.SetIsOnWithoutNotify(localSettings.enableBloom);
         ssrToggle.SetIsOnWithoutNotify(localSettings.enableSSR);
         ssaoToggle.SetIsOnWithoutNotify(localSettings.enableSSAO);
 
@@ -115,6 +120,7 @@ public class OptionsMenu : MonoBehaviour {
         lookSmoothSlider.SetValueWithoutNotify(localSettings.mouseSmoothing);
         hudDesignDropdown.SetValueWithoutNotify(localSettings.hudDesign);
         hudFunctionDropdown.SetValueWithoutNotify(localSettings.hudFunctionality);
+        scp173ModelDropdown.SetValueWithoutNotify(localSettings.scp173Model);
 
         // Refresh most sliders (Audio settings don't have displayed values atm)
         RefreshSliderTexts();
@@ -244,9 +250,11 @@ public class OptionsMenu : MonoBehaviour {
     // NOTE: Specifically for things NOT slider related to prevent constant updates!
     // Tis why the brightness setting is it's own ApplyBrightness() method
     public void ApplyVFXSettings() {
+        localSettings.enableBloom = bloomToggle.isOn;
         localSettings.enableSSR = ssrToggle.isOn;
         localSettings.enableSSAO = ssaoToggle.isOn;
 
+        OnBloomChanged.Invoke(localSettings.enableBloom);
         OnSSRChanged.Invoke(localSettings.enableSSR);
         OnSSAOChanged.Invoke(localSettings.enableSSAO);
 
@@ -348,9 +356,14 @@ public class OptionsMenu : MonoBehaviour {
         RevivalRuntimeEngine.SaveSettingsData();
     }
 
+    public void ApplyStatueModel(int newModel) {
+        localSettings.scp173Model = newModel;
+        OnStatueModelChanged.Invoke(newModel);
+        RevivalRuntimeEngine.SaveSettingsData();
+    }
+
     public void ApplyAdvancedSettings() {
         localSettings.consoleEnabled = consoleToggle.isOn;
-
         RevivalRuntimeEngine.SaveSettingsData();
     }
 

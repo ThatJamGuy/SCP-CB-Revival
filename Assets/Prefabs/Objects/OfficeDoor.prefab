@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8574839963253901491}
+  - component: {fileID: 8919784350382288375}
   m_Layer: 0
   m_Name: DoorHandlePivot
   m_TagString: Untagged
@@ -30,9 +31,30 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 156284955781062113}
-  - {fileID: 238891857980285278}
   m_Father: {fileID: 5437158899494620160}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &8919784350382288375
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802310901888680465}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 87d90fb420fca01408510dcec85791e8, type: 2}
+  m_CullingMode: 2
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4934297065304549091
 GameObject:
   m_ObjectHideFlags: 0
@@ -42,7 +64,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 668434885086122633}
-  - component: {fileID: 1541481667769247368}
+  - component: {fileID: 3524109553998957500}
+  - component: {fileID: 494275763922609472}
   m_Layer: 0
   m_Name: OfficeDoor
   m_TagString: Untagged
@@ -66,28 +89,80 @@ Transform:
   - {fileID: 4609689116365143316}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!95 &1541481667769247368
-Animator:
-  serializedVersion: 7
+--- !u!114 &3524109553998957500
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4934297065304549091}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 503a908674b6e3740a36d54941c9927d, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3a365511ff21dc4691699f528b36c2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door_Hinge
+  isOpen: 0
+  locked: 0
+  requiresKeycard: 0
+  moveTime: 1.9
+  maxPositiveAngle: 90
+  maxNegativeAngle: -100
+  openSound:
+    Guid:
+      Data1: 1876105679
+      Data2: 1325085283
+      Data3: 800936101
+      Data4: 268892567
+    Path: event:/SFX/Machines/Doors/Door_Steel
+  closeSound:
+    Guid:
+      Data1: 1876105679
+      Data2: 1325085283
+      Data3: 800936101
+      Data4: 268892567
+    Path: event:/SFX/Machines/Doors/Door_Steel
+  handleSound:
+    Guid:
+      Data1: 8844607
+      Data2: 1241260514
+      Data3: -2082031696
+      Data4: -402759154
+    Path: event:/SFX/Interact/Door_Handle
+  onDoorOpening:
+    m_PersistentCalls:
+      m_Calls: []
+  onDoorClosing:
+    m_PersistentCalls:
+      m_Calls: []
+  onDoorOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  onDoorClosed:
+    m_PersistentCalls:
+      m_Calls: []
+  hinge: {fileID: 5437158899494620160}
+  handleAnimator: {fileID: 8919784350382288375}
+--- !u!65 &494275763922609472
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4934297065304549091}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6157862786023814200
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,47 +301,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::I_ButtonGeneric
   useInteractMessage: 0
-  interactionCooldown: 0.5
+  interactionCooldown: 0.1
   interactMessage: 
   messageDuration: 3
   messageFadeDuration: 2
   onInteract:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1541481667769247368}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: OpenDoor
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 2885677526642296464}
-        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
-        m_MethodName: Play
+      - m_Target: {fileID: 3524109553998957500}
+        m_TargetAssemblyTypeName: Door_Hinge, Assembly-CSharp
+        m_MethodName: ToggleDoorState
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: OpenDoor
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 6339727360827029959}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: set_tag
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Untagged
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!136 &4034971429311342523
@@ -513,69 +564,6 @@ NavMeshObstacle:
   m_Extents: {x: 0.93000007, y: 1.5600001, z: 0.13000001}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 1
+  m_CarveOnlyStationary: 0
   m_Center: {x: 0.93000007, y: 1.6, z: -0.001}
-  m_TimeToStationary: 0.5
---- !u!1 &8915581622733198535
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 238891857980285278}
-  - component: {fileID: 2885677526642296464}
-  m_Layer: 0
-  m_Name: SoundEmitter
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &238891857980285278
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8915581622733198535}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.77000016, y: -0.09000003, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8574839963253901491}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2885677526642296464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8915581622733198535}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: 1876105679
-      Data2: 1325085283
-      Data3: 800936101
-      Data4: 268892567
-    Path: event:/SFX/Machines/Doors/Door_Office
-  Event: 
-  EventPlayTrigger: 0
-  EventStopTrigger: 12
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
+  m_TimeToStationary: 1

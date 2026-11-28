@@ -12,6 +12,7 @@ public class SettingsData {
     public bool vSync = true;
     public int frameLimit = 60;
     public float brightness = 50; // 50 - Default factory brightness (What I see when making the game)
+    public bool enableBloom = true;
     public bool enableSSR = true;
     public bool enableSSAO = false;
 
@@ -26,4 +27,5 @@ public class SettingsData {
     public float mouseSmoothing = 95f;
     public int hudDesign = 0;
     public int hudFunctionality = 1;
+    public int scp173Model = 0; // 0 - Default (Unity), 1 - Legacy (CB)
 }

@@ -26,6 +26,7 @@ public class EVNT_NukeRoom : MonoBehaviour {
         yield return new WaitForSeconds(10);
 
         RevivalSessionEngine.Instance.NotifyPlayer("You've reached the temporary end of the SCP:CBR Demo! Feel free to continue playing, or leave a review on Steam!", 10, 3);
+        RevivalRuntimeEngine.Instance.GiveAchievement("achv_demo");
     }
 
     private IEnumerator TemporarilyDisableLevers() {

@@ -1,5 +1,68 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &150614342894061908
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5975536140580037675}
+  - component: {fileID: 8345763185068159329}
+  m_Layer: 0
+  m_Name: Emitter_Activate_C
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5975536140580037675
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 150614342894061908}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.20000005, y: 6.2000003, z: 9.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7698022428675101368}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8345763185068159329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 150614342894061908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1996238878
+      Data2: 1328315384
+      Data3: -780677218
+      Data4: -461591404
+    Path: event:/SFX/General/One-Shots/Activate_C
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 12
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &618344590387279015
 GameObject:
   m_ObjectHideFlags: 0
@@ -1338,7 +1401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
   parentRoomHander: {fileID: 7287665040424921501}
-  roomConfig: {fileID: 11400000, guid: db506736eaff01548902fd60e6e6bea3, type: 2}
+  roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
   onRoomEnter:
     m_PersistentCalls:
       m_Calls:
@@ -1393,69 +1456,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!1 &2420917891233125820
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8821627051793101241}
-  - component: {fileID: 7852734065897375569}
-  m_Layer: 0
-  m_Name: Emitter_TaskComplete_B
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8821627051793101241
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2420917891233125820}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.20000005, y: 6.2000003, z: 9.1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7698022428675101368}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7852734065897375569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2420917891233125820}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: 2025424946
-      Data2: 1139804781
-      Data3: 1479281797
-      Data4: -1991182247
-    Path: event:/Music/Solo Events/TaskComplete_B
-  Event: 
-  EventPlayTrigger: 0
-  EventStopTrigger: 12
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
 --- !u!1 &2678528249801860742
 GameObject:
   m_ObjectHideFlags: 0
@@ -2101,7 +2101,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: b4741aaf38d2789419a5b189889d52ee, type: 2}
   - {fileID: 2100000, guid: b201f8b67261e934e8d5b87ae07ce0bd, type: 2}
   - {fileID: 2100000, guid: 8824bc5a85be2d94dbef8bd53e9c1eb0, type: 2}
-  - {fileID: 2100000, guid: c07e036020cc43c40983b02a9d1f5cd1, type: 2}
+  - {fileID: 2100000, guid: b000ee5bd913fc74daeea8a06d8737a4, type: 2}
   - {fileID: 2100000, guid: 034a8c6225775a7459e94b053c88a7a5, type: 2}
   - {fileID: 2100000, guid: 793f7b48f6cd106488e62a564a7631e7, type: 2}
   - {fileID: 2100000, guid: 78a48c2ade50a50499ca476e28cc1e60, type: 2}
@@ -2244,7 +2244,7 @@ Transform:
   - {fileID: 2464927045600085626}
   - {fileID: 1041301013619553155}
   - {fileID: 5913373470457486341}
-  - {fileID: 8821627051793101241}
+  - {fileID: 5975536140580037675}
   m_Father: {fileID: 3744439812922256043}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4031384277305551355
@@ -3994,7 +3994,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1f737a67ce64e49a242442a3b7a371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomTrigger
-  parentRoomHander: {fileID: 7287665040424921501}
+  parentRoomHander: {fileID: 0}
   roomConfig: {fileID: 11400000, guid: c297d0cb17fe5394eaaf841e276520a7, type: 2}
   onRoomEnter:
     m_PersistentCalls:
@@ -4549,6 +4549,13 @@ MonoBehaviour:
   downDoor: {fileID: 172982527128124385}
   upDoor: {fileID: 4321343583862190482}
   temp049Spawn: {fileID: 1970782778165743774}
+  taskComplete:
+    Guid:
+      Data1: 2025424946
+      Data2: 1139804781
+      Data3: 1479281797
+      Data4: -1991182247
+    Path: event:/Music/Solo Events/TaskComplete_B
 --- !u!1 &6926213809260530866
 GameObject:
   m_ObjectHideFlags: 0
@@ -6287,11 +6294,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
       propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[5].m_Mode
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
       propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[6].m_Mode
-      value: 6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
       propertyPath: OnLeverTurnedOn.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -6316,15 +6323,15 @@ PrefabInstance:
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
       propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[4].m_Target
       value: 
-      objectReference: {fileID: 7852734065897375569}
+      objectReference: {fileID: 6507687274950867051}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
       propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[5].m_Target
       value: 
-      objectReference: {fileID: 6507687274950867051}
+      objectReference: {fileID: 2487704506887087696}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
       propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[6].m_Target
       value: 
-      objectReference: {fileID: 2487704506887087696}
+      objectReference: {fileID: 8345763185068159329}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
       propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -6371,15 +6378,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
       propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[4].m_MethodName
-      value: Play
-      objectReference: {fileID: 0}
-    - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
-      propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[5].m_MethodName
       value: DisableLCZLockdown
       objectReference: {fileID: 0}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
-      propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[6].m_MethodName
+      propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[5].m_MethodName
       value: SetActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
+      propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[6].m_MethodName
+      value: Play
       objectReference: {fileID: 0}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
       propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -6399,15 +6406,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
       propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[4].m_TargetAssemblyTypeName
-      value: FMODUnity.StudioEventEmitter, FMODUnity
-      objectReference: {fileID: 0}
-    - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
-      propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[5].m_TargetAssemblyTypeName
       value: EVNT_SL, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
-      propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[6].m_TargetAssemblyTypeName
+      propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[5].m_TargetAssemblyTypeName
       value: UnityEngine.GameObject, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
+      propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[6].m_TargetAssemblyTypeName
+      value: FMODUnity.StudioEventEmitter, FMODUnity
       objectReference: {fileID: 0}
     - target: {fileID: 1015191478957554280, guid: e02ecdaf980ec664dac3dcccb53c67ea, type: 3}
       propertyPath: OnLeverTurnedOff.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument

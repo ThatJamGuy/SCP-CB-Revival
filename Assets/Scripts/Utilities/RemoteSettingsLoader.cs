@@ -7,13 +7,14 @@ using UnityEngine.Rendering.HighDefinition;
 /// IE. Allows the camera to adjust it's anti-aliasing mode on start by loading data from the save file if it exists.
 /// </summary>
 public class RemoteSettingsLoader : MonoBehaviour {
-    private enum SettingPreset { AntiAliasing, ShadowQuality, Brightness, SSR, SSAO };
+    private enum SettingPreset { AntiAliasing, ShadowQuality, Brightness, Bloom, SSR, SSAO };
 
     [SerializeField] private SettingPreset[] settingToRetreive;
 
     private HDAdditionalCameraData playerCameraData;
     private HDAdditionalLightData lightData;
     private ColorAdjustments colAdj;
+    private Bloom bloom;
     private ScreenSpaceReflection ssr;
     private ScreenSpaceAmbientOcclusion ssao;
 
@@ -31,6 +32,7 @@ public class RemoteSettingsLoader : MonoBehaviour {
                     lightData = GetComponent<HDAdditionalLightData>();
                     break;
                 case SettingPreset.Brightness:
+                case SettingPreset.Bloom:
                 case SettingPreset.SSR:
                 case SettingPreset.SSAO:
                     CacheVolumeOverrides();
@@ -56,6 +58,9 @@ public class RemoteSettingsLoader : MonoBehaviour {
                     case SettingPreset.Brightness:
                         UpdateBrightness(RevivalRuntimeEngine.SettingsData.brightness);
                         break;
+                    case SettingPreset.Bloom:
+                        UpdateBloom(RevivalRuntimeEngine.SettingsData.enableBloom);
+                        break;
                     case SettingPreset.SSR:
                         UpdateSSR(RevivalRuntimeEngine.SettingsData.enableSSR);
                         break;
@@ -69,6 +74,7 @@ public class RemoteSettingsLoader : MonoBehaviour {
         OptionsMenu.OnMinorGraphicsChanged.AddListener(UpdateAntiAliasing);
         OptionsMenu.OnMajorGraphicsChanged.AddListener(UpdateShadowQuality);
         OptionsMenu.OnBrightnessChanged.AddListener(UpdateBrightness);
+        OptionsMenu.OnBloomChanged.AddListener(UpdateBloom);
         OptionsMenu.OnSSRChanged.AddListener(UpdateSSR);
         OptionsMenu.OnSSAOChanged.AddListener(UpdateSSAO);
     }
@@ -77,6 +83,7 @@ public class RemoteSettingsLoader : MonoBehaviour {
         OptionsMenu.OnMinorGraphicsChanged.RemoveListener(UpdateAntiAliasing);
         OptionsMenu.OnMajorGraphicsChanged.RemoveListener(UpdateShadowQuality);
         OptionsMenu.OnBrightnessChanged.RemoveListener(UpdateBrightness);
+        OptionsMenu.OnBloomChanged.RemoveListener(UpdateBloom);
         OptionsMenu.OnSSRChanged.RemoveListener(UpdateSSR);
         OptionsMenu.OnSSAOChanged.RemoveListener(UpdateSSAO);
     }
@@ -86,12 +93,14 @@ public class RemoteSettingsLoader : MonoBehaviour {
     #region Private Methods
 
     private void CacheVolumeOverrides() {
-        if (ssr != null || ssao != null) return;
+        // If we already have everything cached no need to do it again
+        //if (ssr != null && ssao != null && bloom != null && colAdj != null) return;
 
         Volume volume = GetComponent<Volume>();
         if (volume == null || volume.profile == null) return;
 
         volume.profile.TryGet(out colAdj);
+        volume.profile.TryGet(out bloom);
         volume.profile.TryGet(out ssr);
         volume.profile.TryGet(out ssao);
     }
@@ -125,6 +134,13 @@ public class RemoteSettingsLoader : MonoBehaviour {
 
     private void UpdateBrightness(float value) {
         if (colAdj != null) colAdj.postExposure.value = value;
+    }
+
+    // Turns out bloom wasn't doing much, so using the intensity value at 0
+    // and turning bloom on will have the opposite effect, as without that setup
+    // turning bloom off didn't do anything
+    private void UpdateBloom(bool enabled) {
+        if (bloom != null) bloom.active = !enabled;
     }
 
     private void UpdateSSR(bool enabled) {

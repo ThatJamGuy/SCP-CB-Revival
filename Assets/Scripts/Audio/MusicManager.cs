@@ -44,6 +44,8 @@ public class MusicManager : MonoBehaviour {
     [Header("Ambience Settings")]
     [SerializeField] private EventReference zoneAmbienceMasterEvent;
 
+    public bool IsChaseActive => anyChaseActive;
+
     public static int CurrentPursuit = -1;
 
     private const string CURR_TRACK_PARAM = "CurrentTrack";
@@ -52,8 +54,8 @@ public class MusicManager : MonoBehaviour {
 
     private const string CURR_ZONE_AMB_PARAM = "CurrentZone";
 
-    private const float stingerFadeOutTime = 0.5f;
-    private const float stingerFadeInTime = 1.5f;
+    private const float STINGER_FADE_OUT_TIME = 0.5f;
+    private const float STINGER_FADE_IN_TIME = 1.5f;
 
     private readonly List<ChaseRequest> chaseRequests = new List<ChaseRequest>(3);
 
@@ -88,6 +90,7 @@ public class MusicManager : MonoBehaviour {
     private EventInstance stingerInstance;
     private bool stingerActive;
     private bool stingerHasNextTrack;
+    private bool instantStinger;
     private int stingerNextTrack;
     private int stingerNextIntensity;
     private StingerState stingerState;
@@ -217,7 +220,7 @@ public class MusicManager : MonoBehaviour {
         ChaseRequest top = chaseRequests[best];
         CurrentPursuit = top.priority;
 
-        if (anyChaseActive && activeChaseTrack == top.track && activeChaseIntensity == top.intensity) return;
+        if (anyChaseActive && currentTrackIndex == (int)top.track && currentIntensity == top.intensity) return;
 
         anyChaseActive = true;
         activeChaseTrack = top.track;
@@ -234,7 +237,7 @@ public class MusicManager : MonoBehaviour {
         musicInstance.setParameterByID(trackParameterID, currentTrackIndex);
     }
 
-    private void StartStinger(EventReference stinger, bool hasNext, int nextTrack, int nextIntensity) {
+    private void StartStinger(EventReference stinger, bool hasNext, int nextTrack, int nextIntensity, bool instant) {
         if (stinger.IsNull) return;
         if (!initialized) Init();
 
@@ -242,6 +245,20 @@ public class MusicManager : MonoBehaviour {
         stingerNextTrack = nextTrack;
         stingerNextIntensity = nextIntensity;
         pendingStinger = stinger;
+
+        // Instant stingers skip the fade, rather opting to do both the things at the same time
+        if (instant) {
+            if (stingerState == StingerState.Playing) {
+                stingerInstance.stop(STOP_MODE.IMMEDIATE);
+                stingerInstance.release();
+            }
+
+            musicVolume = 0f;
+            musicInstance.setVolume(0f);
+            musicInstance.setPaused(true);
+            BeginStingerPlayback();
+            return;
+        }
 
         switch (stingerState) {
             case StingerState.None:
@@ -274,15 +291,14 @@ public class MusicManager : MonoBehaviour {
 
         switch (stingerState) {
             case StingerState.FadingOut: {
-                    musicVolume = stingerFadeOutTime > 0f
-                        ? Mathf.MoveTowards(musicVolume, 0f, dt / stingerFadeOutTime)
-                        : 0f;
+                    musicVolume = STINGER_FADE_OUT_TIME > 0f ? Mathf.MoveTowards(musicVolume, 0f, dt / STINGER_FADE_OUT_TIME) : 0f;
                     musicInstance.setVolume(musicVolume);
 
                     if (musicVolume <= 0f) {
                         musicInstance.setPaused(true);
                         BeginStingerPlayback();
                     }
+
                     break;
                 }
 
@@ -305,8 +321,8 @@ public class MusicManager : MonoBehaviour {
                 }
 
             case StingerState.FadingIn: {
-                    musicVolume = stingerFadeInTime > 0f
-                        ? Mathf.MoveTowards(musicVolume, 1f, dt / stingerFadeInTime)
+                    musicVolume = STINGER_FADE_IN_TIME > 0f
+                        ? Mathf.MoveTowards(musicVolume, 1f, dt / STINGER_FADE_IN_TIME)
                         : 1f;
                     musicInstance.setVolume(musicVolume);
 
@@ -348,12 +364,12 @@ public class MusicManager : MonoBehaviour {
 
     /// <summary>Plays a one-shot stinger, then resumes whichever track should be playing.</summary>
     public void PlayStinger(EventReference stinger) {
-        StartStinger(stinger, false, 0, 0);
+        StartStinger(stinger, false, 0, 0, false);
     }
 
     /// <summary>Plays a one-shot stinger, then switches to the given track.</summary>
-    public void PlayStinger(EventReference stinger, MusicTrack nextTrack, int nextIntensity = 0) {
-        StartStinger(stinger, true, (int)nextTrack, nextIntensity);
+    public void PlayStinger(EventReference stinger, MusicTrack nextTrack, int nextIntensity = 0, bool instant = false) {
+        StartStinger(stinger, true, (int)nextTrack, nextIntensity, instant);
     }
 
     public void SetZoneAmbience(int zone = 1) {
@@ -415,10 +431,15 @@ public class MusicManager : MonoBehaviour {
         }
 
         stingerState = StingerState.None;
-        musicVolume = 1f; // The next Init creates a fresh instance at full volume
+        musicVolume = 1f;
+
+        chaseRequests.Clear();
+        anyChaseActive = false;
+        CurrentPursuit = -1;
 
         musicInstance.setPaused(false);
         musicInstance.stop(STOP_MODE.ALLOWFADEOUT);
+        musicInstance.release();
         initialized = false;
     }
 
